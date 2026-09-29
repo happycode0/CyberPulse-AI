@@ -1264,4 +1264,6 @@ Confirm the site at `https://happycode0.github.io/CyberPulse-AI/`.
 - [ ] The site renders real AU and global intelligence, with no "LIVE" claim anywhere
 - [ ] The site is deployed and reachable on GitHub Pages
 - [ ] `pytest -q` is green
-- [ ] No secret appears in any tracked file: `git grep -nE "(sk-or-v1-|tvly-|ghp_|github_pat_)" || echo CLEAN`
+- [ ] No secret appears in any tracked file. Note the exclusions — the docs contain deliberate fake keys as test fixtures, so an unfiltered scan false-positives:
+      `git grep -nE "(sk-or-v1-|tvly-[A-Za-z0-9]{20}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22})" -- . ':(exclude)docs/**' ':(exclude)ops/check-keys.sh' ':(exclude).env.example' || echo CLEAN`
+- [ ] `./ops/check-keys.sh` passes
