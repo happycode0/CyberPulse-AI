@@ -46,9 +46,9 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
          ┌────────────────────────────────┼────────────────────────────────┐
          ▼                                ▼                                ▼
    INTELLIGENCE                     ENGINEERING                      OPERATIONS
-   ORACLE · SOUTHERN CROSS          WRENCH · AUDITOR                 KELPIE · PENNY
-   NOMAD · SYNAPSE · MAGPIE                                          HERALD · BOUNCER
-   BLOODHOUND · RED PEN                                              GROUNDTRUTH · WEAVER
+   MORPHEUS · ZION          WHEELJACK · TRON                 TELETRAAN · ROGUE
+   BLASTER · WINTERMUTE · TACHIKOMA                                          LINK · SERAPH
+   DECKARD · VOIGHT                                              LIBRARIAN · PROWL
          └────────────────────────────────┼────────────────────────────────┘
                                           ▼
                               CYBER WORKER  (Python 3.13)
@@ -83,23 +83,23 @@ Personas are presentation, not authority — that comes from each agent's Paperc
 permissions and budget. **Deterministic agents cost zero tokens**, which is the whole point
 of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 
-| Callsign | Beat | Runtime |
-|---|---|---|
-| **ORACLE** · *"Signal over noise."* | Intelligence Director / Chief Editor | LLM, strong, 1×/day |
-| **SOUTHERN CROSS** · *"If it lands here, I'll know before the ASX opens."* | Australian desk | LLM, fast |
-| **NOMAD** · *"Somewhere it's always 3am and something's on fire."* | Global cyber desk | LLM, fast |
-| **SYNAPSE** · *"The model is the attack surface."* | AI + cyber↔AI convergence | LLM, fast |
-| **MAGPIE** · *"Ooh, what's this then?"* | Source discovery | LLM + Tavily |
-| **BOUNCER** · *"Name's not on the list."* | Source verification gate | Deterministic |
-| **WEAVER** · *"One event, many threads."* | Event correlation, material change | Deterministic + Strands |
-| **GROUNDTRUTH** · *"Cite it or it didn't happen."* | KEV / CVE / EPSS / OSV / ATT&CK | Deterministic |
-| **BLOODHOUND** · *"It's not over until it's patched."* | Follow-up, developing events | LLM + Strands |
-| **RED PEN** · *"Says who?"* | Editorial QA, publication veto | LLM, strong, gated |
-| **HERALD** · *"Hear ye — and here's the diff."* | Publishing + notifications | Deterministic |
-| **PENNY** · *"Every token is a coin."* | Cost / FinOps, degradation tiers | Deterministic |
-| **KELPIE** · *"Something's off with the mob."* | Watchdog / SRE, self-healing | Deterministic + LLM on incident |
-| **WRENCH** · *"She'll be right — after the tests pass."* | Source & platform engineer | OpenCode, incident-driven |
-| **AUDITOR** · *"Trust, but diff."* | Independent code verification | LLM, different family |
+| Callsign | Origin | Beat | Runtime |
+|---|---|---|---|
+| **MORPHEUS** · *"I can only show you the door."* | Matrix | Intelligence Director / Chief Editor | LLM, strong, 1×/day |
+| **ZION** · *"Home ground. Our watch."* | Matrix | Australian desk | LLM, fast |
+| **BLASTER** · *"I'm picking up chatter on every band."* | Transformers | Global cyber desk | LLM, fast |
+| **WINTERMUTE** · *"The model is the attack surface."* | Neuromancer | AI + cyber↔AI convergence | LLM, fast |
+| **TACHIKOMA** · *"Ooh — what's this one?"* | Ghost in the Shell | Source discovery | LLM + Tavily |
+| **SERAPH** · *"I had to be sure."* | Matrix | Source verification gate | Deterministic |
+| **PROWL** · *"One event. Many threads."* | Transformers | Event correlation, material change | Deterministic + Strands |
+| **LIBRARIAN** · *"Cite it or it didn't happen."* | Snow Crash | KEV / CVE / EPSS / OSV / ATT&CK | Deterministic |
+| **DECKARD** · *"The case stays open until it's patched."* | Blade Runner | Follow-up, developing events | LLM + Strands |
+| **VOIGHT** · *"Says who?"* | Blade Runner | Editorial QA, publication veto | LLM, strong, gated |
+| **LINK** · *"Transmission clean. Here's the diff."* | Matrix | Publishing + notifications | Deterministic |
+| **ROGUE** · *"Nothing in this city is free."* | Cyberpunk 2077 | Cost / FinOps, degradation tiers | Deterministic |
+| **TELETRAAN** · *"Anomaly detected on the grid."* | Transformers | Watchdog / SRE, self-healing | Deterministic + LLM on incident |
+| **WHEELJACK** · *"She'll be right — after the tests pass."* | Transformers | Source & platform engineer | OpenCode, incident-driven |
+| **TRON** · *"I fight for the users."* | Tron | Independent code verification | LLM, different family |
 
 ---
 
@@ -149,7 +149,7 @@ instead (see `PLAN.md` §1, decision 4).
 
 > **Understand the trade:** GitHub's docs state *"GitHub Pages sites are publicly available
 > on the internet, even if the repository for the site is private."* The site is public
-> either way. Everything secret lives in `.env`, which is git-ignored, and HERALD runs a
+> either way. Everything secret lives in `.env`, which is git-ignored, and LINK runs a
 > secret scan before every publish.
 
 ### 0.2 OpenRouter — the AI budget 🔴
@@ -412,15 +412,15 @@ docker compose ps                                  # what's running
 docker compose logs -f worker                      # follow the pipeline
 docker compose run --rm worker python -m worker.main --lane fast --once
 docker compose run --rm worker python -m worker.ops.health
-docker compose run --rm worker python -m worker.ops.cost --month     # PENNY's ledger
-docker compose run --rm worker python -m worker.ops.sources --status # BOUNCER's view
+docker compose run --rm worker python -m worker.ops.cost --month     # ROGUE's ledger
+docker compose run --rm worker python -m worker.ops.sources --status # SERAPH's view
 docker compose run --rm worker pytest -q
 ```
 
 ### Cost control
 
 The hard stop is the **OpenRouter key limit**, set at the provider. The platform cannot
-exceed it regardless of any bug on our side. Inside that, PENNY degrades progressively:
+exceed it regardless of any bug on our side. Inside that, ROGUE degrades progressively:
 
 | Budget remaining | Behaviour |
 |---|---|
@@ -436,8 +436,8 @@ Non-negotiable, and enforced in code:
 - `.env` is git-ignored — never committed, logged, or pasted into any prompt
 - Secrets never appear in Python, YAML, JSON, Dockerfiles, frontend JS, published data or README examples
 - Each agent gets only the credentials its job requires ([`PLAN.md` §4.4](PLAN.md))
-- WRENCH, the engineer agent, holds **exactly one** credential: a branch-scoped GitHub token
-- HERALD secret-scans every payload before publishing and **fails closed**
+- WHEELJACK, the engineer agent, holds **exactly one** credential: a branch-scoped GitHub token
+- LINK secret-scans every payload before publishing and **fails closed**
 - Ingested article text is treated as untrusted input, given to models as data with no tools available, and never forwarded to the engineer agent
 
 ### Recovery
