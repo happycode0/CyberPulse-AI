@@ -116,14 +116,22 @@ OpenRouter prices and the four-tier ladder in §7.1:
 | Workload | Assumption | Est. monthly |
 |---|---|---|
 | Tier 0 (free): classify, extract, tag, source relevance | ~124 calls/day, 12% of the 1,000/day free cap | **$0.00** |
-| Tier 1 (cheap): summaries, AU reasoning, desk digests | ~5M in / 1.2M out @ $0.018/$0.09 | ~$0.20 |
-| Tier 2 (strong): severity, impact, evidence, MITRE, editorial | 10 events/day + daily editorial pass | ~$4.50 |
-| Engineering (incident-driven) | ~4 sessions/month | ~$2.00 |
-| **Total** | | **~$6.70** |
+| Tier 1 (cheap): summaries, AU reasoning, desk digests | 7.2M in / 1.44M out @ $0.018/$0.09 | ~$0.26 |
+| Tier 2 (strong): severity, impact, evidence, MITRE, editorial | 300 judgments @ $0.435/$0.87 | ~$1.17 |
+| CODE: WHEELJACK | ~4 sessions @ $0.30/$0.90 | ~$0.78 |
+| AUDIT: TRON | ~4 reviews | ~$0.74 |
+| RIPPERDOC gauntlet | weekly, ~30 golden events per candidate | ~$0.25 |
+| **Total** | | **~$3.20 (16% of cap)** |
 
-That is roughly a third of the cap, and less than half my first estimate — because the
-free tier legitimately absorbs the highest-volume work (§7.1). The headroom matters: it
-funds growth in source count and event volume without a budget change.
+Two things drive that number down: the free tier absorbs the highest-volume work (§7.1),
+and the US$1 output ceiling removes frontier models from the judgment and code tiers,
+saving roughly **$10.65/month** against a frontier-model design. The ceiling is a real
+quality trade, documented honestly in §7.1 — the saving is not free, it is paid for in
+severity-reasoning nuance on the ~300 highest-stakes judgments per month.
+
+The remaining headroom is deliberate: it funds growth in source count and event volume
+without a budget change, and RIPPERDOC's job (§7.6) is to keep pushing volume down the
+ladder toward free.
 
 The rationing that makes it hold:
 
@@ -294,7 +302,7 @@ Neither appeared in the source prompts.
 
 ## 4. The crew
 
-Fifteen agents, each named after a figure from the cyberpunk canon whose role matches the
+Sixteen agents, each named after a figure from the cyberpunk canon whose role matches the
 job — Matrix, Transformers, Blade Runner, Neuromancer, Ghost in the Shell, Snow Crash,
 Tron and Cyberpunk 2077. Each has a persona (it makes the org legible, and the private
 dashboard genuinely pleasant to read), a Paperclip role, an adapter, an explicit wake
@@ -465,6 +473,20 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 | Never | Raises a budget limit autonomously |
 | KPI | Actual vs. budgeted spend; cost per published event |
 
+#### RIPPERDOC — Model Scout
+> *Cyberpunk 2077.* The street surgeon who knows which chrome is worth fitting and which will cook your nervous system. Watches what just landed on the market, and is unsentimental about ripping out last month's upgrade.
+> **"Better chrome just came in."**
+
+| | |
+|---|---|
+| Role / adapter | `researcher` · `http` adapter → worker for harvest and evaluation (**deterministic**), tier 1 LLM only to draft the recommendation |
+| Reports to | ROGUE, with MORPHEUS approving any change that affects output quality |
+| Wakes on | Weekly DEEP routine, Sunday 04:00 AEST; on-demand when a configured model fails, is withdrawn, or drifts above the price ceiling |
+| Owns | Keeping the §7.1 ladder optimal: the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling |
+| Specialised tasks | Snapshot `/api/v1/models` each run and diff against the last: new models, withdrawn models, price changes. **Flag new `:free` models loudly** — free is always evaluated first. Filter candidates to `tools` + `structured_outputs`, output ≤ $1/M, non-`:batch`, with a capable route at acceptable quantisation. Score survivors on published signals (§7.6). Run the **local gauntlet** — a pinned golden set of ~30 human-verified events — measuring schema compliance, agreement with golden labels, **refusal rate on security content**, p95 latency and measured cost from `usage.cost`. Open a proposal issue with a side-by-side table and a recommendation. Re-verify every ladder model's current price each run and immediately drop any that drifted above the ceiling. Repair fallback chains when a `:free` variant disappears, before a pipeline run discovers it. |
+| Never | Changes a tier **default** unilaterally — that needs MORPHEUS (quality) and ROGUE (cost); proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set |
+| KPI | Cost per 1,000 enrichments, trending down; share of pipeline volume served by the free tier, trending up; regressions caught before promotion; ceiling breaches (must be zero) |
+
 #### TELETRAAN — Watchdog / SRE
 > *Transformers.* The ship's computer that scans continuously and wakes the whole crew when something moves. Notices the one missing signal before anyone else does.
 > **"Anomaly detected on the grid."**
@@ -522,6 +544,7 @@ MORPHEUS (ceo)
 │   ├── PROWL (correlation)
 │   └── LINK (publish + notify)
 └── ROGUE (cfo)
+    └── RIPPERDOC (model scout)
 ```
 
 Least privilege, per the source prompts' §60, made concrete:
@@ -532,6 +555,7 @@ Least privilege, per the source prompts' §60, made concrete:
 | Desks (×3) | Ops API token (scoped to their desk) | Write ground truth; publish |
 | TACHIKOMA | Ops API token, Tavily key | Activate a source |
 | SERAPH, LIBRARIAN, PROWL, LINK, ROGUE | Worker-internal only (no LLM) | — |
+| RIPPERDOC | Ops API token, OpenRouter key (read-only endpoints + gauntlet calls) | Change a tier default; exceed the price ceiling |
 | DECKARD | Ops API token, Tavily key | Publish |
 | VOIGHT | Ops API token (read + verdict) | Edit event facts |
 | TELETRAAN | Ops API token, health endpoints | Disable security controls |
@@ -679,9 +703,37 @@ use** — the catalogue changes weekly. All slugs configurable via `config/model
 |---|---|---|---|---|
 | **0 — FREE** | `nvidia/nemotron-3-super-120b-a12b:free` | `qwen/qwen3.8-27b:free` → tier 1 | **$0 / $0** | Classification, entity extraction, tagging, source relevance, simple matching |
 | **1 — CHEAP** | `openai/gpt-oss-20b` | `z-ai/glm-5.3-flash` → `upstage/solar-mini4` | $0.018 / $0.09 | Short summaries, AU relevance reasoning, ambiguous matching, desk digests |
-| **2 — STRONG** | `z-ai/glm-5.3` | `openai/gpt-6-sol` | $1.40 / $4.40 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
-| **CODE** | `z-ai/glm-5.3` | `openai/gpt-6-sol` | $1.40 / $4.40 | WHEELJACK |
-| **AUDIT** | `anthropic/claude-sonnet-5.5` | — | $2.00 / $10.00 | TRON (different family, deliberately) |
+| **2 — STRONG** | `xiaomi/mimo-v2.6-pro` | `minimax/minimax-m2.7` → `upstage/solar-pro-3` | $0.435 / $0.87 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
+| **CODE** | `mistralai/codestral-2508` | `qwen/qwen3-coder` | $0.30 / $0.90 | WHEELJACK |
+| **AUDIT** | `xiaomi/mimo-v2.6-pro` | `minimax/minimax-m2.7` | $0.435 / $0.87 | TRON (different family from CODE, deliberately) |
+
+**Hard price ceiling: output ≤ US$1.00 per million tokens.** This is an owner-set policy
+(2026-09-30), enforced in code rather than documentation — see §7.2. It has a real cost:
+
+- **No frontier model is available at any price point under the cap.** Verified against
+  `/endpoints`: `openai/gpt-6-sol` ($10 out), `anthropic/claude-sonnet-5.5` ($10),
+  `z-ai/glm-5.3` ($4.40), `x-ai/grok-4.7` ($6) and `qwen/qwen3.8-max` have **zero**
+  capable routes at or below $1 output. The cap is not a routing choice; it changes which
+  class of model does our judgment work.
+- `xiaomi/mimo-v2.6-pro` is the strongest thing under the ceiling: released 2026-09-21,
+  1.05M context, and — unusually for this price — available at **bf16** from GMICloud, so
+  tier 2 keeps its non-quantised requirement.
+- Why this is defensible: §7.3 already forces the strong tier to reason over **retrieved
+  evidence** rather than recalled knowledge. CVSS, KEV status and technique IDs are looked
+  up, never generated. That narrows the gap between a mid-tier and a frontier model
+  considerably, because the task is judgment over supplied facts, not recall.
+- Where it still costs us: nuanced severity reasoning and evidence reconciliation on
+  genuinely conflicting reports. VOIGHT's QA gate and the `unknown`-over-guess rule are the
+  compensating controls, and §13 tracks measuring the difference.
+
+**Excluded by the ceiling, for the record:** `openai/gpt-6-sol`, `openai/gpt-6-astra`,
+`anthropic/claude-sonnet-5.5`, `anthropic/claude-opus-5.5`, `z-ai/glm-5.3`,
+`x-ai/grok-4.7`, `google/gemini-3.8-flash` ($3.75 out), `deepseek/deepseek-v4.1-flash`
+($1.20 out at the default route).
+
+**`:batch` variants are also excluded** despite attractive pricing (e.g.
+`openai/gpt-6-luna:batch` at $0.05/$0.25). Batch processing is asynchronous, which cannot
+serve a 15-minute collection lane.
 
 **Why tier 0 is viable.** OpenRouter's free limits are **20 requests/minute and 1,000
 requests/day** once an account has purchased ≥10 credits all-time — which our $20 top-up
@@ -785,6 +837,51 @@ Pinned API facts from §2.7: `strands-agents` 1.57.1, Python ≥3.10, `GraphBuil
 because graph joins are OR by default. Deterministic steps are custom `MultiAgentBase`
 nodes so they cost nothing. Pin the exact version; it ships weekly.
 
+### 7.6 Model lifecycle (RIPPERDOC)
+
+The ladder is not a one-time choice. Model prices move — `z-ai/glm-5.3`'s listed input
+price changed between two queries a day apart during this design — and `:free` variants are
+withdrawn without notice. RIPPERDOC tends it on a weekly cycle.
+
+**Selection order, always in this sequence:**
+
+1. **Free and capable?** Evaluate every `:free` candidate first. If one passes the gauntlet for a task, it wins regardless of what a paid model scores.
+2. **Cheapest paid that passes.** Among capable routes only (`require_parameters: true`).
+3. **Never above the ceiling.** Output ≤ US$1.00/M, no exceptions, enforced in code.
+
+**Published signals, all authenticated with our normal inference key.** Rate limits are
+30 requests/minute and 500/day per account on the benchmark and dataset endpoints, which
+a weekly cycle uses a negligible fraction of.
+
+| Signal | Endpoint | What we read |
+|---|---|---|
+| Quality | `GET /api/v1/benchmarks` | Artificial Analysis `intelligence_index`, `coding_index`, `agentic_index`; Design Arena `elo`, `win_rate`; OpenRouter's own `gpqa_diamond` and `tau_bench_verified_airline` with `accuracy`, `accuracy_stddev` and `avg_cost_per_task`. Filter `task_type=coding` for the CODE tier |
+| Adoption | `GET /api/v1/datasets/rankings-daily` | Daily token totals for the top 50 models. **`modality=tool_calling`** is the relevant slice for us, and `category=programming` for the CODE tier. `:free` variants rank as their own entries |
+| Market share by task | `GET /api/v1/classifications/...` | Traffic share by task class (code generation, summarisation, and so on) |
+| Price, capability, quantisation | `GET /api/v1/models`, `GET /api/v1/models/{id}/endpoints` | Per-provider price, `supported_parameters`, quantisation, data policy |
+
+**Adoption is a tiebreaker and a liveness signal, never the primary criterion.** A model
+being popular says nothing about whether it will emit schema-valid JSON for an Australian
+cyber-incident severity judgment. Benchmarks are closer but still generic.
+
+**The local gauntlet decides.** A pinned golden set of ~30 events with human-verified
+expected enrichment, scored on:
+
+| Dimension | Why it matters |
+|---|---|
+| Schema compliance rate | Hard gate. A model that cannot reliably satisfy `json_schema` is unusable no matter how cheap |
+| Agreement with golden labels | Severity, entities, CVE extraction, AU relevance |
+| **Refusal rate on security content** | A model that declines to summarise exploit or malware detail is worthless to this platform. Generic benchmarks never measure this, and it is the failure mode most likely to disqualify an otherwise strong candidate |
+| p95 latency | Must fit inside the 15-minute lane |
+| Measured cost per event | From `usage.cost`, not estimated from a price table |
+
+Gauntlet cost is budgeted at ≤ US$0.25/month — about 30 events across a handful of
+candidates, which at these prices is rounding error.
+
+**Attribution.** Benchmark data carries a required citation in `meta.citation`, and the
+rankings dataset is CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as
+of {as_of}"*. If any of it ever surfaces on the public site, the citation travels with it.
+
 ---
 
 ## 8. Public site
@@ -880,11 +977,13 @@ genuine AU + global intelligence; `pytest` green.
 ### Stage 2 — Ground truth + enrichment 🟢
 LIBRARIAN sync (KEV, cvelistV5 deltas, Vulnrichment, EPSS, OSV, GitHub Advisories,
 ATT&CK, ATLAS) with the validated CVSS chain. OpenRouter client with strict schemas, cost
-ledger from `usage.cost`, ROGUE's degradation tiers. AI enrichment: classification,
-entities, summary, severity judgment, MITRE suggestion. AU relevance engine with reasons.
-Evidence engine and claims. Event detail page.
+ledger from `usage.cost`, ROGUE's degradation tiers, **and the price-ceiling guard that
+refuses to start if any configured model exceeds US$1/M output** (§7.2). AI enrichment:
+classification, entities, summary, severity judgment, MITRE suggestion. AU relevance engine
+with reasons. Evidence engine and claims. Event detail page.
 **Exit:** events carry real KEV/CVSS/EPSS and AI enrichment; ledger shows per-event cost
-under budget; degradation demonstrably works when the tier is forced.
+under budget; degradation demonstrably works when the tier is forced; the ceiling guard
+rejects an over-priced model in a test.
 
 ### Stage 3 — Correlation depth + trends 🟢
 Material-change detection (14 types), source lineage and independent confirmation,
@@ -905,11 +1004,13 @@ ROGUE), configure budgets.
 pipeline survives Paperclip being stopped.
 
 ### Stage 5 — Full crew + follow-up + notifications 🟢
-BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT. Source discovery with Tavily and the SERAPH
-gate. Follow-up Strands graph and status transitions. Daily intelligence report. Telegram
-notifications. Public `THE CREW` page.
+BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT, RIPPERDOC. Source discovery with Tavily
+and the SERAPH gate. The model-scout gauntlet and golden set (§7.6). Follow-up Strands graph
+and status transitions. Daily intelligence report. Telegram notifications. Public
+`THE CREW` page.
 **Exit:** a source is discovered, validated and activated without human action; a
-developing event accrues real timeline entries; the daily digest arrives in Telegram.
+developing event accrues real timeline entries; RIPPERDOC proposes a ladder change with
+gauntlet evidence attached; the daily digest arrives in Telegram.
 
 ### Stage 6 — Self-healing 🟢
 TELETRAAN's full detection suite including stale-but-healthy feeds. Incident model. WHEELJACK
@@ -1004,8 +1105,9 @@ CyberPulse-AI/                      # public
 
 | # | Item | Resolve at |
 |---|---|---|
-| 1 | Re-verify model slugs, per-provider prices and `:free` availability; the catalogue changes weekly and `:free` variants are withdrawn without notice | Stage 2 start, then monthly |
-| 2 | Measure tier 0 schema-compliance rate on real events; if free models fail validation too often, promote those tasks to tier 1 | Stage 2 |
+| 1 | Re-verify model slugs, per-provider prices and `:free` availability — RIPPERDOC automates this from Stage 5; until then it is manual | Stage 2 start, then weekly |
+| 2 | Measure tier 0 schema-compliance and security-refusal rates on real events; if free models fail too often, promote those tasks to tier 1 | Stage 2 |
+| 3 | Quantify what the US$1 output ceiling costs in severity-judgment accuracy, using the golden set. If the gap is material on critical/KEV events, decide whether a narrow exception is worth ~US$2.40/month | Stage 5 |
 | 2 | Whether embeddings/pgvector are needed at all, from measured duplicate rate | Stage 3 |
 | 3 | SecurityWeek access (Cloudflare 403) — accept the gap or find a lawful route | Stage 3 |
 | 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop (unverified) | Stage 4 |
@@ -1015,7 +1117,7 @@ CyberPulse-AI/                      # public
 
 ---
 
-## 14. Sources checked (2026-09-29)
+## 14. Sources checked (2026-09-29, prices re-verified 2026-09-30)
 
 Paperclip (`github.com/paperclipai/paperclip` @ v2026.916.1, `paperclip-docs`) ·
 Strands Agents (`strandsagents.com`, `github.com/strands-agents/harness-sdk`,

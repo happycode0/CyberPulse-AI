@@ -46,9 +46,10 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
          ┌────────────────────────────────┼────────────────────────────────┐
          ▼                                ▼                                ▼
    INTELLIGENCE                     ENGINEERING                      OPERATIONS
-   MORPHEUS · ZION          WHEELJACK · TRON                 TELETRAAN · ROGUE
-   BLASTER · WINTERMUTE · TACHIKOMA                                          LINK · SERAPH
-   DECKARD · VOIGHT                                              LIBRARIAN · PROWL
+   MORPHEUS · ZION                  WHEELJACK · TRON                 TELETRAAN · ROGUE
+   BLASTER · WINTERMUTE                                              LINK · SERAPH
+   TACHIKOMA · DECKARD                                               LIBRARIAN · PROWL
+   VOIGHT                                                            RIPPERDOC
          └────────────────────────────────┼────────────────────────────────┘
                                           ▼
                               CYBER WORKER  (Python 3.13)
@@ -69,7 +70,7 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
 | **Deterministic layer** | Python 3.13 worker — collection, resolution, scoring, publishing, scheduling |
 | **Specialist workflows** | Strands Agents 1.57.1 Graph |
 | **Engineer agent** | OpenCode CLI via OpenRouter, branch + PR only |
-| **Inference** | OpenRouter — free tier first, then two paid tiers, **US$20/month hard cap** |
+| **Inference** | OpenRouter — free tier first, then two paid tiers. **US$20/month hard cap, output ≤ US$1/M** |
 | **Discovery** | Tavily (free tier, ~30 searches/day) |
 | **State** | PostgreSQL 17 + pgvector — one instance, two databases |
 | **Host** | One Debian 13 QEMU VM on Proxmox VE 9 · 6 vCPU / 12 GB / 150 GB |
@@ -97,6 +98,7 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 | **VOIGHT** · *"Says who?"* | Blade Runner | Editorial QA, publication veto | LLM, strong, gated |
 | **LINK** · *"Transmission clean. Here's the diff."* | Matrix | Publishing + notifications | Deterministic |
 | **ROGUE** · *"Nothing in this city is free."* | Cyberpunk 2077 | Cost / FinOps, degradation tiers | Deterministic |
+| **RIPPERDOC** · *"Better chrome just came in."* | Cyberpunk 2077 | Model scout — cheaper/better models, free first | Deterministic + tier 1 |
 | **TELETRAAN** · *"Anomaly detected on the grid."* | Transformers | Watchdog / SRE, self-healing | Deterministic + LLM on incident |
 | **WHEELJACK** · *"She'll be right — after the tests pass."* | Transformers | Source & platform engineer | OpenCode, incident-driven |
 | **TRON** · *"I fight for the users."* | Tron | Independent code verification | LLM, different family |
