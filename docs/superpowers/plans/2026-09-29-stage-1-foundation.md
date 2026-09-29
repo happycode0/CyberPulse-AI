@@ -846,7 +846,7 @@ Expected: FAIL — `ModuleNotFoundError: worker.pipeline.health`
 
 - [ ] **Step 3: Implement**
 
-`assess` derives a staleness threshold from `expected_frequency` (`hourly` → 2 days, `daily` → 7, `weekly` → 30, `monthly` → 90) and returns `STALE` when the newest item exceeds it, **even on HTTP 200**. `NOT_MODIFIED` carries the previous status forward. Lifecycle transitions follow `PLAN.md` §4.2 BOUNCER: 3 failures warn, 5 consecutive degrade, and recovery goes to `TESTING` — never straight back to `ACTIVE`.
+`assess` derives a staleness threshold from `expected_frequency` (`hourly` → 2 days, `daily` → 7, `weekly` → 30, `monthly` → 90) and returns `STALE` when the newest item exceeds it, **even on HTTP 200**. `NOT_MODIFIED` carries the previous status forward. Lifecycle transitions follow `PLAN.md` §4.2 SERAPH: 3 failures warn, 5 consecutive degrade, and recovery goes to `TESTING` — never straight back to `ACTIVE`.
 
 - [ ] **Step 4: Run to verify pass**
 
