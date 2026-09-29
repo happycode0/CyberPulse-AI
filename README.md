@@ -69,7 +69,7 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
 | **Deterministic layer** | Python 3.13 worker — collection, resolution, scoring, publishing, scheduling |
 | **Specialist workflows** | Strands Agents 1.57.1 Graph |
 | **Engineer agent** | OpenCode CLI via OpenRouter, branch + PR only |
-| **Inference** | OpenRouter, two tiers, **US$20/month hard cap** |
+| **Inference** | OpenRouter — free tier first, then two paid tiers, **US$20/month hard cap** |
 | **Discovery** | Tavily (free tier, ~30 searches/day) |
 | **State** | PostgreSQL 17 + pgvector — one instance, two databases |
 | **Host** | One Debian 13 QEMU VM on Proxmox VE 9 · 6 vCPU / 12 GB / 150 GB |
@@ -424,10 +424,11 @@ exceed it regardless of any bug on our side. Inside that, ROGUE degrades progres
 
 | Budget remaining | Behaviour |
 |---|---|
-| > 50% | Normal tiering |
-| 20–50% | Fast tier only |
-| < 20% | Enrich only critical / high / KEV-linked / developing |
-| Exhausted | AI off; deterministic collection continues; events marked `pending_enrichment` |
+| > 50% | Full ladder: free tier → cheap → strong, by task |
+| 20–50% | Strong tier restricted to critical and KEV-linked |
+| < 20% | Free tier only, and only critical / high / KEV-linked / developing |
+| Free daily cap hit | Falls through to the cheap paid tier |
+| Exhausted | Paid AI off; free tier and deterministic collection continue; events marked `pending_enrichment` |
 
 ### Secret hygiene
 
