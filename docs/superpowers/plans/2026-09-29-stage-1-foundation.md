@@ -13,6 +13,8 @@
 ## Global Constraints
 
 - Python **3.13**; `strands-agents` is **not** a Stage 1 dependency.
+- **Local toolchain is `uv`** (Docker is unavailable in the build environment). Create the environment with `uv venv .venv --python 3.13` and install with `uv pip install --python .venv/bin/python -r requirements.txt`. Run tests as `.venv/bin/python -m pytest`. `uv` lives at `~/.local/bin/uv`, so ensure `export PATH="$HOME/.local/bin:$PATH"`.
+- **No PostgreSQL is available locally.** Tests needing a live database must `pytest.skip` when `DATABASE_URL` is unset, via the `pg_engine` fixture in `tests/conftest.py`. Write those tests; they will run in CI and on the VM. Every other test must pass locally with no database.
 - PostgreSQL image is exactly `pgvector/pgvector:0.8.6-pg17-trixie`; data volume mounts at `/var/lib/postgresql/data` (the PG17 layout — PG18 moved it, do not use PG18).
 - `pgvector` extension is created but **unused** in Stage 1. Deterministic matching only. No embeddings.
 - **No AI calls anywhere in Stage 1.** No OpenRouter, no Tavily.
@@ -25,6 +27,7 @@
 - The site never displays the word "LIVE"; it displays `LAST COMPLETED COLLECTION <ts> UTC`.
 - Schema/pipeline/scoring versions are literals in `worker/version.py`: `SCHEMA_VERSION = "1"`, `PIPELINE_VERSION = "1.0.0"`, `SCORING_VERSION = "1"`, `ENRICHMENT_VERSION = "0"` (no enrichment yet).
 - Every HTTP request sends `User-Agent: CyberPulse-AI/1.0 (+https://github.com/happycode0/CyberPulse-AI)`.
+- **Never enable `http2=True` on the httpx client.** `cyber.gov.au` intermittently aborts HTTP/2 streams with `INTERNAL_ERROR`; httpx's HTTP/1.1 default avoids it.
 
 ## Review Focus
 
