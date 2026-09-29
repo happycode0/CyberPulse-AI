@@ -69,6 +69,10 @@ else
   d=$(curl -sS -m 30 "https://openrouter.ai/api/v1/datasets/rankings-daily?period=week&modality=tool_calling" \
         -H "Authorization: Bearer ${OPENROUTER_API_KEY}" | jqr '.data | length')
   [[ "${d:-0}" -gt 0 ]] && ok "/datasets/rankings-daily reachable — ${d} rows (adoption signal)" || bad "/datasets/rankings-daily failed"
+
+  s=$(curl -sS -m 30 "https://openrouter.ai/api/v1/datasets/session-cost?turn_range=1-turn&limit=5" \
+        -H "Authorization: Bearer ${OPENROUTER_API_KEY}" | jqr '.data | length')
+  [[ "${s:-0}" -gt 0 ]] && ok "/datasets/session-cost reachable — ${s} cells (real cost-per-task signal)" || bad "/datasets/session-cost failed"
 fi
 
 # ─── Model ladder: verify every configured model against the price ceiling ────

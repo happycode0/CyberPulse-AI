@@ -118,16 +118,17 @@ OpenRouter prices and the four-tier ladder in §7.1:
 | Tier 0 (free): classify, extract, tag, source relevance | ~124 calls/day, 12% of the 1,000/day free cap | **$0.00** |
 | Tier 1 (cheap): summaries, AU reasoning, desk digests | 7.2M in / 1.44M out @ $0.018/$0.09 | ~$0.26 |
 | Tier 2 (strong): severity, impact, evidence, MITRE, editorial | 300 judgments @ $0.435/$0.87 | ~$1.17 |
-| CODE: WHEELJACK | ~4 sessions @ $0.30/$0.90 | ~$0.78 |
-| AUDIT: TRON | ~4 reviews | ~$0.74 |
+| CODE: WHEELJACK | ~4 sessions @ $0.14/$0.28 | ~$0.34 |
+| AUDIT: TRON | ~4 diff reviews, input-heavy @ $0.018/$0.32 | ~$0.05 |
 | RIPPERDOC gauntlet | weekly, ~30 golden events per candidate | ~$0.25 |
-| **Total** | | **~$3.20 (16% of cap)** |
+| **Total** | | **~$2.07 (10% of cap)** |
 
-Two things drive that number down: the free tier absorbs the highest-volume work (§7.1),
-and the US$1 output ceiling removes frontier models from the judgment and code tiers,
-saving roughly **$10.65/month** against a frontier-model design. The ceiling is a real
-quality trade, documented honestly in §7.1 — the saving is not free, it is paid for in
-severity-reasoning nuance on the ~300 highest-stakes judgments per month.
+Three things drive that number down: the free tier absorbs the highest-volume work (§7.1),
+the US$1 output ceiling removes frontier models from the judgment and code tiers, and
+choosing CODE and AUDIT on measured session cost rather than token price cut those two
+tiers by more than half. The ceiling is still a real quality trade, documented honestly in
+§7.1 — the saving is paid for in severity-reasoning nuance on the ~300 highest-stakes
+judgments per month.
 
 The remaining headroom is deliberate: it funds growth in source count and event volume
 without a budget change, and RIPPERDOC's job (§7.6) is to keep pushing volume down the
@@ -719,10 +720,42 @@ use** — the catalogue changes weekly. All slugs configurable via `config/model
 | Tier | Default | Fallback chain | Price in/out per M | Used for |
 |---|---|---|---|---|
 | **0 — FREE** | `nvidia/nemotron-3-super-120b-a12b:free` | `qwen/qwen3.8-27b:free` → tier 1 | **$0 / $0** | Classification, entity extraction, tagging, source relevance, simple matching |
-| **1 — CHEAP** | `openai/gpt-oss-20b` | `z-ai/glm-5.3-flash` → `upstage/solar-mini4` | $0.018 / $0.09 | Short summaries, AU relevance reasoning, ambiguous matching, desk digests |
-| **2 — STRONG** | `xiaomi/mimo-v2.6-pro` | `minimax/minimax-m2.7` → `upstage/solar-pro-3` | $0.435 / $0.87 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
-| **CODE** | `mistralai/codestral-2508` | `qwen/qwen3-coder` | $0.30 / $0.90 | WHEELJACK |
-| **AUDIT** | `xiaomi/mimo-v2.6-pro` | `minimax/minimax-m2.7` | $0.435 / $0.87 | TRON (different family from CODE, deliberately) |
+| **1 — CHEAP** | `openai/gpt-oss-20b` | `deepseek/deepseek-v4-flash-0731` → `z-ai/glm-5.3-flash` | $0.018 / $0.09 | Short summaries, AU relevance reasoning, ambiguous matching, desk digests |
+| **2 — STRONG** | `xiaomi/mimo-v2.6-pro` | `xiaomi/mimo-v2.6-flash` → `minimax/minimax-m2.7` | $0.435 / $0.87 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
+| **CODE** | `xiaomi/mimo-v2.6-flash` | `xiaomi/mimo-v2.5` → `mistralai/codestral-2508` | $0.14 / $0.28 | WHEELJACK |
+| **AUDIT** | `deepseek/deepseek-v4-flash-0731` | `qwen/qwen3.8-flash` | $0.018 / $0.32 | TRON — must be a different vendor from CODE (two-person rule) |
+
+**CODE and AUDIT were chosen on measured session cost and adoption trend, not token price**
+(§7.6). All three signals were needed, and each alone would have picked wrong:
+
+- **Token price alone** picks `openai/gpt-oss-20b` at $0.126/1k events — but it appears in
+  neither the harness session rankings nor the top-20 adoption table, so it has no
+  real-world validation at all.
+- **Session cost alone** picks `xiaomi/mimo-v2.5`, cheapest eligible at $0.17/session over
+  50+ turns. But adoption shows it **down 72% week-on-week** at rank 15 — a model being
+  abandoned.
+- **Adoption alone** picks `deepseek/deepseek-v4.1-flash`, rank 1 with 20.8T tokens and +23%
+  growth — which is over the output ceiling at $1.20/M and therefore ineligible.
+
+The resolution is `xiaomi/mimo-v2.6-flash`: **identically priced to v2.5** ($0.14/$0.28),
+newer, 1.05M context, and **+>999% growth at rank 7** while v2.5 collapses. It is the
+successor users are actually migrating to. It has no session-cost row of its own yet, so
+that specific inference is unproven and the gauntlet must confirm it.
+
+`mistralai/codestral-2508` — my earlier CODE default — drops to last fallback: it appears in
+no harness ranking and no adoption table, so a purpose-built coding model with zero observed
+agent usage loses to a general model with a strong one.
+
+AUDIT deliberately sits on a different vendor from CODE. DeepSeek V4 Flash 0731 also fits
+the shape of the work: review is input-heavy (reading a diff) and output-light (a verdict),
+and its $0.018/M input is the cheapest credible rate available — about $0.003 per review.
+It is rank 6 with 7.57T tokens, so it is thoroughly exercised.
+
+**The two most-adopted free models cannot serve this pipeline.** `stealth/space-bunny-alpha`
+(rank 2, 18.2T tokens) and `nvidia/nemotron-3-ultra-550b-a55b:free` (rank 8, +23%) both
+offer `tools` but **not `structured_outputs`**, which §7.2 makes mandatory. That is why
+tier 0 uses the far less famous `nemotron-3-super-120b-a12b:free` instead. Popularity and
+fitness are different questions.
 
 **Hard price ceiling: output ≤ US$1.00 per million tokens.** This is an owner-set policy
 (2026-09-30), enforced in code rather than documentation — see §7.2. It has a real cost:
@@ -873,31 +906,55 @@ a weekly cycle uses a negligible fraction of.
 | Signal | Endpoint | What we read |
 |---|---|---|
 | Quality | `GET /api/v1/benchmarks` | Artificial Analysis `intelligence_index`, `coding_index`, `agentic_index`; Design Arena `elo`, `win_rate`; OpenRouter's own `gpqa_diamond` and `tau_bench_verified_airline` with `accuracy`, `accuracy_stddev` and `avg_cost_per_task`. Filter `task_type=coding` for the CODE tier |
-| Adoption | `GET /api/v1/datasets/rankings-daily` | Daily token totals for the top 50 models. **`modality=tool_calling`** is the relevant slice for us, and `category=programming` for the CODE tier. `:free` variants rank as their own entries |
-| Market share by task | `GET /api/v1/classifications/...` | Traffic share by task class (code generation, summarisation, and so on) |
-| Price, capability, quantisation | `GET /api/v1/models`, `GET /api/v1/models/{id}/endpoints` | Per-provider price, `supported_parameters`, quantisation, data policy |
+| **Real cost per task** | `GET /api/v1/datasets/session-cost` | `median_session_cost_usd` by `app_slug` (harness), `model` and `turn_range` (`1-turn`, `2-9-turns`, `10-49-turns`, `50-plus-turns`). Weekly refresh over a 30-day window |
+| Adoption + **trend** | `GET /api/v1/datasets/rankings-daily` | Tokens processed, and the week-on-week change. `modality=tool_calling` is our slice; `category=programming` for CODE. `:free` variants rank separately |
+| Market share by task | `GET /api/v1/classifications/...` | Traffic share by task class |
+| Price, capability, quantisation | `GET /api/v1/models`, `.../endpoints` | Per-provider price, `supported_parameters`, quantisation, data policy |
 
-**Adoption is a tiebreaker and a liveness signal, never the primary criterion.** A model
-being popular says nothing about whether it will emit schema-valid JSON for an Australian
-cyber-incident severity judgment. Benchmarks are closer but still generic.
+**Match `turn_range` to the tier.** Our enrichment is a single structured call, so `1-turn`
+is the relevant cell for tiers 0–2. WHEELJACK and TRON run long agentic sessions, so
+`10-49-turns` and `50-plus-turns` govern CODE and AUDIT. Reading the wrong cell is how you
+end up optimising for the wrong workload.
 
-**The local gauntlet decides.** A pinned golden set of ~30 events with human-verified
-expected enrichment, scored on:
+**Session cost captures what token price cannot:** how many tokens a model actually burns to
+finish a task, including reasoning tokens, retries and cache efficiency. A model with a
+higher input price can be cheaper per completed task. This is the signal most likely to
+overturn a token-price decision, and §7.1 records a case where it did.
+
+**Falling adoption is a disqualifier, not a neutral fact.** A model shedding usage is one
+being abandoned by people who tried it, and is a candidate for deprecation or withdrawal.
+RIPPERDOC therefore treats **any decline steeper than −40% week-on-week as a veto** on
+promotion, and opens a migration issue if a model already in the ladder crosses that line.
+The worked example is in §7.1: `xiaomi/mimo-v2.5` looked optimal on session cost while
+quietly dropping 72%, and its successor at the same price was growing >999%.
+
+**Adoption is never sufficient on its own.** The top-ranked model overall breached our price
+ceiling, and the two most-adopted free models lack structured outputs entirely. Popularity
+answers "is this alive and exercised", not "can it do our job".
+
+**The local gauntlet decides.** All of the above is published, generic evidence. A pinned
+golden set of ~30 events with human-verified expected enrichment is what actually adjudicates:
 
 | Dimension | Why it matters |
 |---|---|
 | Schema compliance rate | Hard gate. A model that cannot reliably satisfy `json_schema` is unusable no matter how cheap |
 | Agreement with golden labels | Severity, entities, CVE extraction, AU relevance |
-| **Refusal rate on security content** | A model that declines to summarise exploit or malware detail is worthless to this platform. Generic benchmarks never measure this, and it is the failure mode most likely to disqualify an otherwise strong candidate |
+| **Refusal rate on security content** | A model that declines to summarise exploit or malware detail is worthless to this platform. No generic benchmark measures this, and it is the failure mode most likely to disqualify an otherwise strong candidate |
 | p95 latency | Must fit inside the 15-minute lane |
 | Measured cost per event | From `usage.cost`, not estimated from a price table |
+
+**Caveat on the published datasets, stated plainly:** session cost and adoption are
+*observational*, not controlled. A model used mainly for easy tasks shows a low median
+session cost regardless of its efficiency, and harness populations differ in what they ask
+of a model. Treat both as strong evidence about liveness and real-world economics, and the
+gauntlet as the thing that decides.
 
 Gauntlet cost is budgeted at ≤ US$0.25/month — about 30 events across a handful of
 candidates, which at these prices is rounding error.
 
-**Attribution.** Benchmark data carries a required citation in `meta.citation`, and the
-rankings dataset is CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as
-of {as_of}"*. If any of it ever surfaces on the public site, the citation travels with it.
+**Attribution.** Benchmark data carries a required citation in `meta.citation`. Both
+datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as of
+{as_of}"*. If any of it ever surfaces on the public site, the citation travels with it.
 
 ---
 
