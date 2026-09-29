@@ -111,18 +111,21 @@ cost no tokens.
 ### 2.4 The budget will not stretch as far as the prompts assume
 
 $20/month against a 24/7 pipeline plus autonomous engineering. Modelled with live
-OpenRouter prices:
+OpenRouter prices and the four-tier ladder in §7.1:
 
 | Workload | Assumption | Est. monthly |
 |---|---|---|
-| Fast-tier triage + classify + summarise | 100 new events/day @ ~$0.0007 | ~$2.10 |
-| Strong-tier judgment | 10 critical/high/KEV events/day @ ~$0.027 | ~$8.10 |
-| Desk agent digests (fast tier) | 4 desks × 6 wakes/day | ~$1.50 |
-| Editorial pass (strong, 1/day) | | ~$1.00 |
+| Tier 0 (free): classify, extract, tag, source relevance | ~124 calls/day, 12% of the 1,000/day free cap | **$0.00** |
+| Tier 1 (cheap): summaries, AU reasoning, desk digests | ~5M in / 1.2M out @ $0.018/$0.09 | ~$0.20 |
+| Tier 2 (strong): severity, impact, evidence, MITRE, editorial | 10 events/day + daily editorial pass | ~$4.50 |
 | Engineering (incident-driven) | ~4 sessions/month | ~$2.00 |
-| **Total** | | **~$14.70** |
+| **Total** | | **~$6.70** |
 
-That leaves headroom, but only because of hard rationing. Consequences baked into the design:
+That is roughly a third of the cap, and less than half my first estimate — because the
+free tier legitimately absorbs the highest-volume work (§7.1). The headroom matters: it
+funds growth in source count and event volume without a budget change.
+
+The rationing that makes it hold:
 
 - Strong tier is **gated**, never the default: critical, high, KEV-linked, or
   developing-with-material-change only.
@@ -667,28 +670,79 @@ Postgres or git.
 
 ### 7.1 Tiers
 
-Verified available on OpenRouter 2026-09-29 with `tools` + `structured_outputs`.
-**Re-verify before use** — the catalogue changes weekly. All configurable via env.
+Four tiers, not two. Every model below was verified against the live
+`/api/v1/models` and `/endpoints` APIs on **2026-09-29** and filtered to those supporting
+**both `tools` and `structured_outputs`**, which §7.2 makes mandatory. **Re-verify before
+use** — the catalogue changes weekly. All slugs configurable via `config/models.yaml`.
 
-| Tier | Default | Price in/out per M | Used for |
+| Tier | Default | Fallback chain | Price in/out per M | Used for |
+|---|---|---|---|---|
+| **0 — FREE** | `nvidia/nemotron-3-super-120b-a12b:free` | `qwen/qwen3.8-27b:free` → tier 1 | **$0 / $0** | Classification, entity extraction, tagging, source relevance, simple matching |
+| **1 — CHEAP** | `openai/gpt-oss-20b` | `z-ai/glm-5.3-flash` → `upstage/solar-mini4` | $0.018 / $0.09 | Short summaries, AU relevance reasoning, ambiguous matching, desk digests |
+| **2 — STRONG** | `z-ai/glm-5.3` | `openai/gpt-6-sol` | $1.40 / $4.40 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
+| **CODE** | `z-ai/glm-5.3` | `openai/gpt-6-sol` | $1.40 / $4.40 | WHEELJACK |
+| **AUDIT** | `anthropic/claude-sonnet-5.5` | — | $2.00 / $10.00 | TRON (different family, deliberately) |
+
+**Why tier 0 is viable.** OpenRouter's free limits are **20 requests/minute and 1,000
+requests/day** once an account has purchased ≥10 credits all-time — which our $20 top-up
+satisfies. Our fast-tier volume is ~124 calls/day (≈3,000 enrichments + 720 desk digests
+per month), about **12% of the free daily cap**. `GET /api/v1/key` reports
+`free_model_daily_requests.{used,limit,remaining}` so ROGUE can track it directly.
+
+**Free-tier rules** (these are what make it safe to depend on):
+
+- Only 5 free models support `tools` + `structured_outputs` at all: `nemotron-3-super-120b-a12b:free`, `dots-studio/dots-3-note-preview:free`, `qwen/qwen3.8-27b:free`, `liquid/lfm-2.5-2.6b:free`, and `openrouter/free`. Everything else is disqualified by §7.2.
+- **Never use `openrouter/free`** — it selects a free model *at random* per request, so output quality and schema compliance would vary run to run. Unacceptable in a pipeline.
+- `:free` variants appear and disappear. A `models: [...]` fallback chain ending in a **paid** tier-1 model is mandatory, so a withdrawn free model degrades instead of failing.
+- On 429, fall through to tier 1 rather than retrying — a daily cap does not clear with backoff.
+- Free routing generally requires enabling the *"providers that may train on prompts"* setting, which OpenRouter keeps **separate for free and paid models**. Our inputs are public news so exposure is low, but our enrichment prompts are our own work. Tier 0 is therefore restricted to mechanical tasks (classify, extract, tag) and never carries editorial reasoning.
+- Free endpoints are deprioritised, so latency is higher and failures more common. Acceptable for a 15-minute batch; never on a publish-blocking path.
+
+**Provider routing matters as much as model choice.** The `/models` list price is the
+default route; per-provider prices differ by up to **15×** for the same model. Verified
+examples:
+
+| Model | Default route | Cheapest route | Cheapest with `structured_outputs` |
 |---|---|---|---|
-| FAST | `openai/gpt-6-luna` | $0.10 / $0.50 | Classification, entity extraction, short summaries, source relevance, simple matching, desk digests |
-| STRONG | `openai/gpt-6-sol` | $2.00 / $10.00 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
-| CODE | `z-ai/glm-5.3` | $1.40 / $4.40 | WHEELJACK |
-| AUDIT | `anthropic/claude-sonnet-5.5` | $2.00 / $10.00 | TRON (different family, deliberately) |
+| `deepseek/deepseek-v4.1-flash` | $0.30 / $1.20 | $0.02 / $0.60 (Relace) — **no structured output** | $0.03 / $0.50 (OpenInference, fp4) |
+| `z-ai/glm-5.3-flash` | $0.15 / $0.50 | $0.02 / $0.30 (OpenInference, fp4) ✓ | same |
+| `openai/gpt-6-luna` | $0.10 / $0.50 | $0.05 / $0.25 (OpenAI) ✓ | same |
 
-Cheaper FAST alternatives verified the same day: `deepseek/deepseek-flash-latest`
-($0.02/$0.60), `inception/mercury-2.5` ($0.04/$0.15), `upstage/solar-mini4`
-($0.05/$0.20), `z-ai/glm-5.3-flash` ($0.15/$0.50).
+Two consequences:
+
+1. Setting `provider: {sort: "price"}` alongside our mandatory
+   `provider: {require_parameters: true}` gets the floor price **among capable providers
+   only** — the two settings interact, and `require_parameters` is what stops us silently
+   landing on a provider that ignores `response_format`.
+2. The cheapest routes are frequently **fp4-quantised**. For strict JSON-schema compliance
+   and severity judgment that is a real quality risk, so tier 2 pins
+   `quantizations: ["bf16", "fp8", "unknown"]` and accepts the higher price. Tier 0 and 1
+   may use fp4, because schema validation catches failures and the fallback chain absorbs them.
+
+**Blended cost per 1,000 enrichments** at our measured mix (~3k input, ~800 output),
+cheapest capable route:
+
+| Model | Per 1k events |
+|---|---|
+| Tier 0 free models | **$0.00** |
+| `openai/gpt-oss-20b` | $0.13 |
+| `inception/mercury-2.5` | $0.24 |
+| `z-ai/glm-5.3-flash` | $0.30 |
+| `upstage/solar-mini4` | $0.31 |
+| `openai/gpt-6-luna` | $0.35 |
+| `deepseek/deepseek-v4.1-flash` | $0.49 |
+| `openai/gpt-5.6-luna` | $1.56 |
 
 ### 7.2 Request discipline
 
 Every call: `response_format` `json_schema` with `strict: true`; `provider:
-{require_parameters: true}`; a `models: [...]` fallback list with the returned `model`
-logged (that is what is billed); explicit `max_tokens`; `HTTP-Referer`,
-`X-OpenRouter-Title`, `X-OpenRouter-App-Visibility: hidden`; `usage.cost` recorded to the
-ledger; **no tools offered on enrichment calls** (§2.10); and our own schema validation
-regardless of `strict`.
+{require_parameters: true}` **plus** `{sort: "price"}` so we get the floor price among
+*capable* providers only; a `models: [...]` fallback list with the returned `model` logged
+(that is what is billed, and on tier 0 it is how we know whether a free model served the
+request); explicit `max_tokens`; `HTTP-Referer`, `X-OpenRouter-Title`,
+`X-OpenRouter-App-Visibility: hidden`; `usage.cost` recorded to the ledger; **no tools
+offered on enrichment calls** (§2.10); and our own schema validation regardless of
+`strict`. Tier 2 additionally pins `quantizations: ["bf16", "fp8", "unknown"]`.
 
 ### 7.3 Guardrails
 
@@ -703,13 +757,18 @@ interpret but never generate a statistic.
 
 | Budget remaining | Behaviour |
 |---|---|
-| > 50% | Normal tiering |
-| 20–50% | FAST tier only |
-| < 20% | Enrich only critical / high / KEV-linked / developing |
+| > 50% | Full ladder: tier 0 → 1 → 2 by task |
+| 20–50% | Tier 2 restricted to critical and KEV-linked; everything else tier 0/1 |
+| < 20% | **Tier 0 only**, and enrich only critical / high / KEV-linked / developing |
+| Free cap hit (429) | Fall through to tier 1 — a daily cap does not clear with backoff |
 | Exhausted | AI off; deterministic pipeline continues; `pending_enrichment: true` |
 
-On mid-run 402: branch on `limit_source` (§2.8), stop further AI calls, continue
-deterministically, publish with `pending_enrichment`, enrich later.
+Because tier 0 is free, "exhausted" now means only that *paid* tiers are unavailable —
+mechanical enrichment can keep running on the free tier until its own daily cap is
+reached. That is a meaningful resilience gain over a two-tier design.
+
+On mid-run 402: branch on `limit_source` (§2.8), stop further paid AI calls, continue on
+tier 0 and deterministically, publish with `pending_enrichment`, enrich later.
 
 ### 7.5 Strands usage
 
@@ -945,7 +1004,8 @@ CyberPulse-AI/                      # public
 
 | # | Item | Resolve at |
 |---|---|---|
-| 1 | Re-verify OpenRouter model IDs and prices; catalogue changes weekly | Stage 2 start |
+| 1 | Re-verify model slugs, per-provider prices and `:free` availability; the catalogue changes weekly and `:free` variants are withdrawn without notice | Stage 2 start, then monthly |
+| 2 | Measure tier 0 schema-compliance rate on real events; if free models fail validation too often, promote those tasks to tier 1 | Stage 2 |
 | 2 | Whether embeddings/pgvector are needed at all, from measured duplicate rate | Stage 3 |
 | 3 | SecurityWeek access (Cloudflare 403) — accept the gap or find a lawful route | Stage 3 |
 | 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop (unverified) | Stage 4 |
