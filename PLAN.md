@@ -688,6 +688,23 @@ explicit `SKIPPED` as a valid state when credentials are absent (X API stays
 `enabled: false`); and raw payloads cached to the filesystem with a TTL, never to
 Postgres or git.
 
+**One more, found while testing credentials on 2026-09-30:** `cyber.gov.au` shows two
+distinct transport faults. It intermittently aborts HTTP/2 streams with `INTERNAL_ERROR`
+(`httpx` defaults to HTTP/1.1, so the collector is safe as long as we never set
+`http2=True`). More importantly, **`/rss/alerts` hung for over 40 seconds returning zero
+bytes, while `/rss/advisories` and the site homepage answered in ~0.1 s from the same IP at
+the same moment** — so it is a per-endpoint fault, not an IP block or an outage.
+
+Three consequences, all of which the Stage 1 design already anticipates but which this
+makes non-negotiable:
+
+1. **Per-source timeouts with concurrent fetch.** One hanging feed must never stall a run.
+2. **`TIMEOUT` is a distinct health status from `ERROR`,** because the remedy differs: back
+   off, do not retry immediately.
+3. **Per-source circuit breaking.** ACSC alerts is our single highest-priority source, so
+   TELETRAAN must distinguish "this one feed is hanging" from "ACSC is down" — the sibling
+   feed responding proves the difference is observable.
+
 ---
 
 ## 7. AI layer
