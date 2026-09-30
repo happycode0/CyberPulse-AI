@@ -106,14 +106,16 @@ class _Model(BaseModel):
 
 
 class Risk(_Model):
-    urgency: Score
-    confidence: Score
-    novelty: Score
-    prominence: Score
+    """An unscored event has `None` for each number, never zero."""
+
+    urgency: Score | None = None
+    confidence: Score | None = None
+    novelty: Score | None = None
+    prominence: Score | None = None
 
 
 class AuRelevance(_Model):
-    relevance: Score = 0.0
+    relevance: Score | None = None
     directly_reported_in_au: bool = False
     reasons: list[str] = Field(default_factory=list)
     sectors: list[str] = Field(default_factory=list)
@@ -222,9 +224,7 @@ class Event(_Model):
     severity: Severity = Severity.UNKNOWN
     severity_source: SeveritySource = SeveritySource.UNKNOWN
 
-    risk: Risk = Field(
-        default_factory=lambda: Risk(urgency=0.0, confidence=0.0, novelty=0.0, prominence=0.0)
-    )
+    risk: Risk = Field(default_factory=Risk)
     au: AuRelevance = Field(default_factory=AuRelevance)
     entities: Entities = Field(default_factory=Entities)
 

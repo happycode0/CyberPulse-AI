@@ -234,6 +234,39 @@ def test_risk_range_enforced():
         Risk(urgency=1.2, confidence=0.5, novelty=0.5, prominence=0.5)
 
 
+def test_unscored_event_has_null_risk_and_au_relevance_not_zero():
+    e = _minimal()
+    assert e.risk.urgency is None and e.risk.confidence is None
+    assert e.risk.novelty is None and e.risk.prominence is None
+    assert e.au.relevance is None
+    dumped = e.model_dump_public()
+    assert dumped["risk"] == {
+        "urgency": None, "confidence": None, "novelty": None, "prominence": None
+    }
+    assert dumped["au"]["relevance"] is None
+    _schema_validator("event.schema.json").validate(dumped)
+
+
+def test_genuine_zero_score_is_distinct_from_unscored():
+    e = _minimal(risk=Risk(urgency=0.0, confidence=0.0, novelty=0.0, prominence=0.0))
+    assert e.risk.urgency == 0.0 and e.risk.urgency is not None
+    _schema_validator("event.schema.json").validate(e.model_dump_public())
+
+
+def test_event_schema_risk_and_au_relevance_are_optional_and_nullable():
+    schema = json.loads((SCHEMAS / "event.schema.json").read_text())
+    assert "required" not in schema["$defs"]["risk"]
+    assert "relevance" not in schema["$defs"]["au"]["required"]
+    validator = _schema_validator("event.schema.json")
+    dumped = _minimal().model_dump_public()
+    dumped["risk"] = {}
+    del dumped["au"]["relevance"]
+    validator.validate(dumped)
+    dumped["risk"] = {"urgency": 1.5}
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(dumped)
+
+
 def test_naive_datetime_is_rejected():
     with pytest.raises(ValidationError):
         _minimal(first_seen=datetime(2026, 9, 29))
