@@ -1,0 +1,51 @@
+# Versioned scoring configuration (PLAN.md section 5, "Scoring").
+# `version` must equal worker.version.SCORING_VERSION; bump both together whenever
+# any number below changes, so stored scores can be traced to the rules that made them.
+version: "1"
+
+# Base severity weight. Severity and prominence stay separate: this is severity only.
+severity_weights:
+  critical: 4
+  high: 3
+  medium: 2
+  low: 1
+  unknown: 1.5   # between low and medium: unrated is not the same as harmless
+
+# Added to the severity weight when any attached CVE is listed in CISA KEV.
+kev_bonus: 1.5
+
+# Freshness half-life in hours, by severity. Decay is measured from
+# last_material_update only; repeat sightings (last_seen) never reset it.
+half_life_hours:
+  critical: 168
+  high: 72
+  medium: 24
+  low: 24
+  unknown: 24
+
+# Confidence floor contributed by the best evidence class among an event's sources.
+evidence_class_weights:
+  PRIMARY: 0.90
+  AUTHORITATIVE: 0.85
+  VENDOR: 0.75
+  SPECIALIST: 0.60
+  NEWS: 0.45
+  COMMUNITY: 0.30
+  SOCIAL: 0.20
+  AI_INFERENCE: 0.15
+
+# Each additional independent lineage closes this fraction of the remaining gap to 1.0.
+corroboration_gain: 0.5
+
+# Independent confirmations at which the prominence corroboration term saturates.
+corroboration_cap: 3
+
+# Novelty halves this many hours after first_seen.
+novelty_half_life_hours: 48
+
+# intensity = sum(weight * term); prominence = freshness * intensity. Weights must sum to 1.
+prominence_weights:
+  severity: 0.40
+  corroboration: 0.20
+  au_relevance: 0.25
+  novelty: 0.15
