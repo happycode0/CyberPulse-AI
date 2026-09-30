@@ -21,9 +21,16 @@ def test_parse_date_handles_real_world_formats(raw, expected):
     assert parse_date(raw) == expected
 
 
-def test_two_digit_year_is_not_interpreted_as_1926():
-    result = parse_date("Sun, 27 Sep 26 12:00:00 +0000")
-    assert result.year == 2026
+@pytest.mark.parametrize("raw,expected_year", [
+    ("Sun, 27 Sep 26 12:00:00 +0000", 2026),  # 2-digit year in 00-68 range → 20xx
+    ("Wed, 15 Aug 68 09:30:00 +0000", 2068),  # boundary case: 68 → 2068
+    ("Thu, 15 Aug 69 09:30:00 +0000", 1969),  # boundary case: 69 → 1969 (email.utils pivot)
+])
+def test_two_digit_year_pivot_boundary(raw, expected_year):
+    """Verify 2-digit years pivot correctly: 00-68 → 2000-2068, 69-99 → 1969-1999."""
+    result = parse_date(raw)
+    assert result is not None
+    assert result.year == expected_year
 
 
 @pytest.mark.parametrize("bad", [None, "", "not a date", "Thu, 32 Xxx 2026"])
