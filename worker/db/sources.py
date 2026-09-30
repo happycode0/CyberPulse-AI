@@ -12,6 +12,8 @@ its `ON CONFLICT DO UPDATE` column list, or re-syncing the static config would o
 the dynamically tracked state.
 """
 
+from typing import NamedTuple
+
 from sqlalchemy import Connection, text
 
 from worker.models import LifecycleState, SourceHealth
@@ -80,3 +82,20 @@ def load_lifecycle_states(conn: Connection) -> dict[str, LifecycleState]:
         text("select id, lifecycle_state from source_registry where lifecycle_state is not null")
     )
     return {r.id: LifecycleState(r.lifecycle_state) for r in rows}
+
+
+class RegistryRow(NamedTuple):
+    id: str
+    name: str
+    region: str
+    category: str
+    lane: str
+    enabled: bool
+
+
+def load_registry_rows(conn: Connection) -> list[RegistryRow]:
+    """Every registered source, ordered by id, for the public source-health report."""
+    rows = conn.execute(
+        text("select id, name, region, category, lane, enabled from source_registry order by id")
+    )
+    return [RegistryRow(*r) for r in rows]

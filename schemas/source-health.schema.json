@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-health.schema.json",
+  "title": "CyberPulse-AI source-health.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "counts", "sources"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id", "name", "region", "category", "lane", "enabled",
+          "lifecycle_state", "latest", "history"
+        ],
+        "properties": {
+          "source_id": { "type": "string" },
+          "name": { "type": "string" },
+          "region": { "type": "string" },
+          "category": { "type": "string" },
+          "lane": { "enum": ["fast", "normal", "deep"] },
+          "enabled": { "type": "boolean" },
+          "lifecycle_state": {
+            "enum": [
+              "discovered", "candidate", "testing", "validated",
+              "active", "degraded", "broken", "retired"
+            ]
+          },
+          "latest": { "anyOf": [{ "$ref": "#/$defs/check" }, { "type": "null" }] },
+          "history": { "type": "array", "items": { "$ref": "#/$defs/check" } }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checked_at", "status", "error", "newest_item_age_days", "items_fetched", "duration_ms"
+      ],
+      "properties": {
+        "checked_at": { "type": "string", "format": "date-time" },
+        "status": {
+          "enum": ["ok", "error", "timeout", "empty", "stale", "degraded", "disabled"]
+        },
+        "error": { "type": ["string", "null"] },
+        "newest_item_age_days": { "type": ["number", "null"] },
+        "items_fetched": { "type": "integer", "minimum": 0 },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
