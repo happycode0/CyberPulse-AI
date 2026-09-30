@@ -84,18 +84,18 @@ def normalise_title(title: str) -> str:
 
 def extract_cves(text: str) -> list[str]:
     r"""
-    Extract CVE IDs from text using pattern CVE-\d{4}-\d{4,} (matching CVE_ID_PATTERN).
+    Extract CVE IDs from text using pattern derived from CVE_ID_PATTERN.
     - Case-insensitive matching
     - Requires at least 4 digits in sequence number (per CVE_ID_PATTERN and DB constraint)
     - Returns sorted unique list in uppercase
     """
-    # Extract pattern from CVE_ID_PATTERN (remove ^ and $ anchors for free-text matching)
-    # Pattern: CVE-YYYY-NNNN+ (4 or more digits after year)
-    pattern = r"CVE-(\d{4})-(\d{4,})"
+    # Derive pattern from CVE_ID_PATTERN by removing anchors (^ and $)
+    # CVE_ID_PATTERN is "^CVE-\d{4}-\d{4,}$"; strip anchors for free-text matching
+    pattern = CVE_ID_PATTERN[1:-1]
     matches = re.findall(pattern, text, re.IGNORECASE)
     
-    # Format as CVE-YYYY-NNNN and deduplicate
-    cve_ids = {f"CVE-{year}-{number}" for year, number in matches}
+    # findall returns whole matched substrings (e.g., "cve-2026-0001"); uppercase and dedupe
+    cve_ids = {match.upper() for match in matches}
     
     # Return sorted list
     return sorted(cve_ids)
