@@ -6,7 +6,7 @@
 |---|---|
 | **Status** | Design validated, Stage 1 ready to build |
 | **Last validated** | 2026-09-29 (every external dependency checked against live docs) |
-| **Consolidates** | `docs/source-prompts/prompt1-infrastructure.md`, `prompt2-master-build.md`, `prompt3-master-build-extended.md` |
+| **Consolidates** | Three original design prompts (infrastructure, master build, extended build) — retired after consolidation into this document |
 | **Public product** | Static cyberpunk intelligence site on GitHub Pages |
 | **Private platform** | Docker Compose on one Debian 13 QEMU VM under Proxmox VE 9 |
 | **Hard AI budget** | US$20/month (OpenRouter key limit = hard stop) |
@@ -1169,7 +1169,7 @@ CyberPulse-AI/                      # public
 ├── schemas/                        # published JSON Schema
 ├── tests/{unit,integration,failure,fixtures}
 ├── ops/{backup.sh,restore.sh,runbooks/}
-├── docs/{source-prompts/,design/,superpowers/plans/}
+├── docs/{design/,superpowers/plans/}
 └── .github/workflows/pages.yml
 ```
 
