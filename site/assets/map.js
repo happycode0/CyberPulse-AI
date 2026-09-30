@@ -146,7 +146,8 @@ function makeResolver(names) {
 // ------------------------------------------------------------------ render
 
 // Draw the world map for `events` and pair it with the #map-country select.
-// onCountryClick(tokenOrNull) fires from both the map and the select.
+// onCountryClick(tokensOrNull) fires from both the map and the select; tokens is a
+// Set of every raw country token that resolves to the chosen ISO id.
 export async function renderMap(events, onCountryClick, opts = {}) {
   const fetchImpl = opts.fetchImpl || globalThis.fetch;
   const host = opts.host || document.getElementById('world-map');
@@ -229,10 +230,13 @@ export async function renderMap(events, onCountryClick, opts = {}) {
       attrs['aria-label'] = `${name}: ${count} ${count === 1 ? 'event' : 'events'} in this snapshot. Select to filter.`;
       el = s('path', attrs);
       const choose = () => {
-        const token = (n3Tokens.get(n3) || [])[0];
-        if (!token) return;
-        syncMapSelection(token);
-        if (onCountryClick) onCountryClick(token);
+        // Every token that resolves to this id ("Australia" and "AU" both mean 036), so
+        // the filtered count is the same number the aria-label promises.
+        const tokens = n3Tokens.get(n3) || [];
+        if (!tokens.length) return;
+        const selection = new Set(tokens);
+        syncMapSelection(selection);
+        if (onCountryClick) onCountryClick(selection);
       };
       el.addEventListener('click', choose);
       el.addEventListener('keydown', (e) => {
@@ -263,21 +267,45 @@ export async function renderMap(events, onCountryClick, opts = {}) {
     }
   }
 
-  // Paired <select>: every country token in the data, with counts, plus the
-  // no-filter option. This is the keyboard/screen-reader equivalent of clicking.
+  // Paired <select>: one option per ISO id, labelled with every token that resolves to it
+  // ("Australia · AU (13)"), so the option, the path's aria-label and the filtered count can
+  // never drift apart. Tokens with no numeric ISO match stay selectable on their own, and the
+  // ALL COUNTRIES option clears the filter. This is the keyboard/screen-reader equivalent of
+  // clicking a path.
   if (select) {
     clear(select);
     select.append(h('option', { value: '', text: 'ALL COUNTRIES' }));
-    const ordered = [...tokenCounts.entries()].sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
-    );
-    for (const [token, count] of ordered) {
-      select.append(h('option', { value: token, text: `${token} (${count})` }));
+    const grouped = new Map();
+    for (const [token, count] of tokenCounts) {
+      const n3 = n3Of(token);
+      if (!n3) continue;
+      const entry = grouped.get(n3) || { tokens: [], count: 0 };
+      entry.tokens.push(token);
+      entry.count += count;
+      grouped.set(n3, entry);
+    }
+    const options = [
+      ...[...grouped.entries()].map(([n3, entry]) => ({
+        value: n3,
+        text: `${entry.tokens.join(' · ')} (${entry.count})`,
+        count: entry.count,
+      })),
+      ...unplaced.map((token) => ({
+        value: token,
+        text: `${token} (${tokenCounts.get(token)})`,
+        count: tokenCounts.get(token),
+      })),
+    ].sort((a, b) => b.count - a.count || a.text.localeCompare(b.text));
+    for (const option of options) {
+      select.append(h('option', { value: option.value, text: option.text }));
     }
     select.onchange = () => {
-      const token = select.value || null;
-      applySelection(token);
-      if (onCountryClick) onCountryClick(token);
+      const value = select.value;
+      const selection = value
+        ? (n3Tokens.has(value) ? new Set(n3Tokens.get(value)) : new Set([value]))
+        : null;
+      applySelection(selection);
+      if (onCountryClick) onCountryClick(selection);
     };
   }
 
@@ -294,18 +322,32 @@ export async function renderMap(events, onCountryClick, opts = {}) {
   return svg;
 }
 
-function applySelection(token) {
+// Highlight the selected country in the picture and mirror it in the <select>.
+// `selection` is null/"" (nothing selected), one raw token, or the Set of every raw token
+// that resolves to a single ISO id — which is what a path click hands over.
+function applySelection(selection) {
   if (!current) return;
-  const n3 = token ? current.n3Of(token) : null;
+  const list = selection == null || selection === ''
+    ? []
+    : Array.isArray(selection) || selection instanceof Set
+      ? [...selection]
+      : [String(selection)];
+  let n3 = null;
+  for (const token of list) {
+    const id = current.n3Of(token);
+    if (id) { n3 = id; break; }
+  }
   for (const [key, el] of current.paths) {
     el.classList.toggle('is-selected', Boolean(n3) && key === n3);
   }
-  if (current.select && current.select.value !== (token || '')) {
-    current.select.value = token || '';
+  if (current.select) {
+    // The <select> is keyed by ISO id when the token maps to one, else by the raw token.
+    const value = n3 || (list.length ? list[0] : '');
+    if (current.select.value !== value) current.select.value = value;
   }
 }
 
 // Keep map and select in step when a filter is cleared elsewhere (CLEAR FILTERS).
-export function syncMapSelection(token) {
-  applySelection(token || null);
+export function syncMapSelection(selection) {
+  applySelection(selection || null);
 }
