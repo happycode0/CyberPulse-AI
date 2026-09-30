@@ -1,0 +1,707 @@
+sources:
+  # FAST Lane: Authoritative advisories & CVE feeds
+  - id: acsc_alerts
+    name: ACSC Alerts
+    type: rss
+    region: au
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: true
+    url: https://www.cyber.gov.au/rss/alerts
+    parser: rss
+    expected_frequency: hourly
+    notes: null
+
+  - id: acsc_advisories
+    name: ACSC Advisories
+    type: rss
+    region: au
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: true
+    url: https://www.cyber.gov.au/rss/advisories
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: acsc_news
+    name: ACSC News
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.cyber.gov.au/rss/news
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: acsc_publications
+    name: ACSC Publications
+    type: rss
+    region: au
+    category: advisory
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.cyber.gov.au/rss/publications
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: cisa_advisories
+    name: CISA Advisories
+    type: rss
+    region: us
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: true
+    url: https://www.cisa.gov/cybersecurity-advisories/all.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: cisa_ics
+    name: CISA ICS Advisories
+    type: rss
+    region: us
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: true
+    url: https://www.cisa.gov/ics-advisories.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: cisa_news
+    name: CISA News
+    type: rss
+    region: us
+    category: news
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.cisa.gov/news.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: cisa_kev
+    name: CISA Known Exploited Vulnerabilities
+    type: json_api
+    region: us
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: true
+    url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+    parser: json_kev
+    expected_frequency: hourly
+    notes: null
+
+  # FAST Lane: Australian specialist news
+  - id: cyber_daily
+    name: CyberDaily AU
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.cyberdaily.au/news?format=feed&type=rss
+    parser: rss
+    expected_frequency: daily
+    notes: Non-standard feed path (not /feed or /rss)
+
+  - id: itnews_security
+    name: ITNews Security
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.itnews.com.au/RSS/rss.ashx?type=Category&ID=32
+    parser: rss
+    expected_frequency: daily
+    notes: Category ID 32 (not 37 which is Business)
+
+  - id: dta
+    name: DTA News and Blogs
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.dta.gov.au/news-and-blogs/latest/feed/all
+    parser: rss
+    expected_frequency: daily
+    notes: Use /feed/all not /rss.xml (which is stale)
+
+  # NORMAL Lane: General security news & analysis
+  - id: securitybrief_au
+    name: Security Brief AU
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://securitybrief.com.au/feed
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: acsm
+    name: Australian Cybersecurity Magazine
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://australiancybersecuritymagazine.com.au/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: asm
+    name: Australian Security Magazine
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://australiansecuritymagazine.com.au/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: triskele
+    name: Triskele Labs
+    type: rss
+    region: au
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.triskelelabs.com/resources/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: innovationaus
+    name: Innovation Australia
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.innovationaus.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: thn
+    name: The Hacker News
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://feeds.feedburner.com/TheHackersNews
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: bleepingcomputer
+    name: Bleeping Computer
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.bleepingcomputer.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: krebs
+    name: Krebs on Security
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://krebsonsecurity.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: darkreading
+    name: Dark Reading
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.darkreading.com/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: therecord
+    name: The Record
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://therecord.media/feed
+    parser: rss
+    expected_frequency: hourly
+    notes: Low-volume feed (~5 items)
+
+  - id: cyberwire
+    name: The CyberWire
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://thecyberwire.com/feeds/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: schneier
+    name: Bruce Schneier Blog
+    type: rss
+    region: global
+    category: analysis
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.schneier.com/feed/atom/
+    parser: atom
+    expected_frequency: daily
+    notes: null
+
+  - id: grahamcluley
+    name: Graham Cluley
+    type: rss
+    region: global
+    category: analysis
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://grahamcluley.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: sans_isc
+    name: SANS Internet Storm Center
+    type: rss
+    region: global
+    category: analysis
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://isc.sans.edu/rssfeed_full.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  # NORMAL Lane: Vendor security blogs
+  - id: microsoft_security
+    name: Microsoft Security Blog
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.microsoft.com/en-us/security/blog/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: crowdstrike
+    name: CrowdStrike Blog
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.crowdstrike.com/en-us/blog/feed
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: unit42
+    name: Unit 42 Palo Alto Networks
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://unit42.paloaltonetworks.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: malwarebytes
+    name: Malwarebytes Labs
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.malwarebytes.com/blog/feed/index.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  # DEEP Lane: Specialist research & AI security
+  - id: simonwillison
+    name: Simon Willison Blog
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://simonwillison.net/atom/everything/
+    parser: atom
+    expected_frequency: daily
+    notes: AI/tech specialist blog
+
+  - id: embracethered
+    name: Embrace The Red
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://embracethered.com/blog/index.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: openai_news
+    name: OpenAI News
+    type: rss
+    region: global
+    category: ai_security
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://openai.com/news/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: deepmind
+    name: DeepMind Blog
+    type: rss
+    region: global
+    category: ai_security
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://deepmind.google/blog/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: google_security
+    name: Google Security Blog
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://blog.google/security/rss/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: ms_ai_security
+    name: Microsoft AI & Security Blog
+    type: rss
+    region: global
+    category: ai_security
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://www.microsoft.com/en-us/security/blog/topic/ai-and-machine-learning/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: owasp_genai
+    name: OWASP GenAI Security
+    type: rss
+    region: global
+    category: ai_security
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://genai.owasp.org/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: huggingface
+    name: Hugging Face Blog
+    type: rss
+    region: global
+    category: ai_security
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://huggingface.co/blog/feed.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: arxiv_cs_cr
+    name: arXiv Computer Science - Cryptography and Security
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://rss.arxiv.org/rss/cs.CR
+    parser: rss
+    expected_frequency: daily
+    notes: Academic preprints
+
+  # Additional specialist security sources
+  - id: fortinet_blog
+    name: Fortinet Security Blog
+    type: rss
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.fortinet.com/blog/feed
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: sophos_labs
+    name: Sophos Labs
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://news.sophos.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: zerodayinitiative
+    name: Zero Day Initiative
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.zerodayinitiative.com/blog/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  - id: cvedetails
+    name: CVE Details Security News
+    type: rss
+    region: global
+    category: advisory
+    class: feed
+    priority: 2
+    lane: fast
+    enabled: true
+    url: https://www.cvedetails.com/rss/cvedetails.rss
+    parser: rss
+    expected_frequency: hourly
+    notes: CVE update feed
+
+  # Disabled sources with reasons
+  - id: securityweek
+    name: SecurityWeek
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: false
+    url: https://www.securityweek.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Blocked: Cloudflare 403 error on feed endpoint"
+
+  - id: x_security_search
+    name: X Security Search
+    type: rss
+    region: global
+    category: social
+    class: feed
+    priority: 5
+    lane: deep
+    enabled: false
+    url: https://x.com/search?q=cybersecurity
+    parser: twitter_search
+    expected_frequency: real_time
+    notes: "Blocked: Requires cost-gated API access"
+
+  - id: asd
+    name: ASD (Australian Signals Directorate)
+    type: web_page
+    region: au
+    category: advisory
+    class: web_page
+    priority: 1
+    lane: fast
+    enabled: false
+    url: https://www.asdefence.gov.au/
+    parser: web_page
+    expected_frequency: daily
+    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
+
+  - id: msrc_blog
+    name: Microsoft Security Response Center Blog
+    type: web_page
+    region: global
+    category: vendor_advisory
+    class: web_page
+    priority: 3
+    lane: normal
+    enabled: false
+    url: https://msrc.microsoft.com/blog/
+    parser: web_page
+    expected_frequency: daily
+    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
+
+  - id: anthropic_news
+    name: Anthropic News
+    type: web_page
+    region: global
+    category: ai_security
+    class: web_page
+    priority: 4
+    lane: deep
+    enabled: false
+    url: https://www.anthropic.com/news
+    parser: web_page
+    expected_frequency: daily
+    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
+
+  - id: oaic
+    name: Office of the Australian Information Commissioner
+    type: web_page
+    region: au
+    category: advisory
+    class: web_page
+    priority: 2
+    lane: normal
+    enabled: false
+    url: https://www.oaic.gov.au/
+    parser: web_page
+    expected_frequency: weekly
+    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
+
+  - id: acsc_threats
+    name: ACSC Threats
+    type: rss
+    region: au
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: false
+    url: https://www.cyber.gov.au/rss/threats
+    parser: rss
+    expected_frequency: hourly
+    notes: "Feed endpoint exists but is empty"
+
+  - id: acsc_advice
+    name: ACSC Advice
+    type: rss
+    region: au
+    category: advisory
+    class: feed
+    priority: 1
+    lane: fast
+    enabled: false
+    url: https://www.cyber.gov.au/rss/advice
+    parser: rss
+    expected_frequency: daily
+    notes: "Evergreen content, migration-dated (Stage 3 differential sync)"
