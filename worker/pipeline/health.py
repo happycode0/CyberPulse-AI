@@ -85,13 +85,22 @@ def _stale_reason(age: timedelta, threshold: timedelta) -> str:
 def _carry_forward(
     source: SourceConfig, fetch: FetchResult, now: datetime, history: Sequence[SourceHealth]
 ) -> SourceHealth:
-    """A 304 confirms nothing changed, so the previous verdict stands, except that the
-    newest item keeps ageing and can cross the staleness threshold while the feed says 304."""
-    previous = next(
-        (h for h in sorted(history, key=lambda h: h.checked_at, reverse=True)
-         if h.status is not HealthStatus.DISABLED),
-        None,
+    """A 304 confirms nothing changed *and* that the server answered, so the last content
+    verdict (OK or STALE) stands, except that the newest item keeps ageing and can cross
+    the staleness threshold while the feed says 304.
+
+    A previous ERROR / TIMEOUT / EMPTY is not carried forward: any valid HTTP response,
+    even Not Modified, proves that failure has cleared. Carrying it would keep a healthy,
+    reachable source failing (and eventually degraded) for as long as it answers 304. The
+    verdict is instead rebuilt from the last OK / STALE record, so a feed that was already
+    stale before the blip is not laundered into OK.
+    """
+    verdicts = sorted(
+        (h for h in history if h.status in (HealthStatus.OK, HealthStatus.STALE)),
+        key=lambda h: h.checked_at,
+        reverse=True,
     )
+    previous = verdicts[0] if verdicts else None
     base = {"source_id": source.id, "checked_at": now, "items_fetched": 0,
             "duration_ms": fetch.duration_ms}
     if previous is None:
