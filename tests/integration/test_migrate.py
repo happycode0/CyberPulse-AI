@@ -3,6 +3,12 @@ from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 
 from worker.db.migrate import current_version, run_migrations
+from worker.version import (
+    ENRICHMENT_VERSION,
+    PIPELINE_VERSION,
+    SCHEMA_VERSION,
+    SCORING_VERSION,
+)
 
 EXPECTED_TABLES = {
     "events", "event_sources", "event_timeline", "event_relationships", "claims",
@@ -17,10 +23,17 @@ def insert_event(engine, event_id):
     with engine.begin() as conn:
         conn.execute(
             text(
-                "insert into events (event_id, first_seen, last_seen, title, summary) "
-                "values (:id, now(), now(), 't', 's')"
+                "insert into events (event_id, schema_version, pipeline_version, "
+                "scoring_version, enrichment_version, first_seen, last_seen, title, summary) "
+                "values (:id, :schema, :pipeline, :scoring, :enrichment, now(), now(), 't', 's')"
             ),
-            {"id": event_id},
+            {
+                "id": event_id,
+                "schema": SCHEMA_VERSION,
+                "pipeline": PIPELINE_VERSION,
+                "scoring": SCORING_VERSION,
+                "enrichment": ENRICHMENT_VERSION,
+            },
         )
 
 
