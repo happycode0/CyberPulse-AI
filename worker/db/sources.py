@@ -12,11 +12,12 @@ its `ON CONFLICT DO UPDATE` column list, or re-syncing the static config would o
 the dynamically tracked state.
 """
 
+from collections.abc import Sequence
 from typing import NamedTuple
 
 from sqlalchemy import Connection, text
 
-from worker.models import LifecycleState, SourceHealth
+from worker.models import LifecycleState, SourceConfig, SourceHealth
 
 DEFAULT_HISTORY_LIMIT = 20
 
@@ -82,6 +83,67 @@ def load_lifecycle_states(conn: Connection) -> dict[str, LifecycleState]:
         text("select id, lifecycle_state from source_registry where lifecycle_state is not null")
     )
     return {r.id: LifecycleState(r.lifecycle_state) for r in rows}
+
+
+def upsert_registry(conn: Connection, sources: Sequence[SourceConfig]) -> None:
+    """Sync the static YAML registry into `source_registry`.
+
+    `lifecycle_state` is deliberately absent from the update list: it is tracked in the
+    database and re-syncing the YAML must never overwrite it.
+    """
+    for s in sources:
+        conn.execute(
+            text(
+                "insert into source_registry (id, name, type, region, category, source_class, "
+                "priority, lane, enabled, url, parser, expected_frequency, notes) "
+                "values (:id, :name, :type, :region, :category, :source_class, :priority, "
+                ":lane, :enabled, :url, :parser, :expected_frequency, :notes) "
+                "on conflict (id) do update set name = excluded.name, type = excluded.type, "
+                "region = excluded.region, category = excluded.category, "
+                "source_class = excluded.source_class, priority = excluded.priority, "
+                "lane = excluded.lane, enabled = excluded.enabled, url = excluded.url, "
+                "parser = excluded.parser, expected_frequency = excluded.expected_frequency, "
+                "notes = excluded.notes, updated_at = now()"
+            ),
+            {
+                "id": s.id,
+                "name": s.name,
+                "type": s.type,
+                "region": s.region,
+                "category": s.category,
+                "source_class": s.source_class,
+                "priority": s.priority,
+                "lane": s.lane.value,
+                "enabled": s.enabled,
+                "url": s.url,
+                "parser": s.parser,
+                "expected_frequency": s.expected_frequency,
+                "notes": s.notes,
+            },
+        )
+
+
+class FetchState(NamedTuple):
+    etag: str | None
+    last_modified: str | None
+
+
+def load_fetch_states(conn: Connection) -> dict[str, FetchState]:
+    """Stored conditional-request validators, keyed by source id."""
+    rows = conn.execute(text("select source_id, etag, last_modified from source_fetch_state"))
+    return {r.source_id: FetchState(r.etag, r.last_modified) for r in rows}
+
+
+def save_fetch_state(conn: Connection, source_id: str, state: FetchState) -> None:
+    conn.execute(
+        text(
+            "insert into source_fetch_state (source_id, etag, last_modified) "
+            "values (:source_id, :etag, :last_modified) "
+            "on conflict (source_id) do update set etag = excluded.etag, "
+            "last_modified = excluded.last_modified, updated_at = now()"
+        ),
+        {"source_id": source_id, "etag": state.etag, "last_modified": state.last_modified},
+    )
 
 
 class RegistryRow(NamedTuple):

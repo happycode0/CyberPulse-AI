@@ -188,6 +188,19 @@ async def test_timeout_maps_to_timeout_status(respx_mock):
     assert (await fetch(client, src)).status is FetchStatus.TIMEOUT
 
 
+async def test_timeout_always_carries_an_explanation(respx_mock):
+    """httpx timeout exceptions stringify to '', which used to leave a bare TIMEOUT."""
+    URL = "https://cyber.gov.au/feed/alerts"
+    respx_mock.get(URL).mock(side_effect=httpx.ReadTimeout(""))
+    src = SourceConfig(
+        id="acsc_alerts", name="ACSC Alerts", type="feed", region="AU", category="alerts",
+        source_class="acsc", priority=1, lane="fast", enabled=True, url=URL, parser="rss",
+        expected_frequency="hourly",
+    )
+    result = await fetch(httpx.AsyncClient(), src, max_retries=1)
+    assert result.status is FetchStatus.TIMEOUT and "ReadTimeout" in result.error
+
+
 async def test_5xx_is_retried_then_errors(respx_mock):
     """Test that 5xx errors are retried up to 3 times, then return ERROR."""
     URL = "https://cyber.gov.au/feed/alerts"

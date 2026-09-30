@@ -175,7 +175,9 @@ async def fetch(
                 continue
             return FetchResult(
                 status=FetchStatus.TIMEOUT,
-                error=str(e),
+                # httpx timeout exceptions stringify to "", which would leave the health
+                # record with a TIMEOUT status and no explanation.
+                error=str(e) or f"{type(e).__name__} after {timeout:g}s",
                 duration_ms=duration_ms,
             )
         except Exception as e:

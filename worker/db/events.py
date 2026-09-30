@@ -152,6 +152,11 @@ def load_live_events(conn: Connection, *, min_prominence: float, limit: int) -> 
     return _hydrate(conn, ids, candidates=False)
 
 
+def load_events(conn: Connection, event_ids: Sequence[str]) -> list[Event]:
+    """The given events, fully hydrated, in `event_ids` order. Unknown ids are an error."""
+    return _hydrate(conn, event_ids, candidates=False)
+
+
 def load_event_dates(conn: Connection) -> list[date]:
     """Distinct UTC dates on which events were first seen, newest first."""
     rows = conn.execute(
