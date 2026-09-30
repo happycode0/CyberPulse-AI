@@ -224,3 +224,28 @@ def test_event_cards_never_use_the_event_id_as_a_dom_id():
     assert not re.search(r"\bid:\s*event\.event_id", js)
     assert "data-event-id" in js
     assert not re.search(r"href:\s*`#\$\{e\.event_id\}`", js)
+
+
+# PLAN.md 8.3 item 13 and the 10.x acceptance criteria treat the history page as a product
+# surface, so a visitor landing on the dashboard has to be able to find it.
+def test_history_page_is_reachable_from_the_dashboard():
+    html = read("site/index.html")
+    assert 'href="history.html"' in html, "index.html links to history.html"
+    nav = html.split('<nav class="site-nav"', 1)[1].split("</nav>", 1)[0]
+    assert "history.html" not in nav, (
+        "the history link must live outside the section nav: initTabs() promotes that nav to "
+        "role=tablist, where a non-tab link would be invalid ARIA"
+    )
+
+
+# The map counts events per ISO id in aria-label, so the click, the paired <select> and the
+# filter all have to work from the same set of country tokens, or they drift apart.
+def test_map_click_filters_by_every_token_for_the_country():
+    js = read("site/assets/map.js")
+    hud = read("site/assets/hud.js")
+    assert "n3Tokens.get(n3)[0]" not in js, "the click must not stop at the first token"
+    assert "new Set(tokens)" in js, "the click selects every token of the ISO id"
+    assert "n3Tokens.has(value)" in js, "the <select> is keyed by ISO id, not by single tokens"
+    assert "state.selected.country = new Set([token])" not in hud, (
+        "the country filter must accept the whole token set the map hands it"
+    )

@@ -1709,9 +1709,11 @@ export async function main() {
   renderFacetUi(buildFacets(data.events), state, refresh);
 
   // The world map and the country dropdown filter in exactly the same way a
-  // country facet chip does, through state.selected.country.
+  // country facet chip does, through state.selected.country. Both hand over a Set of
+  // every raw token for the chosen ISO id, so the filter matches the count the map
+  // and aria-label promise.
   const onCountry = (token) => {
-    if (token) state.selected.country = new Set([token]);
+    if (token) state.selected.country = new Set(typeof token === 'string' ? [token] : token);
     else delete state.selected.country;
     refresh();
   };

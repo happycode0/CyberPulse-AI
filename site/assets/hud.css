@@ -95,6 +95,9 @@ a:hover { color: var(--text); }
 .btn:hover { border-color: var(--cyan); color: var(--cyan); }
 .btn[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
 .btn--small { padding: 6px 8px; min-height: 28px; }
+/* A .btn that is a link (the HISTORY shortcut in the header, history prev/next): anchors
+   need their underline removed and a box model, otherwise min-height is ignored. */
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 
 /* HUD panel: chamfered clip-path, bracket corners, header strip and tick ruler */
 .hud-panel {
