@@ -1,11 +1,23 @@
 import os
 import uuid
+from pathlib import Path
 
 import pytest
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
 
 from worker.db.session import make_engine, to_sqlalchemy_url
+from worker import settings as settings_module
+
+
+@pytest.fixture(autouse=True)
+def mock_settings(monkeypatch, tmp_path):
+    """Mock settings for tests, avoiding database_url requirement."""
+    # If DATABASE_URL is not set, provide a dummy value
+    if "DATABASE_URL" not in os.environ:
+        monkeypatch.setenv("DATABASE_URL", "sqlite:///:memory:")
+    
+    yield
 
 
 @pytest.fixture(scope="session")
