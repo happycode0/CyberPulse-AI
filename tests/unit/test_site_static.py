@@ -128,6 +128,16 @@ def test_fonts_ship_with_their_licence():
         assert f.read_bytes()[:4] == b"wOF2", f
 
 
+def test_vendored_libraries_ship_with_their_licence():
+    vendor = SITE / "assets" / "vendor"
+    for name in ("d3-geo", "d3-array", "topojson-client"):
+        text = (vendor / f"ISC-{name}.txt").read_text()
+        assert "Permission to use, copy, modify, and/or distribute this software" in text, name
+    for name in ("d3-geo.min.js", "topojson-client.min.js"):
+        head = (vendor / name).read_text()[:500]
+        assert "ISC licence" in head and "esbuild" in head, name
+
+
 def test_every_font_face_file_exists():
     css = read("site/assets/hud.css")
     files = re.findall(r"url\(['\"]?(fonts/[\w.-]+\.woff2)", css)
