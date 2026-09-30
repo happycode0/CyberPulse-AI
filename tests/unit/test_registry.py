@@ -22,6 +22,16 @@ def test_duplicate_id_raises(fixture):
         load_registry(fixture("sources_duplicate_id.yaml"))
 
 
+def test_lifecycle_state_in_static_yaml_is_rejected(fixture):
+    """Lifecycle state is tracked in the database; the git-tracked YAML must not carry it."""
+    with pytest.raises(ValueError, match="lifecycle_state.*test_source_1"):
+        load_registry(fixture("sources_lifecycle_state.yaml"))
+
+
+def test_committed_registry_carries_no_lifecycle_state():
+    assert all(s.lifecycle_state is None for s in load_registry(Path("config/sources.yaml")))
+
+
 def test_fast_lane_contains_acsc_alerts_and_kev():
     fast = {s.id for s in sources_for_lane(load_registry(Path("config/sources.yaml")), Lane.FAST)}
     assert {"acsc_alerts", "cisa_kev"} <= fast
