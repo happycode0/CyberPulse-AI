@@ -267,6 +267,7 @@ class NormalisedItem(_Model):
     url_hash: str
     title_hash: str
     tokens: frozenset[str] = Field(default_factory=frozenset)
+    published_is_estimated: bool = False
 
 
 class SourceConfig(_Model):

@@ -1,0 +1,69 @@
+"""Tests for item normalisation: URLs, titles, CVE extraction, and tokenisation."""
+
+from datetime import datetime, timedelta, timezone
+
+import pytest
+
+from worker.models import RawItem, NormalisedItem
+from worker.pipeline.normalise import (
+    canonical_url,
+    normalise_title,
+    extract_cves,
+    tokenise,
+    normalise,
+)
+
+
+NOW = datetime(2026, 9, 29, 12, 0, 0, tzinfo=timezone.utc)
+
+# Fixture: a base RawItem for testing
+@pytest.fixture
+def item():
+    return RawItem(
+        source_id="test-source",
+        url="https://example.com/article",
+        guid="guid-123",
+        title="Critical RCE in Acme Framework",
+        raw_summary="A critical vulnerability has been found",
+        published=NOW,
+        fetched_at=NOW,
+        payload_hash="hash123",
+    )
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("https://x.com/a?utm_source=rss&utm_medium=feed", "https://x.com/a"),
+    ("https://x.com/a/?fbclid=1", "https://x.com/a"),
+    ("http://X.COM/A", "http://x.com/A"),        # host lowered, path preserved
+    ("https://x.com/a#section", "https://x.com/a"),
+])
+def test_canonical_url_strips_tracking_and_normalises_host(raw, expected):
+    assert canonical_url(raw) == expected
+
+
+def test_normalise_title_is_case_and_punctuation_insensitive():
+    assert normalise_title("Critical RCE in Acme!") == normalise_title("critical rce in acme")
+
+
+def test_extract_cves_finds_all_and_dedupes_and_uppercases():
+    assert extract_cves("cve-2026-1 and CVE-2026-1 and CVE-2025-12345") == ["CVE-2025-12345", "CVE-2026-1"]
+
+
+def test_extract_cves_ignores_malformed_ids():
+    assert extract_cves("CVE-26-1 CVE-2026 CVEX-2026-1") == []
+
+
+def test_missing_published_falls_back_to_fetched_at(item):
+    n = normalise(item.model_copy(update={"published": None, "fetched_at": NOW}), now=NOW)
+    assert n.published == NOW and n.published_is_estimated is True
+
+
+def test_future_published_is_clamped_to_now(item):
+    n = normalise(item.model_copy(update={"published": NOW + timedelta(days=30)}), now=NOW)
+    assert n.published == NOW and n.published_is_estimated is True
+
+
+def test_url_hash_matches_for_urls_differing_only_by_tracking_params(item):
+    a = normalise(item.model_copy(update={"url": "https://x.com/a?utm_source=rss"}), now=NOW)
+    b = normalise(item.model_copy(update={"url": "https://x.com/a"}), now=NOW)
+    assert a.url_hash == b.url_hash
