@@ -1,0 +1,69 @@
+# Publish the site to GitHub Pages: the static site from `main`, with the
+# generated JSON from the orphan `data` branch merged in as `site/data/`.
+# `site/assets/hud.js` fetches `data/...` first and falls back to `../data/...`,
+# so having the files under both logical locations keeps either layout working.
+#
+# Action majors pinned to the current majors, verified on 2026-09-29:
+#   actions/checkout v6, actions/configure-pages v6,
+#   actions/upload-pages-artifact v5, actions/deploy-pages v5.
+name: pages
+
+on:
+  push:
+    branches: [main, data]
+  workflow_dispatch:
+
+# One deployment at a time; never cancel a deployment already in flight.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Pin main: on a push to `data` the default ref would be the data
+      # branch, which has no site in it.
+      - name: Checkout site (main)
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      # The `data` branch does not exist until the first `push_data()` run, so
+      # before then this checkout fails and the site is deployed without data
+      # (the dashboard's fetch fails over to its empty state).
+      - name: Checkout data branch
+        uses: actions/checkout@v6
+        continue-on-error: true
+        with:
+          ref: data
+          path: data
+
+      - name: Assemble site/data
+        run: |
+          if [ -n "$(ls -A data 2>/dev/null)" ]; then
+            mkdir -p site/data
+            cp -R data/. site/data/
+          else
+            echo "::warning::data branch not available; deploying the site without data"
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
