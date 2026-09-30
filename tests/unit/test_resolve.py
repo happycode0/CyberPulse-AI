@@ -167,17 +167,33 @@ def test_punctuation_and_case_do_not_defeat_the_title_match():
     assert resolve(item, [event]).method == "title_hash"
 
 
-def test_window_boundary_is_fourteen_days_inclusive():
+def test_title_hash_window_is_seventy_two_hours_inclusive():
     item = make_item()
-    inside = make_event(first_seen=item.published - timedelta(days=14))
-    outside = make_event(first_seen=item.published - timedelta(days=14, seconds=1))
+    inside = make_event(first_seen=item.published - timedelta(hours=72))
+    outside = make_event(first_seen=item.published - timedelta(hours=72, seconds=1))
     assert resolve(item, [inside]).decision is Decision.UPDATE_EXISTING
     assert resolve(item, [outside]).decision is Decision.NEW_EVENT
 
 
-def test_item_older_than_the_event_matches_within_the_window():
+def test_identical_title_two_to_three_days_apart_still_merges():
+    """A corrected or next-day re-publish is what the title_hash rung exists to catch."""
+    item = make_item()
+    for delta in (timedelta(hours=30), timedelta(days=2, hours=12)):
+        r = resolve(item, [make_event(first_seen=item.published - delta)])
+        assert (r.decision, r.method) == (Decision.UPDATE_EXISTING, "title_hash")
+
+
+def test_weekly_recurring_identical_title_is_a_new_event():
+    """SANS-style weekly roundups repeat every ~7 days with the same title (plan line 39)."""
+    item = make_item("SANS NewsBites weekly roundup")
+    last_week = make_event("SANS NewsBites weekly roundup", first_seen=NOW - timedelta(days=7))
+    r = resolve(item, [last_week])
+    assert (r.decision, r.event_id, r.method) == (Decision.NEW_EVENT, None, "none")
+
+
+def test_item_older_than_the_event_matches_within_the_title_window():
     """Backfilled or late-fed articles can pre-date the event's first_seen."""
-    item = make_item(published=NOW - timedelta(days=3))
+    item = make_item(published=NOW - timedelta(days=2))
     event = make_event(first_seen=NOW)
     assert resolve(item, [event]).decision is Decision.UPDATE_EXISTING
 
@@ -209,7 +225,7 @@ def test_recurring_identical_title_does_not_chain_onto_a_still_active_event():
     item = make_item("Weekly vulnerability digest")
     alive = make_event(
         "Weekly vulnerability digest",
-        first_seen=item.published - timedelta(days=21),
+        first_seen=item.published - timedelta(days=7),
         last_seen=item.published - timedelta(hours=2),
     )
     assert resolve(item, [alive]).decision is Decision.NEW_EVENT
@@ -220,12 +236,12 @@ def test_recurring_title_matches_the_current_period_not_a_stale_one():
     stale = make_event(
         "Weekly vulnerability digest",
         event_id="evt-2026-000001",
-        first_seen=item.published - timedelta(days=30),
+        first_seen=item.published - timedelta(days=7),
     )
     current = make_event(
         "Weekly vulnerability digest",
         event_id="evt-2026-000002",
-        first_seen=item.published - timedelta(days=2),
+        first_seen=item.published - timedelta(days=1),
     )
     r = resolve(item, [stale, current])
     assert (r.decision, r.event_id) == (Decision.UPDATE_EXISTING, "evt-2026-000002")
@@ -312,11 +328,12 @@ def test_high_overlap_with_date_proximity_updates_existing():
     assert (r.decision, r.method) == (Decision.UPDATE_EXISTING, "tokens+date")
 
 
-def test_high_overlap_beyond_proximity_but_inside_window_is_ambiguous():
-    item_title, event_title = titles_with_overlap(8, 1, 1)
+def test_high_overlap_beyond_proximity_is_a_recurrence_not_a_doubt():
+    item_title, event_title = titles_with_overlap(8, 1, 1)  # 0.8
     item = make_item(item_title)
-    event = make_event(event_title, first_seen=NOW - timedelta(hours=73))
-    assert resolve(item, [event]).decision is Decision.AMBIGUOUS
+    for delta in (timedelta(hours=73), timedelta(days=7)):
+        event = make_event(event_title, first_seen=NOW - delta)
+        assert resolve(item, [event]).decision is Decision.NEW_EVENT
 
 
 def test_borderline_similarity_is_ambiguous_not_a_guess():
@@ -328,11 +345,13 @@ def test_borderline_similarity_is_ambiguous_not_a_guess():
     assert r.score == 0.55
 
 
-def test_borderline_similarity_beyond_the_window_is_a_new_event():
+def test_borderline_similarity_is_ambiguous_out_to_fourteen_days_only():
     item_title, event_title = titles_with_overlap(11, 4, 5)
     item = make_item(item_title)
-    event = make_event(event_title, first_seen=NOW - timedelta(days=30))
-    assert resolve(item, [event]).decision is Decision.NEW_EVENT
+    inside = make_event(event_title, first_seen=NOW - timedelta(days=14))
+    outside = make_event(event_title, first_seen=NOW - timedelta(days=14, seconds=1))
+    assert resolve(item, [inside]).decision is Decision.AMBIGUOUS
+    assert resolve(item, [outside]).decision is Decision.NEW_EVENT
 
 
 def test_low_similarity_is_a_new_event():

@@ -6,7 +6,7 @@ answer:
 1. `url_hash`       same canonical URL already recorded            -> DUPLICATE
 2. `guid`           same feed GUID from the same source            -> DUPLICATE
 3. `canonical_url`  same URL ignoring scheme / `www.`              -> DUPLICATE
-4. `title_hash`     same normalised title within the window        -> UPDATE_EXISTING
+4. `title_hash`     same normalised title, published <= 72 h       -> UPDATE_EXISTING
 5. `cve+tokens`     shared CVE and token overlap >= 0.5            -> UPDATE_EXISTING
 6. `tokens+date`    token overlap >= 0.75 and published <= 72 h    -> UPDATE_EXISTING
 
@@ -14,11 +14,18 @@ Anything left that looks similar but not similar enough is AMBIGUOUS (Stage 1 tr
 as a new event and flags it for Stage 2 adjudication); a shared CVE with unrelated titles
 is RELATED_BUT_DISTINCT; otherwise NEW_EVENT.
 
-Recurring titles ("Microsoft Patch Tuesday ...", weekly digests) are the false-merge
-hazard. Every path that relies on title text alone is gated on the item being published
-within `WINDOW` of the event's *origin* (its earliest known timestamp), never of its
-`last_seen`. Anchoring on `last_seen` would let a recurring title chain onto an event that
-each new instalment keeps alive, merging every period into one event forever.
+Recurring titles ("Microsoft Patch Tuesday ...", "SANS weekly roundup") are the
+false-merge hazard, at monthly *and* weekly cadence. Bare title text is therefore only
+trusted over a short horizon: the `title_hash` rung matches within `PROXIMITY` (72 h),
+which catches same-day and next-day re-publishes but not the next weekly instalment.
+Longer-range "same developing story" matching needs corroboration beyond the title
+(shared CVE plus overlap, or high overlap plus date proximity). The proximity is measured
+from the event's *origin* (its earliest known timestamp), never its `last_seen`:
+anchoring on `last_seen` would let a recurring title chain onto an event that each new
+instalment keeps alive, merging every period into one event forever.
+
+A borderline (0.45 <= overlap < 0.75) title within `AMBIGUOUS_WINDOW` (14 days) is
+flagged AMBIGUOUS rather than guessed; it never merges.
 """
 
 import hashlib
@@ -30,8 +37,8 @@ from typing import ClassVar
 from worker.models import Event, NormalisedItem
 from worker.pipeline.normalise import canonical_url, normalise_title, tokenise
 
-WINDOW = timedelta(days=14)
 PROXIMITY = timedelta(hours=72)
+AMBIGUOUS_WINDOW = timedelta(days=14)
 
 CVE_TOKEN_MIN = 0.5
 HIGH_OVERLAP = 0.75
@@ -155,7 +162,7 @@ def resolve(item: NormalisedItem, candidates: list[Event]) -> Resolution:
     hits = [
         (c, 1.0)
         for c, k in keyed
-        if item.title_hash in k.title_hashes and _within(when, k.anchor, WINDOW)
+        if item.title_hash in k.title_hashes and _within(when, k.anchor, PROXIMITY)
     ]
     if hits:
         event, score = _best(hits)
@@ -181,12 +188,12 @@ def resolve(item: NormalisedItem, candidates: list[Event]) -> Resolution:
         event, score = _best(hits)
         return Resolution(Decision.UPDATE_EXISTING, event.event_id, "tokens+date", score)
 
-    # Similar, but not enough to merge on: within the window, this is a judgement call
-    # (includes very similar titles more than 72 h apart, e.g. a weekly digest).
+    # Similar, but not enough to merge on: a judgement call for Stage 2. Overlap at or
+    # above HIGH_OVERLAP that failed the 72 h proximity test is a recurrence, not a doubt.
     hits = [
         (c, s)
         for c, k, s in scored
-        if s >= AMBIGUOUS_MIN and _within(when, k.anchor, WINDOW)
+        if AMBIGUOUS_MIN <= s < HIGH_OVERLAP and _within(when, k.anchor, AMBIGUOUS_WINDOW)
     ]
     if hits:
         event, score = _best(hits)
