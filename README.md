@@ -474,7 +474,6 @@ Stated plainly, because an intelligence product that oversells itself is worthle
 | File | What |
 |---|---|
 | [`PLAN.md`](PLAN.md) | **Authoritative design** — validation, crew, data model, UI spec, stages |
-| [`docs/source-prompts/`](docs/source-prompts/) | The three original design prompts, preserved |
 | [`docs/superpowers/plans/`](docs/superpowers/plans/) | Task-by-task implementation plans |
 | [`config/sources.yaml`](config/) | Source registry with live-validation status |
 | [`schemas/`](schemas/) | Published JSON Schema for the public data |
