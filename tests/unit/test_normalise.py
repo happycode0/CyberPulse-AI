@@ -46,11 +46,11 @@ def test_normalise_title_is_case_and_punctuation_insensitive():
 
 
 def test_extract_cves_finds_all_and_dedupes_and_uppercases():
-    assert extract_cves("cve-2026-1 and CVE-2026-1 and CVE-2025-12345") == ["CVE-2025-12345", "CVE-2026-1"]
+    assert extract_cves("cve-2026-0001 and CVE-2026-0001 and CVE-2025-12345") == ["CVE-2025-12345", "CVE-2026-0001"]
 
 
 def test_extract_cves_ignores_malformed_ids():
-    assert extract_cves("CVE-26-1 CVE-2026 CVEX-2026-1") == []
+    assert extract_cves("CVE-26-1 CVE-2026 CVEX-2026-1 CVE-2026-1 CVE-2026-123") == []
 
 
 def test_missing_published_falls_back_to_fetched_at(item):
