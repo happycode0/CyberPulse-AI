@@ -5,6 +5,9 @@ RUN useradd -m -u 1000 cyberpulse
 
 WORKDIR /app
 
+# Install git (needed by worker.publish.push for orphan-branch force-push)
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+
 # Install requirements first for layer caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
