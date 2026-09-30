@@ -78,6 +78,9 @@ def test_parse_feed_extracts_items_from_acsc(acsc_src, fixture_bytes):
     assert len(items) == 7
     assert all(isinstance(i, RawItem) for i in items)
     assert all(i.url.startswith("https://") for i in items)
+    # Verify date parsing integration: ACSC fixture uses 2-digit-year format
+    assert any(i.published is not None for i in items), "At least one item should have parsed published date"
+    assert any(i.published.year == 2026 for i in items if i.published), "At least one item should have year 2026"
 
 
 def test_parse_feed_prefers_guid_when_present(cisa_src, fixture_bytes):
