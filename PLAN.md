@@ -1022,7 +1022,7 @@ status — the org made visible) · `SYSTEM`.
 - **Honesty:** never the word "LIVE". Always `LAST COMPLETED COLLECTION <timestamp> UTC`, and the pipeline animation is labelled `COLLECTION REPLAY`.
 - **Motion:** every loop inside `@media (prefers-reduced-motion: no-preference)`, plus a persisted `FX OFF` toggle. Anything auto-moving >5 s is pausable (WCAG 2.2.2). No flicker — the classic CRT flicker at ~7 Hz is dropped outright (WCAG 2.3.1).
 - **Colour is never the only signal** (WCAG 1.4.1): severity also carries a label, a shape (◆ ▲ ● ■ ○) and a bar count.
-- **Performance:** animate only `transform`/`opacity`; canvas at 30 fps, DPR capped at 2, paused on `visibilitychange` and via `IntersectionObserver`; `content-visibility: auto` on long lists.
+- **Performance:** animate only `transform`/`opacity` *(one narrow, deliberate exception: the EKG pulse line and pipeline dash-trace in §8.3 items 2 and 8 animate SVG `stroke-dashoffset`, since a travelling dash cannot be done any other way. Scoped to ≤2 small paths, always removable via `FX OFF` or reduced motion, never forces layout — accepted during Task 14 implementation rather than dropping the dash-pulse visual entirely)*; canvas at 30 fps, DPR capped at 2, paused on `visibilitychange` and via `IntersectionObserver`; `content-visibility: auto` on long lists.
 - **CSP** via `<meta http-equiv>`, since Pages cannot set headers. Third-party files vendored or pinned with SRI.
 - Australian English and `Australia/Sydney` display time throughout; UTC in storage.
 
