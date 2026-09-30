@@ -87,6 +87,32 @@
 
   <section class="gauges" id="gauges" aria-label="Severity distribution"></section>
 
+  <section class="hud-panel hud-panel--wide" id="sec-world-map" aria-labelledby="h-world-map">
+    <div class="hud-panel__inner">
+      <header class="hud-panel__head">
+        <span class="panel-id mono">GEO-01</span>
+        <h2 class="panel-title" id="h-world-map">WORLD MAP</h2>
+        <span class="panel-status"><span class="led" data-state="idle" id="map-led"></span><span class="panel-count mono" id="map-count">AWAITING DATA</span></span>
+      </header>
+      <div class="tick-ruler" aria-hidden="true"></div>
+      <div class="panel-body">
+        <p class="hint">Countries with events in this snapshot are shaded by event count on an Equal Earth projection centred on 150°E (basemap: Natural Earth via world-atlas, public domain). Selecting a country — on the map, or in the country dropdown below which is the keyboard and screen-reader equivalent — filters every section underneath. Selecting ALL COUNTRIES clears the filter.</p>
+        <div id="world-map" class="map-host"></div>
+        <div class="map-legend" aria-label="Map shading: events per country">
+          <span class="map-legend__item"><span class="map-legend__sw" data-load="1" aria-hidden="true"></span>1 EVENT</span>
+          <span class="map-legend__item"><span class="map-legend__sw" data-load="2" aria-hidden="true"></span>2–3 EVENTS</span>
+          <span class="map-legend__item"><span class="map-legend__sw" data-load="3" aria-hidden="true"></span>4–6 EVENTS</span>
+          <span class="map-legend__item"><span class="map-legend__sw" data-load="4" aria-hidden="true"></span>7 OR MORE EVENTS</span>
+        </div>
+        <label class="field">
+          <span class="field__label">COUNTRY FILTER — KEYBOARD AND SCREEN-READER EQUIVALENT OF THE MAP</span>
+          <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
+        </label>
+        <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
+      </div>
+    </div>
+  </section>
+
   <section class="filters hud-panel" id="filters" aria-labelledby="h-filters">
     <div class="hud-panel__inner">
       <header class="hud-panel__head">
@@ -179,12 +205,14 @@
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-the-crew" aria-labelledby="h-the-crew">
+    <section class="hud-panel hud-panel--wide" id="sec-the-crew" aria-labelledby="h-the-crew">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-11</span><h2 class="panel-title" id="h-the-crew">THE CREW</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono">STAGE 1</span></span></header>
+        <header class="hud-panel__head"><span class="panel-id mono">PNL-11</span><h2 class="panel-title" id="h-the-crew">THE CREW</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">15 AGENTS</span></span></header>
         <div class="tick-ruler" aria-hidden="true"></div>
         <div class="panel-body">
-          <p class="empty">The agent crew is not published yet. In Stage 1 the collection pipeline runs on its own; named agents and their sanitised status arrive in a later stage.</p>
+          <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; until then every figure reads "—".</p>
+          <div id="crew-summary"></div>
+          <ul id="crew-list" class="crew-grid"></ul>
         </div>
       </div>
     </section>

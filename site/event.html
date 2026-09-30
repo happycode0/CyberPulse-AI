@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070A">
+<title>Event | CyberPulse-AI</title>
+<meta name="description" content="One published CyberPulse-AI event: evidence, AI inference, timeline and related events kept visibly apart. A snapshot of past collections, not a real-time feed.">
+<link rel="preload" href="assets/fonts/orbitron-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/chakra-petch-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/hud.css">
+<script type="module" src="assets/hud.js"></script>
+</head>
+<body data-page="event">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="site-header__row">
+    <a class="brand brand--link" href="index.html"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></a>
+    <div class="site-header__controls">
+      <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
+    </div>
+  </div>
+  <nav class="site-nav" aria-label="Navigation">
+    <a href="index.html">DASHBOARD</a>
+    <a href="index.html#sec-australia-now">AUSTRALIA NOW</a>
+    <a href="index.html#sec-world-map">WORLD MAP</a>
+    <a href="index.html#sec-vulnerabilities">VULNERABILITIES</a>
+    <a href="history.html">HISTORY</a>
+  </nav>
+</header>
+
+<div class="status-strip" id="status-strip" role="status">
+  <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
+  <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
+  <span class="status-strip__sep" aria-hidden="true">//</span>
+  <span class="mono" id="strip-local"></span>
+  <span class="status-strip__sep" aria-hidden="true">//</span>
+  <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
+</div>
+
+<noscript>
+  <p class="notice">This page reads published JSON files with a small script. Enable JavaScript to see the event.</p>
+</noscript>
+
+<main id="main" class="wrap">
+  <div class="load-error notice" id="load-error" hidden role="alert"></div>
+  <p class="hint">Evidence and inference are kept apart here: the evidence panel lists what you can check against the original sources, while anything marked <span class="chip chip--ai">AI SUGGESTED</span> is model inference and never evidence.</p>
+  <p class="hint" id="event-loading">LOADING THE PUBLISHED SNAPSHOT…</p>
+  <article id="event-detail" class="event-detail"></article>
+</main>
+
+<footer class="site-footer wrap">
+  <p>CyberPulse-AI publishes canonical, evidence-linked events from public sources. Times are shown in Australia/Sydney and stored in UTC. The CyberPulse Index is our own composite measure, not an official scale.</p>
+</footer>
+</body>
+</html>
