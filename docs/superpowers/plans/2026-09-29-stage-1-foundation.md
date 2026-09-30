@@ -704,7 +704,9 @@ Expected: FAIL — `ModuleNotFoundError: worker.pipeline.resolve`
 
 - [ ] **Step 3: Implement**
 
-`resolve` walks the ladder in cost order, stopping at the first confident answer: `url_hash` → `guid` → `canonical_url` → `title_hash` within a **14-day window** → shared CVE plus token overlap ≥ 0.5 → token overlap ≥ 0.75 with date proximity ≤ 72 h. Overlap in 0.45–0.75 with no other signal returns `AMBIGUOUS`, which Stage 1 treats as `NEW_EVENT` and flags for Stage 2 LLM adjudication. The date window is what stops recurring-title false merges, so it is mandatory on every title-only path.
+`resolve` walks the ladder in cost order, stopping at the first confident answer: `url_hash` → `guid` → `canonical_url` → `title_hash` within a **72-hour window** *(amended during implementation — see below)* → shared CVE plus token overlap ≥ 0.5 → token overlap ≥ 0.75 with date proximity ≤ 72 h. Overlap in 0.45–0.75 within 14 days with no other signal returns `AMBIGUOUS`, which Stage 1 treats as `NEW_EVENT` and flags for Stage 2 LLM adjudication. The date window is what stops recurring-title false merges, so it is mandatory on every title-only path.
+
+> **Amendment (Task 9 implementation, ruled by the controller):** the 14-day `title_hash` window specified above did not actually protect this section's own named example — "SANS weekly roundup" recurs every ~7 days, well inside 14. Two consecutive weekly roundups with an identical title would have false-merged. The `title_hash` rung's window was narrowed to 72 hours (matching the `tokens+date` rung) so it only trusts bare title text over a short horizon; longer-range matching still requires actual corroboration via the `cve+tokens` or `tokens+date` rungs. The AMBIGUOUS band's 14-day window is unchanged. See the SDD ledger for Task 9 for the full reasoning.
 
 `find_candidates` queries by `url_hash`, `guid`, `title_hash`, shared CVE, and `similarity(normalised_title, :t) > 0.4` using the pg_trgm GIN index, limited to events with `last_seen` inside 30 days.
 
