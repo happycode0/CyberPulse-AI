@@ -10,8 +10,11 @@ def test_settings_reads_database_url(monkeypatch):
     assert get_settings.__wrapped__().database_url == "postgresql://u:p@h/db"
 
 
-def test_settings_missing_database_url_raises(monkeypatch):
+def test_settings_missing_database_url_raises(monkeypatch, tmp_path):
+    """DATABASE_URL must be required even when .env is present."""
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    # Point env_file at a non-existent path so .env doesn't supply DATABASE_URL
+    monkeypatch.setattr("worker.settings.Settings.model_config", {"env_file": str(tmp_path / "nonexistent.env"), "extra": "ignore"})
     with pytest.raises(ValidationError):
         get_settings.__wrapped__()
 
@@ -19,6 +22,8 @@ def test_settings_missing_database_url_raises(monkeypatch):
 def test_optional_keys_default_to_none(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/db")
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    # Ensure .env doesn't supply the key either
+    monkeypatch.setattr("worker.settings.Settings.model_config", {"env_file": "/nonexistent", "extra": "ignore"})
     assert get_settings.__wrapped__().openrouter_api_key is None
 
 
