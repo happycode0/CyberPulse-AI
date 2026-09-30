@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "history.schema.json",
+  "title": "CyberPulse-AI history/YYYY-MM-DD.json",
+  "description": "Events first seen on one UTC date.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "date", "pipeline_version", "counts", "events"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "date": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "pipeline_version": { "type": "string" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "events": { "type": "array", "items": { "$ref": "event.schema.json" } }
+  }
+}

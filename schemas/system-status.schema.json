@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "system-status.schema.json",
+  "title": "CyberPulse-AI system-status.json",
+  "description": "Freshness is reported as the last completed collection, never as a live claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at", "last_completed_collection", "pipeline_version", "schema_version",
+    "scoring_version", "last_run", "counts"
+  ],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "last_completed_collection": { "type": ["string", "null"], "format": "date-time" },
+    "pipeline_version": { "type": "string" },
+    "schema_version": { "type": "string" },
+    "scoring_version": { "type": "string" },
+    "last_run": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "run_id", "lane", "started_at", "finished_at", "sources_ok", "sources_failed",
+            "sources_stale", "items_fetched", "new_events", "updated_events", "duplicates",
+            "archived_events", "error_count"
+          ],
+          "properties": {
+            "run_id": { "type": "string" },
+            "lane": { "enum": ["fast", "normal", "deep"] },
+            "started_at": { "type": "string", "format": "date-time" },
+            "finished_at": { "type": ["string", "null"], "format": "date-time" },
+            "sources_ok": { "type": "integer", "minimum": 0 },
+            "sources_failed": { "type": "integer", "minimum": 0 },
+            "sources_stale": { "type": "integer", "minimum": 0 },
+            "items_fetched": { "type": "integer", "minimum": 0 },
+            "new_events": { "type": "integer", "minimum": 0 },
+            "updated_events": { "type": "integer", "minimum": 0 },
+            "duplicates": { "type": "integer", "minimum": 0 },
+            "archived_events": { "type": "integer", "minimum": 0 },
+            "error_count": { "type": "integer", "minimum": 0 }
+          }
+        },
+        { "type": "null" }
+      ]
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}
