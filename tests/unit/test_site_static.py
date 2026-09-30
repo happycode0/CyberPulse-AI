@@ -182,9 +182,35 @@ def test_css_has_reduced_motion_and_fx_off_escape_hatches():
     assert "clip-path" in css
 
 
+# PLAN.md 8.4 allows exactly two keyframes to animate SVG stroke-dashoffset: the EKG pulse
+# line and the pipeline dash-trace (8.3 items 2 and 8). A travelling dash cannot be done any
+# other way. Every other keyframe is held to transform/opacity.
+DASH_KEYFRAMES = {"ekg-travel", "trace-flow"}
+CHEAP = {"transform", "opacity"}
+
+
 def test_css_has_no_flicker_and_animates_only_cheap_properties():
     css = read("site/assets/hud.css")
     assert "flicker" not in css.lower()
-    for block in re.findall(r"@keyframes\s+[\w-]+\s*\{(.*?)\n\}", css, re.S):
+    blocks = re.findall(r"@keyframes\s+([\w-]+)\s*\{(.*?)\n\}", css, re.S)
+    assert {name for name, _ in blocks} >= DASH_KEYFRAMES
+    for name, block in blocks:
+        allowed = CHEAP | ({"stroke-dashoffset"} if name in DASH_KEYFRAMES else set())
         for prop in re.findall(r"([\w-]+)\s*:", block):
-            assert prop in {"transform", "opacity", "stroke-dashoffset", "stroke-dasharray"}, prop
+            assert prop in allowed, f"{name} animates {prop}"
+
+
+def test_fx_toggle_label_is_fixed_and_state_is_aria_pressed():
+    html = read("site/index.html")
+    button = re.search(r'<button[^>]*id="fx-toggle"[^>]*>(.*?)</button>', html, re.S)
+    assert button and button.group(1).strip() == "FX OFF"
+    js = read("site/assets/hud.js")
+    assert "FX ON" not in html and "FX ON" not in js
+    assert "textContent" not in js[js.index("export function initFxToggle"):js.index("function initTickerToggle")]
+
+
+def test_event_cards_never_use_the_event_id_as_a_dom_id():
+    js = read("site/assets/hud.js")
+    assert not re.search(r"\bid:\s*event\.event_id", js)
+    assert "data-event-id" in js
+    assert not re.search(r"href:\s*`#\$\{e\.event_id\}`", js)
