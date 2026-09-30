@@ -2,11 +2,14 @@
 
 import copy
 import json
+import os
 from datetime import UTC, datetime
 
 import pytest
 
+import worker.publish.validate as validate_module
 from worker.models import Event
+from worker.settings import Settings
 from worker.publish.validate import ValidationFailure, scan_for_secrets, validate_payload
 
 NOW = datetime(2026, 9, 30, 12, 0, tzinfo=UTC)
@@ -180,6 +183,99 @@ def test_scan_does_not_flag_hashes_or_slugs():
         "query": "https://example.org/a?utm_source=newsletter&utm_campaign=weekly-roundup",
     }
     assert scan_for_secrets(payload) == []
+
+
+ADVISORY_SHAPED = [
+    # Reviewer's four examples, verbatim in shape.
+    "https://blog.example/Log4Shell-Exploitation-Detection-and-Mitigation-Guidance",
+    "Windows11-Update-KB5031354-Cumulative-Security-Patch-Notes",
+    ".../Microsoft-Exchange2019-Server-Zero-Day-Exploited-In-Attacks/",
+    "PowerShellInvokeExpressionObfuscation2026Campaign",
+    # Same family: mixed-alphanumeric words, acronyms, CamelCase, snake_case, prose.
+    "https://x.test/2026/Citrix-NetScaler-ADC-CVE-2023-4966-Session-Token-Leakage-Advisory",
+    "https://x.test/PSExec-and-IEXObfuscation-in-RedTeamToolkits2026-Report",
+    "Apache_Struts2_Remote_Code_Execution_CVE_2017_5638_Post_Incident_Review",
+    "MicrosoftOutlookElevationOfPrivilegeVulnerabilityCVE202323397Analysis",
+    "Barracuda-ESG-0day-CVE-2023-2868-UNC4841-Espionage-Campaign-Analysis",
+    "Ivanti-EPMM-CVE-2023-35078-Exploited-Against-Norwegian-Government-2023",
+]
+
+
+@pytest.mark.parametrize("text", ADVISORY_SHAPED)
+def test_scan_is_clean_on_advisory_shaped_titles_and_urls(text):
+    assert scan_for_secrets({"title": text, "url": f"https://x.test/{text}"}) == []
+    assert scan_for_secrets({"events": [{"sources": [{"url": text}]}]}) == []
+
+
+RANDOM_TOKENS = [
+    "Xk9Lm2Qp7Rt4Vw8Yz1Bn5Cd3Fg6Hj0Ks",
+    "q83JxK2mZp0RvT7yLc9WbN4sHd1GfA6eUo",
+    "aB3xQ9-kL2mZ7-pR4vT8-yH1cW5-nD6sG0",
+    "a1B2-c3D4-e5F6-g7H8-i9J0-k1L2-m3N4",
+    "Zm9vYmFyQmF6MDEyMzQ1Njc4OWFiY2RlZkdISUpLTE1O",
+    "8fA3kD9xQ2mLp7ZrT5vB1nYc6HjW0sGe4UoIw",
+    "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY".replace("/", "_"),
+]
+
+
+@pytest.mark.parametrize("token", RANDOM_TOKENS)
+def test_scan_still_flags_random_tokens_with_no_word_structure(token):
+    assert scan_for_secrets({"note": token})
+    assert scan_for_secrets({"note": f"see https://x.test/{token}/details"})
+
+
+def test_scan_does_not_hide_a_random_token_inside_advisory_text():
+    token = "Xk9Lm2Qp7Rt4Vw8Yz1Bn5Cd3Fg6Hj0Ks"
+    assert scan_for_secrets({"title": f"Log4Shell-Exploitation-Guidance {token}"})
+
+
+def test_env_scan_survives_settings_failing_to_validate(tmp_path, monkeypatch):
+    """`Settings()` needs variables the .env may not have; the scan must not depend on it."""
+    (tmp_path / ".env").write_text(
+        "TAVILY_API_KEY=tvlyLooksNothingLikeAKey\nGITHUB_REPOSITORY=happycode0/CyberPulse-AI\n"
+        "# NVD_API_KEY=commentedOutValue123\n"
+    )
+    monkeypatch.chdir(tmp_path)
+    for name in list(os.environ):
+        if name.upper() in {"DATABASE_URL", "TAVILY_API_KEY"}:
+            monkeypatch.delenv(name)
+    with pytest.raises(Exception):
+        Settings()  # the precondition: full validation really does fail here
+    findings = scan_for_secrets({"note": "x tvlyLooksNothingLikeAKey y"})
+    assert findings and all("tvlyLooksNothingLikeAKey" not in f for f in findings)
+    assert "TAVILY_API_KEY" in findings[0]
+    assert scan_for_secrets({"note": "happycode0/CyberPulse-AI"}) == []
+    assert scan_for_secrets({"note": "commentedOutValue123"}) == []
+
+
+def test_env_scan_does_not_depend_on_constructing_settings(tmp_path, monkeypatch):
+    class Boom:
+        model_fields = Settings.model_fields
+        model_config = Settings.model_config
+
+        def __new__(cls, *a, **k):
+            raise RuntimeError("Settings() must not be needed")
+
+    monkeypatch.setattr(validate_module, "Settings", Boom)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "some-opaque-value-1")
+    assert scan_for_secrets({"x": "some-opaque-value-1"})
+
+
+def test_unreadable_env_file_fails_closed(tmp_path, monkeypatch):
+    (tmp_path / ".env").write_text("TAVILY_API_KEY=whatever-value-1\n")
+    monkeypatch.chdir(tmp_path)
+
+    def denied(*a, **k):
+        raise PermissionError("nope")
+
+    monkeypatch.setattr(validate_module, "dotenv_values", denied)
+    with pytest.raises(ValidationFailure, match="\\.env"):
+        scan_for_secrets({"x": 1})
+
+
+def test_missing_env_file_is_fine(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    assert scan_for_secrets({"x": "hello"}) == []
 
 
 def test_scan_survives_non_string_values():

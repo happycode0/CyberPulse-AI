@@ -15,6 +15,7 @@ from typing import Any
 from urllib.parse import unquote, unquote_plus, urlsplit
 
 import jsonschema
+from dotenv import dotenv_values
 from pydantic import SecretStr
 from referencing import Registry, Resource
 
@@ -64,6 +65,13 @@ _HEX = re.compile(r"[0-9a-fA-F]+")
 # MD5, SHA-1, SHA-224, SHA-256, SHA-384 and SHA-512 digests are ordinary IOC content.
 _HASH_LENGTHS = frozenset({32, 40, 56, 64, 96, 128})
 _MIN_TOKEN_ENTROPY = 3.5
+_ALPHA_RUN = re.compile(r"[A-Za-z]+")
+# Title-case words, lower-case words (2+ letters) and acronyms; an acronym directly before
+# a Title-case word ("IEXObfuscation") gives up its last capital to that word.
+_WORD_RUN = re.compile(r"(?:[A-Z][a-z]+|[a-z]{2,}|[A-Z]{2,}(?![a-z]))+")
+_WORD_PIECE = re.compile(r"[A-Z][a-z]+|[a-z]{2,}|[A-Z]{2,}(?![a-z])")
+_MIN_WORD_FRACTION = 0.8
+_MIN_AVG_WORD_LENGTH = 3.25
 
 _SECRET_ENV_NAME = re.compile(
     r"(?:^|_)(?:API_?KEY|KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIALS?|PRIVATE_KEY)$"
@@ -75,21 +83,33 @@ def _entropy(token: str) -> float:
     return -sum(n / len(token) * math.log2(n / len(token)) for n in counts.values())
 
 
-def _looks_like_slug(token: str) -> bool:
-    """Hyphen/underscore-separated words and numbers, e.g. a capitalised URL slug.
+def _looks_like_words(token: str) -> bool:
+    """Advisory-title-shaped: mostly dictionary-shaped words, acronyms and numbers.
 
-    A random base62/base64url secret mixes letters and digits inside its segments, so it
-    essentially never has four or more segments that are each purely alphabetic or purely
-    numeric.
+    Titles and URL slugs ("Log4Shell-Exploitation-Guidance", "Exchange2019", "KB5031354",
+    "PowerShellInvokeExpression2026Campaign") are made of alphabetic runs that split cleanly
+    into Title-case words, lower-case words and acronyms, joined by digits or hyphens. A
+    random base62/base64 secret has no such structure: its case flips mid-run, so its runs
+    do not split into words of a natural length. Runs shorter than three letters (the
+    "v2", "x86", "0d" noise between digits) are ignored; at least 80% of the letters in the
+    longer runs must sit in word-shaped runs.
     """
-    segments = re.split(r"[-_]", token)
-    return len(segments) >= 4 and all(s.isalpha() or s.isdigit() for s in segments if s)
+    runs = [r for r in _ALPHA_RUN.findall(token) if len(r) >= 3]
+    if not runs:
+        return False
+    word_runs = [r for r in runs if _WORD_RUN.fullmatch(r)]
+    if sum(len(r) for r in word_runs) < _MIN_WORD_FRACTION * sum(len(r) for r in runs):
+        return False
+    # Any string of letters can be cut into 1-3 letter "words" at its case flips; real
+    # titles are made of longer ones.
+    pieces = [p for r in word_runs for p in _WORD_PIECE.findall(r)]
+    return sum(map(len, pieces)) / len(pieces) >= _MIN_AVG_WORD_LENGTH
 
 
 def _looks_like_generic_secret(token: str) -> bool:
     if _HEX.fullmatch(token) and len(token) in _HASH_LENGTHS:
         return False
-    if _looks_like_slug(token):
+    if _looks_like_words(token):
         return False
     return (
         any(c.isupper() for c in token)
@@ -115,14 +135,39 @@ def _settings_secret_env_names() -> set[str]:
     return names
 
 
+def _env_file_values() -> dict[str, str | None]:
+    """Values from the `.env` file(s) `Settings` reads, parsed directly.
+
+    Deliberately independent of `Settings()`: that class validates the whole variable set
+    and raises if any required one is missing, and the scan must not go blind because of
+    that. A missing file is normal (containers get their variables from the environment);
+    a file that exists but cannot be read means secrets we cannot see, so fail closed.
+    """
+    configured = Settings.model_config.get("env_file")
+    if not configured:
+        return {}
+    paths = [configured] if isinstance(configured, str | Path) else list(configured)
+    values: dict[str, str | None] = {}
+    for path in map(Path, paths):
+        if not path.is_file():
+            continue
+        try:
+            values.update(dotenv_values(path))
+        except Exception as exc:  # noqa: BLE001 - any failure to read means an unscanned source
+            raise ValidationFailure(
+                f"secret scan cannot read {path} ({type(exc).__name__}); refusing to publish"
+            ) from exc
+    return values
+
+
 def _secret_literals() -> list[tuple[str, str]]:
     """(source name, value) for every populated secret this process holds.
 
     Read fresh on every call, never cached: the environment is the source of truth and a
-    stale copy would defeat the point. Sources are the `Settings` secret fields (env and
-    `.env`), any environment variable whose name says it is a credential, and the password
-    inside any database URL. Catching the literal value is what catches a key whose shape
-    no regex anticipated.
+    stale copy would defeat the point. Sources are the process environment and the `.env`
+    file, filtered by name: the `Settings` secret fields, any name that says it is a
+    credential, and the password inside any database URL. Catching the literal value is what
+    catches a key whose shape no regex anticipated.
     """
     found: dict[str, str] = {}
     known = _settings_secret_env_names()
@@ -136,21 +181,11 @@ def _secret_literals() -> list[tuple[str, str]]:
         if value and "://" in value:
             add(f"{name} (password)", _url_password(value))
 
-    for name, value in os.environ.items():
-        upper = name.upper()
-        if upper in known or _SECRET_ENV_NAME.search(upper):
-            add_value(upper, value)
-
-    try:
-        settings = Settings()
-    except Exception:  # noqa: BLE001 - env alone is still scanned; never block on config
-        settings = None
-    if settings is not None:
-        for name in known:
-            value = getattr(settings, name.lower(), None)
-            if isinstance(value, SecretStr):
-                value = value.get_secret_value()
-            add_value(name, value if isinstance(value, str) else None)
+    for source in (_env_file_values(), os.environ):
+        for name, value in source.items():
+            upper = name.upper()
+            if upper in known or _SECRET_ENV_NAME.search(upper):
+                add_value(upper, value)
 
     return [(name, value) for value, name in found.items()]
 
