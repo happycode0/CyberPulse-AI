@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "title": "CyberPulse-AI event",
+  "description": "Public shape of an event, mirroring Event.model_dump_public().",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "schema_version", "pipeline_version", "scoring_version", "enrichment_version",
+    "first_seen", "last_seen", "last_material_update", "last_independent_confirmation", "status",
+    "title", "summary", "why_it_matters",
+    "domains", "categories", "ai_subdomain",
+    "severity", "severity_source",
+    "risk", "au", "entities",
+    "cves", "mitre_techniques", "claims", "sources", "timeline", "relationships",
+    "tags", "pending_enrichment"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "pattern": "^evt-\\d{4}-\\d{6}$" },
+    "schema_version": { "type": "string" },
+    "pipeline_version": { "type": "string" },
+    "scoring_version": { "type": "string" },
+    "enrichment_version": { "type": "string" },
+
+    "first_seen": { "type": "string", "format": "date-time" },
+    "last_seen": { "type": "string", "format": "date-time" },
+    "last_material_update": { "type": ["string", "null"], "format": "date-time" },
+    "last_independent_confirmation": { "type": ["string", "null"], "format": "date-time" },
+    "status": {
+      "enum": ["new", "active", "developing", "monitoring", "contained", "resolved", "archived"]
+    },
+
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "why_it_matters": { "type": ["string", "null"] },
+
+    "domains": { "type": "array", "items": { "type": "string" } },
+    "categories": { "type": "array", "items": { "type": "string" } },
+    "ai_subdomain": {
+      "anyOf": [
+        { "enum": ["AI_INDUSTRY", "AI_SECURITY", "AI_THREAT_ACTIVITY", "AI_CYBER_CONVERGENCE"] },
+        { "type": "null" }
+      ]
+    },
+
+    "severity": { "enum": ["critical", "high", "medium", "low", "unknown"] },
+    "severity_source": { "enum": ["cna", "cisa_adp", "nvd", "vendor", "ai_estimate", "unknown"] },
+
+    "risk": { "$ref": "#/$defs/risk" },
+    "au": { "$ref": "#/$defs/au" },
+    "entities": { "$ref": "#/$defs/entities" },
+
+    "cves": { "type": "array", "items": { "$ref": "#/$defs/cve" } },
+    "mitre_techniques": { "type": "array", "items": { "$ref": "#/$defs/mitre_technique" } },
+    "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source_ref" } },
+    "timeline": { "type": "array", "items": { "$ref": "#/$defs/timeline_entry" } },
+    "relationships": { "type": "array", "items": { "$ref": "#/$defs/relationship" } },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "pending_enrichment": { "type": "boolean" }
+  },
+  "$defs": {
+    "unit_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "string_list": { "type": "array", "items": { "type": "string" } },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["urgency", "confidence", "novelty", "prominence"],
+      "properties": {
+        "urgency": { "$ref": "#/$defs/unit_score" },
+        "confidence": { "$ref": "#/$defs/unit_score" },
+        "novelty": { "$ref": "#/$defs/unit_score" },
+        "prominence": { "$ref": "#/$defs/unit_score" }
+      }
+    },
+    "au": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relevance", "directly_reported_in_au", "reasons", "sectors", "soci_asset_classes"],
+      "properties": {
+        "relevance": { "$ref": "#/$defs/unit_score" },
+        "directly_reported_in_au": { "type": "boolean" },
+        "reasons": { "$ref": "#/$defs/string_list" },
+        "sectors": { "$ref": "#/$defs/string_list" },
+        "soci_asset_classes": { "$ref": "#/$defs/string_list" }
+      }
+    },
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actors", "organisations", "products", "countries", "industries"],
+      "properties": {
+        "actors": { "$ref": "#/$defs/string_list" },
+        "organisations": { "$ref": "#/$defs/string_list" },
+        "products": { "$ref": "#/$defs/string_list" },
+        "countries": { "$ref": "#/$defs/string_list" },
+        "industries": { "$ref": "#/$defs/string_list" }
+      }
+    },
+    "cvss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "vector", "source"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "vector": { "type": ["string", "null"] },
+        "source": { "type": "string" }
+      }
+    },
+    "epss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "status"],
+      "properties": {
+        "score": { "anyOf": [{ "$ref": "#/$defs/unit_score" }, { "type": "null" }] },
+        "status": { "type": "string" }
+      }
+    },
+    "kev": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["listed", "date_added", "due_date"],
+      "properties": {
+        "listed": { "type": "boolean" },
+        "date_added": { "type": ["string", "null"], "format": "date" },
+        "due_date": { "type": ["string", "null"], "format": "date" }
+      }
+    },
+    "cve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "cvss", "epss", "kev"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^CVE-\\d{4}-\\d{4,}$" },
+        "cvss": { "anyOf": [{ "$ref": "#/$defs/cvss" }, { "type": "null" }] },
+        "epss": { "$ref": "#/$defs/epss" },
+        "kev": { "$ref": "#/$defs/kev" }
+      }
+    },
+    "mitre_technique": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "confidence", "confidence_type", "dataset_version", "evidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/unit_score" },
+        "confidence_type": { "type": "string" },
+        "dataset_version": { "type": "string" },
+        "evidence": { "$ref": "#/$defs/string_list" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "confidence", "evidence"],
+      "properties": {
+        "text": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/unit_score" },
+        "evidence": { "$ref": "#/$defs/string_list" }
+      }
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "url", "published", "evidence_class", "lineage_id", "independent"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "url": { "type": "string" },
+        "published": { "type": ["string", "null"], "format": "date-time" },
+        "evidence_class": {
+          "enum": [
+            "PRIMARY", "AUTHORITATIVE", "VENDOR", "SPECIALIST",
+            "NEWS", "COMMUNITY", "SOCIAL", "AI_INFERENCE"
+          ]
+        },
+        "lineage_id": { "type": ["string", "null"] },
+        "independent": { "type": "boolean" }
+      }
+    },
+    "timeline_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timestamp", "type", "summary", "sources"],
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "type": {
+          "enum": [
+            "NEW_FACT", "NEW_CVE", "NEW_EXPLOIT", "EXPLOIT_CONFIRMED", "NEW_ACTOR",
+            "NEW_TARGET", "NEW_GEOGRAPHY", "NEW_AU_EXPOSURE", "NEW_IMPACT", "NEW_PATCH",
+            "NEW_MITIGATION", "NEW_EVIDENCE", "CORRECTION", "NO_MATERIAL_CHANGE"
+          ]
+        },
+        "summary": { "type": "string" },
+        "sources": { "$ref": "#/$defs/string_list" }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "event_id"],
+      "properties": {
+        "type": {
+          "enum": [
+            "related_event", "follow_up_to", "caused_by", "exploits", "affects",
+            "targets", "uses", "attributed_to", "mitigated_by", "resolves"
+          ]
+        },
+        "event_id": { "type": "string", "pattern": "^evt-\\d{4}-\\d{6}$" }
+      }
+    }
+  }
+}
