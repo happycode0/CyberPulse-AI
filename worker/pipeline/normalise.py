@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Sequence
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-from worker.models import RawItem, NormalisedItem
+from worker.models import RawItem, NormalisedItem, CVE_ID_PATTERN
 
 # Tracking parameters to strip from URLs
 TRACKING_PARAMS = {
@@ -27,7 +27,7 @@ TRACKING_PARAMS = {
 STOPWORDS = {
     "a", "an", "and", "are", "as", "at", "be", "by", "for", "from",
     "has", "he", "in", "is", "it", "its", "of", "on", "or", "that",
-    "the", "to", "was", "will", "with", "the", "this", "but", "have",
+    "the", "to", "was", "will", "with", "this", "but", "have",
     "had", "do", "does", "did", "can", "could", "would", "should",
 }
 
@@ -55,7 +55,8 @@ def canonical_url(url: str) -> str:
     params = parse_qs(parsed.query, keep_blank_values=True)
     filtered_params = {k: v for k, v in params.items() if k not in TRACKING_PARAMS}
     
-    # Reconstruct query string
+    # Reconstruct query string. Note: urlencode may reorder parameters relative to input,
+    # which is fine since deduplication happens via URL hash, not byte-sequence equality.
     query = urlencode(filtered_params, doseq=True) if filtered_params else ""
     
     # Reconstruct URL without fragment
@@ -83,12 +84,14 @@ def normalise_title(title: str) -> str:
 
 def extract_cves(text: str) -> list[str]:
     r"""
-    Extract CVE IDs from text using pattern CVE-\d{4}-\d{1,}.
+    Extract CVE IDs from text using pattern CVE-\d{4}-\d{4,} (matching CVE_ID_PATTERN).
     - Case-insensitive matching
+    - Requires at least 4 digits in sequence number (per CVE_ID_PATTERN and DB constraint)
     - Returns sorted unique list in uppercase
     """
-    # Pattern: CVE-YYYY-N+ (1 or more digits after year)
-    pattern = r"CVE-(\d{4})-(\d{1,})"
+    # Extract pattern from CVE_ID_PATTERN (remove ^ and $ anchors for free-text matching)
+    # Pattern: CVE-YYYY-NNNN+ (4 or more digits after year)
+    pattern = r"CVE-(\d{4})-(\d{4,})"
     matches = re.findall(pattern, text, re.IGNORECASE)
     
     # Format as CVE-YYYY-NNNN and deduplicate
