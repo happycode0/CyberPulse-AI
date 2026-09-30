@@ -199,6 +199,38 @@ export const SECTIONS = [
 
 const expanded = new Set();
 let filtersActive = false;
+// An event can sit in several sections, so cards carry data-event-id, never a DOM id.
+// main() fills these in so revealEvent can widen the view when a card is capped or filtered out.
+const view = { events: [], refresh: () => {}, clearFilters: () => {} };
+
+export function sectionFor(event) {
+  return SECTIONS.find((section) => section.match(event)) || null;
+}
+
+// Scrolls to and focuses a rendered card for the event, first showing it if a section
+// cap or an active filter is hiding it. Returns the card, or null if it cannot be shown.
+export function revealEvent(eventId) {
+  const find = () => [...document.querySelectorAll('[data-event-id]')].find((el) => el.dataset.eventId === eventId) || null;
+  let card = find();
+  const event = view.events.find((e) => e.event_id === eventId);
+  const section = event ? sectionFor(event) : null;
+  if (!card && section) {
+    expanded.add(section.id);
+    view.refresh();
+    card = find();
+  }
+  if (!card && section) {
+    view.clearFilters();
+    card = find();
+  }
+  if (card) {
+    // Focus first: it forces content-visibility to lay the card out, so the scroll lands on real sizes.
+    card.focus({ preventScroll: true });
+    card.scrollIntoView({ block: 'center' });
+    requestAnimationFrame(() => card.scrollIntoView({ block: 'center' }));
+  }
+  return card;
+}
 
 export function renderSections(data) {
   const events = [...(data.events || [])].sort(byProminence);
@@ -288,7 +320,7 @@ function eventCard(event) {
   const firstSource = (event.sources || [])[0];
   return h(
     'article',
-    { class: 'event-card', id: event.event_id, 'data-severity': key },
+    { class: 'event-card', 'data-event-id': event.event_id, tabindex: '-1', 'data-severity': key },
     h(
       'div',
       { class: 'event-card__meta' },
@@ -771,7 +803,8 @@ export function renderTicker(events) {
   const lane = document.getElementById('ticker-lane');
   if (!lane) return;
   clear(lane);
-  const top = [...events].sort(byProminence).slice(0, 12);
+  // Only events that land in a section are listed, so every link has a card to reveal.
+  const top = [...events].filter(sectionFor).sort(byProminence).slice(0, 12);
   if (!top.length) {
     lane.append(h('ul', { class: 'ticker-track' }, h('li', { class: 'ticker-item', text: 'NO HEADLINES IN THIS SNAPSHOT' })));
     return;
@@ -786,16 +819,25 @@ export function renderTicker(events) {
           'li',
           { class: 'ticker-item' },
           severityBadge(sevKey(e)),
-          duplicate ? h('span', { text: e.title }) : h('a', { href: `#${e.event_id}`, text: e.title }),
+          duplicate ? h('span', { text: e.title }) : tickerLink(e),
         ),
       ),
     );
   lane.append(track(false), track(true));
 }
 
+function tickerLink(event) {
+  const link = h('a', { href: `#sec-${sectionFor(event).id}`, text: event.title });
+  link.addEventListener('click', (e) => {
+    if (revealEvent(event.event_id)) e.preventDefault();
+  });
+  return link;
+}
+
 // ------------------------------------------------------------ fx and boot
 
 export function initFxToggle({ button = document.getElementById('fx-toggle'), root = document.documentElement, storage = safeStorage('localStorage') } = {}) {
+  // The label is fixed ("FX OFF"); aria-pressed=true means effects are off.
   const apply = (off) => {
     root.classList.toggle('fx-off', off);
     if (button) button.setAttribute('aria-pressed', off ? 'true' : 'false');
@@ -916,14 +958,16 @@ export async function main() {
     state.query = e.target.value;
     refresh();
   });
-  document.getElementById('filter-clear')?.addEventListener('click', () => {
+  const clearFilters = () => {
     state.query = '';
     state.selected = {};
     const q = document.getElementById('filter-query');
     if (q) q.value = '';
     document.querySelectorAll('#filter-facets button[aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
     refresh();
-  });
+  };
+  document.getElementById('filter-clear')?.addEventListener('click', clearFilters);
+  Object.assign(view, { events: data.events, refresh, clearFilters });
   refresh();
   runBoot(data);
 }
