@@ -161,9 +161,8 @@ def resolve(item: NormalisedItem, candidates: list[Event]) -> Resolution:
         event, score = _best(hits)
         return Resolution(Decision.UPDATE_EXISTING, event.event_id, "title_hash", score)
 
-    item_tokens = tokenise(item.normalised_title)
     scored = [
-        (c, k, max((token_overlap(item_tokens, t) for t in k.token_sets), default=0.0))
+        (c, k, max((token_overlap(item.tokens, t) for t in k.token_sets), default=0.0))
         for c, k in keyed
     ]
     item_cves = set(item.cves)

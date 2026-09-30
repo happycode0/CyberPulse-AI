@@ -67,3 +67,25 @@ def test_url_hash_matches_for_urls_differing_only_by_tracking_params(item):
     a = normalise(item.model_copy(update={"url": "https://x.com/a?utm_source=rss"}), now=NOW)
     b = normalise(item.model_copy(update={"url": "https://x.com/a"}), now=NOW)
     assert a.url_hash == b.url_hash
+
+
+def test_tokenise_ignores_punctuation_and_case():
+    assert tokenise("Critical RCE in Acme!") == tokenise("critical rce in acme")
+    assert tokenise("CISA warns: Acme flaw exploited, critical!") == frozenset(
+        {"cisa", "warns", "acme", "flaw", "exploited", "critical"}
+    )
+
+
+def test_tokenise_drops_short_tokens_and_stopwords():
+    assert tokenise("The RCE in an Acme VPN") == frozenset({"rce", "acme", "vpn"})
+
+
+def test_tokenise_is_idempotent_on_a_normalised_title():
+    title = "Zero-Day: Acme's VPN, exploited!"
+    assert tokenise(normalise_title(title)) == tokenise(title)
+
+
+def test_normalised_item_tokens_match_across_punctuation_variants(item):
+    a = normalise(item.model_copy(update={"title": "Critical RCE in Acme!"}), now=NOW)
+    b = normalise(item.model_copy(update={"title": "Critical RCE in Acme"}), now=NOW)
+    assert a.tokens == b.tokens

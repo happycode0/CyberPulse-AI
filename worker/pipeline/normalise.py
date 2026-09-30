@@ -104,17 +104,17 @@ def extract_cves(text: str) -> list[str]:
 def tokenise(title: str) -> frozenset[str]:
     """
     Tokenise a title by:
+    - Normalising it as normalise_title does (casefold, strip punctuation, collapse whitespace)
     - Splitting on whitespace
-    - Lowercasing
     - Removing tokens shorter than 3 characters
     - Removing stopwords
+
+    Idempotent on an already normalised title, so an item and a stored event title
+    tokenise identically regardless of punctuation.
     """
-    # Split and lowercase
-    tokens = title.lower().split()
-    
-    # Filter: length >= 3 and not in stopwords
-    filtered = {t for t in tokens if len(t) >= 3 and t not in STOPWORDS}
-    
+    filtered = {
+        t for t in normalise_title(title).split() if len(t) >= 3 and t not in STOPWORDS
+    }
     return frozenset(filtered)
 
 
