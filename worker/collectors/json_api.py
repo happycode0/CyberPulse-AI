@@ -95,32 +95,30 @@ def parse_json_api(source: SourceConfig, body: bytes) -> list[RawItem]:
     
     - Looks up parser by source.parser name in JSON_PARSERS registry
     - Raises KeyError if parser not registered (configuration error)
-    - Returns empty list on malformed JSON or missing expected keys
-    - Returns empty list if JSON is valid but has no parseable content
+    - Returns empty list on malformed JSON (data error — silent)
+    - Lets parser exceptions propagate (real bugs must surface)
     
     Args:
         source: SourceConfig specifying parser name
         body: Raw JSON bytes
     
     Returns:
-        List of RawItem objects, or empty list on parse/content error
+        List of RawItem objects, or empty list on malformed JSON
     
     Raises:
-        KeyError: If parser name not in registry
+        KeyError: If parser name not in registry (configuration error)
+        Exception: Any exception raised by the parser function (real bugs)
     """
-    # Raise KeyError if parser not registered
+    # Raise KeyError if parser not registered (configuration error)
     if source.parser not in JSON_PARSERS:
         raise KeyError(f"no JSON parser named '{source.parser}'")
     
-    # Parse JSON, return empty list on error
+    # Parse JSON; return empty list only on malformed JSON (data error)
     try:
         data = json.loads(body)
     except (json.JSONDecodeError, UnicodeDecodeError):
         return []
     
-    # Call the parser
+    # Call the parser; let its exceptions propagate (real bugs, configuration errors)
     parser = JSON_PARSERS[source.parser]
-    try:
-        return parser(source, data)
-    except Exception:
-        return []
+    return parser(source, data)
