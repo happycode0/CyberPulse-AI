@@ -406,7 +406,8 @@ def test_normalised_item_tokens_are_frozenset():
         tokens=frozenset({"a", "b"}),
     )
     assert isinstance(item.tokens, frozenset)
-    assert not hasattr(item, "published_is_estimated")
+    assert hasattr(item, "published_is_estimated")
+    assert item.published_is_estimated is False
 
 
 def test_source_config_accepts_class_alias_and_attribute_name():
