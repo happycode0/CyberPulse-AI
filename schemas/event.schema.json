@@ -61,24 +61,24 @@
   },
   "$defs": {
     "unit_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "nullable_unit_score": { "anyOf": [{ "$ref": "#/$defs/unit_score" }, { "type": "null" }] },
     "string_list": { "type": "array", "items": { "type": "string" } },
     "risk": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["urgency", "confidence", "novelty", "prominence"],
       "properties": {
-        "urgency": { "$ref": "#/$defs/unit_score" },
-        "confidence": { "$ref": "#/$defs/unit_score" },
-        "novelty": { "$ref": "#/$defs/unit_score" },
-        "prominence": { "$ref": "#/$defs/unit_score" }
+        "urgency": { "$ref": "#/$defs/nullable_unit_score" },
+        "confidence": { "$ref": "#/$defs/nullable_unit_score" },
+        "novelty": { "$ref": "#/$defs/nullable_unit_score" },
+        "prominence": { "$ref": "#/$defs/nullable_unit_score" }
       }
     },
     "au": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["relevance", "directly_reported_in_au", "reasons", "sectors", "soci_asset_classes"],
+      "required": ["directly_reported_in_au", "reasons", "sectors", "soci_asset_classes"],
       "properties": {
-        "relevance": { "$ref": "#/$defs/unit_score" },
+        "relevance": { "$ref": "#/$defs/nullable_unit_score" },
         "directly_reported_in_au": { "type": "boolean" },
         "reasons": { "$ref": "#/$defs/string_list" },
         "sectors": { "$ref": "#/$defs/string_list" },
