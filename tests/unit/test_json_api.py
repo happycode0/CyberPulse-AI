@@ -62,3 +62,16 @@ def test_invalid_json_returns_empty_list(kev_src):
 
 def test_missing_expected_key_returns_empty_list(kev_src):
     assert parse_json_api(kev_src, b'{"unexpected": 1}') == []
+
+
+def test_kev_entries_get_distinct_urls_and_titles_carrying_the_cve(kev_src, fixture_bytes):
+    """A shared URL would make the resolver treat every entry after the first as a duplicate;
+    generic catalog names would merge different CVEs added on the same day."""
+    items = parse_json_api(kev_src, fixture_bytes("kev_sample.json"))
+    assert len({i.url for i in items}) == len(items) == 3
+    assert all(i.guid in i.url and i.guid in i.title for i in items)
+
+
+def test_the_kev_parser_name_used_by_the_committed_registry_is_registered(kev_src, fixture_bytes):
+    src = kev_src.model_copy(update={"parser": "json_kev"})
+    assert len(parse_json_api(src, fixture_bytes("kev_sample.json"))) == 3
