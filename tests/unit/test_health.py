@@ -190,9 +190,48 @@ def test_not_modified_with_no_history_is_ok():
     assert assess(src, not_modified_fetch, [], now=NOW, history=[]).status is HealthStatus.OK
 
 
-def test_not_modified_carries_forward_a_failure_status():
-    h = assess(src, not_modified_fetch, [], now=NOW, history=[err(15)])
-    assert h.status is HealthStatus.ERROR and h.error == "boom"
+@pytest.mark.parametrize(
+    "failure", [HealthStatus.ERROR, HealthStatus.TIMEOUT, HealthStatus.EMPTY]
+)
+def test_not_modified_clears_a_previous_fetch_failure(failure):
+    """Any valid HTTP response, even 304, proves the transient failure has cleared."""
+    ok = health(HealthStatus.OK, at=NOW - timedelta(minutes=30), age=0.5)
+    prev = health(failure, at=NOW - timedelta(minutes=15), error="boom")
+    h = assess(src, not_modified_fetch, [], now=NOW, history=[ok, prev])
+    assert h.status is HealthStatus.OK and h.error is None
+
+
+def test_not_modified_after_a_failure_still_ages_the_last_known_content():
+    """OK (age 0.5 d, 1 h ago) -> ERROR (15 min ago) -> 304: the age keeps running from the
+    last content verdict, not from the failure record, which knows no age."""
+    ok = health(HealthStatus.OK, at=NOW - timedelta(hours=1), age=0.5)
+    h = assess(src, not_modified_fetch, [], now=NOW, history=[ok, err(15)])
+    assert h.status is HealthStatus.OK
+    assert h.newest_item_age_days == pytest.approx(0.5 + 1 / 24)
+
+
+def test_not_modified_after_a_failure_does_not_launder_a_stale_feed_into_ok():
+    stale = health(HealthStatus.STALE, at=NOW - timedelta(hours=1), age=120.0, error="old")
+    h = assess(src, not_modified_fetch, [], now=NOW, history=[stale, err(15)])
+    assert h.status is HealthStatus.STALE
+
+
+def test_not_modified_with_only_failures_in_history_is_ok():
+    assert assess(src, not_modified_fetch, [], now=NOW, history=errs(3)).status is HealthStatus.OK
+
+
+def test_fail_then_repeated_304s_never_degrade_a_reachable_source():
+    """The reported sequence: 200, one 500, then 304 on every later check. Feeding each
+    assessment back in as history, the source must recover on the first 304 and stay
+    ACTIVE indefinitely."""
+    history = [health(HealthStatus.OK, at=NOW - timedelta(minutes=15 * 12), age=0.1)]
+    history.append(health(HealthStatus.ERROR, at=NOW - timedelta(minutes=15 * 11), error="HTTP 500"))
+    for i in range(10, -1, -1):
+        h = assess(src, not_modified_fetch, [], now=NOW - timedelta(minutes=15 * i), history=history)
+        assert h.status is HealthStatus.OK
+        history.append(h)
+    assert consecutive_failures(history) == 0
+    assert next_lifecycle_state(src, history) is LifecycleState.ACTIVE
 
 
 def test_health_records_duration_and_counts():

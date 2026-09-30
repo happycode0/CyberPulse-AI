@@ -2,7 +2,7 @@ import asyncio
 import functools
 import re
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
@@ -237,6 +237,48 @@ async def test_five_consecutive_failures_degrade_the_source(pg_engine, respx_moc
     # the registry re-sync on every run must not wipe the tracked state
     await run_lane(Lane.FAST, once=True)
     assert scalar(pg_engine, "select lifecycle_state from source_registry where id='feed_a'") == "degraded"
+
+
+async def test_a_304_after_a_transient_error_recovers_the_source(
+    pg_engine, respx_mock, two_feeds_registry
+):
+    """200 (ETag saved), one 500, then 304 forever: the first 304 must clear the error, and
+    six more must never degrade a source the server keeps confirming is up."""
+    state = {"fail": False}
+
+    def answer(request):
+        if state["fail"]:
+            return httpx.Response(500)
+        if request.headers.get("if-none-match") == '"v1"':
+            return httpx.Response(304)
+        return httpx.Response(200, content=fixture_bytes("acsc_alerts.xml"),
+                              headers={"ETag": '"v1"'})
+
+    respx_mock.get(URL_A).mock(side_effect=answer)
+    respx_mock.get(URL_B).respond(200, content=fixture_bytes("acsc_alerts.xml"))
+    clock = {"n": 0}
+
+    async def run():      # a real clock moves between runs; identical timestamps would hide ordering bugs
+        clock["n"] += 1
+        return await _run_lane(
+            Lane.FAST, once=True, engine=pg_engine, registry_path=two_feeds_registry,
+            scoring_path=CONFIG / "scoring.yaml", now=NOW + timedelta(minutes=15 * clock["n"]),
+        )
+
+    def latest():
+        return scalar(pg_engine, "select status from source_health where source_id='feed_a' "
+                                 "order by id desc limit 1")
+
+    await run()
+    assert latest() == "ok"
+    state["fail"] = True
+    await run()
+    assert latest() == "error"
+    state["fail"] = False
+    for _ in range(6):
+        await run()
+        assert latest() == "ok"
+    assert scalar(pg_engine, "select lifecycle_state from source_registry where id='feed_a'") is None
 
 
 async def test_a_bad_body_from_one_source_is_a_failure_not_a_crash(pg_engine, respx_mock, run_lane):
