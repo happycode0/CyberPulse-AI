@@ -4,7 +4,12 @@ import pytest
 from sqlalchemy import text
 
 from worker.db.migrate import run_migrations
-from worker.db.sources import load_health_history, record_health, set_lifecycle_state
+from worker.db.sources import (
+    load_health_history,
+    load_lifecycle_states,
+    record_health,
+    set_lifecycle_state,
+)
 from worker.models import SourceHealth
 from worker.pipeline.health import HealthStatus, LifecycleState
 
@@ -78,6 +83,21 @@ def test_lifecycle_state_is_persisted(conn):
         text("select lifecycle_state from source_registry where id = :id"), {"id": SOURCE}
     ).scalar_one()
     assert value == "degraded"
+
+
+def test_load_lifecycle_states_reads_back_only_rows_with_a_state(conn):
+    conn.execute(
+        text(
+            "insert into source_registry (id, name, type, region, category, source_class, "
+            "priority, lane, enabled, url, parser, expected_frequency) values "
+            "('unset', 'unset', 'rss', 'AU', 'advisory', 'NEWS', 1, 'fast', true, "
+            "'https://example.org/u', 'rss', 'daily')"
+        )
+    )
+    set_lifecycle_state(conn, SOURCE, LifecycleState.TESTING)
+    states = load_lifecycle_states(conn)
+    assert states[SOURCE] is LifecycleState.TESTING
+    assert "unset" not in states
 
 
 def test_unknown_lifecycle_state_is_rejected_by_the_database(conn):
