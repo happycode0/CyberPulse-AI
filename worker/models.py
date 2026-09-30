@@ -101,6 +101,27 @@ class Lane(StrEnum):
     DEEP = "deep"
 
 
+class HealthStatus(StrEnum):
+    OK = "ok"
+    ERROR = "error"
+    TIMEOUT = "timeout"
+    EMPTY = "empty"
+    STALE = "stale"
+    DEGRADED = "degraded"
+    DISABLED = "disabled"
+
+
+class LifecycleState(StrEnum):
+    DISCOVERED = "discovered"
+    CANDIDATE = "candidate"
+    TESTING = "testing"
+    VALIDATED = "validated"
+    ACTIVE = "active"
+    DEGRADED = "degraded"
+    BROKEN = "broken"
+    RETIRED = "retired"
+
+
 class _Model(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -286,13 +307,17 @@ class SourceConfig(_Model):
     parser: str
     expected_frequency: str
     notes: str | None = None
+    lifecycle_state: LifecycleState | None = None
 
 
 class SourceHealth(_Model):
     source_id: str
     checked_at: AwareDatetime
-    status: str
+    status: HealthStatus
     error: str | None = None
+    newest_item_age_days: float | None = None
+    items_fetched: int = 0
+    duration_ms: int = 0
 
 
 class RunSummary(_Model):

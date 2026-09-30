@@ -54,7 +54,7 @@ def test_all_plan_tables_present(pg_engine):
 def test_migrations_are_idempotent(pg_engine):
     run_migrations(pg_engine)
     assert run_migrations(pg_engine) == []
-    assert current_version(pg_engine) == 1
+    assert current_version(pg_engine) == 2
 
 
 def test_required_extensions_present(pg_engine):
