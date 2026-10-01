@@ -10,16 +10,14 @@ import asyncio
 import logging
 import sys
 from collections.abc import Sequence
-from datetime import UTC, datetime
 
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
 from worker.models import Lane
 from worker.pipeline.run import run_lane
-from worker.publish.build import build_all
+from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
-from worker.settings import get_settings
 
 logger = logging.getLogger("worker")
 
@@ -40,10 +38,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _publish() -> int:
-    now = datetime.now(UTC)
     try:
-        with get_engine().connect() as conn:
-            written = build_all(conn, get_settings().data_dir, now=now)
+        written = asyncio.run(publish_now())
     except ValidationFailure as exc:
         logger.error("publish blocked, nothing written: %s", exc)
         return EXIT_FAILED
