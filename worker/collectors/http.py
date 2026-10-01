@@ -95,6 +95,15 @@ async def fetch(
     settings = get_settings()
     headers = {
         "User-Agent": settings.user_agent,
+        # Set explicitly to override httpx's default of "gzip, deflate", which www.cisa.gov
+        # treats as a bot signature: measured 2026-10-01, the pair (User-Agent
+        # "CyberPulse-AI/1.0", Accept-Encoding "gzip, deflate") returns 403 on every CISA RSS
+        # endpoint, 10 attempts out of 10, while changing either side alone returns 200 —
+        # "gzip" and "identity" both pass, as does the same default under a different UA. The
+        # value is still honest: gzip is what we can actually decode, so we do not advertise
+        # br or zstd to get through. It also keeps the responses compressed, which "identity"
+        # would not: cisa_kev alone is 1.7 MB per fetch.
+        "Accept-Encoding": "gzip",
     }
 
     if etag is not None:

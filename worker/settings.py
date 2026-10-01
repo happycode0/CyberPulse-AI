@@ -22,7 +22,19 @@ class Settings(BaseSettings):
     telegram_chat_id: str | None = None
     raw_cache_dir: Path = Path("/var/cache/cyberpulse")
     data_dir: Path = Path("data")
-    user_agent: str = "CyberPulse-AI/1.0 (+https://github.com/happycode0/CyberPulse-AI)"
+    # Product and version only, with no contact URL, because the URL is what gets us blocked.
+    # Measured 2026-10-01 against https://www.cyber.gov.au/rss/alerts: the edge accepts
+    # "CyberPulse-AI/1.0", "curl/8.5.0" and "feedparser/6.0.11" with 200, and drops the
+    # connection outright (not a 403 — no response at all, so the client sees a 30s read
+    # timeout) for "CyberPulse-AI/1.0 (+https://github.com/happycode0/CyberPulse-AI)" and for
+    # a Mozilla-prefixed variant carrying the same URL. www.dta.gov.au behaves identically.
+    # That cost all four ACSC feeds plus DTA — the primary Australian sources of an
+    # Australia-first product — so the URL goes. The string still identifies the client
+    # honestly; it is not disguised as a browser, which would be the other way to get through
+    # and is not one we are taking. www.cisa.gov wants the opposite of what ACSC wants and
+    # rejects this string — but only in combination with httpx's default Accept-Encoding, so
+    # that conflict is settled in the headers rather than here. See worker/collectors/http.py.
+    user_agent: str = "CyberPulse-AI/1.0"
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""

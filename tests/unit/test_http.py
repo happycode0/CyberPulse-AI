@@ -139,6 +139,37 @@ async def test_user_agent_identifies_project(respx_mock):
     assert "CyberPulse-AI" in route.calls[0].request.headers["user-agent"]
 
 
+async def test_accept_encoding_is_not_the_httpx_default(respx_mock):
+    """www.cisa.gov 403s our UA paired with httpx's default "gzip, deflate".
+
+    Guarded because the header looks redundant — httpx sets one for you — so deleting it is
+    the obvious tidy-up, and it costs every CISA RSS source with a 403 that reads like the
+    source blocking us rather than our own default giving us away. See worker/collectors/http.py.
+    """
+    URL = "https://cyber.gov.au/feed/alerts"
+    route = respx_mock.get(URL).respond(200, content=b"x")
+
+    client = httpx.AsyncClient()
+    src = SourceConfig(
+        id="acsc_alerts",
+        name="ACSC Alerts",
+        type="feed",
+        region="AU",
+        category="alerts",
+        source_class="acsc",
+        priority=1,
+        lane="fast",
+        enabled=True,
+        url=URL,
+        parser="rss",
+        expected_frequency="hourly",
+    )
+
+    await fetch(client, src)
+    sent = route.calls[0].request.headers["accept-encoding"]
+    assert sent == "gzip", sent
+
+
 async def test_403_is_error_not_exception(respx_mock):
     """Test that 403 Forbidden is returned as ERROR status, not raised."""
     URL = "https://cyber.gov.au/feed/alerts"

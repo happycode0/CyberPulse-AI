@@ -10,3 +10,7 @@ respx>=0.23
 pytest-asyncio>=1.4
 feedparser>=6
 apscheduler>=3.10,<4
+# Not a direct import: httpx picks this up to decode Content-Encoding: br. thecyberwire.com
+# returns a brotli-compressed body whatever the request asks for — including
+# "Accept-Encoding: identity" — so without a decoder here that feed is a 200 we cannot read.
+brotli>=1.1
