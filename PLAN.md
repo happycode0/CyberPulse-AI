@@ -1172,6 +1172,14 @@ first.
 `VULNERABILITIES` · `RESEARCH` · `POLICY / REGULATION` · `THE CREW` (sanitised agent
 status — the org made visible) · `SYSTEM`.
 
+Twelve sections, five tabs: `AUSTRALIA NOW` · `GLOBAL CYBER` · `AI + CYBER` · `OVERVIEW` ·
+`THE CREW`. One tab per section was a strip of thirteen pills that read as a wall and made the
+choice harder than the content behind it, so `OVERVIEW` carries the seven threat and context
+sections stacked inside it behind a jump list, and `SYSTEM` sits inside `THE CREW` — both answer
+who and what produced the page. Every section keeps its own id and heading, so `#sec-vulnerabilities`
+and friends stay linkable from the headline list, from `event.html`, from `history.html` and from
+anyone's bookmark; `initTabs()` resolves an id that has no tab to the panel holding it.
+
 ### 8.3 Components
 
 1. **HUD panel** — chamfered `clip-path`, bracket corners, header strip with panel ID and status dot, tick ruler.

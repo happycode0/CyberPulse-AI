@@ -125,17 +125,25 @@ a:hover { color: var(--text); }
 /* The active tab, when initTabs() has turned the nav into a tablist. */
 .site-nav a[aria-selected="true"] { color: var(--bg-void); background: var(--cyan); font-weight: 600; }
 .site-nav a[aria-selected="true"]:hover { color: var(--bg-void); }
-/* Group dividers in the tab strip. A flex item, not a wrapper around each group: initTabs()
-   collects its tabs with a descendant query, so a wrapper would not break that — but it
-   measures tab.offsetLeft against nav.offsetLeft to scroll the selected tab into view on
-   narrow screens, and a wrapper that generated a box would shift that measurement. The label
-   carries the divider as its own left border, so the group costs one element and no extra
-   rule. --text-muted is 6.2:1 on --bg-void, so 11px is still comfortably legible. */
-/* Spacing measured at 1320px: 10px from the previous pill to the divider (7px margin + the 3px
-   flex gap), 10px from the divider to the label text, 8px from the text to the first pill of the
-   group it names. margin-right exists because without it that last gap is the bare 3px flex gap,
-   which puts the text against the pill's border and reads as crammed rather than as a label. */
-.site-nav__group { flex: none; align-self: center; margin-left: 7px; margin-right: 5px; padding-left: 10px; border-left: 1px solid var(--line); font: 600 11px/1 var(--font-sans); letter-spacing: 0.12em; color: var(--text-muted); white-space: nowrap; }
+/* The jump list inside the overview panel. Deliberately not pill-shaped like .site-nav: these
+   are links down the page you are already on, not a view switcher, and dressing them as tabs
+   would promise a second widget that is not there. */
+.subnav { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 2px 0 4px; }
+.subnav a { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); text-decoration: none; border-bottom: 1px solid var(--line-strong); padding-bottom: 2px; }
+.subnav a:hover { border-bottom-color: var(--cyan); }
+
+/* A section that used to be its own tab panel. scroll-margin-top clears the sticky .site-header so
+   a jump from .subnav lands on the heading rather than behind it, and it cannot be a constant: the
+   header reflows from one row to three as the viewport narrows, measured 93px at 1320 and 222px at
+   375 on 2026-10-01, and a fixed 120px put every jump at 375 a hundred pixels behind the header.
+   initTabs() measures the header and publishes it as --header-h; the literal here is the fallback
+   for the no-JS case, where there are no tabs either and the anchors are plain in-page links.
+   minmax(0, 1fr) for the reason .panel-body has it: the event lists inside are skipped by
+   content-visibility and report their contain-intrinsic-size as a min-content width, which would
+   otherwise set the track for everything sharing it. */
+.subsection { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; scroll-margin-top: calc(var(--header-h, 120px) + 8px); padding-top: 10px; border-top: 1px solid var(--line); }
+.subsection__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; }
+.subsection__head .subhead { margin-top: 0; }
 
 /* The collection stamp used to be its own full-width band between the tabs and the first
    panel — a third horizontal rule to cross before reaching any content, and, because it sat
