@@ -10,6 +10,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from worker.models import Lane
 from worker.pipeline import run as pipeline_run
+from worker.publish.run import publish_now
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +29,34 @@ def job_id(lane: Lane) -> str:
 
 
 async def _run_lane_job(lane: Lane) -> None:
-    """Run one lane; a failed run is logged and the schedule carries on."""
+    """Run one lane and republish from it; either step failing leaves the schedule running.
+
+    Publishing belongs here rather than only behind `--publish`. PLAN.md §11's failure model says
+    that with Paperclip down the worker "keeps collecting and publishing", which it can only do if
+    a scheduled run is what triggers a publish — otherwise the database advances every 15 minutes
+    while data/*.json keeps describing whichever collection was last published by hand, and the
+    site reports a stale snapshot as current.
+    """
     try:
         await pipeline_run.run_lane(lane)
     except Exception:
+        # Not followed by a publish. run_lane already absorbs per-source failures and returns a
+        # summary counting them, so reaching here means the run itself could not proceed — the
+        # database is unreachable or the registry is unreadable. Publishing would either fail for
+        # the same reason or rewrite the previous files unchanged; neither is worth the second
+        # traceback in the log.
         logger.exception("scheduled %s run failed", lane.value)
+        return
+
+    try:
+        written = await publish_now()
+    except Exception:
+        # Deliberately not fatal. Collection is the irreplaceable half: a missed publish is
+        # corrected by the next run 15 minutes later, whereas a lane that stops running loses
+        # items that have already fallen off the end of their feed and cannot be re-fetched.
+        logger.exception("publish after the %s lane failed; collection is unaffected", lane.value)
+    else:
+        logger.info("published %d files after the %s lane", len(written), lane.value)
 
 
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
