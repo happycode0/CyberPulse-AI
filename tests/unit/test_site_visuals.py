@@ -156,6 +156,49 @@ def test_the_sticky_header_height_is_measured_not_assumed():
     assert "ResizeObserver(syncHeaderHeight)" in js, "a sampled header height goes stale"
 
 
+def test_an_unreadable_snapshot_is_not_reported_as_zero_signals():
+    """"Nothing matched" and "nothing was read" are different claims, and only one was being made.
+
+    Measured on the published site with no data branch: all ten sections showed "0 SIGNALS" and
+    "NO SIGNALS IN THIS SNAPSHOT." — a confident statement about a snapshot that had 404'd, made
+    ten times over. The markup's own defaults said it too, so it was on the page before any fetch
+    resolved. history.html's count and the map's count already said AWAITING DATA for this exact
+    reason; the dashboard sections were the ones that did not.
+    """
+    js = read("site/assets/hud.js")
+    block = js.split("export function renderSections", 1)[1].split("\nexport ", 1)[0]
+    assert "const unread = Boolean(data.unread)" in block, "renderSections cannot tell the two apart"
+    assert "unread ? 'AWAITING DATA'" in block, "an unread section still reports a count"
+    assert "'UNKNOWN — NO SNAPSHOT WAS READ.'" in block, "an unread section still claims to be empty"
+    assert "renderSections({ events: [], unread: true })" in js, "the failed load does not say so"
+    assert ">0 SIGNALS<" not in read("site/index.html"), "the markup claims zero before any fetch"
+
+
+def test_the_crew_roster_renders_even_when_the_feed_cannot_be_read():
+    """The roster is presentation, not a reading of the feed, so a failed load must not hide it.
+
+    Measured on the published site, which has no data branch yet: data/live.json 404s, loadData()
+    throws, and main() returned early from the catch — so THE CREW served an empty grid underneath
+    a count that still read "16 AGENTS". 0 of 16 tiles, no portraits, no personas, no status. The
+    roster, the stage list and the per-agent ownership table describe what the system *is* rather
+    than what the last run found; all three ship with the site and have to render on both paths.
+
+    The converse matters just as much, hence the second loop. The index and the gauges compute
+    "0 events, LOW" from an empty list and the headline list would claim this snapshot has no
+    headlines when the truth is that no snapshot was read. Those are fabrications, so they stay
+    behind the guard: an absence is honest, an invented zero is not.
+    """
+    js = read("site/assets/hud.js")
+    body = js.split("export async function main", 1)[1].split("\n}", 1)[0]
+    unguarded, sep, guarded = body.partition("if (!data) {")
+    assert sep, "main() no longer has a no-data guard, so this test cannot tell the halves apart"
+    for call in ("renderStrip(", "renderPipeline(", "renderCrew("):
+        assert call in unguarded, f"{call} sits behind the no-data guard; it ships with the site"
+    for call in ("renderIndex(", "renderGauges(", "renderHeadlines("):
+        assert call not in unguarded, f"{call} on empty input publishes a figure nothing measured"
+        assert call in guarded, f"{call} is no longer called at all"
+
+
 def test_a_deep_link_to_a_sub_section_is_finished_after_the_first_render():
     """initTabs() runs before the data arrives, so on load the target is not where it will end up.
 

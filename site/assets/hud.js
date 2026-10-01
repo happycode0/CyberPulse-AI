@@ -313,31 +313,46 @@ export function revealEvent(eventId) {
   return card;
 }
 
+// `unread` is the third state, and it is not the same as zero. An empty event list can mean the
+// snapshot holds nothing for this section, or that no snapshot could be read at all — and the
+// difference is the whole honest-data rule (PLAN.md §2). Told to render nothing, this used to put
+// "0 SIGNALS" and "NO SIGNALS IN THIS SNAPSHOT." under all ten sections of a page whose data had
+// 404'd: ten confident claims about a snapshot nobody had. history.html and the map count already
+// said AWAITING DATA for exactly this reason; the dashboard's sections were the odd ones out.
 export function renderSections(data) {
+  const unread = Boolean(data.unread);
   const events = [...(data.events || [])].sort(byProminence);
   const result = {};
   for (const section of SECTIONS) {
     const matches = events.filter(section.match);
     result[section.id] = matches;
     const body = document.querySelector(`[data-section-body="${section.id}"]`);
-    if (body) renderSectionBody(body, section.id, matches);
+    if (body) renderSectionBody(body, section.id, matches, unread);
     const count = document.querySelector(`[data-count-for="${section.id}"]`);
     if (count) {
-      count.textContent = `${matches.length} ${matches.length === 1 ? 'SIGNAL' : 'SIGNALS'}`;
+      count.textContent = unread ? 'AWAITING DATA' : `${matches.length} ${matches.length === 1 ? 'SIGNAL' : 'SIGNALS'}`;
       const led = count.parentElement.querySelector('.led');
-      if (led) led.dataset.state = matches.length ? 'ok' : 'idle';
+      if (led) led.dataset.state = !unread && matches.length ? 'ok' : 'idle';
     }
   }
   return result;
 }
 
-function renderSectionBody(body, id, matches) {
+function renderSectionBody(body, id, matches, unread = false) {
   clear(body);
   if (!matches.length) {
     body.append(
       h('p', {
         class: 'empty',
-        text: filtersActive ? 'NO SIGNALS MATCH THE CURRENT FILTERS.' : 'NO SIGNALS IN THIS SNAPSHOT.',
+        // Short on purpose. This prints under all ten sections at once, and the full explanation
+        // is already in the notice at the top of the page; spelling it out ten times is the same
+        // mistake as the five rows of "—" a crew card used to print (hud.css, .crew-card__idle).
+        // It only has to not claim the section is empty, which "UNKNOWN" does in one word.
+        text: unread
+          ? 'UNKNOWN — NO SNAPSHOT WAS READ.'
+          : filtersActive
+            ? 'NO SIGNALS MATCH THE CURRENT FILTERS.'
+            : 'NO SIGNALS IN THIS SNAPSHOT.',
       }),
     );
     return;
@@ -1316,6 +1331,13 @@ function renderSystem(status, feed, health) {
     ['LAST RUN LANE', status?.last_run?.lane?.toUpperCase()],
   ];
   for (const [k, v] of rows) if (v) dl.append(h('dt', { text: k }), h('dd', { text: v }));
+  // Every stamp here comes from a completed run, so before the first one the list is empty — and
+  // an empty list under a VERSIONS heading reads as a rendering fault rather than as "not yet".
+  // One line saying which, for the same reason a crew card with no workload says so in one line
+  // instead of printing five rows of "—".
+  if (!dl.children.length) {
+    dl.append(h('dt', { text: 'STATUS' }), h('dd', { text: 'No completed run has been published, so there are no version stamps yet.' }));
+  }
 }
 
 // -------------------------------------------------------------------- crew
@@ -2081,23 +2103,44 @@ function showError(message) {
 
 export async function main() {
   const tabs = initCommon();
-  let data;
+  let data = null;
   try {
     data = await loadData();
   } catch (err) {
     showError(`The published data could not be read (${err.message}). Try again after the next collection completes.`);
-    renderPipeline(null);
-    renderSections({ events: [] });
+  }
+
+  // Two kinds of content on this page, and only one of them depends on the feed.
+  //
+  // The crew roster, the stage list and the per-agent ownership table are presentation: they
+  // describe what the system is, not what the last run found, and they ship with the site. So
+  // they render whether or not data/ could be read. Gating the roster behind a successful read
+  // was a defect, not a simplification — until the data branch exists, THE CREW served an empty
+  // grid underneath a count that still read 16 AGENTS. The roster's own fallbacks already say
+  // NOT YET ACTIVE and "No workload published for this agent yet" per card, which is the honest
+  // statement; reaching them was the problem.
+  //
+  // Everything below the guard is a reading of the feed, and each one would have to invent a
+  // figure to render on empty input: the index and the gauges both compute "0 events, LOW" from
+  // no events, and the headline list would claim this snapshot has no headlines when the truth is
+  // that no snapshot was read. A fabricated zero is worse than an absence, so those wait.
+  renderStrip(data || {});
+  renderPipeline(data?.health || null, data ? { status: data.status, feed: data.feed } : {});
+  renderCrew(data ? await getJson(`${data.base}crew.json`, globalThis.fetch) : null);
+  if (!data) {
+    renderSections({ events: [], unread: true });
+    // A deep link is still a deep link on a page with no events. The sections have just been
+    // given their final (one-line) contents, so this is the same moment as the call at the end
+    // of the readable path: the layout will not move again.
+    tabs?.rescrollToHash();
     return;
   }
+
   const state = { events: data.events, selected: {} };
-  renderStrip(data);
   renderIndex(data);
   renderGauges(data);
   renderRadar(data);
   renderHeadlines(data.events);
-  renderPipeline(data.health, { status: data.status, feed: data.feed });
-  renderCrew(await getJson(`${data.base}crew.json`, globalThis.fetch));
 
   const count = document.getElementById('filter-count');
   const refresh = () => {
