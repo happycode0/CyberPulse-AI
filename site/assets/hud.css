@@ -125,6 +125,17 @@ a:hover { color: var(--text); }
 /* The active tab, when initTabs() has turned the nav into a tablist. */
 .site-nav a[aria-selected="true"] { color: var(--bg-void); background: var(--cyan); font-weight: 600; }
 .site-nav a[aria-selected="true"]:hover { color: var(--bg-void); }
+/* Group dividers in the tab strip. A flex item, not a wrapper around each group: initTabs()
+   collects its tabs with a descendant query, so a wrapper would not break that — but it
+   measures tab.offsetLeft against nav.offsetLeft to scroll the selected tab into view on
+   narrow screens, and a wrapper that generated a box would shift that measurement. The label
+   carries the divider as its own left border, so the group costs one element and no extra
+   rule. --text-muted is 6.2:1 on --bg-void, so 11px is still comfortably legible. */
+/* Spacing measured at 1320px: 10px from the previous pill to the divider (7px margin + the 3px
+   flex gap), 10px from the divider to the label text, 8px from the text to the first pill of the
+   group it names. margin-right exists because without it that last gap is the bare 3px flex gap,
+   which puts the text against the pill's border and reads as crammed rather than as a label. */
+.site-nav__group { flex: none; align-self: center; margin-left: 7px; margin-right: 5px; padding-left: 10px; border-left: 1px solid var(--line); font: 600 11px/1 var(--font-sans); letter-spacing: 0.12em; color: var(--text-muted); white-space: nowrap; }
 
 /* The collection stamp used to be its own full-width band between the tabs and the first
    panel — a third horizontal rule to cross before reaching any content, and, because it sat
@@ -135,11 +146,6 @@ a:hover { color: var(--text); }
 .status-strip { display: flex; flex-wrap: wrap; gap: 2px 13px; align-items: baseline; flex: 1 1 320px; min-width: 0; font-size: 13px; color: var(--text-dim); }
 .status-strip__label { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.07em; color: var(--text-muted); }
 .status-strip__value { color: var(--text); }
-/* The caveat always takes its own line rather than fitting or not fitting depending on the
-   viewport: two facts then a qualification reads as composed, where the same text breaking
-   mid-run at one width and not another reads as an accident. It is also the one item here
-   that is not a datum, so it sits a step back in the greys. */
-.status-strip__note { flex-basis: 100%; color: var(--text-muted); font-size: 12.5px; }
 @media (max-width: 720px) { .status-strip { order: 3; flex-basis: 100%; } }
 
 .btn { font: 600 13px/1 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 14px; min-height: 36px; cursor: pointer; }
