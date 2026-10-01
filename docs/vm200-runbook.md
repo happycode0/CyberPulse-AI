@@ -356,6 +356,36 @@ machine that is always on. The worker logs `scheduler started: lane-fast, lane-n
 publishes after each run — collection and publishing are one unit now, so `data/*.json` cannot
 describe an older collection than the database holds.
 
+Confirmed unattended at 12:00 UTC. Both lanes fired on the same tick (`*/15` and `0 */4` coincide
+every four hours, which is why publishes hold a lock), and each published afterwards:
+
+```
+22:00:00 Running job "fast lane" ... (scheduled at 2026-10-01 12:00:00+00:00)
+22:00:00 Running job "normal lane" ... (scheduled at 2026-10-01 12:00:00+00:00)
+22:00:01 run ...-b072e3 done: ok=8 failed=0 stale=3 items=90 new=0 updated=0 dup=90
+22:00:13 published 531 files after the fast lane
+22:01:34 run ...-686f8a done: ok=19 failed=1 stale=2 items=320 new=2 updated=0 dup=318
+22:01:42 published 531 files after the normal lane
+```
+
+### Expect sources to go `degraded`, and do not treat it as breakage
+
+The same tick logged `source cisa_news: lifecycle active -> degraded`, and the same for
+`acsc_alerts` and `acsc_publications`. This is correct:
+
+- `worker/pipeline/health.py:49` counts `STALE` among the failure statuses, and `DEGRADE_AFTER = 5`
+  demotes an ACTIVE source after five consecutive ones. At a 15-minute cadence a genuinely quiet
+  feed crosses that in about 75 minutes. `acsc_publications` has published nothing for 14 days
+  against a 7-day expectation, so it is being reported accurately.
+- **A degraded source is still collected.** `sources_for_lane` filters on lane and `enabled` only,
+  never on lifecycle state, so demotion cannot create a catch-22 where a quiet source stops being
+  polled and therefore can never recover. One OK fetch moves it to TESTING.
+- It reaches the site rather than hiding in a log: `data/source-health.json` carries
+  `lifecycle_state: "degraded"` for each, alongside `{ok: 27, stale: 5, timeout: 1, no_data: 17}`.
+
+So the signal to act on is a source going degraded that you expected to be busy — not the fact that
+any source is degraded at all.
+
 ---
 
 ## Defects this build surfaced
