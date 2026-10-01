@@ -9,6 +9,7 @@ unrelated advisory happens to mention:
 - `epss`  — what is today's modelled probability of exploitation
 - `cvss`  — what base score does the most authoritative container carry (PLAN.md §2.5's chain:
             CNA record → CISA Vulnrichment ADP → NVD)
+- `severity` — which published band that score falls in, and which rung it came from
 
 The shared rule across all three is that an absent answer is `unknown`. A CVE with no CVSS is not
 a 0.0, a CVE EPSS has not modelled is not a 0% chance, and a register that failed to download
@@ -19,12 +20,16 @@ from worker.groundtruth.cvss import resolve_cvss
 from worker.groundtruth.epss import EpssSnapshot, parse_epss_snapshot
 from worker.groundtruth.errors import GroundTruthError
 from worker.groundtruth.kev import KevCatalogue, parse_kev_catalogue
+from worker.groundtruth.severity import CVSS_BANDS, severity_for_score, severity_from_cvss
 
 __all__ = [
+    "CVSS_BANDS",
     "EpssSnapshot",
     "GroundTruthError",
     "KevCatalogue",
     "parse_epss_snapshot",
     "parse_kev_catalogue",
     "resolve_cvss",
+    "severity_for_score",
+    "severity_from_cvss",
 ]

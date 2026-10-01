@@ -23,7 +23,8 @@ from worker.groundtruth import (
     resolve_cvss,
 )
 from worker.groundtruth.ids import normalise_cve_id
-from worker.models import CveRef, SeveritySource
+from worker.groundtruth.severity import severity_for_score, severity_from_cvss
+from worker.models import CveRef, CvssScore, Severity, SeveritySource
 
 # --------------------------------------------------------------------------------------------
 # Fixtures, shaped after the live payloads
@@ -563,3 +564,69 @@ def test_register_keys_are_always_valid_cveref_ids():
 def test_cve_ids_are_normalised_consistently(raw, expected):
     """Two registers spelling an id differently is the same as one of them not holding it."""
     assert normalise_cve_id(raw) == expected
+
+
+# --------------------------------------------------------------------------------------------
+# Severity bands
+# --------------------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [
+        (10.0, Severity.CRITICAL),
+        (9.8, Severity.CRITICAL),
+        (9.0, Severity.CRITICAL),
+        (8.9, Severity.HIGH),
+        (7.0, Severity.HIGH),
+        (6.9, Severity.MEDIUM),
+        (4.0, Severity.MEDIUM),
+        (3.9, Severity.LOW),
+        (0.1, Severity.LOW),
+    ],
+)
+def test_the_cvss_v3_1_bands_are_applied_at_their_published_boundaries(score, expected):
+    assert severity_for_score(score) == expected
+
+
+def test_no_score_is_unknown_and_not_low():
+    """The whole point: `unknown` and `low` are different claims about a vulnerability."""
+    assert severity_for_score(None) is Severity.UNKNOWN
+
+
+def test_a_zero_score_is_low_rather_than_unknown():
+    """0.0 is a measurement. CVSS calls it NONE and Severity has no such member, so it bands as
+    LOW — scoring.yaml weights low below unknown, so known-harmless still ranks under unrated."""
+    assert severity_for_score(0.0) is Severity.LOW
+
+
+@pytest.mark.parametrize("score", [-0.1, 10.1, 99.0, -50.0])
+def test_a_score_outside_the_scale_is_unknown_rather_than_clamped(score):
+    """Clamping would present a malformed field as a confident CRITICAL."""
+    assert severity_for_score(score) is Severity.UNKNOWN
+
+
+def test_a_banded_score_carries_the_rung_it_came_from():
+    cvss = CvssScore(score=9.8, vector="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", source="cna")
+    assert severity_from_cvss(cvss) == (Severity.CRITICAL, SeveritySource.CNA)
+
+
+def test_cisa_adp_is_recorded_as_its_own_provenance_not_as_nvd():
+    cvss = CvssScore(score=7.5, source="cisa_adp")
+    assert severity_from_cvss(cvss) == (Severity.HIGH, SeveritySource.CISA_ADP)
+
+
+def test_an_absent_score_yields_unknown_severity_and_unknown_provenance():
+    assert severity_from_cvss(None) == (Severity.UNKNOWN, SeveritySource.UNKNOWN)
+
+
+def test_an_unrecognised_provider_keeps_the_band_but_not_a_guessed_provenance():
+    """The band came from a real score, so it stands; the provider did not, so it does not."""
+    cvss = CvssScore(score=9.1, source="some-vendor-adp")
+    assert severity_from_cvss(cvss) == (Severity.CRITICAL, SeveritySource.UNKNOWN)
+
+
+def test_every_band_is_reachable_and_they_partition_the_scale():
+    """A gap or an overlap in the bands would be invisible in per-value tests."""
+    bands = {severity_for_score(round(x * 0.1, 1)) for x in range(0, 101)}
+    assert bands == {Severity.LOW, Severity.MEDIUM, Severity.HIGH, Severity.CRITICAL}
