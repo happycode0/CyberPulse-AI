@@ -6,11 +6,10 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05070A">
+<meta name="theme-color" content="#121926">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>CyberPulse-AI | Australia-first cyber and AI intelligence</title>
 <meta name="description" content="Evidence-linked cybersecurity and AI intelligence with an Australian lens. A snapshot of the last completed collection, not a real-time feed.">
-<link rel="preload" href="assets/fonts/orbitron-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/chakra-petch-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/hud.css">
 <script type="module" src="assets/hud.js"></script>
@@ -21,14 +20,20 @@
 <header class="site-header">
   <div class="site-header__row">
     <h1 class="brand"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></h1>
+    <div class="status-strip" id="status-strip" role="status">
+      <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
+      <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
+      <span class="mono" id="strip-local"></span>
+      <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
+    </div>
     <div class="site-header__controls">
       <a class="btn" href="history.html">HISTORY</a>
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
-      <button type="button" id="ticker-toggle" class="btn" aria-pressed="false" aria-controls="ticker">PAUSE TICKER</button>
     </div>
   </div>
   <nav class="site-nav" aria-label="Sections">
     <a href="#sec-australia-now">AUSTRALIA NOW</a>
+    <a href="#sec-overview">OVERVIEW</a>
     <a href="#sec-global-cyber">GLOBAL CYBER</a>
     <a href="#sec-ai-cyber">AI + CYBER</a>
     <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
@@ -43,24 +48,6 @@
   </nav>
 </header>
 
-<div class="status-strip" id="status-strip" role="status">
-  <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
-  <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
-  <span class="status-strip__sep" aria-hidden="true">//</span>
-  <span class="mono" id="strip-local"></span>
-  <span class="status-strip__sep" aria-hidden="true">//</span>
-  <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
-</div>
-
-<section class="ticker" id="ticker" aria-label="Headlines from the last completed collection">
-  <div class="ticker-lane" id="ticker-lane"></div>
-</section>
-
-<div id="boot" class="boot" hidden aria-hidden="true">
-  <pre id="boot-text" class="boot__text mono"></pre>
-  <button type="button" id="boot-skip" class="btn btn--small" tabindex="-1">SKIP</button>
-</div>
-
 <noscript>
   <p class="notice">This dashboard reads published JSON files with a small script. Enable JavaScript to see the events.</p>
 </noscript>
@@ -68,150 +55,136 @@
 <main id="main" class="wrap">
   <div class="load-error notice" id="load-error" hidden role="alert"></div>
 
-  <section class="hero hud-panel hud-panel--hero" id="sec-australia-now" aria-labelledby="h-australia-now">
-    <div class="hud-panel__inner">
-      <header class="hud-panel__head">
-        <span class="panel-id mono">PNL-01</span>
-        <h2 class="panel-title panel-title--hero" id="h-australia-now">AUSTRALIA NOW</h2>
-        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="australia-now">0 SIGNALS</span></span>
-      </header>
-      <div class="tick-ruler" aria-hidden="true"></div>
-      <div class="hero__grid">
-        <div class="hero__events" data-section-body="australia-now"></div>
-        <aside class="hero__side" aria-label="Situation overview">
-          <div id="cp-index"></div>
-          <div id="radar-slot"></div>
-        </aside>
-      </div>
+  <!-- The filter applies to every tab, so it stays outside the tab panels. -->
+  <div class="filterbar" aria-label="Filter events">
+    <div class="filterbar__actions">
+      <button type="button" class="btn btn--small" id="filter-clear">CLEAR ALL FILTERS</button>
+      <span class="filterbar__count mono" id="filter-count" role="status"></span>
     </div>
-  </section>
+    <details class="filterbar__more">
+      <summary>TAG FILTERS</summary>
+      <div id="filter-facets" class="facets"></div>
+    </details>
+  </div>
 
-  <section class="gauges" id="gauges" aria-label="Severity distribution"></section>
-
-  <section class="hud-panel hud-panel--wide" id="sec-world-map" aria-labelledby="h-world-map">
-    <div class="hud-panel__inner">
-      <header class="hud-panel__head">
-        <span class="panel-id mono">GEO-01</span>
-        <h2 class="panel-title" id="h-world-map">WORLD MAP</h2>
-        <span class="panel-status"><span class="led" data-state="idle" id="map-led"></span><span class="panel-count mono" id="map-count">AWAITING DATA</span></span>
-      </header>
-      <div class="tick-ruler" aria-hidden="true"></div>
-      <div class="panel-body">
-        <p class="hint">Countries with events in this snapshot are shaded by event count on an Equal Earth projection centred on 150°E (basemap: Natural Earth via world-atlas, public domain). Selecting a country — on the map, or in the country dropdown below which is the keyboard and screen-reader equivalent — filters every section underneath. Selecting ALL COUNTRIES clears the filter.</p>
-        <div id="world-map" class="map-host"></div>
-        <div class="map-legend" aria-label="Map shading: events per country">
-          <span class="map-legend__item"><span class="map-legend__sw" data-load="1" aria-hidden="true"></span>1 EVENT</span>
-          <span class="map-legend__item"><span class="map-legend__sw" data-load="2" aria-hidden="true"></span>2–3 EVENTS</span>
-          <span class="map-legend__item"><span class="map-legend__sw" data-load="3" aria-hidden="true"></span>4–6 EVENTS</span>
-          <span class="map-legend__item"><span class="map-legend__sw" data-load="4" aria-hidden="true"></span>7 OR MORE EVENTS</span>
-        </div>
-        <label class="field">
-          <span class="field__label">COUNTRY FILTER — KEYBOARD AND SCREEN-READER EQUIVALENT OF THE MAP</span>
-          <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
-        </label>
-        <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="filters hud-panel" id="filters" aria-labelledby="h-filters">
-    <div class="hud-panel__inner">
-      <header class="hud-panel__head">
-        <span class="panel-id mono">FLT-01</span>
-        <h2 class="panel-title" id="h-filters">TAG FILTER</h2>
-        <span class="panel-status"><span class="panel-count mono" id="filter-count" role="status"></span></span>
-      </header>
-      <div class="tick-ruler" aria-hidden="true"></div>
-      <div class="filters__body">
-        <label class="field">
-          <span class="field__label">SEARCH TITLES AND SUMMARIES</span>
-          <input type="search" id="filter-query" class="input" autocomplete="off" spellcheck="false">
-        </label>
-        <div id="filter-facets" class="facets"></div>
-        <button type="button" class="btn" id="filter-clear">CLEAR FILTERS</button>
-      </div>
-    </div>
-  </section>
-
-  <div class="grid">
-    <section class="hud-panel" id="sec-global-cyber" aria-labelledby="h-global-cyber">
+  <!-- Every tab panel is a direct child here, so switching a tab always swaps what sits
+       immediately under the tab strip. Nothing untabbed may go between them. -->
+  <div class="tab-panels">
+    <section class="hud-panel hud-panel--hero" id="sec-australia-now" aria-labelledby="h-australia-now">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-02</span><h2 class="panel-title" id="h-global-cyber">GLOBAL CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="global-cyber">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head">
+          <h2 class="panel-title panel-title--hero" id="h-australia-now">AUSTRALIA NOW</h2>
+          <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="australia-now">0 SIGNALS</span></span>
+        </header>
+        <div class="hero__grid">
+          <div class="hero__events" data-section-body="australia-now"></div>
+          <aside class="hero__side" aria-label="Situation overview">
+            <div id="cp-index"></div>
+            <div id="radar-slot"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="hud-panel hud-panel--wide" id="sec-overview" aria-labelledby="h-overview">
+      <div class="hud-panel__inner">
+        <header class="hud-panel__head">
+          <h2 class="panel-title" id="h-overview">OVERVIEW</h2>
+          <span class="panel-status"><span class="led" data-state="idle" id="map-led"></span><span class="panel-count mono" id="map-count">AWAITING DATA</span></span>
+        </header>
+        <div class="panel-body">
+          <h3 class="subhead">TOP SIGNALS</h3>
+          <ul id="headline-list" class="headline-list"></ul>
+
+          <h3 class="subhead">SEVERITY DISTRIBUTION</h3>
+          <section class="gauges" id="gauges" aria-label="Severity distribution"></section>
+
+          <h3 class="subhead">WORLD MAP</h3>
+          <p class="hint">Countries in this snapshot are shaded by event count (Equal Earth projection centred on 150°E; basemap: Natural Earth via world-atlas, public domain). Choosing a country here filters every tab. The dropdown is the keyboard and screen-reader equivalent of the map.</p>
+          <div id="world-map" class="map-host"></div>
+          <div class="map-legend" aria-label="Map shading: events per country">
+            <span class="map-legend__item"><span class="map-legend__sw" data-load="1" aria-hidden="true"></span>1 EVENT</span>
+            <span class="map-legend__item"><span class="map-legend__sw" data-load="2" aria-hidden="true"></span>2–3 EVENTS</span>
+            <span class="map-legend__item"><span class="map-legend__sw" data-load="3" aria-hidden="true"></span>4–6 EVENTS</span>
+            <span class="map-legend__item"><span class="map-legend__sw" data-load="4" aria-hidden="true"></span>7 OR MORE</span>
+          </div>
+          <label class="field">
+            <span class="field__label">COUNTRY FILTER — KEYBOARD AND SCREEN-READER EQUIVALENT OF THE MAP</span>
+            <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
+          </label>
+          <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="hud-panel hud-panel--wide" id="sec-global-cyber" aria-labelledby="h-global-cyber">
+      <div class="hud-panel__inner">
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-global-cyber">GLOBAL CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="global-cyber">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="global-cyber"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-ai-cyber" aria-labelledby="h-ai-cyber">
+    <section class="hud-panel hud-panel--wide" id="sec-ai-cyber" aria-labelledby="h-ai-cyber">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-03</span><h2 class="panel-title" id="h-ai-cyber">AI + CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="ai-cyber">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-ai-cyber">AI + CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="ai-cyber">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="ai-cyber"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
+    <section class="hud-panel hud-panel--wide" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-04</span><h2 class="panel-title" id="h-active-exploitation">ACTIVE EXPLOITATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="active-exploitation">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-active-exploitation">ACTIVE EXPLOITATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="active-exploitation">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="active-exploitation"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-developing-events" aria-labelledby="h-developing-events">
+    <section class="hud-panel hud-panel--wide" id="sec-developing-events" aria-labelledby="h-developing-events">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-05</span><h2 class="panel-title" id="h-developing-events">DEVELOPING EVENTS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="developing-events">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-developing-events">DEVELOPING EVENTS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="developing-events">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="developing-events"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-emerging-threats" aria-labelledby="h-emerging-threats">
+    <section class="hud-panel hud-panel--wide" id="sec-emerging-threats" aria-labelledby="h-emerging-threats">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-06</span><h2 class="panel-title" id="h-emerging-threats">EMERGING THREATS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="emerging-threats">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-emerging-threats">EMERGING THREATS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="emerging-threats">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="emerging-threats"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-threat-actors" aria-labelledby="h-threat-actors">
+    <section class="hud-panel hud-panel--wide" id="sec-threat-actors" aria-labelledby="h-threat-actors">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-07</span><h2 class="panel-title" id="h-threat-actors">THREAT ACTORS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="threat-actors">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-threat-actors">THREAT ACTORS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="threat-actors">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="threat-actors"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-vulnerabilities" aria-labelledby="h-vulnerabilities">
+    <section class="hud-panel hud-panel--wide" id="sec-vulnerabilities" aria-labelledby="h-vulnerabilities">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-08</span><h2 class="panel-title" id="h-vulnerabilities">VULNERABILITIES</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="vulnerabilities">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-vulnerabilities">VULNERABILITIES</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="vulnerabilities">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="vulnerabilities"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-research" aria-labelledby="h-research">
+    <section class="hud-panel hud-panel--wide" id="sec-research" aria-labelledby="h-research">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-09</span><h2 class="panel-title" id="h-research">RESEARCH</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="research">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-research">RESEARCH</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="research">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="research"></div>
       </div>
     </section>
 
-    <section class="hud-panel" id="sec-policy-regulation" aria-labelledby="h-policy-regulation">
+    <section class="hud-panel hud-panel--wide" id="sec-policy-regulation" aria-labelledby="h-policy-regulation">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-10</span><h2 class="panel-title" id="h-policy-regulation">POLICY / REGULATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="policy-regulation">0 SIGNALS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-policy-regulation">POLICY / REGULATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="policy-regulation">0 SIGNALS</span></span></header>
         <div class="panel-body" data-section-body="policy-regulation"></div>
       </div>
     </section>
 
     <section class="hud-panel hud-panel--wide" id="sec-the-crew" aria-labelledby="h-the-crew">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-11</span><h2 class="panel-title" id="h-the-crew">THE CREW</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">15 AGENTS</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-the-crew">THE CREW</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">16 AGENTS</span></span></header>
         <div class="panel-body">
-          <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; until then every figure reads "—".</p>
+          <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; an agent that has not reported yet says so rather than showing a zero.</p>
           <div id="crew-summary"></div>
           <ul id="crew-list" class="crew-grid"></ul>
         </div>
@@ -220,14 +193,28 @@
 
     <section class="hud-panel hud-panel--wide" id="sec-system" aria-labelledby="h-system">
       <div class="hud-panel__inner">
-        <header class="hud-panel__head"><span class="panel-id mono">PNL-12</span><h2 class="panel-title" id="h-system">SYSTEM</h2><span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span></header>
-        <div class="tick-ruler" aria-hidden="true"></div>
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-system">SYSTEM</h2><span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span></header>
         <div class="panel-body">
+          <h3 class="subhead">HOW THIS RUNS</h3>
+          <div class="explain">
+            <p>Nothing on this page was assembled to order. Sixteen agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
+            <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
+            <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
+            <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every 15 minutes for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at 03:00 AEST for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
+            <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
+            <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Ten of the sixteen agents are deterministic and spend nothing at all. One agent — RIPPERDOC — re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
+          </div>
+
           <h3 class="subhead">COLLECTION REPLAY</h3>
           <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
           <div id="pipeline"></div>
+
+          <h3 class="subhead">THE CREW IN THE LAST RUN</h3>
+          <div id="crew-run"></div>
+
           <h3 class="subhead">SOURCES</h3>
           <div id="source-health"></div>
+
           <h3 class="subhead">VERSIONS</h3>
           <dl class="kv mono" id="system-versions"></dl>
         </div>

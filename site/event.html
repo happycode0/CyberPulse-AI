@@ -6,11 +6,10 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05070A">
+<meta name="theme-color" content="#121926">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>Event | CyberPulse-AI</title>
 <meta name="description" content="One published CyberPulse-AI event: evidence, AI inference, timeline and related events kept visibly apart. A snapshot of past collections, not a real-time feed.">
-<link rel="preload" href="assets/fonts/orbitron-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/chakra-petch-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/hud.css">
 <script type="module" src="assets/hud.js"></script>
@@ -21,6 +20,12 @@
 <header class="site-header">
   <div class="site-header__row">
     <a class="brand brand--link" href="index.html"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></a>
+    <div class="status-strip" id="status-strip" role="status">
+      <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
+      <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
+      <span class="mono" id="strip-local"></span>
+      <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
+    </div>
     <div class="site-header__controls">
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
     </div>
@@ -28,20 +33,11 @@
   <nav class="site-nav" aria-label="Navigation">
     <a href="index.html">DASHBOARD</a>
     <a href="index.html#sec-australia-now">AUSTRALIA NOW</a>
-    <a href="index.html#sec-world-map">WORLD MAP</a>
+    <a href="index.html#sec-overview">OVERVIEW</a>
     <a href="index.html#sec-vulnerabilities">VULNERABILITIES</a>
     <a href="history.html">HISTORY</a>
   </nav>
 </header>
-
-<div class="status-strip" id="status-strip" role="status">
-  <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
-  <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
-  <span class="status-strip__sep" aria-hidden="true">//</span>
-  <span class="mono" id="strip-local"></span>
-  <span class="status-strip__sep" aria-hidden="true">//</span>
-  <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
-</div>
 
 <noscript>
   <p class="notice">This page reads published JSON files with a small script. Enable JavaScript to see the event.</p>

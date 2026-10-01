@@ -15,24 +15,75 @@ def test_css_defines_every_palette_token():
     css = read("site/assets/hud.css").replace(" ", "")
     for t in (
         "--bg-void", "--bg-panel", "--bg-raised", "--line", "--line-strong", "--text",
-        "--text-dim", "--text-muted", "--cyan", "--teal", "--magenta",
+        "--text-dim", "--text-muted", "--cyan", "--teal", "--magenta", "--brand",
         "--sev-critical", "--sev-high", "--sev-medium", "--sev-low", "--sev-info",
     ):
         assert f"{t}:" in css, t
 
 
+PALETTE = {
+    "--bg-void": "#121926", "--bg-panel": "#19212D", "--bg-raised": "#24303E",
+    "--line": "#394B62", "--line-strong": "#5E7E9C", "--text": "#EDF2F7",
+    "--text-dim": "#AFC0CD", "--text-muted": "#8A9CAB", "--cyan": "#5BD6E8",
+    "--teal": "#34A9BC", "--magenta": "#F2789F", "--brand": "#B184EB",
+    "--sev-critical": "#F56C79", "--sev-high": "#F09A4A", "--sev-medium": "#E8C766",
+    "--sev-low": "#58C79C", "--sev-info": "#6FBEEA",
+}
+
+
 def test_palette_hex_values_match_the_spec():
     css = read("site/assets/hud.css").replace(" ", "")
-    expected = {
-        "--bg-void": "#05070A", "--bg-panel": "#0B1118", "--bg-raised": "#111C27",
-        "--line": "#16283A", "--line-strong": "#41718A", "--text": "#E6F1F5",
-        "--text-dim": "#9DB2C0", "--text-muted": "#7C93A3", "--cyan": "#00E5FF",
-        "--teal": "#0EB0C2", "--magenta": "#FF2A6D", "--sev-critical": "#FF3B5C",
-        "--sev-high": "#FF8A1F", "--sev-medium": "#FFD23F", "--sev-low": "#3DDC97",
-        "--sev-info": "#4FC3F7",
-    }
-    for token, value in expected.items():
+    for token, value in PALETTE.items():
         assert f"{token}:{value}" in css, token
+
+
+def _relative_luminance(hex_colour: str) -> float:
+    channels = []
+    for i in (1, 3, 5):
+        c = int(hex_colour[i:i + 2], 16) / 255
+        channels.append(c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+    r, g, b = channels
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _contrast(a: str, b: str) -> float:
+    la, lb = _relative_luminance(a), _relative_luminance(b)
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+# PLAN.md 8.1 publishes a ratio per token against --bg-panel and rests accessibility claims
+# on them: 4.5 for anything that carries text (WCAG 1.4.3 at small sizes) and 3.0 for
+# --line-strong, which draws control borders (WCAG 1.4.11 non-text contrast). Pinning the
+# hexes alone would let a later retheme keep the table and lose the compliance, so the
+# thresholds are computed here rather than trusted.
+def test_palette_meets_the_contrast_ratios_the_plan_claims():
+    # Measured against *both* card backgrounds, not just --bg-panel. Cards sit on --bg-raised,
+    # which is the lighter of the two and therefore the worse case for every foreground; an
+    # earlier version of this test checked --bg-panel alone and so missed --line-strong drawing
+    # .btn and .input borders at 2.8:1 against --bg-raised, under the 3.0 WCAG 1.4.11 needs.
+    minimums = {"--line-strong": 3.0, "--text": 7.0}
+    for token in ("--text-dim", "--text-muted", "--cyan", "--teal", "--magenta", "--brand",
+                  "--sev-critical", "--sev-high", "--sev-medium", "--sev-low", "--sev-info"):
+        minimums[token] = 4.5
+    for background in ("--bg-panel", "--bg-raised"):
+        for token, floor in minimums.items():
+            ratio = _contrast(PALETTE[token], PALETTE[background])
+            assert ratio >= floor, f"{token} is {ratio:.2f}:1 on {background}, needs {floor}:1"
+
+
+# A country with no events fills in --map-none and the ramp climbs from there. This started as
+# --line, and lifting --line for the brighter backgrounds pushed it past the old tier-1 hex, so
+# one event rendered *quieter* than none and the legend read backwards. Luminance order is the
+# whole meaning of a ramp, so it is asserted rather than eyeballed.
+def test_the_map_load_ramp_ascends_in_luminance():
+    css = read("site/assets/hud.css")
+    tiers = [re.search(r"--map-none:\s*(#[0-9A-Fa-f]{6})", css).group(1)]
+    for n in (1, 2, 3, 4):
+        value = re.search(rf'\[data-load="{n}"\][^{{]*\{{\s*--map-load:\s*([^;]+);', css).group(1).strip()
+        token = re.fullmatch(r"var\((--[\w-]+)\)", value)
+        tiers.append(PALETTE[token.group(1)] if token else value)
+    lums = [_relative_luminance(c) for c in tiers]
+    assert lums == sorted(lums), f"ramp is not monotonic: {list(zip(tiers, lums))}"
 
 
 def test_every_keyframes_animation_is_gated_on_reduced_motion():
@@ -117,14 +168,24 @@ def test_css_references_no_external_origin():
 
 
 def test_fonts_ship_with_their_licence():
+    # Derived from the stylesheet rather than a hardcoded family list, so dropping or adding a
+    # face cannot leave this test asserting a licence for a font the site no longer serves —
+    # or, worse, pass while a newly added one ships unlicensed.
     fonts = SITE / "assets" / "fonts"
+    css = (SITE / "assets" / "hud.css").read_text()
+    families = set(re.findall(r'@font-face\s*\{[^}]*?font-family:\s*"([^"]+)"', css))
+    assert families, "no @font-face rule found in hud.css"
     licence = (fonts / "OFL.txt").read_text()
-    assert licence.count("SIL OPEN FONT LICENSE Version 1.1") >= 3
-    for family in ("Orbitron", "Chakra Petch", "JetBrains Mono"):
+    assert licence.count("SIL OPEN FONT LICENSE Version 1.1") >= len(families)
+    for family in families:
         assert family in licence, family
-    woff2 = list(fonts.glob("*.woff2"))
-    assert woff2
-    for f in woff2:
+    # Every served file exists, and every shipped file is served: an unreferenced woff2 is dead
+    # weight in a repository and a face with no file is a silent fallback to a system font.
+    served = {u for u in re.findall(r'src:\s*url\("fonts/([^"]+)"', css)}
+    shipped = {f.name for f in fonts.glob("*.woff2")}
+    assert served, "no @font-face src found in hud.css"
+    assert served == shipped, f"served but missing: {served - shipped}; shipped but unused: {shipped - served}"
+    for f in fonts.glob("*.woff2"):
         assert f.read_bytes()[:4] == b"wOF2", f
 
 
@@ -173,6 +234,45 @@ def test_hud_js_exports_the_contract():
         assert re.search(rf"export\s+(async\s+)?function\s+{fn}\b", js), fn
 
 
+def test_the_site_roster_covers_every_agent_the_plan_specifies():
+    # PLAN.md 4 is the authoritative roster, so the site's CREW array is checked against it
+    # rather than against a number written here. The site shipped fifteen cards while the plan
+    # specified sixteen agents, and nothing caught it: RIPPERDOC, the model scout, was simply
+    # absent from the page that claims to list the crew.
+    plan = read("PLAN.md")
+    section = plan[plan.index("### 4.1"):plan.index("### 4.4")]
+    specified = set(re.findall(r"^#### ([A-Z]+) \u2014", section, re.M))
+    js = read("site/assets/hud.js")
+    roster = js[js.index("export const CREW = ["):js.index("\n];", js.index("export const CREW = ["))]
+    shipped = re.findall(r"callsign: '([A-Z]+)'", roster)
+    assert len(specified) >= 16, f"only found {len(specified)} agents in PLAN.md section 4"
+    assert set(shipped) == specified, (
+        f"missing from the site: {sorted(specified - set(shipped))}; "
+        f"on the site but not in the plan: {sorted(set(shipped) - specified)}"
+    )
+    assert len(shipped) == len(set(shipped)), "a callsign appears twice in CREW"
+
+
+def test_every_agent_has_its_own_portrait_and_a_published_job():
+    # Two lookups are keyed by hand off CREW, and a typo in either degrades silently: a missing
+    # BOT_PARTS key renders the shared shell with no accessory, and a missing CREW_JOBS key falls
+    # back to the short beat. Both are quiet failures, so they are asserted instead.
+    js = read("site/assets/hud.js")
+    roster = js[js.index("export const CREW = ["):js.index("\n];", js.index("export const CREW = ["))]
+    entries = re.findall(r"callsign: '([A-Z]+)', face: '(\w+)'", roster)
+    assert len(entries) == len(re.findall(r"callsign: '", roster)), "an entry is missing its face"
+    faces = [f for _, f in entries]
+    assert len(faces) == len(set(faces)), "two agents share a portrait accessory"
+    parts_block = js[js.index("const BOT_PARTS = {"):js.index("\n};", js.index("const BOT_PARTS = {"))]
+    drawn = set(re.findall(r"^  (\w+): \(\) =>", parts_block, re.M))
+    assert set(faces) == drawn, f"undrawn: {sorted(set(faces) - drawn)}; unused: {sorted(drawn - set(faces))}"
+    jobs_block = js[js.index("const CREW_JOBS = {"):js.index("\n};", js.index("const CREW_JOBS = {"))]
+    described = set(re.findall(r"^  ([A-Z]+): \{", jobs_block, re.M))
+    assert {c for c, _ in entries} == described, (
+        f"no job published for: {sorted({c for c, _ in entries} - described)}"
+    )
+
+
 def test_hud_js_formats_times_in_sydney():
     js = read("site/assets/hud.js")
     assert "Australia/Sydney" in js and "en-AU" in js
@@ -216,7 +316,7 @@ def test_fx_toggle_label_is_fixed_and_state_is_aria_pressed():
     assert button and button.group(1).strip() == "FX OFF"
     js = read("site/assets/hud.js")
     assert "FX ON" not in html and "FX ON" not in js
-    assert "textContent" not in js[js.index("export function initFxToggle"):js.index("function initTickerToggle")]
+    assert "textContent" not in js[js.index("export function initFxToggle"):js.index("export function initFxField")]
 
 
 def test_event_cards_never_use_the_event_id_as_a_dom_id():
@@ -249,3 +349,20 @@ def test_map_click_filters_by_every_token_for_the_country():
     assert "state.selected.country = new Set([token])" not in hud, (
         "the country filter must accept the whole token set the map hands it"
     )
+
+
+# A browser requests /favicon.ico on its own whenever no icon is declared, so every page was
+# logging a 404 that no amount of reading the code would explain. Declaring one SVG stops the
+# request outright and serves every size from one file; `img-src 'self'` already allows it.
+def test_every_page_declares_a_self_hosted_favicon():
+    icon = SITE / "assets" / "favicon.svg"
+    assert icon.is_file(), "site/assets/favicon.svg is missing"
+    svg = icon.read_text(encoding="utf-8")
+    for page in SITE.glob("*.html"):
+        html = page.read_text(encoding="utf-8")
+        href = re.search(r'<link rel="icon"[^>]*href="([^"]+)"', html)
+        assert href, f"{page.name} declares no favicon, so the browser will ask for favicon.ico"
+        assert (SITE / href.group(1)).is_file(), href.group(1)
+    # The mark is the wordmark's, so it has to track the palette rather than drift from it.
+    for token in ("--bg-void", "--cyan"):
+        assert PALETTE[token] in svg, f"favicon does not use {token}"

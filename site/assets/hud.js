@@ -7,7 +7,6 @@ import { renderMap, syncMapSelection } from './map.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const DATA_BASES = ['data/', '../data/'];
 const FX_KEY = 'cp-fx';
-const BOOT_KEY = 'cp-boot';
 const INITIAL_CARDS = 6;
 const HERO_CARDS = 8;
 
@@ -31,22 +30,26 @@ const HEALTH = {
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
 // ship with the site. Workload per agent, when there is any, comes from data/crew.json
 // (published from Stage 5) and is looked up by callsign at render time.
+// Each agent carries a `face`: the key of the one accessory that distinguishes its drawn
+// portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
+// and the names PLAN.md assigns permissions and budgets to.
 export const CREW = [
-  { callsign: 'MORPHEUS', desk: 'INTELLIGENCE', beat: 'Intelligence Director / Chief Editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
-  { callsign: 'ZION', desk: 'INTELLIGENCE', beat: 'Australian desk', runtime: 'LLM · fast', quote: 'Home ground. Our watch.' },
-  { callsign: 'BLASTER', desk: 'INTELLIGENCE', beat: 'Global cyber desk', runtime: 'LLM · fast', quote: "I'm picking up chatter on every band." },
-  { callsign: 'WINTERMUTE', desk: 'INTELLIGENCE', beat: 'AI + cyber↔AI convergence', runtime: 'LLM · fast', quote: 'The model is the attack surface.' },
-  { callsign: 'TACHIKOMA', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
-  { callsign: 'DECKARD', desk: 'INTELLIGENCE', beat: 'Follow-up, developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
-  { callsign: 'VOIGHT', desk: 'INTELLIGENCE', beat: 'Editorial QA, publication veto', runtime: 'LLM · strong · gated', quote: 'Says who?' },
-  { callsign: 'WHEELJACK', desk: 'ENGINEERING', beat: 'Source & platform engineer', runtime: 'CODE agent · wakes on request', quote: '' },
-  { callsign: 'TRON', desk: 'ENGINEERING', beat: 'Independent verification', runtime: 'AUDIT agent · different model family', quote: 'A security program that answers to the users, not to the system it audits.' },
-  { callsign: 'TELETRAAN', desk: 'OPERATIONS', beat: 'Watchdog / SRE', runtime: 'Deterministic + LLM triage', quote: '' },
-  { callsign: 'ROGUE', desk: 'OPERATIONS', beat: 'Cost / FinOps, degradation tiers', runtime: 'Deterministic', quote: 'Nothing in this city is free.' },
-  { callsign: 'LINK', desk: 'OPERATIONS', beat: 'Publishing + notifications', runtime: 'Deterministic', quote: "Transmission clean. Here's the diff." },
-  { callsign: 'SERAPH', desk: 'OPERATIONS', beat: 'Source verification gate', runtime: 'Deterministic', quote: 'I had to be sure.' },
-  { callsign: 'LIBRARIAN', desk: 'OPERATIONS', beat: 'KEV / CVE / EPSS / OSV / ATT&CK', runtime: 'Deterministic', quote: "Cite it or it didn't happen." },
-  { callsign: 'PROWL', desk: 'OPERATIONS', beat: 'Event correlation, material change', runtime: 'Deterministic + Strands', quote: 'One event. Many threads.' },
+  { callsign: 'MORPHEUS', face: 'crown', desk: 'INTELLIGENCE', beat: 'Intelligence Director / Chief Editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
+  { callsign: 'ZION', face: 'brim', desk: 'INTELLIGENCE', beat: 'Australian desk', runtime: 'LLM · fast', quote: 'Home ground. Our watch.' },
+  { callsign: 'BLASTER', face: 'ring', desk: 'INTELLIGENCE', beat: 'Global cyber desk', runtime: 'LLM · fast', quote: "I'm picking up chatter on every band." },
+  { callsign: 'WINTERMUTE', face: 'twin', desk: 'INTELLIGENCE', beat: 'AI + cyber↔AI convergence', runtime: 'LLM · fast', quote: 'The model is the attack surface.' },
+  { callsign: 'TACHIKOMA', face: 'tilt', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
+  { callsign: 'DECKARD', face: 'lens', desk: 'INTELLIGENCE', beat: 'Follow-up, developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
+  { callsign: 'VOIGHT', face: 'scan', desk: 'INTELLIGENCE', beat: 'Editorial QA, publication veto', runtime: 'LLM · strong · gated', quote: 'Says who?' },
+  { callsign: 'WHEELJACK', face: 'helmet', desk: 'ENGINEERING', beat: 'Source & platform engineer', runtime: 'CODE agent · wakes on request', quote: '' },
+  { callsign: 'TRON', face: 'ticks', desk: 'ENGINEERING', beat: 'Independent verification', runtime: 'AUDIT agent · different model family', quote: 'A security program that answers to the users, not to the system it audits.' },
+  { callsign: 'TELETRAAN', face: 'dish', desk: 'OPERATIONS', beat: 'Watchdog / SRE', runtime: 'Deterministic + LLM triage', quote: '' },
+  { callsign: 'ROGUE', face: 'tally', desk: 'OPERATIONS', beat: 'Cost / FinOps, degradation tiers', runtime: 'Deterministic', quote: 'Nothing in this city is free.' },
+  { callsign: 'RIPPERDOC', face: 'mirror', desk: 'OPERATIONS', beat: 'Model scout — assigns each agent its model', runtime: 'Deterministic scan · daily', quote: 'Better chrome just came in.' },
+  { callsign: 'LINK', face: 'uplink', desk: 'OPERATIONS', beat: 'Publishing + notifications', runtime: 'Deterministic', quote: "Transmission clean. Here's the diff." },
+  { callsign: 'SERAPH', face: 'shield', desk: 'OPERATIONS', beat: 'Source verification gate', runtime: 'Deterministic', quote: 'I had to be sure.' },
+  { callsign: 'LIBRARIAN', face: 'books', desk: 'OPERATIONS', beat: 'KEV / CVE / EPSS / OSV / ATT&CK', runtime: 'Deterministic', quote: "Cite it or it didn't happen." },
+  { callsign: 'PROWL', face: 'threads', desk: 'OPERATIONS', beat: 'Event correlation, material change', runtime: 'Deterministic + Strands', quote: 'One event. Many threads.' },
 ];
 
 const SYDNEY = new Intl.DateTimeFormat('en-AU', {
@@ -162,6 +165,13 @@ function byProminence(a, b) {
     prominence(b) - prominence(a) ||
     String(b.last_material_update || b.first_seen).localeCompare(String(a.last_material_update || a.first_seen))
   );
+}
+
+// Counts in prose are written by the page, so a quiet day reads "1 event queued", not
+// "1 events queued". Only the regular -s plural is handled; every caller passes a noun
+// that takes one.
+function plural(n, word) {
+  return `${n} ${word}${n === 1 ? '' : 's'}`;
 }
 
 // ------------------------------------------------------------------- data
@@ -703,7 +713,9 @@ export function renderEventDetail(event, related = []) {
   const severitySource = String(event.severity_source || 'unknown').toUpperCase().replace(/_/g, ' ');
   const root = h('div', { class: 'detail', 'data-severity': key });
 
-  root.append(
+  // append(), not root.append(): the optional rows below are null when the field is absent, and
+  // the native append stringifies null into a literal "null" line under the summary.
+  append(root, [
     h('h1', { class: 'detail__title', text: event.title }),
     h(
       'div',
@@ -719,7 +731,7 @@ export function renderEventDetail(event, related = []) {
     event.why_it_matters
       ? h('p', { class: 'detail__why' }, h('strong', { text: 'WHY IT MATTERS: ' }), event.why_it_matters)
       : null,
-  );
+  ]);
 
   const entityLists = [
     listOf('ACTORS', entities.actors),
@@ -742,7 +754,12 @@ export function renderEventDetail(event, related = []) {
           ['LAST SEEN (AEST)', formatSydney(event.last_seen)],
           ['LAST SEEN (UTC)', utcStamp(event.last_seen)],
           ['LAST MATERIAL UPDATE (AEST)', formatSydney(event.last_material_update)],
-          ['INDEPENDENT CONFIRMATION (UTC)', utcStamp(event.last_independent_confirmation)],
+          // CONFIRMATION is wider than the label column, so it has to break somewhere. The
+          // soft hyphen (U+00AD) puts the break where a typesetter would and renders a real
+          // hyphen; left to itself the browser drops a bare "N" on the next line, which
+          // reads as a typo. A dictionary-based hyphens: auto would not work here, because
+          // the hyphenation dictionary is not present in every browser build.
+          ['INDEPENDENT CONFIRMA­TION (UTC)', utcStamp(event.last_independent_confirmation)],
         ]),
       ),
       detailBlock(
@@ -957,20 +974,17 @@ export function buildFacets(events) {
   return facets;
 }
 
-// state: { events, query: string, selected: { [dimension]: Set|Array of values } }
+// state: { events, selected: { [dimension]: Set|Array of values } }
 // Within a dimension any selected value matches (OR); dimensions combine with AND.
+// There was a free-text box here as well. A snapshot of one day's events is small enough to
+// read, the tag facets already cover every dimension a reader would type into it, and a
+// substring match over titles is a worse instrument than a facet: it silently misses a
+// synonym and gives no clue that it did.
 export function applyFilters(state) {
-  const query = (state.query || '').trim().toLowerCase();
   const active = Object.entries(state.selected || {})
     .map(([dim, values]) => [dim, new Set(values)])
     .filter(([, values]) => values.size > 0);
   return (state.events || []).filter((event) => {
-    if (query) {
-      const haystack = [event.title, event.summary, event.event_id, ...(event.tags || []), ...(event.cves || []).map((c) => c.id)]
-        .join(' ')
-        .toLowerCase();
-      if (!haystack.includes(query)) return false;
-    }
     if (!active.length) return true;
     const tokens = facetTokens(event);
     return active.every(([dim, values]) => tokens.some(([d, v]) => d === dim && values.has(v)));
@@ -1062,7 +1076,7 @@ export function renderIndex(data) {
       viewBox: '0 0 240 56',
       preserveAspectRatio: 'none',
       role: 'img',
-      'aria-label': `Event volume by hour for the 24 hours before the last completed collection: ${total} events, busiest hour ${Math.max(0, ...buckets)}.`,
+      'aria-label': `Event volume by hour for the 24 hours before the last completed collection: ${plural(total, 'event')}, busiest hour ${Math.max(0, ...buckets)}.`,
     },
     s('path', { class: 'ekg-base', d }),
     s('path', { class: 'ekg-pulse', d, pathLength: 100 }),
@@ -1163,7 +1177,7 @@ export function renderRadar(data) {
   const auCount = events.filter((e) => e.au?.directly_reported_in_au).length;
   const radar = h(
     'div',
-    { class: 'radar', role: 'img', 'aria-label': `Threat radar: ${events.length} events plotted by severity ring and category angle, ${auCount} reported in Australia.` },
+    { class: 'radar', role: 'img', 'aria-label': `Threat radar: ${plural(events.length, 'event')} plotted by severity ring and category angle, ${auCount} reported in Australia.` },
     svg,
     h('div', { class: 'radar-sweep', 'aria-hidden': 'true' }),
   );
@@ -1239,6 +1253,7 @@ export function renderPipeline(health, extras = {}) {
   }
   renderSources(health);
   renderSystem(status, feed, health);
+  renderCrewRun(status, feed);
 }
 
 function renderSources(health) {
@@ -1305,6 +1320,309 @@ function renderSystem(status, feed, health) {
 
 // -------------------------------------------------------------------- crew
 
+const CREW_JOBS = {
+  MORPHEUS: { owns: 'Editorial direction: what leads, what is held, and the daily brief', run: () => null },
+  ZION: { owns: 'The Australian desk — AU relevance, local impact, ACSC and OAIC material', run: () => null },
+  BLASTER: { owns: 'The global cyber desk — incidents, actors and campaigns outside AU', run: () => null },
+  WINTERMUTE: { owns: 'The AI desk — attacks on models, and models used to attack', run: () => null },
+  TACHIKOMA: { owns: 'Finding sources we do not have yet, and proposing them for review', run: () => null },
+  DECKARD: { owns: 'Developing events: keeping one open until it is patched or closed', run: () => null },
+  VOIGHT: { owns: 'The publication veto — every critical and high claim is checked or held', run: () => 'Not in Stage 1. The QA gate arrives with the agents.' },
+  WHEELJACK: { owns: 'Writing and repairing the collectors and parsers this pipeline runs on', run: () => null },
+  TRON: { owns: 'Reviewing WHEELJACK\u2019s work on a different model family (two-person rule)', run: () => null },
+  TELETRAAN: {
+    owns: 'Watching the estate and opening an incident before a reader notices',
+    run: (run) => (run ? (run.error_count ? `${plural(run.error_count, 'error')} recorded during the run` : 'No errors recorded during the run') : null),
+  },
+  ROGUE: { owns: 'The US$20/month ceiling, the spend ledger and the degradation tiers', run: () => null },
+  RIPPERDOC: {
+    owns: 'Assigning every agent its model: cheapest capable, free where possible, never above US$1/M output — re-checked daily, and swapped immediately if a model starts failing an agent',
+    run: () => 'Not in Stage 1. The catalogue scan starts with the agents.',
+  },
+  LINK: {
+    owns: 'Publishing the snapshot this page is reading, and notifying on change',
+    run: (run, feed) => (feed?.counts?.events === undefined ? null : `${plural(feed.counts.events, 'event')} published in this snapshot`),
+  },
+  SERAPH: {
+    owns: 'The source gate — nothing enters the pipeline from a source that failed its check',
+    run: (run) => {
+      if (!run) return null;
+      const bad = run.sources_failed + run.sources_stale;
+      return `${plural(run.sources_ok, 'source')} passed the check` + (bad ? `, ${bad} did not` : '');
+    },
+  },
+  LIBRARIAN: {
+    owns: 'Ground truth for vulnerabilities: KEV, CVE, EPSS, OSV and ATT&CK, looked up and never generated',
+    run: (run, feed) => {
+      const pending = feed?.counts?.pending_enrichment;
+      if (pending === undefined) return null;
+      return pending ? `${plural(pending, 'event')} queued for enrichment` : 'Nothing queued for enrichment';
+    },
+  },
+  PROWL: {
+    owns: 'Deciding whether an item is a new event, an update to one, or a duplicate',
+    run: (run) =>
+      run
+        ? `${run.new_events} new and ${plural(run.updated_events, 'updated event')}, ` +
+          `${run.duplicates} merged as ${run.duplicates === 1 ? 'a duplicate' : 'duplicates'}`
+        : null,
+  },
+};
+
+// THE CREW IN THE LAST RUN. A table, not cards: the question this answers is "who did what",
+// which is a comparison down a column, and sixteen cards is the wrong shape for that.
+export function renderCrewRun(status, feed) {
+  const host = document.getElementById('crew-run');
+  if (!host) return;
+  clear(host);
+  const run = status?.last_run || null;
+  const when = run?.finished_at ? `${formatSydney(run.finished_at)}` : null;
+  host.append(
+    h('p', {
+      class: 'hint',
+      text: run
+        ? `Last completed run: ${run.lane.toUpperCase()} lane, finished ${when}. An agent appears with a figure only where the run published a counter it owns; the rest state that plainly.`
+        : 'No completed run has been published, so there is nothing for any agent to report yet. Each agent\u2019s ownership below is what it will answer for once it is wired up.',
+    }),
+    h(
+      'table',
+      { class: 'run-table' },
+      h('thead', {}, h('tr', {}, h('th', { scope: 'col', text: 'AGENT' }), h('th', { scope: 'col', text: 'WHAT IT OWNS' }), h('th', { scope: 'col', text: 'IN THE LAST RUN' }))),
+      h(
+        'tbody',
+        {},
+        CREW.map((agent) => {
+          const job = CREW_JOBS[agent.callsign] || {};
+          const did = job.run ? job.run(run, feed) : null;
+          return h(
+            'tr',
+            { 'data-desk': agent.desk },
+            h(
+              'th',
+              { scope: 'row' },
+              h(
+                'span',
+                { class: 'run-table__who' },
+                botFace(agent, 'bot bot--sm'),
+                h(
+                  'span',
+                  { class: 'run-table__id' },
+                  h('span', { class: 'run-table__callsign', text: agent.callsign }),
+                  h('span', { class: 'run-table__desk mono', text: agent.desk }),
+                ),
+              ),
+            ),
+            h('td', { text: job.owns || agent.beat }),
+            h('td', { class: did ? 'run-table__did' : 'run-table__did run-table__did--none', text: did || 'Nothing published for this run.' }),
+          );
+        }),
+      ),
+    ),
+  );
+}
+
+// One accessory per agent, keyed by CREW[].face. `back` is drawn behind the head, so
+// antennae, brims and orbit rings sit around the silhouette; `front` is drawn over it, for
+// the two accessories that belong on the face itself. Nothing here is decorative-only: the
+// accessory is how you tell the sixteen portraits apart at 46px.
+const BOT_PARTS = {
+  // Director: a low coronet, lit at the centre and tipped at both ends.
+  crown: () => ({
+    back: [
+      s('path', { class: 'bot-line', d: 'M14 12 Q24 4 34 12' }),
+      s('path', { class: 'bot-dim', d: 'M17.2 12.4 Q24 7.2 30.8 12.4' }),
+      s('circle', { class: 'bot-eye', cx: 24, cy: 5, r: 1.9 }),
+      s('circle', { class: 'bot-eye', cx: 14.2, cy: 11.6, r: 1.1 }),
+      s('circle', { class: 'bot-eye', cx: 33.8, cy: 11.6, r: 1.1 }),
+    ],
+  }),
+  // Australian desk: an akubra — dented dome, hatband, curved brim, chin cord.
+  brim: () => ({
+    back: [
+      s('path', { class: 'bot-dim', d: 'M15 13 Q24 5 33 13' }),
+      s('path', { class: 'bot-dim', d: 'M20.6 7.6 Q24 9.8 27.4 7.6' }),
+    ],
+    front: [
+      s('path', { class: 'bot-line', d: 'M6 14 Q24 18 42 14' }),
+      s('path', { class: 'bot-line', d: 'M15.4 13.1 Q24 15.7 32.6 13.1' }),
+      s('path', { class: 'bot-dim', d: 'M12.8 15.8 Q11.4 20.8 14.2 23.4' }),
+    ],
+  }),
+  // Global desk: two orbits at a cant, each carrying a body.
+  ring: () => ({
+    back: [
+      s('ellipse', { class: 'bot-dim', cx: 24, cy: 26, rx: 21, ry: 8 }),
+      s('ellipse', { class: 'bot-dim', cx: 24, cy: 26, rx: 21, ry: 8, transform: 'rotate(-17 24 26)' }),
+      s('circle', { class: 'bot-eye', cx: 3.4, cy: 26, r: 1.5 }),
+      s('circle', { class: 'bot-eye', cx: 44.6, cy: 26, r: 1.5 }),
+    ],
+  }),
+  // AI desk: paired antennae, tied together, one per hemisphere.
+  twin: () => ({
+    back: [
+      s('path', { class: 'bot-line', d: 'M16 14 L12 5' }),
+      s('path', { class: 'bot-line', d: 'M32 14 L36 5' }),
+      s('path', { class: 'bot-dim', d: 'M13.6 7.6 Q24 13.2 34.4 7.6' }),
+      s('path', { class: 'bot-dim', d: 'M12.5 10.2 L15.5 8.8' }),
+      s('path', { class: 'bot-dim', d: 'M35.5 10.2 L32.5 8.8' }),
+      s('circle', { class: 'bot-eye', cx: 11.5, cy: 4, r: 1.7 }),
+      s('circle', { class: 'bot-eye', cx: 36.5, cy: 4, r: 1.7 }),
+    ],
+  }),
+  // Discovery: one antenna cocked to the side, already picking something up.
+  tilt: () => ({
+    back: [
+      s('circle', { class: 'bot-fill', cx: 24, cy: 13.2, r: 1.6 }),
+      s('path', { class: 'bot-line', d: 'M24 13 L29 5' }),
+      s('circle', { class: 'bot-eye', cx: 29.5, cy: 4, r: 2.1 }),
+      s('path', { class: 'bot-dim', d: 'M32.6 2.4 Q36 4.8 34.6 8.6' }),
+      s('path', { class: 'bot-dim', d: 'M35.8 1.6 Q40.8 5 38.2 10.4' }),
+    ],
+  }),
+  // Follow-up: a magnifier, because the case stays open.
+  lens: () => ({
+    back: [
+      s('circle', { class: 'bot-line', cx: 39, cy: 11, r: 4.6 }),
+      s('path', { class: 'bot-glint', d: 'M36.6 9 Q35.6 10.8 36.2 12.6' }),
+      s('path', { class: 'bot-line', d: 'M42.4 14.4 L46 18' }),
+      s('path', { class: 'bot-dim', d: 'M43.4 16.8 L45 15.2' }),
+      s('path', { class: 'bot-dim', d: 'M44.4 17.8 L46 16.2' }),
+    ],
+  }),
+  // Editorial QA: a viewfinder bracketed around one eye, mid-interrogation.
+  scan: () => ({
+    front: [
+      s('circle', { class: 'bot-line', cx: 28.5, cy: 24.5, r: 5 }),
+      s('path', { class: 'bot-line', d: 'M24.2 21.6 V20.2 H25.6' }),
+      s('path', { class: 'bot-line', d: 'M31.4 20.2 H32.8 V21.6' }),
+      s('path', { class: 'bot-line', d: 'M32.8 27.4 V28.8 H31.4' }),
+      s('path', { class: 'bot-line', d: 'M25.6 28.8 H24.2 V27.4' }),
+    ],
+  }),
+  // Engineer: a hard hat, ridges cut into it, lamp on the crown.
+  helmet: () => ({
+    front: [
+      s('path', { class: 'bot-fill', d: 'M13 15 Q24 4 35 15 Z' }),
+      s('path', { class: 'bot-etch', d: 'M24 6.6 V10.2' }),
+      s('path', { class: 'bot-etch', d: 'M18.6 8.6 Q17.9 11.6 18.3 14.4' }),
+      s('path', { class: 'bot-etch', d: 'M29.4 8.6 Q30.1 11.6 29.7 14.4' }),
+      s('circle', { class: 'bot-eye', cx: 24, cy: 12.6, r: 1.6 }),
+      s('path', { class: 'bot-line', d: 'M7 15.4 H41' }),
+    ],
+  }),
+  // Independent QA: a clipboard with two ticks, and never its own work on it.
+  ticks: () => ({
+    back: [
+      s('rect', { class: 'bot-dim', x: 34.8, y: 4.2, width: 11.4, height: 17, rx: 1.8 }),
+      s('path', { class: 'bot-dim', d: 'M38.2 4.2 V2.8 H42.8 V4.2' }),
+      s('path', { class: 'bot-line', d: 'M36.8 10 l2.6 2.6 l4.4 -5.6' }),
+      s('path', { class: 'bot-line', d: 'M36.8 16.6 l2.6 2.6 l4.4 -5.6' }),
+    ],
+  }),
+  // Watchdog: a dish on a mast with its feed horn, listening to the whole estate.
+  dish: () => ({
+    back: [
+      s('path', { class: 'bot-dim', d: 'M21 12.6 H27' }),
+      s('path', { class: 'bot-line', d: 'M24 12.6 V8' }),
+      s('path', { class: 'bot-line', d: 'M17.5 8 Q24 1 30.5 8' }),
+      s('path', { class: 'bot-dim', d: 'M19.9 7.4 Q24 3.6 28.1 7.4' }),
+      s('path', { class: 'bot-line', d: 'M24 8 V5' }),
+      s('circle', { class: 'bot-eye', cx: 24, cy: 4.2, r: 1.3 }),
+    ],
+  }),
+  // Cost: a tally, closed with the fifth stroke.
+  tally: () => ({
+    back: [
+      s('path', { class: 'bot-dim', d: 'M37 6 V14' }),
+      s('path', { class: 'bot-dim', d: 'M40 6 V14' }),
+      s('path', { class: 'bot-dim', d: 'M43 6 V14' }),
+      s('path', { class: 'bot-dim', d: 'M46 6 V14' }),
+      s('path', { class: 'bot-line', d: 'M35.6 14.8 L47.4 5.2' }),
+    ],
+  }),
+  // Publishing: stacked broadcast arcs off a short mast.
+  uplink: () => ({
+    back: [
+      s('path', { class: 'bot-line', d: 'M24 13 V9' }),
+      s('circle', { class: 'bot-eye', cx: 24, cy: 9.6, r: 1.4 }),
+      s('path', { class: 'bot-line', d: 'M19.5 9 Q24 4 28.5 9' }),
+      s('path', { class: 'bot-dim', d: 'M16 7 Q24 1 32 7' }),
+      s('path', { class: 'bot-dim', d: 'M12.6 5.4 Q24 0 35.4 5.4' }),
+    ],
+  }),
+  // Verification gate: a shield, chevroned.
+  shield: () => ({
+    back: [
+      s('path', { class: 'bot-line', d: 'M37.5 6 h8.5 v5 q0 5.5 -4.25 7.5 q-4.25 -2 -4.25 -7.5 z' }),
+      s('path', { class: 'bot-dim', d: 'M37.6 8.4 H45.9' }),
+      s('path', { class: 'bot-dim', d: 'M39.4 10.6 l2.35 2.1 l2.35 -2.1' }),
+      s('path', { class: 'bot-dim', d: 'M39.4 13.8 l2.35 2.1 l2.35 -2.1' }),
+    ],
+  }),
+  // Reference data: a shelf of banded volumes.
+  books: () => ({
+    back: [
+      s('rect', { class: 'bot-dim', x: 35, y: 6, width: 3.4, height: 9, rx: 1 }),
+      s('rect', { class: 'bot-dim', x: 39.4, y: 6, width: 3.4, height: 9, rx: 1 }),
+      s('rect', { class: 'bot-dim', x: 43.8, y: 6, width: 3.4, height: 9, rx: 1 }),
+      s('path', { class: 'bot-line', d: 'M35 9.4 H38.4' }),
+      s('path', { class: 'bot-line', d: 'M39.4 9.4 H42.8' }),
+      s('path', { class: 'bot-line', d: 'M43.8 9.4 H47.2' }),
+      s('path', { class: 'bot-dim', d: 'M34.2 16 H47.6' }),
+    ],
+  }),
+  // Model scout: a surgeon's head mirror on a band — worn, not held, which is what keeps it
+  // distinct from DECKARD's magnifier at 30px.
+  mirror: () => ({
+    front: [
+      s('path', { class: 'bot-line', d: 'M11 16.6 H37' }),
+      s('path', { class: 'bot-dim', d: 'M11.6 14.6 H36.4' }),
+      s('circle', { class: 'bot-line', cx: 24, cy: 11.4, r: 4.2 }),
+      s('path', { class: 'bot-glint', d: 'M21.2 9 Q20.3 11 21 13' }),
+      s('circle', { class: 'bot-eye', cx: 24, cy: 11.4, r: 1.5 }),
+    ],
+  }),
+  // Correlation: crossed threads, pinned at every end.
+  threads: () => ({
+    back: [
+      s('path', { class: 'bot-line', d: 'M36.4 5.4 L46.6 15.6' }),
+      s('path', { class: 'bot-line', d: 'M46.6 5.4 L36.4 15.6' }),
+      s('path', { class: 'bot-dim', d: 'M36.4 10.5 H46.6' }),
+      s('circle', { class: 'bot-eye', cx: 36.4, cy: 5.4, r: 1.3 }),
+      s('circle', { class: 'bot-eye', cx: 46.6, cy: 5.4, r: 1.3 }),
+      s('circle', { class: 'bot-eye', cx: 36.4, cy: 15.6, r: 1.3 }),
+      s('circle', { class: 'bot-eye', cx: 46.6, cy: 15.6, r: 1.3 }),
+    ],
+  }),
+};
+
+
+// The shared body. Inline SVG rather than an image file: the CSP serves no external images,
+// and drawn eyes take --bot-accent from the card, so the roster follows the palette. The class
+// is a parameter because the same drawing serves the 62px crew card and the 30px run-table row;
+// scaling one vector beats maintaining a second, coarser set of paths for the small size.
+function botFace(agent, klass = 'bot') {
+  const parts = (BOT_PARTS[agent.face] || (() => ({})))();
+  return s(
+    'svg',
+    { class: klass, viewBox: '0 0 48 48', 'aria-hidden': 'true', focusable: 'false' },
+    parts.back || [],
+    s('rect', { class: 'bot-fill', x: 5.5, y: 21, width: 3, height: 8, rx: 1.5 }),
+    s('rect', { class: 'bot-fill', x: 39.5, y: 21, width: 3, height: 8, rx: 1.5 }),
+    s('rect', { class: 'bot-fill', x: 18, y: 38, width: 12, height: 3, rx: 1.5 }),
+    s('rect', { class: 'bot-shell', x: 9, y: 13, width: 30, height: 26, rx: 9 }),
+    s('path', { class: 'bot-etch', d: 'M6.3 25 H7.7' }),
+    s('path', { class: 'bot-etch', d: 'M40.3 25 H41.7' }),
+    s('path', { class: 'bot-etch', d: 'M13.6 37 H34.4' }),
+    s('rect', { class: 'bot-visor', x: 13, y: 18, width: 22, height: 13, rx: 6.5 }),
+    s('path', { class: 'bot-glint', d: 'M15.6 23.2 Q17.4 20.4 20.6 19.9' }),
+    s('circle', { class: 'bot-eye', cx: 19.5, cy: 24.5, r: 2.6 }),
+    s('circle', { class: 'bot-eye', cx: 28.5, cy: 24.5, r: 2.6 }),
+    s('path', { class: 'bot-mouth', d: 'M21 34.5 H27' }),
+    parts.front || [],
+  );
+}
+
 function crewCard(agent, stat) {
   const status = stat?.status || 'not_active';
   const led = { active: 'ok', idle: 'idle', degraded: 'warn', not_active: 'idle' }[status] || 'idle';
@@ -1312,30 +1630,40 @@ function crewCard(agent, stat) {
   const fmtStat = (value, fmt = (v) => String(v)) => (value === null || value === undefined ? '—' : fmt(value));
   return h(
     'li',
-    { class: 'crew-card', 'data-status': status },
+    { class: 'crew-card', 'data-status': status, 'data-desk': agent.desk },
     h(
       'div',
       { class: 'crew-card__head' },
-      h('span', { class: 'led', 'data-state': led }),
-      h('span', { class: 'crew-card__callsign', text: agent.callsign }),
-      h('span', { class: 'crew-card__desk mono', text: agent.desk }),
+      botFace(agent),
+      h(
+        'div',
+        { class: 'crew-card__id' },
+        h('span', { class: 'crew-card__callsign', text: agent.callsign }),
+        h('span', { class: 'crew-card__desk mono', text: agent.desk }),
+      ),
+      // Status reads once, here, next to the face — it used to repeat as a stats row too.
+      h('span', { class: 'crew-card__status' }, h('span', { class: 'led', 'data-state': led }), h('span', { text: label })),
     ),
     h('p', { class: 'crew-card__beat', text: agent.beat }),
     agent.quote ? h('p', { class: 'crew-card__quote', text: `"${agent.quote}"` }) : null,
-    h(
-      'dl',
-      { class: 'kv crew-card__stats mono' },
-      h('dt', { text: 'STATUS' }), h('dd', { text: label }),
-      h('dt', { text: 'TASKS COMPLETED' }), h('dd', { text: fmtStat(stat?.tasks_completed) }),
-      h('dt', { text: 'ITEMS PROCESSED' }), h('dd', { text: fmtStat(stat?.items_processed) }),
-      h('dt', { text: 'EST. COST (MTD)' }), h('dd', { text: fmtStat(stat?.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
-      h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat?.last_active_at, formatSydney) }),
-    ),
+    // An agent with nothing published says so in one line instead of printing four rows of
+    // "—". Same claim, a quarter of the ink; the stats table appears once there are figures,
+    // and a single missing field inside a reporting agent still falls back to "—".
+    stat
+      ? h(
+        'dl',
+        { class: 'kv crew-card__stats mono' },
+        h('dt', { text: 'TASKS COMPLETED' }), h('dd', { text: fmtStat(stat.tasks_completed) }),
+        h('dt', { text: 'ITEMS PROCESSED' }), h('dd', { text: fmtStat(stat.items_processed) }),
+        h('dt', { text: 'EST. COST (MTD)' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
+        h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat.last_active_at, formatSydney) }),
+      )
+      : h('p', { class: 'crew-card__idle', text: 'No workload published for this agent yet.' }),
     h('span', { class: 'chip crew-card__runtime', text: agent.runtime }),
   );
 }
 
-// Renders the full 15-agent roster every time: personas ship with the site regardless
+// Renders the full sixteen-agent roster every time: personas ship with the site regardless
 // of data, and each card's workload falls back to "—"/NOT YET ACTIVE when data/crew.json
 // has nothing for that callsign, which is the honest state for as long as Stage 1 runs
 // with no agents wired up yet.
@@ -1353,7 +1681,7 @@ export function renderCrew(crew) {
       h('p', {
         class: 'hint',
         text: reporting
-          ? `${reporting} of ${CREW.length} agents reporting · ${totalTasks} tasks completed · US$${totalCost.toFixed(2)} spent this month.`
+          ? `${reporting} of ${CREW.length} agents reporting · ${plural(totalTasks, 'task')} completed · US$${totalCost.toFixed(2)} spent this month.`
           : `${CREW.length} agents are planned for this project; none are wired up yet. Workload figures publish from Stage 5 onward.`,
       }),
     );
@@ -1363,40 +1691,29 @@ export function renderCrew(crew) {
   if (count) count.textContent = `${CREW.length} AGENTS`;
 }
 
-// ----------------------------------------------------------------- ticker
+// ------------------------------------------------------------- top signals
 
-export function renderTicker(events) {
-  const lane = document.getElementById('ticker-lane');
-  if (!lane) return;
-  clear(lane);
+// The strongest headlines in the snapshot, as a plain static list. Deliberately not a
+// scrolling banner: perpetual motion at the top of the page competes with the content
+// for attention and cannot be read at a glance. Capped at 8 — past that the list stops
+// being a summary and becomes a second copy of the sections.
+export function renderHeadlines(events) {
+  const host = document.getElementById('headline-list');
+  if (!host) return;
+  clear(host);
   // Only events that land in a section are listed, so every link has a card to reveal.
-  // Capped at 8 (not the full snapshot): a scrolling line of near-identical advisory
-  // titles reads as noise past that, however many events actually qualify.
-  const top = [...events].filter(sectionFor).sort(byProminence).slice(0, 8);
+  const top = [...(events || [])].filter(sectionFor).sort(byProminence).slice(0, 8);
   if (!top.length) {
-    lane.append(h('ul', { class: 'ticker-track' }, h('li', { class: 'ticker-item', text: 'NO HEADLINES IN THIS SNAPSHOT' })));
+    host.append(h('li', { class: 'empty', text: 'NO HEADLINES IN THIS SNAPSHOT.' }));
     return;
   }
-  // The second track is a decorative duplicate so the scroll loops seamlessly.
-  const track = (duplicate) =>
-    h(
-      'ul',
-      { class: 'ticker-track', 'aria-hidden': duplicate ? 'true' : undefined },
-      top.map((e) =>
-        h(
-          'li',
-          { class: 'ticker-item' },
-          severityBadge(sevKey(e)),
-          h('span', { class: 'ticker-sep', 'aria-hidden': 'true', text: '·' }),
-          duplicate ? h('span', { text: e.title }) : tickerLink(e),
-        ),
-      ),
-    );
-  lane.append(track(false), track(true));
+  // data-severity on the row, not just the badge, so the row's left stripe picks up
+  // --sev-color from the one shared severity mapping in the CSS.
+  host.append(...top.map((e) => h('li', { class: 'headline', 'data-severity': sevKey(e) }, severityBadge(sevKey(e)), headlineLink(e))));
 }
 
-function tickerLink(event) {
-  const link = h('a', { href: `#sec-${sectionFor(event).id}`, text: event.title });
+function headlineLink(event) {
+  const link = h('a', { class: 'headline__link', href: `#sec-${sectionFor(event).id}`, text: event.title });
   link.addEventListener('click', (e) => {
     if (revealEvent(event.event_id)) e.preventDefault();
   });
@@ -1426,7 +1743,30 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     panels[i].tabIndex = 0;
   });
 
-  const activate = (targetId, { focusPanel = false } = {}) => {
+  // The panels sit in one container directly under the tab strip. Switching a tab while
+  // scrolled further down would otherwise swap content the reader cannot see, which reads
+  // as a dead tab. Scrolling is one-way — up to the top of the panels, never downwards —
+  // so activating a tab from the top of the page leaves the view where it is. Instant, not
+  // smooth: this is a view change, not an animation.
+  const panelHost = panels[0].closest('.tab-panels');
+  const scrollToPanels = () => {
+    const host = panelHost || panels[0];
+    const header = document.querySelector('.site-header');
+    const top = window.scrollY + host.getBoundingClientRect().top - (header ? header.offsetHeight : 0) - 8;
+    if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
+  };
+
+  // On narrow screens the strip is one scrollable row, so the selected tab can sit off its
+  // edge. Nudging nav.scrollLeft brings it back without touching the page scroll.
+  const keepTabVisible = () => {
+    const tab = tabs.find((a) => a.getAttribute('aria-selected') === 'true');
+    if (!tab) return;
+    const left = tab.offsetLeft - nav.offsetLeft;
+    if (left < nav.scrollLeft) nav.scrollLeft = Math.max(0, left - 8);
+    else if (left + tab.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = left + tab.offsetWidth - nav.clientWidth + 8;
+  };
+
+  const activate = (targetId, { focusPanel = false, scroll = false } = {}) => {
     const index = tabs.findIndex((a) => a.getAttribute('href') === `#${targetId}`);
     if (index === -1) return false;
     tabs.forEach((a, i) => {
@@ -1435,13 +1775,15 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
       a.tabIndex = active ? 0 : -1;
       panels[i].hidden = !active;
     });
+    keepTabVisible();
+    if (scroll) scrollToPanels();
     if (focusPanel) panels[index].focus({ preventScroll: true });
     return true;
   };
 
-  const activateFromHash = () => {
+  const activateFromHash = ({ scroll = true } = {}) => {
     const id = window.location.hash.slice(1);
-    if (!id || !activate(id)) activate(tabs[0].getAttribute('href').slice(1));
+    if (!id || !activate(id, { scroll })) activate(tabs[0].getAttribute('href').slice(1));
   };
 
   nav.addEventListener('click', (e) => {
@@ -1449,7 +1791,7 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     if (!a) return;
     e.preventDefault();
     const id = a.getAttribute('href').slice(1);
-    activate(id, { focusPanel: true });
+    activate(id, { focusPanel: true, scroll: true });
     history.replaceState(null, '', `#${id}`);
   });
 
@@ -1464,24 +1806,28 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     if (next === current) return;
     e.preventDefault();
     const id = tabs[next].getAttribute('href').slice(1);
-    activate(id);
+    activate(id, { scroll: true });
     tabs[next].focus();
     history.replaceState(null, '', `#${id}`);
   });
 
-  window.addEventListener('hashchange', activateFromHash);
-  activateFromHash();
+  window.addEventListener('hashchange', () => activateFromHash());
+  // First run only restores which tab is open; it must not move a reader who deep-linked.
+  activateFromHash({ scroll: false });
+  // Both of these widen the strip after that first activation — the display face swapping
+  // in over the fallback, and a rotation — which would leave the selected tab off-edge.
+  document.fonts?.ready.then(keepTabVisible);
+  window.addEventListener('resize', keepTabVisible);
   activateTab = activate;
   return { activate };
 }
 
-// ------------------------------------------------------------ fx and boot
+// -------------------------------------------------------------------- fx
 
-// The pieces every page shares: the FX OFF toggle, the ticker pause (when the
-// ticker exists) and the canvas particle field.
+// The pieces every page shares: the FX OFF toggle, the canvas particle field and the
+// section tabs (a no-op on pages whose nav has no same-page section links).
 function initCommon() {
   initFxToggle();
-  initTickerToggle();
   initFxField();
   initTabs();
 }
@@ -1500,16 +1846,6 @@ export function initFxToggle({ button = document.getElementById('fx-toggle'), ro
       storageSet(storage, FX_KEY, off ? 'off' : 'on');
     });
   }
-}
-
-function initTickerToggle() {
-  const button = document.getElementById('ticker-toggle');
-  const ticker = document.getElementById('ticker');
-  if (!button || !ticker) return;
-  button.addEventListener('click', () => {
-    const paused = ticker.classList.toggle('is-paused');
-    button.setAttribute('aria-pressed', paused ? 'true' : 'false');
-  });
 }
 
 // A slow particle field on a fixed canvas behind the page. The rules §8.4 asks
@@ -1615,51 +1951,6 @@ export function initFxField({ root = document.documentElement, host = document.b
   return canvas;
 }
 
-// A small corner readout, at most 2.4 s, once per session, skippable, and skipped
-// entirely under reduced motion or FX OFF. It never covers or delays the content.
-export function runBoot(data, { storage = safeStorage('sessionStorage') } = {}) {
-  const panel = document.getElementById('boot');
-  const out = document.getElementById('boot-text');
-  if (!panel || !out) return;
-  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  if (reduce || document.documentElement.classList.contains('fx-off') || storageGet(storage, BOOT_KEY) === '1') return;
-  storageSet(storage, BOOT_KEY, '1');
-  const events = data.events || [];
-  const au = events.filter((e) => e.au?.directly_reported_in_au).length;
-  const stamp = data.feed?.last_completed_collection ? `${formatUtc(data.feed.last_completed_collection)} UTC` : 'NONE YET';
-  const script = [
-    '> CYBERPULSE-AI // HUD INIT',
-    '> READING PUBLISHED SNAPSHOT',
-    `> ${events.length} EVENTS // ${au} REPORTED IN AU`,
-    `> LAST COMPLETED COLLECTION ${stamp}`,
-    '> READY',
-  ].join('\n');
-  panel.hidden = false;
-  let i = 0;
-  let closeTimer = 0;
-  let typer = 0;
-  const onKey = (e) => {
-    if (e.key === 'Escape') finish();
-  };
-  function finish() {
-    clearInterval(typer);
-    clearTimeout(closeTimer);
-    panel.hidden = true;
-    document.removeEventListener('keydown', onKey);
-  }
-  typer = setInterval(() => {
-    i += 2;
-    out.textContent = script.slice(0, i);
-    if (i >= script.length) {
-      clearInterval(typer);
-      closeTimer = setTimeout(finish, 400);
-    }
-  }, 30);
-  document.addEventListener('keydown', onKey);
-  panel.addEventListener('click', finish);
-  document.getElementById('boot-skip')?.addEventListener('click', finish);
-}
-
 // ------------------------------------------------------------------- main
 
 function renderStrip(data) {
@@ -1690,19 +1981,19 @@ export async function main() {
     renderSections({ events: [] });
     return;
   }
-  const state = { events: data.events, query: '', selected: {} };
+  const state = { events: data.events, selected: {} };
   renderStrip(data);
   renderIndex(data);
   renderGauges(data);
   renderRadar(data);
-  renderTicker(data.events);
+  renderHeadlines(data.events);
   renderPipeline(data.health, { status: data.status, feed: data.feed });
   renderCrew(await getJson(`${data.base}crew.json`, globalThis.fetch));
 
   const count = document.getElementById('filter-count');
   const refresh = () => {
     const filtered = applyFilters(state);
-    filtersActive = Boolean(state.query.trim()) || Object.values(state.selected).some((v) => v.size);
+    filtersActive = Object.values(state.selected).some((v) => v.size);
     renderSections({ events: filtered });
     if (count) count.textContent = `${filtered.length} OF ${data.events.length} EVENTS`;
   };
@@ -1719,15 +2010,8 @@ export async function main() {
   };
   await renderMap(data.events, onCountry);
 
-  document.getElementById('filter-query')?.addEventListener('input', (e) => {
-    state.query = e.target.value;
-    refresh();
-  });
   const clearFilters = () => {
-    state.query = '';
     state.selected = {};
-    const q = document.getElementById('filter-query');
-    if (q) q.value = '';
     document.querySelectorAll('#filter-facets button[aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
     syncMapSelection('');
     refresh();
@@ -1736,7 +2020,6 @@ export async function main() {
   document.getElementById('map-clear')?.addEventListener('click', clearFilters);
   Object.assign(view, { events: data.events, refresh, clearFilters });
   refresh();
-  runBoot(data);
 }
 
 // ---------------------------------------------------------------- event page
@@ -1799,6 +2082,13 @@ async function mainHistory() {
     return;
   }
   const known = days.map((d) => d.date);
+  // Every other panel head states how much it is showing; this one read a bare "PUBLISHED DAYS"
+  // with a permanently idle lamp. The figure is only written once the index is in hand, so an
+  // unreadable index still says AWAITING DATA rather than claiming zero days.
+  const countLabel = document.getElementById('history-count');
+  const countLed = document.getElementById('history-led');
+  if (countLabel) countLabel.textContent = `${known.length} PUBLISHED ${known.length === 1 ? 'DAY' : 'DAYS'}`;
+  if (countLed) countLed.dataset.state = 'ok';
   const requested = new URLSearchParams(window.location.search).get('date');
   const date = known.includes(requested)
     ? requested

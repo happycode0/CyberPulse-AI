@@ -6,11 +6,10 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#05070A">
+<meta name="theme-color" content="#121926">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>Collection history | CyberPulse-AI</title>
 <meta name="description" content="Published CyberPulse-AI snapshots, one per UTC day: previous and next day navigation and a jump-to-date control driven by the published history index.">
-<link rel="preload" href="assets/fonts/orbitron-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/chakra-petch-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/hud.css">
 <script type="module" src="assets/hud.js"></script>
@@ -28,7 +27,7 @@
   <nav class="site-nav" aria-label="Navigation">
     <a href="index.html">DASHBOARD</a>
     <a href="index.html#sec-australia-now">AUSTRALIA NOW</a>
-    <a href="index.html#sec-world-map">WORLD MAP</a>
+    <a href="index.html#sec-overview">OVERVIEW</a>
     <a href="index.html#sec-vulnerabilities">VULNERABILITIES</a>
     <a href="history.html">HISTORY</a>
   </nav>
@@ -43,11 +42,9 @@
   <section class="hud-panel" id="sec-history" aria-labelledby="h-history">
     <div class="hud-panel__inner">
       <header class="hud-panel__head">
-        <span class="panel-id mono">HIS-01</span>
         <h1 class="panel-title" id="h-history">COLLECTION HISTORY</h1>
-        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono">PUBLISHED DAYS</span></span>
+        <span class="panel-status"><span class="led" data-state="idle" id="history-led"></span><span class="panel-count mono" id="history-count">AWAITING DATA</span></span>
       </header>
-      <div class="tick-ruler" aria-hidden="true"></div>
       <div class="panel-body">
         <p class="hint">One snapshot per UTC day, each shown exactly as it was published — a record of past collections, not a running view. Step through days with previous and next, or jump straight to a date.</p>
         <div class="history-nav" id="history-nav" aria-label="Day navigation"></div>
