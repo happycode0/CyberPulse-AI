@@ -482,10 +482,10 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 |---|---|
 | Role / adapter | `researcher` · `http` adapter → worker for harvest and evaluation (**deterministic**), tier 1 LLM only to draft the recommendation |
 | Reports to | ROGUE, with MORPHEUS approving any change that affects output quality |
-| Wakes on | Weekly DEEP routine, Sunday 04:00 AEST; on-demand when a configured model fails, is withdrawn, or drifts above the price ceiling |
-| Owns | Keeping the §7.1 ladder optimal: the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling |
+| Wakes on | **Daily** DEEP routine, 04:00 AEST, for the deterministic catalogue scan (zero tokens); **weekly** Sunday 04:00 AEST for the full gauntlet and any promotion proposal; on-demand within minutes when TELETRAAN reports a configured model failing, withdrawn, or above the price ceiling |
+| Owns | Keeping the §7.1 ladder optimal — the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling — and the **agent-to-model assignment** built on it (§7.7): which model each of the sixteen agents is running right now, and swapping an agent off a model that is failing it |
 | Specialised tasks | Snapshot `/api/v1/models` each run and diff against the last: new models, withdrawn models, price changes. **Flag new `:free` models loudly** — free is always evaluated first. Filter candidates to `tools` + `structured_outputs`, output ≤ $1/M, non-`:batch`, with a capable route at acceptable quantisation. Score survivors on published signals (§7.6). Run the **local gauntlet** — a pinned golden set of ~30 human-verified events — measuring schema compliance, agreement with golden labels, **refusal rate on security content**, p95 latency and measured cost from `usage.cost`. Open a proposal issue with a side-by-side table and a recommendation. Re-verify every ladder model's current price each run and immediately drop any that drifted above the ceiling. Repair fallback chains when a `:free` variant disappears, before a pipeline run discovers it. |
-| Never | Changes a tier **default** unilaterally — that needs MORPHEUS (quality) and ROGUE (cost); proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set |
+| Never | Changes a tier **default** unilaterally — that needs MORPHEUS (quality) and ROGUE (cost); proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set; swaps the same agent more than **3× in 24 h** (circuit breaker → escalate, §7.7) |
 | KPI | Cost per 1,000 enrichments, trending down; share of pipeline volume served by the free tier, trending up; regressions caught before promotion; ceiling breaches (must be zero) |
 
 #### TELETRAAN — Watchdog / SRE
@@ -891,7 +891,17 @@ nodes so they cost nothing. Pin the exact version; it ships weekly.
 
 The ladder is not a one-time choice. Model prices move — `z-ai/glm-5.3`'s listed input
 price changed between two queries a day apart during this design — and `:free` variants are
-withdrawn without notice. RIPPERDOC tends it on a weekly cycle.
+withdrawn without notice. RIPPERDOC tends it on **two cycles, because the two halves of the
+job have different costs**:
+
+| Cycle | What runs | Cost | Why this cadence |
+|---|---|---|---|
+| **Daily**, 04:00 AEST | Deterministic catalogue scan: snapshot `/api/v1/models` and `/endpoints`, diff against yesterday, re-verify the current price of every model in the ladder, detect `:free` variants that appeared or disappeared, and flag any ladder model that has drifted above the ceiling or lost its capable route | **$0.00** — plain HTTP, no inference | The thing that changes daily is *price and availability*, and catching a ceiling breach or a withdrawn `:free` model the morning it happens is worth a free API call. A pipeline run should never be the thing that discovers a model is gone |
+| **Weekly**, Sunday 04:00 AEST | Score candidates on the published signals below, run the local gauntlet, open a promotion proposal | ≤ $0.25/month | The gauntlet is what actually decides, and it costs money. Running it daily would be ~7× the spend to re-answer a question whose answer is a pinned golden set — it does not change overnight. The adoption veto below is also defined **week-on-week**, so it needs a week of data to mean anything |
+| **On demand**, within minutes | Repair a fallback chain, or swap a failing agent down its chain (§7.7) | $0.00 | Triggered by TELETRAAN, not by a clock |
+
+Splitting it this way is what makes a daily assessment affordable: the free half runs every
+morning, and the half that bills only runs when there is something new for it to judge.
 
 **Selection order, always in this sequence:**
 
@@ -956,6 +966,65 @@ candidates, which at these prices is rounding error.
 datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as of
 {as_of}"*. If any of it ever surfaces on the public site, the citation travels with it.
 
+### 7.7 Agent-to-model assignment, and swapping a failing model
+
+§7.1 keeps the *best model per tier*. This section is the layer above it: **which model each
+of the sixteen agents is actually running**, and what happens when one of them stops working.
+
+**Assignment is by tier, not per agent, and that is the point.** An agent is assigned the
+cheapest tier that can do its work; RIPPERDOC keeps that tier on the best model available.
+Sixteen independent per-agent choices would need sixteen gauntlets to justify, and there is no
+evidence on which to make them differently — the work of four research desks is the same
+shape. The indirection is what makes one evaluation serve every agent that shares a need.
+
+| Agent | Tier | Why that tier |
+|---|---|---|
+| MORPHEUS | 2 — STRONG | Editorial judgment over conflicting evidence; runs once a day, so the cost is bounded |
+| VOIGHT | 2 — STRONG | It holds the publication veto; the gate must not be weaker than what it is gating |
+| ZION · BLASTER · WINTERMUTE | 1 — CHEAP | Desk summaries and AU-relevance reasoning over supplied evidence |
+| TACHIKOMA | 1 — CHEAP + Tavily | Judging whether a discovered source is worth proposing |
+| DECKARD | 1 — CHEAP, 2 on critical | Routine follow-up is cheap; a critical developing event earns the strong tier |
+| PROWL | 1 — CHEAP, ambiguous cases only | Deterministic matching first; the model only sees what the rules could not decide |
+| WHEELJACK | CODE | Long agentic coding sessions — chosen on session cost, not token price |
+| TRON | AUDIT | Deliberately a different vendor from CODE: a two-person rule is worthless if both halves share a failure mode |
+| TELETRAAN | 1 — CHEAP, incidents only | Deterministic checks every 5 min cost nothing; the model only diagnoses an open incident |
+| RIPPERDOC | 1 — CHEAP, drafting only | The harvest and the gauntlet are deterministic; the model writes up the recommendation |
+| ROGUE | none (monthly review) | A ledger is arithmetic |
+| SERAPH · LIBRARIAN · LINK | none | Deterministic by design — **zero tokens, permanently** |
+
+Tier 0 — FREE serves the mechanical sub-tasks inside the pipeline (classify, extract, tag,
+source relevance) rather than belonging to one agent, and §7.1 bars it from editorial
+reasoning. Ten of the sixteen agents spend nothing on a normal run.
+
+**Swapping a model that is failing an agent.** This is a different event from a promotion and
+moves at a different speed, because it is a repair:
+
+1. **TELETRAAN detects it** — schema-compliance failures, refusals on security content, 5xx or
+   402 from the route, p95 latency outside the lane, or the daily scan finding the model
+   withdrawn or over the ceiling.
+2. **RIPPERDOC moves the agent down its tier's fallback chain immediately**, no approval. Going
+   *down* a chain that MORPHEUS and ROGUE already signed off is not a new decision, and a
+   pipeline that waits for a human to approve a documented fallback is a pipeline that stops.
+3. **A promotion still needs both approvals.** Moving *up*, or changing a tier default, goes
+   through the proposal and the gauntlet as §7.6 describes. The asymmetry is deliberate:
+   degrading is reversible and cheap to get wrong, promoting is neither.
+4. **Circuit breaker: three swaps for the same agent in 24 hours and RIPPERDOC stops** and
+   escalates to a human. Three failures in a day is not a bad model, it is a wrong diagnosis —
+   the same rule TELETRAAN applies to its own automatic fixes (§4.2).
+5. **Every swap is written to the ledger** with the trigger, the old and new slug and the
+   evidence, so a silent drift down the chain cannot happen unnoticed. The public site
+   publishes the current assignment, not the history.
+
+**Why Paperclip can carry this and what it must not hold.** Paperclip owns the *schedule* (a
+daily DEEP routine in `Australia/Sydney`, §2.3), the *authority* (RIPPERDOC's role, its
+approval chain to MORPHEUS and ROGUE) and the *audit trail* (issues, heartbeats, budgets).
+It does **not** hold the ladder or the assignment table — §3 keeps application logic out of the
+control plane — so those stay in `config/models.yaml` and Postgres, and RIPPERDOC writes them
+through the worker's Ops API, which is the only write authority §4.4 grants it. Open question
+§13/4 applies directly here: whether an `http`-adapter run satisfies Paperclip's mandatory
+issue-comment backstop is **unverified**, and RIPPERDOC is an `http`-adapter agent. Stage 4
+settles it; until then a manual comment is the fallback.
+
 ---
 
 ## 8. Public site
@@ -967,32 +1036,120 @@ explicitly unmaintained and React-bound. We ship ~15 KB of our own CSS.
 
 ### 8.1 Palette
 
-Cyan carries structure; warm colours mean severity — the discipline that makes a HUD
-readable. Contrast ratios measured against `--bg-panel`.
+Cyan carries structure; warm colours mean severity — the discipline that makes a dashboard
+readable. Ratios below are measured against **both** card backgrounds and asserted, not just
+recorded, by `test_palette_meets_the_contrast_ratios_the_plan_claims`. Measuring against
+`--bg-panel` alone is how `--line-strong` shipped at 2.8:1 on the surface it actually draws
+`.btn` and `.input` borders on — under the 3.0 WCAG 1.4.11 requires. Cards sit on the lighter
+of the two, so the lighter one is the case that has to pass.
+
+**Colour is spent, not sprinkled.** Cyan means exactly three things — a link, the selected
+tab, and a headline figure. Magenta means one: a value a model inferred rather than read off a
+source. Every micro-label on the page was cyan or teal in the first pass, which left no
+emphasis to spend on anything; hierarchy in small print now comes from size, weight and
+tracking, and the labels are grey.
+
+`--brand` is a token of its own, so that the `-AI` in the wordmark can have a colour meaning
+nothing else on the site. `--magenta` was the obvious reuse and is wrong: it marks model
+inference, so a magenta `-AI` would read as *unverified*. Red is unavailable too — the severity
+ramp owns 354° through 50°, and any red light enough to clear 4.5:1 on this background is a
+coral you cannot tell from `--sev-critical` at a glance. Violet is the one hue nothing else in
+the palette claims, which is what a brand colour has to be.
+
+A studio palette, not a neon one. The first pass paired a near-black page with saturated
+primaries (`#00E5FF`, `#FF2A6D`); at the sizes text is actually set that reads as glare.
+Backgrounds now lift off pure black, the accents come down to the soft blue-cyan the
+crew portraits glow with, and every severity hue is desaturated far enough that the label
+does the shouting and the colour only confirms it.
 
 | Token | Hex | Ratio | Role |
 |---|---|---|---|
-| `--bg-void` | `#05070A` | — | Page |
-| `--bg-panel` | `#0B1118` | — | Panels |
-| `--bg-raised` | `#111C27` | — | Raised |
-| `--line` | `#16283A` | 1.3 | Decorative grid only |
-| `--line-strong` | `#41718A` | 3.6 | Control borders (WCAG 1.4.11) |
-| `--text` | `#E6F1F5` | 16.5 | Body |
-| `--text-dim` | `#9DB2C0` | 8.6 | Secondary |
-| `--text-muted` | `#7C93A3` | 5.9 | Minimum for small text |
-| `--cyan` | `#00E5FF` | 12.3 | Structure / info |
-| `--teal` | `#0EB0C2` | 7.2 | Secondary lines |
-| `--magenta` | `#FF2A6D` | 5.2 | AI/ML accent |
-| `--sev-critical` | `#FF3B5C` | 5.45 | Critical |
-| `--sev-high` | `#FF8A1F` | 8.0 | High |
-| `--sev-medium` | `#FFD23F` | 13.1 | Medium |
-| `--sev-low` | `#3DDC97` | 10.7 | Low |
-| `--sev-info` | `#4FC3F7` | 9.5 | Info |
+| `--bg-void` | `#121926` | — | Page |
+| `--bg-panel` | `#19212D` | — | Panels |
+| `--bg-raised` | `#24303E` | — | Cards, inside a panel |
+| `--line` | `#394B62` | 1.8 / 1.5 | Container borders only |
+| `--line-strong` | `#5E7E9C` | 3.8 / 3.2 | Control borders, and nothing else (WCAG 1.4.11) |
+| `--text` | `#EDF2F7` | 14.4 / 11.9 | Body |
+| `--text-dim` | `#AFC0CD` | 8.7 / 7.2 | Secondary |
+| `--text-muted` | `#8A9CAB` | 5.7 / 4.7 | Micro-labels; minimum for small text |
+| `--cyan` | `#5BD6E8` | 9.4 / 7.8 | Links, selected tab, headline figure |
+| `--teal` | `#34A9BC` | 5.8 / 4.8 | Secondary lines |
+| `--magenta` | `#F2789F` | 6.1 / 5.1 | Model-inferred values only |
+| `--brand` | `#B184EB` | 5.7 / 4.7 | The `-AI` in the wordmark, and nothing else |
+| `--sev-critical` | `#F56C79` | 5.6 / 4.7 | Critical |
+| `--sev-high` | `#F09A4A` | 7.3 / 6.0 | High |
+| `--sev-medium` | `#E8C766` | 9.9 / 8.2 | Medium |
+| `--sev-low` | `#58C79C` | 7.8 / 6.4 | Low |
+| `--sev-info` | `#6FBEEA` | 7.9 / 6.5 | Info |
 
-Typography: **Orbitron** 600–800 display (uppercase, `.08em` tracking, ≥18px) ·
-**Chakra Petch** 400–600 UI/body (15–16px, 1.5) · **JetBrains Mono** 400–600 for CVE IDs,
-IOCs and timestamps with `tabular-nums`. All SIL OFL, self-hosted (no Google Fonts
-callout — Australian Privacy Act hygiene, and better caching).
+Ratios are `--bg-panel` / `--bg-raised`. The backgrounds have been lifted twice. The first step
+moved `--bg-raised` from `#18202B` to `#1A232E`, so that a card separates from its panel by tone
+alone; with that step visible, the nine inner card types dropped their 1px `--line` rectangles —
+roughly forty fewer hairlines on a full dashboard, and the borders that remain now mean
+something because they are the only rectangles left. Nothing that carries state lost its edge:
+an event card keeps its 4px severity bar, a source node its state colour, a pipeline node its
+lamp.
+
+The second step lifted all three backgrounds together — `--bg-raised` `#1A232E` → `#24303E`,
+0.0162 → 0.0284 relative luminance — because the page still read as switched off rather than
+dark. Every foreground ratio falls when a background rises, so the palette was re-derived
+against the new pair rather than carried across: `--line-strong` and `--sev-critical` came up to
+hold their floors, and `--line` came up furthest, because at `#253140` it sat within a hair of
+the new `--bg-raised` and every rule separating two rows of a table would have disappeared into
+the card drawing it. Lifting `--line` then broke something a contrast floor does not see: the
+map filled a country with no events in `--line`, so one event had become *quieter* than none and
+the legend read backwards. Tier 1 moved to `#29657D`, and the no-events fill stopped borrowing a
+border token altogether: `--map-none` `#334357` sits 2.1× below tier 1, which is the step the
+ramp had before the lift, and 3.6× above the ocean so land still reads as land. The five tiers
+now climb 0.054, 0.113, 0.195, 0.327, 0.561 relative luminance — an even geometric ramp — and
+`test_the_map_load_ramp_ascends_in_luminance` asserts the ordering.
+
+Shape: one radius (`--radius` 14px, `--radius-sm` 8px) on panels, cards, inputs and
+controls; chips and tabs are full pills. The chamfered corner the first pass clipped onto
+every panel was the loudest piece of HUD costume on the page, and it fought the subject —
+the crew are drawn as soft-radius bots.
+
+**Typography: two faces, one job each.** `--font-sans` — the system UI stack — sets every
+word; `--font-mono` — JetBrains Mono 400/600, self-hosted, SIL OFL — sets every figure.
+
+There were four tokens across three families before, and the two display families were the
+reason the page read as costume. Orbitron is a squared-off sci-fi face and Chakra Petch a
+semi-technical one, and between them they set the brand, every panel title and every caption.
+Neither is more readable than the reader's own UI font, and each cost a download. Both were
+deleted — six `woff2` files, ~49 KB, and two `<link rel=preload>` per page — along with their
+OFL sections. Hierarchy now comes from size, weight and tracking: body at 17px/1.65, panel
+titles 15px/600 at `.09em` uppercase, micro-labels 12px/600 at `.08–.09em`. Uppercase caption
+text carries more tracking than it did, because a humanist face needs more of it than a squared
+one to stay legible at caps.
+
+Mono earns its download on the one thing a proportional face genuinely cannot do: hold columns
+of figures, timestamps and identifiers in line. It also now sets the two large numerals — the
+CyberPulse Index and the gauge counts — which were in the display face; a figure belongs in the
+face with `tabular-nums`. `test_fonts_ship_with_their_licence` derives the family list from the
+`@font-face` rules and asserts served files and shipped files are the same set, so a face cannot
+drift out of its licence or leave dead bytes behind.
+
+The page background is flat. The graph-paper grid and the scanline film that preceded it were
+both atmosphere paid for in legibility — ruled lines running under body copy, and a translucent
+wash over every glyph.
+
+Crew portraits: each of the sixteen agents is drawn as a little bot in inline SVG — one shared
+shell (head, visor, two eyes, vents, a seam across the jaw, a highlight across the visor) plus
+one accessory per agent, keyed by `CREW[].face`, that says what the agent does. Accessories run
+four to seven nodes each rather than one or two: the akubra has a dented dome, a hatband and a
+chin cord; the hard hat has ridges and a lamp; the tally closes with its fifth stroke; the
+clipboard has a clip. Two ink weights exist for that detail — `.bot-etch` strokes in the page
+colour, because a ridge on a filled shape cannot be drawn in the same ink as the fill, and
+`.bot-glint` is a half-opacity highlight. Inline because the CSP serves no external images, and
+because drawn eyes inherit `--bot-accent` from the card's desk, so the roster follows the
+palette instead of a sprite sheet.
+
+The same drawing appears twice: at 62px on the crew card, and at 30px in the first column of the
+run table, which is what ties the two views of the roster together. At the smaller size the
+etched detail drops out and the accessory silhouette does the identifying, so a row still reads
+as a particular agent rather than a generic bot. One vector serves both — `botFace()` takes its
+class as a parameter — rather than a second, coarser set of paths to keep in step with the
+first.
 
 ### 8.2 Sections
 

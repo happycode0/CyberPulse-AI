@@ -1,37 +1,67 @@
 /* CyberPulse-AI HUD. Hand-written; technique borrowed from CYBERCORE CSS (MIT) and augmented-ui (BSD-2), no dependency on either. */
 
-@font-face { font-family: "Orbitron"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/orbitron-600.woff2") format("woff2"); }
-@font-face { font-family: "Orbitron"; font-weight: 700; font-style: normal; font-display: swap; src: url("fonts/orbitron-700.woff2") format("woff2"); }
-@font-face { font-family: "Orbitron"; font-weight: 800; font-style: normal; font-display: swap; src: url("fonts/orbitron-800.woff2") format("woff2"); }
-@font-face { font-family: "Chakra Petch"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/chakra-petch-400.woff2") format("woff2"); }
-@font-face { font-family: "Chakra Petch"; font-weight: 500; font-style: normal; font-display: swap; src: url("fonts/chakra-petch-500.woff2") format("woff2"); }
-@font-face { font-family: "Chakra Petch"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/chakra-petch-600.woff2") format("woff2"); }
 @font-face { font-family: "JetBrains Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/jetbrains-mono-400.woff2") format("woff2"); }
 @font-face { font-family: "JetBrains Mono"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/jetbrains-mono-600.woff2") format("woff2"); }
 
 :root {
-  --bg-void: #05070A;
-  --bg-panel: #0B1118;
-  --bg-raised: #111C27;
-  --line: #16283A;
-  --line-strong: #41718A;
-  --text: #E6F1F5;
-  --text-dim: #9DB2C0;
-  --text-muted: #7C93A3;
-  --cyan: #00E5FF;
-  --teal: #0EB0C2;
-  --magenta: #FF2A6D;
-  --sev-critical: #FF3B5C;
-  --sev-high: #FF8A1F;
-  --sev-medium: #FFD23F;
-  --sev-low: #3DDC97;
-  --sev-info: #4FC3F7;
+  /* A studio palette, not a neon one. The previous values were a near-black page with
+     saturated primaries on top (#00E5FF, #FF2A6D); at the sizes text actually gets used
+     that reads as glare, and glare is what made the page feel loud rather than technical.
+     Backgrounds lift off pure black, the accents come down to the soft blue-cyan the
+     photographed bots glow with, and every severity hue is desaturated to the point where
+     the label does the shouting and the colour only confirms it. Every ratio is measured
+     against both --bg-panel and --bg-raised, because cards sit on the lighter of the two,
+     and recorded in PLAN.md 8.1. --line-strong draws control borders and nothing else now,
+     so it is held to 3:1 (WCAG 1.4.11) on every background it is used over.
 
-  --font-display: "Orbitron", "Segoe UI", system-ui, sans-serif;
-  --font-ui: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+     The backgrounds were then lifted a second time (--bg-raised 0.0162 -> 0.0284 relative
+     luminance, +75%): the first pass overshot into a page that read as switched off rather
+     than dark. Lifting a background lowers every foreground ratio measured on it, so the
+     palette was re-derived rather than assumed. --line-strong and --sev-critical had to come
+     up to hold their floors, and --line had to come up further still — at the old #253140 it
+     was within a hair of the new --bg-raised, so every rule separating two rows of a table
+     would have vanished into the card drawing it.
+
+     --brand exists so the wordmark can have a colour that means nothing else on the site.
+     --magenta was the obvious candidate and is wrong: it marks model inference (.chip--ai,
+     .detail-col--ai), so a magenta -AI would read as "unverified". Red is unavailable too —
+     the severity ramp owns 354deg through 50deg, and any red light enough to clear 4.5:1 on
+     this background is a coral you cannot tell from --sev-critical at a glance. Violet is the
+     one hue nothing else in the palette claims. */
+  --bg-void: #121926;
+  --bg-panel: #19212D;
+  --bg-raised: #24303E;
+  --line: #394B62;
+  --line-strong: #5E7E9C;
+  --text: #EDF2F7;
+  --text-dim: #AFC0CD;
+  --text-muted: #8A9CAB;
+  --cyan: #5BD6E8;
+  --teal: #34A9BC;
+  --magenta: #F2789F;
+  --brand: #B184EB;
+  --sev-critical: #F56C79;
+  --sev-high: #F09A4A;
+  --sev-medium: #E8C766;
+  --sev-low: #58C79C;
+  --sev-info: #6FBEEA;
+
+  /* Two faces, one job each: --font-sans for every word, --font-mono for every figure.
+     There were four tokens across three families before, and the two display families were
+     the reason the page read as costume — Orbitron is a squared-off sci-fi face and Chakra
+     Petch a semi-technical one, and between them they set the brand, every panel title and
+     every caption. Neither is more readable than the reader's own UI font, and each cost a
+     download. The system stack is the cleanest face available on any given machine, ships
+     no bytes and needs no font-src beyond 'self'; hierarchy now comes from size, weight and
+     spacing. JetBrains Mono stays, self-hosted, for the one thing a proportional face genuinely
+     cannot do: hold columns of figures, timestamps and identifiers in line. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-  --chamfer: 14px;
+  /* Rounded, not chamfered. The cut corner was the loudest single piece of HUD costume on
+     the page and it fought the subject: the bots are all soft radii. */
+  --radius: 14px;
+  --radius-sm: 8px;
   --gap: 16px;
 }
 
@@ -40,88 +70,112 @@ html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   background-color: var(--bg-void);
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-position: -1px -1px;
+  /* Flat. The graph-paper grid and the scanline film that preceded it were both atmosphere
+     paid for in legibility: ruled lines running under body copy, and a translucent wash over
+     every glyph. A dashboard reads cleanest when the only marks on the page are the data. */
   color: var(--text);
-  font: 400 16px/1.5 var(--font-ui);
-  overflow-wrap: anywhere;
+  font: 400 17px/1.65 var(--font-sans);
+  /* break-word, not anywhere: "anywhere" splits ordinary words mid-syllable at any width. */
+  overflow-wrap: break-word;
 }
-/* Static scanlines: a fixed overlay with no animation, so nothing can flash. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
-  opacity: 0.4;
-}
-.fx-off body::after { display: none; }
-.fx-off body { background-image: none; }
 
 h1, h2, h3, p { margin: 0; }
 a { color: var(--cyan); text-underline-offset: 3px; }
 a:hover { color: var(--text); }
 :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+/* Long opaque strings (event ids, CVEs, URLs) are the only place breaking mid-token beats
+   overflowing the panel. */
+.mono, .detail__id, .event-card__id { overflow-wrap: anywhere; }
 .wrap { max-width: 1320px; margin: 0 auto; padding: 0 var(--gap); }
 .skip-link { position: absolute; left: -999px; top: 0; z-index: 200; background: var(--cyan); color: var(--bg-void); padding: 8px 12px; }
 .skip-link:focus { left: 8px; top: 8px; }
 [hidden] { display: none !important; }
 
-/* Header and status */
-.site-header { border-bottom: 1px solid var(--line-strong); background: rgba(5, 7, 10, 0.92); }
-.site-header__row { display: flex; align-items: center; justify-content: space-between; gap: var(--gap); flex-wrap: wrap; max-width: 1320px; margin: 0 auto; padding: 12px var(--gap) 4px; }
-.brand { font: 800 22px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+/* Header and status. The header is sticky because it carries the tab strip: tabs a reader
+   has to scroll back up to find are the main reason a tabbed page feels broken. */
+.site-header { position: sticky; top: 0; z-index: 90; border-bottom: 1px solid var(--line-strong); background: var(--bg-void); }
+.site-header__row { display: flex; align-items: center; justify-content: space-between; gap: var(--gap); flex-wrap: wrap; max-width: 1320px; margin: 0 auto; padding: 10px var(--gap) 6px; }
+.brand { font: 700 19px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; }
 .brand__mark { color: var(--cyan); }
-.brand__ai { color: var(--magenta); }
+.brand__ai { color: var(--brand); }
 .site-header__controls { display: flex; gap: 8px; flex-wrap: wrap; }
-.site-nav { display: flex; gap: 4px 16px; overflow-x: auto; max-width: 1320px; margin: 0 auto; padding: 4px var(--gap) 10px; scrollbar-width: thin; }
-.site-nav a { flex: none; font: 600 12px/1.6 var(--font-display); letter-spacing: 0.08em; text-decoration: none; color: var(--text-dim); padding: 2px 0; border-bottom: 1px solid transparent; }
-.site-nav a:hover { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* Tab strip. The selected tab is a filled cyan chip — the same "on" treatment the filter
+   chips already use — because an underline alone was not reading as a selection. */
+/* Wraps rather than scrolls. With thirteen tabs an overflow strip put THE CREW and SYSTEM
+   behind a horizontal scrollbar, which is exactly the kind of tab a reader never finds. */
+.site-nav { display: flex; flex-wrap: wrap; gap: 3px; max-width: 1320px; margin: 0 auto; padding: 0 var(--gap) 2px; }
+.site-nav a {
+  flex: none;
+  font: 600 13px/1.4 var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  padding: 9px 13px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+}
+.site-nav a:hover { color: var(--cyan); background: var(--bg-raised); }
+.site-nav a[aria-selected="false"] { border-color: var(--line); }
 /* The active tab, when initTabs() has turned the nav into a tablist. */
-.site-nav a[aria-selected="true"] { color: var(--cyan); border-bottom-color: var(--cyan); }
+.site-nav a[aria-selected="true"] { color: var(--bg-void); background: var(--cyan); font-weight: 600; }
+.site-nav a[aria-selected="true"]:hover { color: var(--bg-void); }
 
-.status-strip { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; padding: 8px var(--gap); background: var(--bg-raised); border-bottom: 1px solid var(--line-strong); font-size: 13px; }
-.status-strip__label { font: 700 12px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--cyan); }
+/* The collection stamp used to be its own full-width band between the tabs and the first
+   panel — a third horizontal rule to cross before reaching any content, and, because it sat
+   below the tab strip, the one thing a deep link scrolled straight past. It now sits inline
+   in the header row beside the brand, which is where a reader looks for "as at when" anyway.
+   The header is sticky, so the stamp is on screen permanently instead of only at the top.
+   It keeps its own background at narrow widths, where it wraps onto its own line. */
+.status-strip { display: flex; flex-wrap: wrap; gap: 2px 13px; align-items: baseline; flex: 1 1 320px; min-width: 0; font-size: 13px; color: var(--text-dim); }
+.status-strip__label { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.07em; color: var(--text-muted); }
 .status-strip__value { color: var(--text); }
-.status-strip__sep { color: var(--line-strong); }
-.status-strip__note { color: var(--text-dim); letter-spacing: 0.04em; }
+/* The caveat always takes its own line rather than fitting or not fitting depending on the
+   viewport: two facts then a qualification reads as composed, where the same text breaking
+   mid-run at one width and not another reads as an accident. It is also the one item here
+   that is not a datum, so it sits a step back in the greys. */
+.status-strip__note { flex-basis: 100%; color: var(--text-muted); font-size: 12.5px; }
+@media (max-width: 720px) { .status-strip { order: 3; flex-basis: 100%; } }
 
-.btn { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); background: var(--bg-raised); border: 1px solid var(--line-strong); padding: 9px 12px; min-height: 36px; cursor: pointer; }
+.btn { font: 600 13px/1 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 14px; min-height: 36px; cursor: pointer; }
 .btn:hover { border-color: var(--cyan); color: var(--cyan); }
 .btn[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
-.btn--small { padding: 6px 8px; min-height: 28px; }
+.btn--small { padding: 6px 12px; min-height: 30px; font-size: 12px; }
 /* A .btn that is a link (the HISTORY shortcut in the header, history prev/next): anchors
    need their underline removed and a box model, otherwise min-height is ignored. */
 a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 
-/* HUD panel: chamfered clip-path, bracket corners, header strip and tick ruler */
+/* HUD panel: the chamfered frame stays — it is the look. The bracket corners, the PNL-xx
+   call-signs and the tick ruler did not: twelve panels each wearing four pieces of
+   decoration is most of what made the page feel busy. */
 .hud-panel {
-  --clip: polygon(0 0, calc(100% - var(--chamfer)) 0, 100% var(--chamfer), 100% 100%, var(--chamfer) 100%, 0 calc(100% - var(--chamfer)));
   position: relative;
-  padding: 1px;
-  background: var(--line-strong);
-  clip-path: var(--clip);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
   min-width: 0;
 }
-.hud-panel__inner { position: relative; background: var(--bg-panel); clip-path: var(--clip); height: 100%; }
-.hud-panel__inner::before, .hud-panel__inner::after { content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none; border: 0 solid var(--cyan); }
-.hud-panel__inner::before { left: 4px; top: 4px; border-top-width: 2px; border-left-width: 2px; }
-.hud-panel__inner::after { right: 4px; bottom: 4px; border-bottom-width: 2px; border-right-width: 2px; }
-.hud-panel--hero { --chamfer: 26px; background: var(--cyan); }
+.hud-panel__inner { position: relative; border-radius: inherit; height: 100%; }
+.hud-panel--hero { border-color: var(--line-strong); }
 .hud-panel--wide { grid-column: 1 / -1; }
-.hud-panel__head { display: flex; align-items: center; gap: 12px; padding: 12px 22px 8px; }
-.panel-id { font-size: 12px; color: var(--teal); flex: none; }
-.panel-title { font: 700 18px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; flex: 1; min-width: 0; overflow-wrap: normal; }
-.panel-title--hero { font-size: clamp(22px, 6vw, 44px); font-weight: 800; color: var(--cyan); }
+.hud-panel__head { display: flex; align-items: center; gap: 12px; padding: 14px 22px 10px; border-bottom: 1px solid var(--line); margin: 0 0 2px; }
+.panel-title { font: 600 15px/1.3 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; flex: 1; min-width: 0; overflow-wrap: normal; }
+.panel-title--hero { font-size: clamp(19px, 3.2vw, 25px); font-weight: 700; color: var(--text); }
 .panel-status { display: flex; align-items: center; gap: 8px; flex: none; }
-.panel-count { font-size: 12px; color: var(--text-dim); }
-.tick-ruler { height: 8px; margin: 0 22px; background: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 8px), repeating-linear-gradient(90deg, var(--teal) 0 1px, transparent 1px 40px); background-size: 100% 4px, 100% 8px; background-repeat: no-repeat; background-position: 0 100%, 0 100%; border-bottom: 1px solid var(--line-strong); }
-.panel-body { padding: 14px 22px 22px; display: grid; gap: 12px; align-content: start; }
+.panel-count { font-size: 13px; color: var(--text-dim); }
+/* minmax(0, 1fr) for the same reason as .hero__grid below: the column is shared by every
+   child, so without it the widest child sets it for all of them. The source list is skipped
+   by content-visibility and reports its contain-intrinsic-size as a min-content width, which
+   at 375px stretched the column past the viewport and clipped the run table beside it. */
+.panel-body { padding: 16px 22px 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-content: start; }
+/* A button is only as wide as its label. .panel-body is a grid and a grid item stretches by
+   default, so a lone button under a section spanned the whole panel and read as a divider bar. */
+.panel-body > .btn { justify-self: start; }
 
 .led { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); flex: none; box-shadow: 0 0 0 2px var(--bg-panel); }
 .led[data-state="ok"] { background: var(--sev-low); }
@@ -129,20 +183,28 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .led[data-state="bad"] { background: var(--sev-critical); }
 .led[data-state="idle"] { background: var(--text-muted); }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: var(--gap); margin: var(--gap) 0; }
+/* One tab panel is visible at a time, so this needs no columns — only the outer spacing
+   the old multi-panel grid used to provide. */
+.tab-panels { margin: var(--gap) 0 0; }
 main.wrap > * + * { margin-top: var(--gap); }
-.grid > * { margin-top: 0 !important; }
-.hero { margin-top: var(--gap); }
+.tab-panels > .hud-panel { margin-top: 0; }
 /* minmax(0, 1fr): a skipped content-visibility subtree keeps a stale min-content, which
    would otherwise blow the track out to desktop width and force a scrollbar at 390px. */
 .hero__grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: var(--gap); padding: 14px 22px 26px; }
 .hero__events { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; }
 .hero__side { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); align-content: start; }
 @media (max-width: 860px) { .hero__grid { grid-template-columns: minmax(0, 1fr); padding: 14px 16px 26px; } }
+/* Narrow screens flip the trade the other way: wrapping thirteen tabs took six rows and
+   a third of the viewport, so here the strip scrolls in one row and initTabs() keeps the
+   selected tab scrolled into view. */
+@media (max-width: 860px) {
+  .site-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+  .site-nav a { padding: 9px 11px; }
+}
 
-.empty, .hint, .notice { color: var(--text-dim); font-size: 15px; }
-.notice { padding: 12px var(--gap); border: 1px solid var(--line-strong); background: var(--bg-raised); }
-.subhead { font: 600 13px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); margin-top: 8px; }
+.empty, .hint, .notice { color: var(--text-dim); font-size: 15.5px; line-height: 1.6; max-width: 76ch; }
+.notice { padding: 12px var(--gap); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--bg-raised); }
+.subhead { font: 600 12.5px/1.4 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); margin-top: 10px; }
 
 /* One severity mapping shared by every component: card stripe, badge, bars, gauge, radar blip, index band */
 [data-severity="critical"] { --sev-color: var(--sev-critical); }
@@ -154,23 +216,23 @@ main.wrap > * + * { margin-top: var(--gap); }
 
 /* Event card */
 .event-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; content-visibility: auto; contain-intrinsic-size: auto 600px; }
-.event-card { background: var(--bg-raised); border: 1px solid var(--line); border-left: 4px solid var(--sev-color, var(--text-muted)); padding: 10px 12px 10px 12px; display: grid; gap: 6px; content-visibility: auto; contain-intrinsic-size: auto 150px; }
-.event-card__meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--text-dim); }
-.event-card__title { font: 600 16px/1.35 var(--font-ui); color: var(--text); }
-.event-card__summary { color: var(--text-dim); font-size: 14px; }
+.event-card { background: var(--bg-raised); border-left: 4px solid var(--sev-color, var(--text-muted)); border-radius: var(--radius-sm); padding: 13px 15px; display: grid; gap: 8px; content-visibility: auto; contain-intrinsic-size: auto 150px; }
+.event-card__meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--text-dim); }
+.event-card__title { font: 600 17px/1.4 var(--font-sans); color: var(--text); }
+.event-card__summary { color: var(--text-dim); font-size: 15.5px; line-height: 1.6; }
 .event-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.event-more summary { cursor: pointer; color: var(--cyan); font-size: 13px; letter-spacing: 0.04em; }
-.event-more__body { display: grid; gap: 8px; margin-top: 8px; font-size: 14px; color: var(--text-dim); }
-.event-more__body h4 { margin: 0; font: 600 12px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); }
+.event-more summary { cursor: pointer; color: var(--cyan); font-size: 14px; }
+.event-more__body { display: grid; gap: 8px; margin-top: 8px; font-size: 15px; line-height: 1.6; color: var(--text-dim); }
+.event-more__body h4 { margin: 0; font: 600 12.5px/1.4 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); }
 .event-more__body ul { margin: 0; padding-left: 18px; }
 
-.sev-badge { display: inline-flex; align-items: center; gap: 6px; font: 700 12px/1 var(--font-display); letter-spacing: 0.08em; color: var(--sev-color, var(--text-muted)); }
+.sev-badge { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-sans); letter-spacing: 0.06em; color: var(--sev-color, var(--text-muted)); }
 .sev-shape { font-size: 15px; line-height: 1; }
 .sev-bars { display: inline-flex; gap: 2px; }
 .sev-bars i { display: block; width: 6px; height: 10px; border: 1px solid var(--sev-color, var(--text-muted)); }
 .sev-bars i.on { background: var(--sev-color, var(--text-muted)); }
 
-.chip { display: inline-flex; align-items: center; font: 500 12px/1 var(--font-mono); padding: 4px 6px; border: 1px solid var(--line-strong); color: var(--text-dim); background: transparent; }
+.chip { display: inline-flex; align-items: center; font: 500 12.5px/1.2 var(--font-mono); padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--text-dim); background: var(--bg-panel); }
 button.chip { cursor: pointer; font-family: var(--font-mono); }
 button.chip:hover { border-color: var(--cyan); color: var(--cyan); }
 button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-void); background: var(--cyan); }
@@ -182,22 +244,22 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
 .show-more { justify-self: start; }
 
 /* Index, gauges, radar */
-.cp-index { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line-strong); background: var(--bg-raised); }
-.cp-index__label { font: 600 12px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); }
+.cp-index { display: grid; gap: 8px; padding: 14px; border-radius: var(--radius-sm); background: var(--bg-raised); }
+.cp-index__label { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
 .cp-index__value { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.cp-index__num { font: 800 44px/1 var(--font-display); color: var(--cyan); font-variant-numeric: tabular-nums; }
-.cp-index__band { font: 700 13px/1.2 var(--font-display); letter-spacing: 0.08em; color: var(--sev-color, var(--text)); }
-.cp-index__note { font-size: 12px; color: var(--text-muted); }
+.cp-index__num { font: 600 40px/1 var(--font-mono); letter-spacing: -0.03em; color: var(--cyan); font-variant-numeric: tabular-nums; }
+.cp-index__band { font: 600 13px/1.2 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--sev-color, var(--text)); }
+.cp-index__note { font-size: 12.5px; line-height: 1.55; color: var(--text-dim); }
 .ekg { width: 100%; height: 56px; display: block; }
 .ekg-base { fill: none; stroke: var(--teal); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .ekg-pulse { fill: none; stroke: var(--cyan); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-dasharray: 8 92; stroke-dashoffset: 0; }
 
 .gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--gap); }
-.gauge { display: grid; justify-items: center; gap: 4px; padding: 10px; background: var(--bg-panel); border: 1px solid var(--line-strong); }
+.gauge { display: grid; justify-items: center; gap: 4px; padding: 12px; background: var(--bg-raised); border-radius: var(--radius-sm); }
 .gauge svg { width: 110px; height: 110px; }
 .gauge-track { fill: none; stroke: var(--line-strong); stroke-width: 8; stroke-linecap: butt; opacity: 0.6; }
 .gauge-arc { fill: none; stroke: var(--sev-color, var(--text-muted)); stroke-width: 8; stroke-linecap: butt; }
-.gauge-num { font: 700 26px var(--font-display); fill: var(--text); text-anchor: middle; }
+.gauge-num { font: 600 23px var(--font-mono); fill: var(--text); text-anchor: middle; }
 .gauge__label { display: flex; align-items: center; gap: 6px; }
 
 .radar { position: relative; width: 100%; max-width: 280px; aspect-ratio: 1; margin: 0 auto; border-radius: 50%; overflow: hidden; background: var(--bg-void); }
@@ -206,77 +268,150 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
 .radar-axis { stroke: var(--line); stroke-width: 0.6; }
 .radar-blip { fill: var(--sev-color, var(--text-muted)); stroke: var(--bg-void); stroke-width: 0.5; }
 .radar-au-ring { fill: none; stroke: var(--cyan); stroke-width: 0.8; }
-.radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 300deg, rgba(0, 229, 255, 0.28) 360deg); opacity: 0.5; will-change: transform; }
-.radar-legend { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 6px; }
+.radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 300deg, rgba(91, 214, 232, 0.22) 360deg); opacity: 0.5; will-change: transform; }
+.radar-legend { font-size: 13px; color: var(--text-dim); text-align: center; margin-top: 6px; }
 
-/* Filters */
-.filters__body { padding: 14px 22px 22px; display: grid; gap: 12px; }
+/* Filter bar. It filters every tab, so it lives above the panels rather than inside one,
+   and it is one slim row: the tag facets are folded away until asked for. */
+.filterbar { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 16px; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); }
+.filterbar__actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.filterbar__count { font-size: 13px; color: var(--text-dim); }
+.filterbar__more { flex-basis: 100%; }
+.filterbar__more:not([open]) { flex: 0 1 auto; }
+.filterbar__more > summary { cursor: pointer; font: 600 12.5px/1.6 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); }
+.filterbar__more[open] > summary { color: var(--cyan); }
+.filterbar__more > .facets { padding-top: 10px; }
+
 .field { display: grid; gap: 4px; }
-.field__label { font: 600 12px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); }
-.input { font: 400 16px var(--font-ui); color: var(--text); background: var(--bg-void); border: 1px solid var(--line-strong); padding: 9px 10px; min-height: 40px; width: 100%; max-width: 520px; }
+.field__label { font: 600 12px/1.5 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
+.input { font: 400 16px var(--font-sans); color: var(--text); background: var(--bg-void); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 9px 12px; min-height: 40px; width: 100%; max-width: 520px; }
 .facets { display: grid; gap: 8px; }
-.facet > summary { cursor: pointer; font: 600 12px/1.6 var(--font-display); letter-spacing: 0.08em; color: var(--text-dim); }
+.facet > summary { cursor: pointer; font: 600 12.5px/1.6 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); }
 .facet__chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; }
 .facet[open] > summary { color: var(--cyan); }
 
-/* Ticker */
-.ticker { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--bg-void); font-size: 13px; }
-.ticker-lane { display: flex; width: max-content; min-width: 100%; }
-.ticker-track { list-style: none; margin: 0; padding: 9px 0; display: flex; gap: 28px; padding-right: 28px; flex: none; white-space: nowrap; }
-.ticker-track[aria-hidden="true"] { display: none; }
-.ticker-item { display: inline-flex; gap: 8px; align-items: center; }
-/* The ticker keeps severity as label + shape (sev-badge); the 4-bar meter is redundant
-   noise at this size and reads as clutter in a fast-moving line. */
-.ticker-item .sev-bars { display: none; }
-.ticker-sep { color: var(--line-strong); }
-/* Without motion the headlines become a static, wrapping list. */
-.ticker-lane { width: auto; }
-.ticker-track { flex-wrap: wrap; white-space: normal; padding-left: var(--gap); }
-
-/* Boot sequence: a small corner readout, never a blocking overlay */
-.boot { position: fixed; left: 12px; bottom: 12px; z-index: 150; width: min(360px, calc(100vw - 24px)); background: var(--bg-panel); border: 1px solid var(--cyan); padding: 10px 12px; display: grid; gap: 8px; }
-.boot__text { margin: 0; font-size: 12px; line-height: 1.5; color: var(--cyan); white-space: pre-wrap; min-height: 6em; }
+/* Top signals: a static list, one headline per row. Replaces the scrolling banner that
+   used to sit above the fold on every page. */
+.headline-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.headline { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; align-items: baseline; padding: 9px 12px; border-left: 3px solid var(--sev-color, var(--text-muted)); border-radius: var(--radius-sm); background: var(--bg-raised); }
+.headline .sev-badge { align-self: center; }
+.headline__link { color: var(--text); text-decoration: none; font-size: 16px; }
+.headline__link:hover, .headline__link:focus-visible { color: var(--cyan); text-decoration: underline; }
+@media (max-width: 560px) { .headline { grid-template-columns: minmax(0, 1fr); } }
 
 /* Pipeline replay */
 .pipe-svg { width: 100%; height: 40px; display: block; }
 .pipe-trace { fill: none; stroke: var(--line-strong); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .pipe-pulse { fill: none; stroke: var(--cyan); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-dasharray: 6 94; stroke-dashoffset: 0; }
 .pipe-nodes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
-.pipe-node { background: var(--bg-raised); border: 1px solid var(--line-strong); padding: 8px 6px; text-align: center; display: grid; gap: 4px; justify-items: center; }
-.pipe-node__name { font: 700 11px/1.2 var(--font-display); letter-spacing: 0.06em; }
+.pipe-node { background: var(--bg-raised); border-radius: var(--radius-sm); padding: 9px 6px; text-align: center; display: grid; gap: 4px; justify-items: center; }
+.pipe-node__name { font: 600 11.5px/1.25 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; }
 .pipe-node__count { font-size: 18px; color: var(--cyan); }
-.pipe-node__state { font-size: 11px; color: var(--text-dim); letter-spacing: 0.04em; }
+.pipe-node__state { font-size: 12px; color: var(--text-dim); }
 @media (max-width: 760px) { .pipe-nodes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pipe-svg { display: none; } }
 
 /* Crew roster: personas are static; workload columns read "—" until data/crew.json
    (Stage 5+) has something to say for that callsign. */
-.crew-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; content-visibility: auto; contain-intrinsic-size: auto 400px; }
-.crew-card { background: var(--bg-raised); border: 1px solid var(--line); border-left: 3px solid var(--line-strong); padding: 12px 14px; display: grid; gap: 8px; align-content: start; }
-.crew-card[data-status="active"] { border-left-color: var(--sev-low); }
-.crew-card[data-status="degraded"] { border-left-color: var(--sev-medium); }
-.crew-card__head { display: flex; align-items: center; gap: 8px; }
-.crew-card__callsign { font: 700 14px/1.2 var(--font-display); letter-spacing: 0.06em; color: var(--cyan); flex: 1; min-width: 0; }
-.crew-card__desk { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
-.crew-card__beat { color: var(--text-dim); font-size: 13px; }
-.crew-card__quote { color: var(--text-muted); font-size: 12px; font-style: italic; }
-.crew-card__stats { font-size: 12px; }
-.crew-card__runtime { justify-self: start; font-size: 11px; }
+.crew-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; content-visibility: auto; contain-intrinsic-size: auto 400px; }
+/* SYSTEM explainer. Body prose, so it gets a measure: 68ch is about 11 words a line, which
+   is where a reader stops losing their place on the return sweep. The bold lead-in carries
+   the structure instead of a heading per paragraph — six h4s in one panel is a table of
+   contents, not an explanation. */
+.explain { display: grid; gap: 12px; max-width: 68ch; color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+.explain p { margin: 0; }
+.explain strong { color: var(--text); font-weight: 600; }
+
+/* Who did what in the last run. A table because the question is a comparison down a column.
+   No cell borders: the row gap and one hairline rule per row are enough to track across, and
+   16 rows x 3 cells of ruled box would be 100 lines of chrome for 48 facts. */
+.run-table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; }
+.run-table th, .run-table td { padding: 10px 14px 10px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+.run-table thead th { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); border-bottom-color: var(--line-strong); white-space: nowrap; }
+.run-table tbody th { font-weight: 400; min-width: 148px; }
+/* The same face appears on the crew card and in this table, which is what ties the two views
+   of the roster together. At 30px the etched detail drops out and the accessory silhouette is
+   doing the identifying, so the row still reads as a particular agent rather than a generic
+   bot. Kept inside a flex row so the 720px block layout only has to stack the cells. */
+.run-table__who { display: flex; align-items: center; gap: 9px; }
+.run-table__id { display: grid; gap: 2px; min-width: 0; }
+.run-table__callsign { font-weight: 700; letter-spacing: 0.04em; color: var(--text); }
+.run-table__desk { font-size: 11.5px; color: var(--text-muted); }
+.run-table td { color: var(--text-dim); }
+.run-table__did { color: var(--text); }
+/* An agent with nothing to report is a fact about Stage 1, not a defect, so it is stated in
+   the same place as a figure would be — just without the emphasis a figure earns. */
+.run-table__did--none { color: var(--text-muted); }
+@media (max-width: 720px) {
+  .run-table, .run-table tbody, .run-table tr, .run-table td, .run-table tbody th { display: block; }
+  .run-table thead { display: none; }
+  .run-table tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .run-table th, .run-table td { border: 0; padding: 2px 0; }
+}
+
+.crew-card { background: var(--bg-raised); border-radius: var(--radius); padding: 14px; display: grid; gap: 9px; align-content: start; }
+/* A bot takes its accent from whatever is carrying it, so the same agent's eyes are the same
+   colour on its card and in its run-table row. Declared on both carriers rather than as a
+   default on .bot itself: a value set on the element would beat the one inherited from the
+   card, and the desk colouring would stop working. Undeclared, `fill: var(--bot-accent)` is
+   invalid and the browser falls back to black — which is how the run-table faces first
+   shipped, eyeless. */
+.crew-card, .run-table tbody tr { --bot-accent: var(--cyan); }
+.crew-card[data-desk="ENGINEERING"], .run-table tbody tr[data-desk="ENGINEERING"] { --bot-accent: var(--sev-medium); }
+.crew-card[data-desk="OPERATIONS"], .run-table tbody tr[data-desk="OPERATIONS"] { --bot-accent: var(--sev-low); }
+.crew-card__head { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; align-items: center; }
+.crew-card__id { display: grid; gap: 2px; min-width: 0; }
+.crew-card__callsign { font: 700 15.5px/1.2 var(--font-sans); letter-spacing: 0.06em; color: var(--text); min-width: 0; }
+.crew-card__desk { font-size: 11.5px; letter-spacing: 0.06em; color: var(--text-muted); }
+.crew-card__status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+
+/* The face. One shared body, one accessory per agent, eyes tinted by desk. 62px is the size
+   at which the accessory — the only thing telling fifteen portraits apart — is still legible;
+   at 46px the dish, the tally and the crossed threads all collapsed into a smudge. */
+.bot { grid-row: span 2; width: 62px; height: 62px; display: block; margin: -4px -2px -4px -6px; }
+.bot--sm { grid-row: auto; width: 32px; height: 32px; margin: 0; flex: none; }
+.bot-shell { fill: var(--text-dim); stroke: var(--text); stroke-width: 1; }
+.bot-visor { fill: var(--bg-void); stroke: none; }
+.bot-eye { fill: var(--bot-accent); }
+.bot-line { fill: none; stroke: var(--bot-accent); stroke-width: 1.6; stroke-linecap: round; }
+.bot-dim { fill: none; stroke: var(--text-muted); stroke-width: 1.4; stroke-linecap: round; }
+.bot-fill { fill: var(--text-muted); }
+/* Detail cut *into* a filled shape rather than drawn on top of it: --bot-dim is the same ink
+   as --bot-fill, so a ridge on a hard hat stroked in it is invisible. Etching uses the page
+   behind the bot instead, which is how a seam or a panel line reads on a solid body. */
+.bot-etch { fill: none; stroke: var(--bg-panel); stroke-width: 1.2; stroke-linecap: round; }
+.bot-glint { fill: none; stroke: var(--text-dim); stroke-width: 1.2; stroke-linecap: round; opacity: 0.5; }
+/* The mouth sits on the light shell, so it is the one line that has to go darker, not lighter. */
+.bot-mouth { fill: none; stroke: var(--bg-panel); stroke-width: 1.4; stroke-linecap: round; }
+.crew-card[data-status="active"] .bot-shell { stroke: var(--sev-low); stroke-width: 1.6; }
+.crew-card[data-status="degraded"] .bot-shell { stroke: var(--sev-medium); stroke-width: 1.6; }
+.crew-card__beat { color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
+.crew-card__quote { color: var(--text-dim); font-size: 13.5px; font-style: italic; border-left: 2px solid var(--line-strong); padding-left: 10px; }
+.kv.crew-card__stats { font-size: 13.5px; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 14px; }
+/* Said once, not five times. An agent with no published workload used to print five rows of
+   "—"; across fifteen cards that is seventy-five lines of dash. The honest statement is the
+   same either way, so it gets one line and the stats table only appears with figures in it. */
+.crew-card__idle { color: var(--text-muted); font-size: 13.5px; }
+.crew-card__runtime { justify-self: start; font-size: 12px; }
 
 .source-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px; content-visibility: auto; contain-intrinsic-size: auto 400px; }
-.source-node { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border: 1px solid var(--line); background: var(--bg-raised); font-size: 13px; }
+.source-node { display: flex; gap: 8px; align-items: center; padding: 9px 11px; border-radius: var(--radius-sm); background: var(--bg-raised); font-size: 14px; }
 .source-node .sev-shape { color: var(--st-color, var(--text-muted)); }
 .source-node__name { flex: 1; min-width: 0; }
-.source-node__state { font: 700 10px/1 var(--font-display); letter-spacing: 0.08em; color: var(--st-color, var(--text-muted)); white-space: nowrap; }
+.source-node__state { font: 600 11px/1 var(--font-sans); letter-spacing: 0.06em; color: var(--st-color, var(--text-muted)); white-space: nowrap; }
 .source-node[data-health="healthy"] { --st-color: var(--sev-low); border-left: 3px solid var(--sev-low); }
 .source-node[data-health="degraded"] { --st-color: var(--sev-medium); border-left: 3px solid var(--sev-medium); }
 .source-node[data-health="broken"] { --st-color: var(--sev-critical); border-left: 3px solid var(--sev-critical); }
 .source-node[data-health="off"] { --st-color: var(--text-muted); border-left: 3px solid var(--text-muted); }
 /* The label column may wrap (minmax(0, 1fr)) so long labels take two lines instead of
    crushing the value into a two-character-wide column; values get the larger share. */
-.kv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px 16px; margin: 0; font-size: 13px; }
+.kv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 6px 16px; margin: 0; font-size: 14px; }
+/* A label whose longest word is wider than the column has to break inside the word. Where
+   that happens the label carries a soft hyphen (hud.js) so the break lands between
+   syllables and shows a hyphen; hyphens: auto is not used because the browser's
+   hyphenation dictionary is not present in every build. */
 .kv dt { color: var(--text-muted); min-width: 0; overflow-wrap: break-word; }
 .kv dd { margin: 0; color: var(--text); min-width: 0; overflow-wrap: break-word; }
-.site-footer { padding-top: 24px; padding-bottom: 40px; color: var(--text-muted); font-size: 13px; }
+.site-footer { padding-top: 28px; padding-bottom: 40px; color: var(--text-dim); font-size: 14px; line-height: 1.6; max-width: 90ch; }
 
 /* Long lists are skipped by layout until they scroll near the viewport */
 .panel-body, .hero__events { content-visibility: auto; contain-intrinsic-size: auto 300px; }
@@ -292,48 +427,56 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
 
 /* World map: choropleth by event count (cyan family = count, never severity) */
 .map-host { display: grid; gap: 10px; }
-.map-svg { width: 100%; height: auto; display: block; background: var(--bg-void); border: 1px solid var(--line); }
-.map-country { fill: var(--line); stroke: var(--bg-void); stroke-width: 0.6; }
-.map-country[data-load="1"], .map-legend__sw[data-load="1"] { --map-load: #14384A; }
-.map-country[data-load="2"], .map-legend__sw[data-load="2"] { --map-load: #0E7E90; }
+.map-svg { width: 100%; height: auto; display: block; background: var(--bg-void); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+/* "No events in this snapshot" is a data state, not a border, so it gets a fill of its own
+   instead of borrowing --line. It rode on --line until the palette lift carried --line to
+   within 1.7x of tier 1 and "none" became hard to tell from "one". This sits 2.1x below
+   tier 1 — the step the ramp had before — and 3.6x above the ocean, so land still reads. */
+.map-country, .map-legend__sw { --map-none: #334357; }
+.map-country { fill: var(--map-none); stroke: var(--bg-void); stroke-width: 0.6; }
+/* Tier 1 is pinned above --line, which fills a country with no events: when --line was lifted
+   it passed the old #1E4A5C, so one event rendered *quieter* than none and the ramp read
+   backwards. Every tier now ascends in luminance — 0.068, 0.113, 0.195, 0.327, 0.561. */
+.map-country[data-load="1"], .map-legend__sw[data-load="1"] { --map-load: #29657D; }
+.map-country[data-load="2"], .map-legend__sw[data-load="2"] { --map-load: #2A8598; }
 .map-country[data-load="3"], .map-legend__sw[data-load="3"] { --map-load: var(--teal); }
 .map-country[data-load="4"], .map-legend__sw[data-load="4"] { --map-load: var(--cyan); }
 .map-country[data-load] { fill: var(--map-load); cursor: pointer; }
 .map-country[data-load]:hover { stroke: var(--cyan); stroke-width: 1.5; }
 .map-country.is-selected { fill: var(--text); stroke: var(--bg-void); stroke-width: 1.2; }
 .map-country:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; stroke: var(--cyan); stroke-width: 2; }
-.map-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 600 11px/1.4 var(--font-display); letter-spacing: 0.06em; color: var(--text-dim); }
+.map-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font: 600 12.5px/1.4 var(--font-sans); letter-spacing: 0.04em; color: var(--text-dim); }
 .map-legend__item { display: inline-flex; align-items: center; gap: 6px; }
-.map-legend__sw { display: inline-block; width: 14px; height: 14px; background: var(--map-load, var(--line)); border: 1px solid var(--line-strong); }
+.map-legend__sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; background: var(--map-load, var(--map-none)); border: 1px solid var(--line-strong); }
 
 /* Event detail page */
 .event-detail { margin-top: var(--gap); display: grid; gap: 16px; }
 .detail { display: grid; gap: 16px; }
-.detail__title { margin: 0; font: 800 clamp(24px, 4vw, 38px)/1.2 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); overflow-wrap: normal; }
+.detail__title { margin: 0; font: 700 clamp(23px, 3.2vw, 31px)/1.3 var(--font-sans); letter-spacing: -0.005em; color: var(--text); overflow-wrap: normal; }
 .detail__meta { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; font-size: 13px; }
 .detail__id { color: var(--text-muted); font-size: 13px; }
-.detail__summary { color: var(--text-dim); font-size: 16px; }
-.detail__why { border-left: 3px solid var(--cyan); padding: 8px 12px; background: var(--bg-raised); color: var(--text); }
-.detail__why strong { color: var(--cyan); font: 600 12px/1.6 var(--font-display); letter-spacing: 0.08em; }
+.detail__summary { color: var(--text-dim); font-size: 17px; line-height: 1.65; max-width: 76ch; }
+.detail__why { border-left: 3px solid var(--cyan); border-radius: var(--radius-sm); padding: 10px 14px; background: var(--bg-raised); color: var(--text); }
+.detail__why strong { color: var(--cyan); font: 600 12px/1.6 var(--font-sans); letter-spacing: 0.06em; }
 .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--gap); }
-.detail-block { background: var(--bg-panel); border: 1px solid var(--line); padding: 12px 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
-.detail-label { margin: 0; font: 600 12px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); }
-.detail-list ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--text-dim); font-size: 14px; }
+.detail-block { background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.detail-label { margin: 0; font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
+.detail-list ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
 .detail-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--gap); align-items: start; }
-.detail-col { display: grid; gap: 10px; align-content: start; padding: 14px 16px; border: 1px solid var(--line-strong); background: var(--bg-panel); min-width: 0; }
+.detail-col { display: grid; gap: 10px; align-content: start; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); min-width: 0; }
 .detail-col--ev { border-top: 4px solid var(--cyan); }
-.detail-col--ai { border-top: 4px solid var(--magenta); background-color: var(--bg-raised); background-image: repeating-linear-gradient(45deg, rgba(255, 42, 109, 0.07) 0 8px, transparent 8px 16px); }
-.detail-col__head { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 700 15px/1.3 var(--font-display); letter-spacing: 0.08em; }
+.detail-col--ai { border-top: 4px solid var(--magenta); background-color: var(--bg-raised); background-image: repeating-linear-gradient(45deg, rgba(242, 120, 159, 0.05) 0 10px, transparent 10px 20px); }
+.detail-col__head { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 600 14px/1.3 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; }
 .detail-col--ev .detail-col__head { color: var(--cyan); }
 .detail-col--ai .detail-col__head { color: var(--magenta); }
 .detail-note { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--text); }
 .source-reports, .claims, .cve-list, .mitre-list, .related-events { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .source-report { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; font-size: 14px; }
 .source-report__lineage, .cve-row__vector, .mitre-row__set { color: var(--text-muted); font-size: 12px; }
-.claim { display: grid; gap: 6px; background: var(--bg-raised); border: 1px solid var(--line); padding: 8px 10px; font-size: 14px; }
+.claim { display: grid; gap: 6px; background: var(--bg-raised); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 14px; }
 .claim__text { color: var(--text); }
 .claim__ev { font-size: 12px; color: var(--text-muted); }
-.cve-row, .mitre-row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; background: var(--bg-raised); border: 1px solid var(--line); padding: 8px 10px; font-size: 14px; }
+.cve-row, .mitre-row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; background: var(--bg-raised); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 14px; }
 .cve-row__vector { flex-basis: 100%; }
 .mitre-row__id { color: var(--cyan); }
 .related-events li { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; font-size: 14px; }
@@ -341,16 +484,16 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
 .related-title { color: var(--text-dim); }
 
 /* Timeline: tick-marked axis, hex nodes, Sydney day groups */
-.timeline { display: grid; gap: 10px; background: var(--bg-panel); border: 1px solid var(--line); padding: 12px 14px; }
+.timeline { display: grid; gap: 10px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
 .timeline__day { display: grid; gap: 8px; }
-.timeline__dayhead { margin: 0; font: 600 13px/1.4 var(--font-display); letter-spacing: 0.08em; color: var(--teal); }
+.timeline__dayhead { margin: 0; font: 600 12.5px/1.4 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-dim); }
 .timeline__list { list-style: none; margin: 0; padding: 0 0 0 20px; border-left: 2px solid var(--line-strong); display: grid; gap: 8px; }
-.timeline__node { position: relative; display: grid; grid-template-columns: max-content max-content 1fr; gap: 4px 10px; align-items: baseline; background: var(--bg-raised); border: 1px solid var(--line); padding: 8px 10px; font-size: 14px; }
+.timeline__node { position: relative; display: grid; grid-template-columns: max-content max-content 1fr; gap: 4px 10px; align-items: baseline; background: var(--bg-raised); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 14px; }
 .timeline__node::before { content: ""; position: absolute; left: -12px; top: 15px; width: 12px; height: 2px; background: var(--line-strong); }
 .timeline__hex { position: absolute; left: -29px; top: 9px; width: 16px; height: 16px; background: var(--cyan); clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
-.timeline__node time { color: var(--text-dim); font-size: 13px; }
+.timeline__node time { color: var(--text-dim); font-size: 13.5px; }
 .timeline__summary { color: var(--text); }
-.timeline__src { grid-column: 1 / -1; color: var(--text-muted); font-size: 12px; }
+.timeline__src { grid-column: 1 / -1; color: var(--text-dim); font-size: 12.5px; }
 
 /* History navigation */
 .history-nav { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: space-between; }
@@ -372,21 +515,8 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -100; }
 }
-@keyframes ticker-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@keyframes led-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-@keyframes cursor-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .radar-sweep { animation: radar-sweep 8s linear infinite; }
+  .radar-sweep { animation: radar-sweep 14s linear infinite; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .ekg-pulse { animation: ekg-travel 4s linear infinite; }
@@ -394,48 +524,14 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
 @media (prefers-reduced-motion: no-preference) {
   .pipe-pulse { animation: trace-flow 3s linear infinite; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .ticker-lane { animation: ticker-scroll 130s linear infinite; }
-}
-/* Fades the scrolling edges instead of hard-clipping mid-word, and pauses on hover/focus
-   so a headline can actually be read without reaching for the pause button. Not an
-   animation itself, so it stays outside the one-rule-per-keyframes blocks above. */
-@media (prefers-reduced-motion: no-preference) {
-  .ticker { -webkit-mask-image: linear-gradient(90deg, transparent, black 40px, black calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, transparent, black 40px, black calc(100% - 40px), transparent); }
-  .ticker:hover .ticker-lane, .ticker:focus-within .ticker-lane { animation-play-state: paused; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .led[data-state="ok"] { animation: led-pulse 2.4s ease-in-out infinite; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .boot__text::after { content: "_"; animation: cursor-blink 1.1s steps(1) infinite; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .ticker-lane { width: max-content; }
-  .ticker-track { flex-wrap: nowrap; white-space: nowrap; padding-left: 0; }
-  .ticker-track[aria-hidden="true"] { display: flex; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .ticker.is-paused .ticker-lane { animation-play-state: paused; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .boot { display: none; }
-  #ticker-toggle { display: none; }
-}
-
-/* FX OFF escape hatch: stops every loop and returns the ticker to a static list */
+/* FX OFF escape hatch: stops every loop on the page */
 .fx-off *, .fx-off *::before, .fx-off *::after { animation: none !important; transition: none !important; }
-.fx-off .ticker-lane { width: auto; }
-.fx-off .ticker-track { flex-wrap: wrap; white-space: normal; padding-left: var(--gap); }
-.fx-off .ticker-track[aria-hidden="true"] { display: none; }
-.fx-off .boot, .fx-off #ticker-toggle { display: none; }
 
 @media (max-width: 560px) {
-  .hud-panel { --chamfer: 10px; }
-  .hud-panel__head { padding: 10px 14px 6px; flex-wrap: wrap; }
-  .panel-body, .filters__body { padding: 12px 14px 18px; }
-  .tick-ruler { margin: 0 14px; }
+  .hud-panel { --radius: 10px; }
+  .hud-panel__head { padding: 12px 14px 8px; flex-wrap: wrap; }
+  .panel-body { padding: 14px 14px 18px; }
   .timeline__node { grid-template-columns: 1fr; }
   .detail__title { overflow-wrap: anywhere; }
 }
-@media print { body::after, .ticker, .boot { display: none; } }
+@media print { .site-nav { display: none; } }
