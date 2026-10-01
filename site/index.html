@@ -30,34 +30,26 @@
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
     </div>
   </div>
-  <!-- Thirteen pills in flat order read as one wall, so the strip is grouped: the domain
-       views a reader picks between first, then the threat sections, then context, then the
-       two pages about the system itself. OVERVIEW leads because it is the summary the other
-       views drill out of — and because initTabs() lands on the first tab when there is no
-       #hash, so first here means first on arrival.
+  <!-- Five tabs, and that is the whole strip. Thirteen pills read as a wall no matter how they
+       are grouped, so the three domain views a reader actually chooses between come first, then
+       OVERVIEW, which now carries every threat and context section inside it, then the one page
+       about the system. AUSTRALIA NOW leads because this is an Australia-first product and
+       initTabs() lands on the first tab when there is no #hash, so first here means first on
+       arrival.
 
-       The group labels are aria-hidden on purpose. initTabs() promotes this nav to
-       role="tablist", whose owned children must all be tabs, so the labels are taken out of
-       the accessibility tree: a screen reader hears thirteen tabs with nothing between them,
-       while a sighted reader gets the grouping. They are also spans, not links — the nav
-       must contain no non-tab link (see test_history_page_is_reachable_from_the_dashboard). -->
+       The sections that stopped being tabs kept their ids. They had to: headline links,
+       revealEvent() and anyone's existing bookmark all still point at #sec-vulnerabilities and
+       friends. initTabs() resolves an id it has no tab for to the panel that contains it, so
+       those links open OVERVIEW and scroll to the section instead of silently falling back to
+       the first tab. HISTORY stays a header button rather than a tab, because this nav becomes
+       role="tablist" and a tablist may not own a non-tab link
+       (see test_history_page_is_reachable_from_the_dashboard). -->
   <nav class="site-nav" aria-label="Sections">
-    <a href="#sec-overview">OVERVIEW</a>
     <a href="#sec-australia-now">AUSTRALIA NOW</a>
     <a href="#sec-global-cyber">GLOBAL CYBER</a>
     <a href="#sec-ai-cyber">AI + CYBER</a>
-    <span class="site-nav__group" aria-hidden="true">THREATS</span>
-    <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
-    <a href="#sec-developing-events">DEVELOPING</a>
-    <a href="#sec-emerging-threats">EMERGING</a>
-    <a href="#sec-threat-actors">ACTORS</a>
-    <a href="#sec-vulnerabilities">VULNERABILITIES</a>
-    <span class="site-nav__group" aria-hidden="true">CONTEXT</span>
-    <a href="#sec-research">RESEARCH</a>
-    <a href="#sec-policy-regulation">POLICY</a>
-    <span class="site-nav__group" aria-hidden="true">ABOUT</span>
+    <a href="#sec-overview">OVERVIEW</a>
     <a href="#sec-the-crew">THE CREW</a>
-    <a href="#sec-system">SYSTEM</a>
   </nav>
 </header>
 
@@ -99,6 +91,20 @@
       </div>
     </section>
 
+    <section class="hud-panel hud-panel--wide" id="sec-global-cyber" aria-labelledby="h-global-cyber">
+      <div class="hud-panel__inner">
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-global-cyber">GLOBAL CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="global-cyber">0 SIGNALS</span></span></header>
+        <div class="panel-body" data-section-body="global-cyber"></div>
+      </div>
+    </section>
+
+    <section class="hud-panel hud-panel--wide" id="sec-ai-cyber" aria-labelledby="h-ai-cyber">
+      <div class="hud-panel__inner">
+        <header class="hud-panel__head"><h2 class="panel-title" id="h-ai-cyber">AI + CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="ai-cyber">0 SIGNALS</span></span></header>
+        <div class="panel-body" data-section-body="ai-cyber"></div>
+      </div>
+    </section>
+
     <section class="hud-panel hud-panel--wide" id="sec-overview" aria-labelledby="h-overview">
       <div class="hud-panel__inner">
         <header class="hud-panel__head">
@@ -126,72 +132,85 @@
             <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
           </label>
           <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
+
+          <!-- The seven sections below used to be seven tabs. They are stacked here instead of
+               being nested tabs because nested tablists are their own usability problem — two
+               rows of pills, and no way to tell which row a keyboard arrow key will move. The
+               jump list is plain links: they land inside a panel that is already open, so the
+               browser's own anchor scroll does the work and there is no second widget to learn.
+               .subsection carries scroll-margin-top because .site-header is sticky and would
+               otherwise cover whatever a jump lands on. -->
+          <h3 class="subhead">SECTIONS</h3>
+          <p class="hint">An event appears under every section it matches, so the same event can be in more than one of these. Counts are events in this snapshot, after any filter set above.</p>
+          <nav class="subnav" aria-label="Overview sections">
+            <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
+            <a href="#sec-developing-events">DEVELOPING EVENTS</a>
+            <a href="#sec-emerging-threats">EMERGING THREATS</a>
+            <a href="#sec-threat-actors">THREAT ACTORS</a>
+            <a href="#sec-vulnerabilities">VULNERABILITIES</a>
+            <a href="#sec-research">RESEARCH</a>
+            <a href="#sec-policy-regulation">POLICY / REGULATION</a>
+          </nav>
+
+          <section class="subsection" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-active-exploitation">ACTIVE EXPLOITATION</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="active-exploitation">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="active-exploitation"></div>
+          </section>
+
+          <section class="subsection" id="sec-developing-events" aria-labelledby="h-developing-events">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-developing-events">DEVELOPING EVENTS</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="developing-events">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="developing-events"></div>
+          </section>
+
+          <section class="subsection" id="sec-emerging-threats" aria-labelledby="h-emerging-threats">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-emerging-threats">EMERGING THREATS</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="emerging-threats">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="emerging-threats"></div>
+          </section>
+
+          <section class="subsection" id="sec-threat-actors" aria-labelledby="h-threat-actors">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-threat-actors">THREAT ACTORS</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="threat-actors">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="threat-actors"></div>
+          </section>
+
+          <section class="subsection" id="sec-vulnerabilities" aria-labelledby="h-vulnerabilities">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-vulnerabilities">VULNERABILITIES</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="vulnerabilities">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="vulnerabilities"></div>
+          </section>
+
+          <section class="subsection" id="sec-research" aria-labelledby="h-research">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-research">RESEARCH</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="research">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="research"></div>
+          </section>
+
+          <section class="subsection" id="sec-policy-regulation" aria-labelledby="h-policy-regulation">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-policy-regulation">POLICY / REGULATION</h3>
+              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="policy-regulation">0 SIGNALS</span></span>
+            </header>
+            <div data-section-body="policy-regulation"></div>
+          </section>
         </div>
       </div>
     </section>
 
-    <section class="hud-panel hud-panel--wide" id="sec-global-cyber" aria-labelledby="h-global-cyber">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-global-cyber">GLOBAL CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="global-cyber">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="global-cyber"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-ai-cyber" aria-labelledby="h-ai-cyber">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-ai-cyber">AI + CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="ai-cyber">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="ai-cyber"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-active-exploitation">ACTIVE EXPLOITATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="active-exploitation">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="active-exploitation"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-developing-events" aria-labelledby="h-developing-events">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-developing-events">DEVELOPING EVENTS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="developing-events">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="developing-events"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-emerging-threats" aria-labelledby="h-emerging-threats">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-emerging-threats">EMERGING THREATS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="emerging-threats">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="emerging-threats"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-threat-actors" aria-labelledby="h-threat-actors">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-threat-actors">THREAT ACTORS</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="threat-actors">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="threat-actors"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-vulnerabilities" aria-labelledby="h-vulnerabilities">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-vulnerabilities">VULNERABILITIES</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="vulnerabilities">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="vulnerabilities"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-research" aria-labelledby="h-research">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-research">RESEARCH</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="research">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="research"></div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-policy-regulation" aria-labelledby="h-policy-regulation">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-policy-regulation">POLICY / REGULATION</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="policy-regulation">0 SIGNALS</span></span></header>
-        <div class="panel-body" data-section-body="policy-regulation"></div>
-      </div>
-    </section>
 
     <section class="hud-panel hud-panel--wide" id="sec-the-crew" aria-labelledby="h-the-crew">
       <div class="hud-panel__inner">
@@ -200,36 +219,40 @@
           <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; an agent that has not reported yet says so rather than showing a zero.</p>
           <div id="crew-summary"></div>
           <ul id="crew-list" class="crew-grid"></ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="hud-panel hud-panel--wide" id="sec-system" aria-labelledby="h-system">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-system">SYSTEM</h2><span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span></header>
-        <div class="panel-body">
-          <h3 class="subhead">HOW THIS RUNS</h3>
-          <div class="explain">
-            <p>Nothing on this page was assembled to order. Sixteen agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
-            <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
-            <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
-            <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every 15 minutes for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at 03:00 AEST for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
-            <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
-            <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Ten of the sixteen agents are deterministic and spend nothing at all. One agent — RIPPERDOC — re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
-          </div>
-
-          <h3 class="subhead">COLLECTION REPLAY</h3>
-          <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
-          <div id="pipeline"></div>
 
           <h3 class="subhead">THE CREW IN THE LAST RUN</h3>
           <div id="crew-run"></div>
 
-          <h3 class="subhead">SOURCES</h3>
-          <div id="source-health"></div>
+          <!-- SYSTEM used to be its own tab. It belongs with the crew: both answer the same
+               question, which is who and what produced the page you are reading. It keeps its
+               id so #sec-system still resolves — initTabs() maps the id to this panel. Its own
+               headings are h4 because they now sit under the SYSTEM h3, which sits under the
+               panel's h2; .subhead styles the class, not the tag, so nothing shifts visually. -->
+          <section class="subsection" id="sec-system" aria-labelledby="h-system">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-system">SYSTEM</h3>
+              <span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span>
+            </header>
+            <h4 class="subhead">HOW THIS RUNS</h4>
+            <div class="explain">
+              <p>Nothing on this page was assembled to order. Sixteen agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
+              <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
+              <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
+              <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every 15 minutes for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at 03:00 AEST for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
+              <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
+              <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Ten of the sixteen agents are deterministic and spend nothing at all. One agent — RIPPERDOC — re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
+            </div>
 
-          <h3 class="subhead">VERSIONS</h3>
-          <dl class="kv mono" id="system-versions"></dl>
+            <h4 class="subhead">COLLECTION REPLAY</h4>
+            <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
+            <div id="pipeline"></div>
+
+            <h4 class="subhead">SOURCES</h4>
+            <div id="source-health"></div>
+
+            <h4 class="subhead">VERSIONS</h4>
+            <dl class="kv mono" id="system-versions"></dl>
+          </section>
         </div>
       </div>
     </section>

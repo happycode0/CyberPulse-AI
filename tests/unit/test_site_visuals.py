@@ -88,7 +88,81 @@ def test_every_tab_panel_is_a_sibling_under_the_tab_strip():
     html = read("site/index.html")
     nav = html.split('<nav class="site-nav"', 1)[1].split("</nav>", 1)[0]
     targets = re.findall(r'href="#(sec-[\w-]+)"', nav)
-    assert len(targets) >= 12, targets
+    assert len(targets) == 5, targets
     panels = html.split('<div class="tab-panels">', 1)[1]
     for target in targets:
         assert f'id="{target}"' in panels, target
+
+
+def test_every_section_the_js_renders_has_a_home_in_the_markup():
+    """Thirteen tabs became five, and the other sections moved inside two of the panels.
+
+    A section that renders into no container is silently empty, and one that sits outside every
+    panel is the opposite failure: initTabs() only hides the panels it knows about, so an
+    orphaned section would show on every tab at once. Both are invisible in a diff, hence this.
+    """
+    html = read("site/index.html")
+    js = read("site/assets/hud.js")
+    ids = re.findall(r"\{\s*id: '([\w-]+)',\s*match:", js.split("export const SECTIONS", 1)[1].split("];", 1)[0])
+    assert len(ids) == 10, ids
+    panels = html.split('<div class="tab-panels">', 1)[1].split("</main>", 1)[0]
+    for section_id in ids:
+        assert f'data-section-body="{section_id}"' in panels, section_id
+        assert f'data-count-for="{section_id}"' in panels, section_id
+    assert html.count('data-section-body=') == len(ids), "a body with no section renders nothing"
+
+
+def test_a_section_id_that_is_not_a_tab_resolves_to_its_panel():
+    """Most section ids no longer have a tab, and three callers still pass them.
+
+    renderHeadlines() builds href="#sec-<section>", revealEvent() calls activateTab('sec-...'),
+    and old bookmarks carry the same ids. initTabs() has to map such an id to the panel that
+    contains it; the failure mode if it does not is a link that quietly opens the first tab,
+    which looks like a working link to the wrong place rather than a broken one.
+    """
+    js = read("site/assets/hud.js")
+    tabs = js.split("export function initTabs", 1)[1]
+    assert "closest('[role=\"tabpanel\"]')" in tabs, "no resolution from a section id to its panel"
+    assert "scrollIntoView({ block: 'start' })" in tabs, "a sub-section target is not scrolled to"
+
+
+def test_a_sub_section_jump_keeps_correcting_until_it_settles():
+    """One scrollIntoView lands in the wrong place, for a reason invisible in a diff.
+
+    The event lists above the target are content-visibility: auto with a flat 600px estimate. They
+    lay out at their real heights one frame after the scroll, the content above the target shrinks,
+    and the heading slides up under the sticky header. Traced at 1320px: the first scroll put it at
+    120px (right), the next frame at 14px (hidden), and it took five corrections to settle. So a
+    single call is wrong, and so is a loop that stops at the first frame that looks right — that is
+    the frame before the one that spoils it.
+    """
+    tabs = read("site/assets/hud.js").split("export function initTabs", 1)[1]
+    assert "requestAnimationFrame(step)" in tabs, "the scroll correction is not a loop"
+    assert "good < 3" in tabs, "stopping on one good frame stops one frame too early"
+
+
+def test_the_sticky_header_height_is_measured_not_assumed():
+    """scroll-margin-top cannot be a constant, because the header it clears is not one.
+
+    .site-header measures 93px at 1320 and 222px at 375, and grows again once renderStrip() puts
+    real timestamps in the status strip and the strip wraps. A fixed 120px hid every jump at 375px
+    behind the header; a value sampled when initTabs() runs was still 24px short of the final
+    height. Only observing it is correct, so .subsection reads the measurement and the literal in
+    the CSS is just the no-JS fallback.
+    """
+    css = read("site/assets/hud.css")
+    js = read("site/assets/hud.js")
+    assert "scroll-margin-top: calc(var(--header-h" in css, "the jump offset is not the measurement"
+    assert "ResizeObserver(syncHeaderHeight)" in js, "a sampled header height goes stale"
+
+
+def test_a_deep_link_to_a_sub_section_is_finished_after_the_first_render():
+    """initTabs() runs before the data arrives, so on load the target is not where it will end up.
+
+    Measured on a cold load of #sec-vulnerabilities: the scroll settled at 960 against a final
+    heading position of 3926 — the right tab open, several screens short of the section the link
+    named. main() has to come back to it once the sections hold their events.
+    """
+    js = read("site/assets/hud.js")
+    assert "return { activate, rescrollToHash }" in js, "initTabs does not expose the deep-link fix"
+    assert "rescrollToHash" in js.split("export async function main", 1)[1], "main() never calls it"

@@ -1766,8 +1766,88 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     else if (left + tab.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = left + tab.offsetWidth - nav.clientWidth + 8;
   };
 
+  // .site-header is sticky, so anything jumped to in the page has to be pushed clear of it, and its
+  // height is not a number the stylesheet can hold: the row reflows as the viewport narrows,
+  // measured 93px at 1320 and 222px at 375 on 2026-10-01. So measure it and publish it for
+  // .subsection's scroll-margin-top to use.
+  //
+  // Observed rather than sampled, because sampling it is wrong twice over: the header is 198px when
+  // initTabs() runs and 222px once renderStrip() has put real timestamps in the status strip and
+  // the strip has wrapped — measured at 375px, where a 24px error is enough to hide the heading a
+  // jump just landed on. Resize and the font swap move it as well. One observer covers all three.
+  const header = document.querySelector('.site-header');
+  const syncHeaderHeight = () => {
+    if (header) document.documentElement.style.setProperty('--header-h', `${Math.round(header.offsetHeight)}px`);
+  };
+  if (header && window.ResizeObserver) new ResizeObserver(syncHeaderHeight).observe(header);
+
+  // Most section ids are no longer tabs: the overview panel owns the threat and context
+  // sections, and the crew panel owns the system block. Callers do not know that and should not
+  // have to — headline links, revealEvent() and anyone's old bookmark all still name a section
+  // directly. So an id with no tab of its own resolves to the panel that contains it, and the
+  // caller gets that panel opened. Without this they would all fail the findIndex below: the
+  // link would fall back to the first tab, which is a wrong destination rather than no
+  // destination, and revealEvent() would give up on a card it could have shown.
+  const panelIdFor = (id) => {
+    if (tabs.some((a) => a.getAttribute('href') === `#${id}`)) return id;
+    const owner = document.getElementById(id)?.closest('[role="tabpanel"]');
+    return owner?.id || null;
+  };
+
+  // When the reader last did something that moves the page themselves. Used to stand down: both
+  // the settling loop below and the deep-link scroll give up rather than fight them. A scroll
+  // listener cannot tell us this — scroll anchoring and our own scrolling fire it too.
+  let lastInputAt = 0;
+  for (const type of ['wheel', 'touchmove', 'keydown']) {
+    window.addEventListener(type, () => { lastInputAt = Date.now(); }, { passive: true });
+  }
+
+  // One scrollIntoView is not enough to land on a section inside a panel, and the reason is worth
+  // writing down. .event-list is content-visibility: auto with contain-intrinsic-size: auto 600px,
+  // so every list the reader has not reached yet is a flat 600px guess. The first scroll is
+  // computed through those guesses and lands correctly — and then, on the next frame, the lists
+  // that the scroll brought near the viewport lay out at their real heights, the content above the
+  // target shrinks, and the target slides up under the sticky header. Traced at 1320px with nine
+  // events, jumping to VULNERABILITIES from the top of a cold overview panel: scroll 1 put the
+  // heading at 120px (correct), one frame later the four lists above it went 600 → 1106/176/362/
+  // 1097 and the heading was at 14px, and it took five rounds of correcting to settle back at 120.
+  // Forcing those subtrees to lay out first does not help: measured the same day, flipping them to
+  // content-visibility: visible and back makes every list report 600px again, so the guess cannot
+  // be pre-warmed. Hence a loop, re-scrolling for as long as the target is not where it belongs.
+  //
+  // Termination is on the target's own position, not on whether the scroll moved: scroll anchoring
+  // also shifts window.scrollY between frames to absorb the same relayout, so "scrollY stopped
+  // changing" is true while the heading is still in the wrong place. The reader, by contrast, is
+  // detected from their input, which is why lastInputAt exists rather than a scroll comparison.
+  const settleScroll = (el) => {
+    const startedAt = Date.now();
+    let ticks = 20;
+    // Three consecutive good frames, not one: the drift arrives a frame after a correct scroll, so
+    // stopping at the first frame that looks right stops just before the frame that spoils it.
+    let good = 0;
+    const step = () => {
+      if (lastInputAt > startedAt || ticks-- <= 0) return;
+      const want = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+      const off = el.getBoundingClientRect().top - want;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      if (Math.abs(off) <= 2) good += 1;
+      else {
+        good = 0;
+        // Skip the scroll when the page has run out of it — the last section cannot come up to the
+        // header, and asking repeatedly will not change that. Keep watching rather than giving up,
+        // though: the sections below are still rendering, and when they lengthen the page the
+        // target becomes reachable after all. Returning here left THREAT ACTORS 328px low at 375px.
+        if (!(off > 0 && window.scrollY >= maxY - 1)) el.scrollIntoView({ block: 'start' });
+      }
+      if (good < 3) requestAnimationFrame(step);
+    };
+    step();
+  };
+
   const activate = (targetId, { focusPanel = false, scroll = false } = {}) => {
-    const index = tabs.findIndex((a) => a.getAttribute('href') === `#${targetId}`);
+    const panelId = panelIdFor(targetId);
+    if (!panelId) return false;
+    const index = tabs.findIndex((a) => a.getAttribute('href') === `#${panelId}`);
     if (index === -1) return false;
     tabs.forEach((a, i) => {
       const active = i === index;
@@ -1776,7 +1856,13 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
       panels[i].hidden = !active;
     });
     keepTabVisible();
-    if (scroll) scrollToPanels();
+    // A sub-section target gets scrolled to itself, not to the top of the panel that holds it,
+    // or following a link to VULNERABILITIES would open the overview at TOP SIGNALS and leave
+    // the reader to find it. scroll-margin-top in the CSS keeps it clear of the sticky header.
+    if (scroll && panelId !== targetId) {
+      const target = document.getElementById(targetId);
+      if (target) settleScroll(target);
+    } else if (scroll) scrollToPanels();
     if (focusPanel) panels[index].focus({ preventScroll: true });
     return true;
   };
@@ -1811,25 +1897,48 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     history.replaceState(null, '', `#${id}`);
   });
 
+  // A deep link to a sub-section cannot be honoured on first paint: the panel is still empty, so
+  // the target sits a few hundred pixels down a short page and that position stops existing the
+  // moment the events render. Measured 2026-10-01 on a cold load of #sec-vulnerabilities: the
+  // scroll settled at 960 against a final heading position of 3926, which is the right tab open at
+  // the wrong place. So main() calls this once the first render is in. It declines if the reader
+  // has already started moving the page: landing somewhere you did not ask for is bad, being
+  // yanked out of where you went instead is worse.
+  const rescrollToHash = () => {
+    const id = window.location.hash.slice(1);
+    if (!id || lastInputAt) return false;
+    const target = document.getElementById(id);
+    // Only a sub-section needs this. A tab target is the top of the panels, which is where a
+    // first load already is, and scrollToPanels() never scrolls downwards on purpose.
+    if (!target || panelIdFor(id) === id) return false;
+    settleScroll(target);
+    return true;
+  };
+
   window.addEventListener('hashchange', () => activateFromHash());
+  // The observer above covers the usual case; this is for a browser without ResizeObserver, where a
+  // stale --header-h is better than none.
+  syncHeaderHeight();
   // First run only restores which tab is open; it must not move a reader who deep-linked.
   activateFromHash({ scroll: false });
   // Both of these widen the strip after that first activation — the display face swapping
   // in over the fallback, and a rotation — which would leave the selected tab off-edge.
   document.fonts?.ready.then(keepTabVisible);
-  window.addEventListener('resize', keepTabVisible);
+  window.addEventListener('resize', () => { syncHeaderHeight(); keepTabVisible(); });
   activateTab = activate;
-  return { activate };
+  return { activate, rescrollToHash };
 }
 
 // -------------------------------------------------------------------- fx
 
 // The pieces every page shares: the FX OFF toggle, the canvas particle field and the
-// section tabs (a no-op on pages whose nav has no same-page section links).
+// section tabs (a no-op on pages whose nav has no same-page section links). Returns the tabs
+// API, or null on the pages that have no tabs, because main() has to finish a deep link to a
+// sub-section after the first render — see rescrollToHash().
 function initCommon() {
   initFxToggle();
   initFxField();
-  initTabs();
+  return initTabs();
 }
 
 export function initFxToggle({ button = document.getElementById('fx-toggle'), root = document.documentElement, storage = safeStorage('localStorage') } = {}) {
@@ -1971,7 +2080,7 @@ function showError(message) {
 }
 
 export async function main() {
-  initCommon();
+  const tabs = initCommon();
   let data;
   try {
     data = await loadData();
@@ -2020,6 +2129,8 @@ export async function main() {
   document.getElementById('map-clear')?.addEventListener('click', clearFilters);
   Object.assign(view, { events: data.events, refresh, clearFilters });
   refresh();
+  // The sections now exist at their real size, so a deep link to one can finally be honoured.
+  tabs?.rescrollToHash();
 }
 
 // ---------------------------------------------------------------- event page
