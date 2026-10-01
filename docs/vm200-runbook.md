@@ -21,7 +21,9 @@ Measured on the VM, 2026-10-01, not copied from the design table:
 | Address | `10.0.0.0/24` on `eth0` (DHCP), reachable from the WSL box |
 | Login | `deploy-user`, passwordless sudo, key-only (`~/.ssh/cyberpulse_vm_ed25519`) |
 | CPU / RAM | 4 vCPU / 11 GiB usable (created with `--memory 12288 --balloon 8192`) |
-| **Disk** | **3 GB — this is wrong and blocks Docker. See Part 2.** |
+| Disk | 59 GB usable on `/dev/sda1`, 55 GB free after Docker and the images (resized — see Part 2) |
+| Docker | 29.8.2, Compose v5.5.1, `local` log driver capped at 3 × 10 MB |
+| Status | **Stage 1 is running.** FAST every 15 min, NORMAL every 4 h, publishing after each run. |
 
 An SSH alias is configured on the WSL box, so every 🟢 command below is reachable as
 `ssh cyberpulse-vm '<command>'`:
@@ -94,10 +96,10 @@ Notes worth keeping, both learned the hard way:
 
 ---
 
-## Part 2 🔴 — Resize the disk *(blocking, not yet done)*
+## Part 2 🔴 — Resize the disk *(done)*
 
-`lsblk` on the guest reports `sda` as **3G**, which is the cloud image's native size: step 5 above
-never took effect. The root filesystem is 2.8 GB with ~1.6 GB free.
+`lsblk` on the guest reported `sda` as **3G**, which is the cloud image's native size: step 5 above
+never took effect. The root filesystem was 2.8 GB with ~1.6 GB free.
 
 That is not enough to continue, and the failure mode if we try is bad rather than merely
 inconvenient. Docker Engine is roughly 400 MB installed; `pgvector/pgvector:0.8.6-pg17-trixie`
@@ -125,6 +127,10 @@ df -h /                      # expect ~59G
 `/dev/sda1` starts at sector 262144, after `sda14` and `sda15`, so it is the last partition on the
 disk and can grow into the new space directly.
 
+Both ran cleanly with no reboot: `growpart` moved the partition end from sector 6289407 to
+125829086, `resize2fs` took the filesystem to 15,695,867 4k blocks, and the guest had already seen
+the larger disk so no SCSI rescan was needed. `df -h /` now reports 59G.
+
 ---
 
 ## Part 3 🟢 — Prepare the guest
@@ -145,7 +151,7 @@ with `qm guest cmd 200 network-get-interfaces`.
 
 The system had 0 pending upgrades, so README §4.3's `apt upgrade` is a no-op on this image today.
 
-### Still to run, after Part 2 — Docker (README §4.3)
+### Docker (README §4.3) *(done)*
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -175,11 +181,23 @@ sudo systemctl restart docker
 ```
 
 The `usermod` needs a new login to take effect; over SSH each command is a fresh session, so this
-resolves itself.
+resolves itself — `docker version` as `deploy-user` without `sudo` confirmed it.
+
+Write that script to the guest by piping it, not by quoting it:
+
+```bash
+ssh cyberpulse-vm 'bash -s' <<'REMOTE'
+...
+REMOTE
+```
+
+The `sudo tee ... <<EOF` heredocs are nested inside, and passing the whole thing as a quoted `ssh`
+argument breaks on the inner quoting. Note also that the `Suites:` line must stay unquoted so
+`$VERSION_CODENAME` expands on the guest — it resolved to `trixie`.
 
 ---
 
-## Part 4 🟢 — The `.env`
+## Part 4 🟢 — The `.env` *(done)*
 
 `worker/settings.py` requires exactly one variable: `database_url`. Everything else is optional
 with a default, so collection needs only the database block. The Postgres password is generated
@@ -188,6 +206,7 @@ on the VM and exists nowhere else.
 ```bash
 cd ~/CyberPulse-AI
 PGPASS="$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)"
+umask 077                     # so the file is never briefly world-readable between > and chmod
 cat > .env <<EOF
 POSTGRES_USER=cyberpulse
 POSTGRES_PASSWORD=${PGPASS}
@@ -207,52 +226,120 @@ Three deliberate choices here:
 - **No `CYBERPULSE_PUBLISH_TOKEN` yet.** It is only needed by the publish step (Part 5d). A
   collection-only host has no reason to hold a token that can write to a public repository, so it
   is added when publishing starts and not before.
-- **`.env` is git-ignored and must stay so.** The repository is public.
+- **`.env` is git-ignored and must stay so.** The repository is public. Verified with
+  `git check-ignore -v .env`, which reported `.gitignore:2`.
+
+Validate with `docker compose config -q`, not `docker compose config`. The unquiet form prints the
+fully resolved file, `POSTGRES_PASSWORD` included, into your terminal and scrollback. `-q` exits 0
+on success and says nothing.
 
 ---
 
-## Part 5 🟢 — Bring up Stage 1
+## Part 5 🟢 — Bring up Stage 1 *(done; 5d is blocked on the owner)*
 
 ```bash
 cd ~/CyberPulse-AI
-docker compose config                 # validates .env resolves — Stage 0's exit criterion
+docker compose config -q              # validates .env resolves — Stage 0's exit criterion
 docker compose build                  # builds the worker image from Dockerfile.worker
 docker compose up -d db               # Postgres with pgvector; waits for its own healthcheck
 ```
+
+> **Add `</dev/null` to every `docker compose run` and `exec` inside a piped script.** Both attach
+> the caller's stdin, so when the script itself arrived on stdin (`ssh host 'bash -s' <<'EOF'`) the
+> container eats the remaining lines and the rest of the script silently never runs. `-T` disables
+> the TTY but does *not* detach stdin. This cost two confusing half-executed runs here.
+
+The db came up healthy in ~12s and carries both required extensions: `pg_trgm 1.6` and
+`vector 0.8.6`.
 
 **a. Migrate.** Creates the schema and the required extensions (`pg_trgm` and `vector` — the
 first is not optional, `worker/db/events.py:124` uses `similarity()` for trigram event resolution):
 
 ```bash
-docker compose run --rm worker python -m worker.main --migrate
+docker compose run --rm -T worker python -m worker.main --migrate </dev/null
 ```
+
+Applied `001_initial.sql`, `002_source_health_lifecycle.sql`, `003_source_fetch_state.sql` →
+**28 tables**, with `pg_trgm` and `vector` both installed.
 
 **b. Collect once.** The FAST lane, a single pass, against the real ACSC/CISA feeds:
 
 ```bash
-docker compose run --rm worker python -m worker.main --lane fast --once
+docker compose run --rm -T worker python -m worker.main --lane fast --once </dev/null
+docker compose run --rm -T worker python -m worker.main --lane normal --once </dev/null
 ```
+
+Measured, 2026-10-01:
+
+| Lane | Sources | ok | failed | stale | Items | New events |
+|---|---|---|---|---|---|---|
+| FAST | 11 | 8 | 0 | 3 | 1877 | 1742 |
+| NORMAL | 22 | 19 | 1 | 2 | 415 | 409 |
+
+**`stale` is not an error.** It is §2.6 working: `acsc_publications` genuinely has nothing newer
+than 14 days, and the run says so rather than presenting an old item as current. The one NORMAL
+failure was `sophos_labs: timeout: ReadTimeout after 30s` — transient, and the other 21 sources
+were unaffected, which is §11's one-source-fails row behaving as designed.
+
+A second FAST pass immediately afterwards returned `items=90 new=0 dup=90`: seven sources answered
+**304 Not Modified** against the `etag`/`last_modified` stored in `source_fetch_state`, and every
+re-ingested item resolved onto the event it already was. Both halves of that are worth keeping an
+eye on — it is the cheapest evidence that conditional fetching and deduplication are working.
 
 **c. Verify it is real data.** The point of the whole exercise, and worth doing before publishing
 anything — the site currently shows synthetic fixtures:
 
 ```bash
-docker compose exec -T db psql -U cyberpulse -d cyber_intel \
+docker compose exec -T db psql -U cyberpulse -d cyber_intel </dev/null \
   -c "select count(*) from events;" \
-  -c "select source_id, count(*) from raw_items group by 1 order by 2 desc limit 10;" \
-  -c "select title, published from events order by published desc limit 5;"
+  -c "select source_id, count(*) from event_sources group by 1 order by 2 desc limit 10;" \
+  -c "select left(title,60), severity, first_seen::date from events order by first_seen desc limit 5;"
 ```
+
+(`events` has no `published` column and there is no `raw_items` table — the columns are
+`first_seen` / `last_seen` / `last_material_update`, and per-source attribution lives in
+`event_sources`.)
+
+It is real: 2151 events, 1813 CVEs, titles such as *"Exclusive: WA's St James' Anglican School
+investigating cyber…"* and *"Critical alert: Aussie organisations targeted in Citrix NetScaler…"*.
+`cisa_kev` contributed 1730 — which matches the live KEV catalogue size independently measured
+while building `worker/groundtruth/kev.py`, a useful cross-check that nothing was dropped.
+
+**Expect every severity to be `unknown` at this point, and do not treat it as a fault.**
+
+```
+severity | severity_source | count          counts in live.json
+---------+-----------------+------          critical 0   high 0   medium 0   low 0
+unknown  | unknown         |  1742          unknown 20   pending_enrichment 20
+```
+
+Severity arrives from the Stage 2 ground-truth chain (CNA → CISA-ADP → NVD), which is written but
+not yet wired into the pipeline, so `unknown` is the honest answer and PLAN.md §2 forbids inventing
+anything else. The same is true of `au_relevance`, which is NULL rather than 0.
+
+One visible consequence: `urgency` is **0.273 for every single event**, because
+`worker/pipeline/score.py:121` computes it from the severity weight plus a KEV bonus, and with
+severity unknown and no CVE yet flagged as KEV-listed every event gets the identical number. Flat
+urgency is the symptom of the missing ground truth, not a scoring bug — it is the single clearest
+argument for wiring Stage 2 in next.
 
 **d. Publish.** Writes `data/*.json` against the JSON Schemas, secret-scans the output and fails
 closed if anything matches:
 
 ```bash
-docker compose run --rm worker python -m worker.main --publish
+docker compose run --rm -T worker python -m worker.main --publish </dev/null
 ```
 
-Pushing the `data` branch needs a token with `contents: write` on this repo and **nothing else**.
-Specifically **not** `workflow` scope: a worker able to rewrite `.github/workflows/**` could bypass
-Stage 6's approval gates. Add it to `.env` as `CYBERPULSE_PUBLISH_TOKEN` at this point.
+Wrote **501 files** — `live.json`, `index.json`, `source-health.json`, `system-status.json` and 497
+under `data/history/`. `--publish` only builds and writes; pushing is a separate module, so this is
+safe to run on a host holding no token.
+
+🔴 **This is where the owner is needed.** Pushing the `data` branch needs a token with
+`contents: write` on this repo and **nothing else** — specifically **not** `workflow` scope, since a
+worker able to rewrite `.github/workflows/**` could bypass Stage 6's approval gates. Add it to
+`.env` as `CYBERPULSE_PUBLISH_TOKEN`. **Until that exists the live site keeps serving the synthetic
+fixture events and its AWAITING DATA banners**, because the VM is producing correct files that
+nothing is allowed to push.
 
 **e. Run continuously.** Replaces the one-shot with the scheduler the design intends — FAST every
 15 minutes, NORMAL every 4 hours, owned by the worker so collection survives the control plane
@@ -265,7 +352,53 @@ docker compose logs -f worker
 ```
 
 This is the step that makes the VM worth having over the laptop: a 15-minute cadence needs a
-machine that is always on.
+machine that is always on. The worker logs `scheduler started: lane-fast, lane-normal`, then
+publishes after each run — collection and publishing are one unit now, so `data/*.json` cannot
+describe an older collection than the database holds.
+
+---
+
+## Defects this build surfaced
+
+Three, all of which only appear when the stack actually runs in containers, which is why the laptop
+never showed them. Recorded because each is the kind that hides rather than announces itself.
+
+**1. The worker image could not start at all.** `--migrate` died on
+`ModuleNotFoundError: No module named 'yaml'`. PyYAML was never in `requirements.txt`, and
+`worker/sources/registry.py` imports it at module load to read `config/sources.yaml` — so *no*
+worker subcommand worked in a container, not just `--migrate`. The laptop was unaffected because its
+`.venv` happens to carry `yaml 6.0.3`, pulled in by something else. `referencing` was the same
+problem one step removed: `worker/publish/validate.py` imports it directly but it reached the image
+only as a dependency of `jsonschema`. Both are now declared.
+
+**2. No provenance was being written.** Every source logged
+`raw cache write failed … Permission denied: /var/cache/cyberpulse/<source>` — and the run still
+reported `ok=8 failed=0`. `/var/cache/cyberpulse` was not in the image, so Docker invented the
+`rawcache` mount point as `root:root` while the container runs as `cyberpulse` (uid 1000).
+`worker/pipeline/run.py:181` only warns, so this host could have collected for weeks with a complete
+database and an empty evidence store and nothing would have said so. The cache holds the raw bytes
+every published event was derived from, keyed by sha256 — it is what can show an event was not
+invented. Fixed by creating the directory in `Dockerfile.worker` before `USER`, since Docker
+initialises an empty named volume from the image's content at the mount point, ownership included.
+
+After fixing it, the first run's bodies were still missing, and conditional fetching meant they
+would not be re-downloaded until they changed. Backfilled with:
+
+```bash
+docker compose exec -T db psql -U cyberpulse -d cyber_intel -c "delete from source_fetch_state;" </dev/null
+docker compose run --rm -T worker python -m worker.main --lane fast --once </dev/null
+```
+
+All 11 FAST sources now hold provenance, and a spot check confirms the filename really is the
+payload's hash: `41a998d171e4b29a.raw` ⇄ `sha256sum | cut -c1-16` = `41a998d171e4b29a`.
+
+**3. The scheduler never published.** It ran lanes only, so the database would advance every 15
+minutes while `data/*.json` kept describing whichever collection was last published by hand — a
+stale snapshot presented as current, which is exactly what §2.6 exists to prevent, and it
+contradicts §11's *"keeps collecting and publishing"*. `worker/publish/run.py` now supplies the
+connection and output directory, both `--publish` and the scheduler go through it, publishes are
+serialised with a lock (the two cadences coincide at 00:00, 04:00, 08:00), and the build runs off
+the event loop so a slow publish cannot look like a stalled collection.
 
 ---
 
@@ -343,11 +476,12 @@ are not backed up when using vzdump"*.
 
 Everything that needs a human, in order:
 
-- [ ] **Part 2 — `qm disk resize 200 scsi0 60G`** on the Proxmox host. Blocking; nothing else can
-      proceed.
-- [ ] Part 5d — create the publish token (`contents: write` only, **no `workflow` scope**) when
-      publishing starts.
-- [ ] Part 7 — provide an off-host backup target.
+- [x] **Part 2 — `qm disk resize 200 scsi0 60G`** on the Proxmox host. Done 2026-10-01; everything
+      after it followed.
+- [ ] **Part 5d — the publish token.** `contents: write` only, **no `workflow` scope**. This is the
+      one thing standing between a VM producing correct data and a site showing it. Nothing else is
+      blocked on it.
+- [ ] Part 7 — provide an off-host backup target. There is now real data to lose.
 - [ ] Part 6 — NetBird, claiming Paperclip, and the five hardening toggles. Not yet actionable.
 
 ## Commands the README lists that do not exist yet
