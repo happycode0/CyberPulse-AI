@@ -69,9 +69,23 @@ finding below was checked against live documentation or a live HTTP request on
 3. **Debian 12 is past regular security support** (ended 2026-07-11; LTS only until
    2028-06-30). Debian 13 "trixie" is current stable (13.7), and is what PVE 9.2 is built on.
 
-**Resolution:** a Debian 13 QEMU VM, 6 vCPU / 12 GB / 150 GB, QEMU guest agent installed
+**Resolution:** a Debian 13 QEMU VM, 4 vCPU / 12 GB / 60 GB, QEMU guest agent installed
 so `vzdump` snapshot backups get `fsfreeze` consistency. Bind mounts were also ruled out:
 *"The contents of bind mount points are not backed up when using vzdump."*
+
+*Amended 2026-10-01, against the host this was commissioned on* — 4-core/8-thread i7-7700HQ,
+31 GiB RAM, a single 94 GB disk with 88 GB free. The original 6 vCPU / 150 GB was sized
+before the hardware was known and does not fit it:
+
+- **150 GB does not exist on a 94 GB disk.** `local-lvm` is thin-provisioned, so the
+  request would have been *accepted* and then filled until the pool wedged, taking Postgres
+  down with it. 60 GB is ample because the database holds no raw article bodies (§3) and
+  the raw cache is a rotating filesystem cache, and it leaves ~28 GB of host headroom.
+- **6 of 8 threads starves the hypervisor** for no gain: collection is IO-bound HTTP plus
+  Postgres, not CPU-bound. 4 vCPU.
+- **One disk means the host cannot back itself up.** `vzdump` to local storage dies with
+  the disk it sits on, so Stage 7's backup target has to be external (NAS, USB, or PBS on
+  another machine). Recorded here rather than discovered at Stage 7.
 
 ### 2.2 The engineer agent: two live security defaults to fix
 
