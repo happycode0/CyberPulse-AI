@@ -293,7 +293,25 @@ The source design called for an LXC. Validation changed that — the details are
 
 ### 4.2 Create the VM 🔴
 
-On the Proxmox host:
+**Check the host first — these numbers are sized for the host, not copied blind:**
+
+```bash
+lscpu | grep -E '^(CPU\(s\)|Core|Thread|Model name)'
+free -g | head -2
+pvesm status            # free space on the storage you will import into
+```
+
+The commands below assume a host with roughly **8 threads, 32 GB RAM and 90 GB of free
+storage** (the box this was commissioned on: 4-core/8-thread i7-7700HQ, 31 GiB, a single
+94 GB disk). Two of the figures are the ones to adjust:
+
+- **`--cores`** — 4, not 6. The work is IO-bound HTTP collection plus Postgres, so cores
+  buy little here, and leaving half a 4-core host to PVE itself costs nothing in throughput.
+- **`scsi0` size** — 60G. Postgres never stores raw article bodies (§3), so the database
+  stays small; the raw cache is a rotating filesystem cache. On **thin** storage
+  (`local-lvm` is thin by default) an over-sized disk is accepted at creation and then
+  fills silently until the pool wedges — which takes the database down hard. Size it to
+  fit the pool with headroom, and grow it later with `qm disk resize` if you need to.
 
 ```bash
 # Debian 13 "trixie" cloud image
@@ -302,7 +320,7 @@ wget https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-
 
 qm create 200 --name cyberpulse \
   --memory 12288 --balloon 8192 \
-  --cores 6 --cpu host \
+  --cores 4 --cpu host \
   --net0 virtio,bridge=vmbr0 \
   --scsihw virtio-scsi-single \
   --agent enabled=1 \
@@ -310,7 +328,7 @@ qm create 200 --name cyberpulse \
 
 qm importdisk 200 debian-13-genericcloud-amd64.qcow2 local-lvm
 qm set 200 --scsi0 local-lvm:vm-200-disk-0
-qm disk resize 200 scsi0 150G
+qm disk resize 200 scsi0 60G
 qm set 200 --boot order=scsi0 --ide2 local-lvm:cloudinit --serial0 socket --vga serial0
 qm set 200 --ciuser YOURUSER --sshkeys ~/.ssh/id_ed25519.pub --ipconfig0 ip=dhcp
 qm start 200
@@ -318,6 +336,10 @@ qm start 200
 
 `--agent enabled=1` matters: the QEMU guest agent lets `vzdump` snapshot backups use
 `fsfreeze` for a consistent database backup.
+
+> **A single-disk host cannot back itself up.** `vzdump` to local storage is not a backup:
+> it dies with the disk it sits on. If the host has one disk, §4.6 needs an external
+> target — a NAS over NFS/SMB, a USB disk, or another machine running PBS.
 
 ### 4.3 Prepare the guest 🔴
 
