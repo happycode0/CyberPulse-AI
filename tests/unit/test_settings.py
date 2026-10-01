@@ -36,6 +36,17 @@ def test_repr_does_not_leak_secrets(monkeypatch):
 
 def test_user_agent_identifies_project(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/db")
-    assert get_settings.__wrapped__().user_agent == (
-        "CyberPulse-AI/1.0 (+https://github.com/happycode0/CyberPulse-AI)"
-    )
+    assert get_settings.__wrapped__().user_agent == "CyberPulse-AI/1.0"
+
+
+def test_user_agent_carries_no_url(monkeypatch):
+    """A URL in the User-Agent is what cyber.gov.au and dta.gov.au drop the connection on.
+
+    Guarded as a test rather than only a comment because adding a contact URL back is the
+    obvious, well-intentioned change to make here, and it silently costs every ACSC feed:
+    the request does not fail fast, it hangs until the read timeout, which looks like the
+    source being slow rather than the client being rejected. See worker/settings.py.
+    """
+    monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/db")
+    ua = get_settings.__wrapped__().user_agent
+    assert "http" not in ua and "://" not in ua and "." not in ua.split("/")[0], ua

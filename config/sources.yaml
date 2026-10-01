@@ -79,10 +79,10 @@ sources:
     priority: 1
     lane: fast
     enabled: true
-    url: https://www.cisa.gov/ics-advisories.xml
+    url: https://www.cisa.gov/cybersecurity-advisories/ics-advisories.xml
     parser: rss
     expected_frequency: daily
-    notes: null
+    notes: Was /ics-advisories.xml, which 404s; CISA serves ICS under the advisories path.
 
   - id: cisa_news
     name: CISA News
@@ -546,10 +546,13 @@ sources:
     priority: 3
     lane: normal
     enabled: true
-    url: https://www.fortinet.com/blog/feed
+    url: https://feeds.fortinet.com/fortinet/blog/threat-research
     parser: rss
     expected_frequency: daily
-    notes: null
+    # /blog/feed 404s; this is the FortiGuard Labs threat-research feed behind the same blog.
+    # Their PSIRT advisories are a separate feed worth adding on its own entry rather than
+    # here: https://filestore.fortinet.com/fortiguard/rss/ir.xml (50 items, IR advisories).
+    notes: Was /blog/feed, which 404s; now the FortiGuard Labs threat-research feed.
 
   - id: sophos_labs
     name: Sophos Labs
@@ -563,7 +566,13 @@ sources:
     url: https://news.sophos.com/feed/
     parser: rss
     expected_frequency: daily
-    notes: null
+    # Left enabled deliberately. Measured 2026-10-01: this host answers 200 for a few requests
+    # and then stalls every request from the same IP until the read timeout, regardless of
+    # User-Agent — nine different strings, including ones that had just worked, all timed out
+    # together. So it is per-IP rate or reputation mitigation, not something a header fixes;
+    # testing it hard is what triggers it. At one request per 4 hours it may never fire. If it
+    # does, source health will mark it degraded from real run data, which is the honest answer.
+    notes: Rate-limits by IP; may time out in bursts. Do not change the User-Agent for it.
 
   - id: zerodayinitiative
     name: Zero Day Initiative
@@ -587,11 +596,17 @@ sources:
     class: feed
     priority: 2
     lane: fast
-    enabled: true
+    enabled: false
     url: https://www.cvedetails.com/rss/cvedetails.rss
     parser: rss
     expected_frequency: hourly
-    notes: CVE update feed
+    # Disabled 2026-10-01, not retired: the feed is behind a Cloudflare interstitial
+    # (403 with cf-mitigated: challenge) that only a browser executing the challenge
+    # script can clear, which is impersonation we are not doing. Left enabled it would
+    # spend 96 failing requests a day and sit permanently red in source health for a
+    # reason no amount of retrying fixes. Nothing is lost: CVE enrichment comes from
+    # NVD and KEV status from cisa_kev, both of which are in this registry and work.
+    notes: CVE update feed; disabled while behind a Cloudflare challenge.
 
   # Disabled sources with reasons
   - id: securityweek
