@@ -24,25 +24,38 @@
       <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
       <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
       <span class="mono" id="strip-local"></span>
-      <span class="status-strip__note">SNAPSHOT, NOT A REAL-TIME FEED</span>
     </div>
     <div class="site-header__controls">
       <a class="btn" href="history.html">HISTORY</a>
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
     </div>
   </div>
+  <!-- Thirteen pills in flat order read as one wall, so the strip is grouped: the domain
+       views a reader picks between first, then the threat sections, then context, then the
+       two pages about the system itself. OVERVIEW leads because it is the summary the other
+       views drill out of — and because initTabs() lands on the first tab when there is no
+       #hash, so first here means first on arrival.
+
+       The group labels are aria-hidden on purpose. initTabs() promotes this nav to
+       role="tablist", whose owned children must all be tabs, so the labels are taken out of
+       the accessibility tree: a screen reader hears thirteen tabs with nothing between them,
+       while a sighted reader gets the grouping. They are also spans, not links — the nav
+       must contain no non-tab link (see test_history_page_is_reachable_from_the_dashboard). -->
   <nav class="site-nav" aria-label="Sections">
-    <a href="#sec-australia-now">AUSTRALIA NOW</a>
     <a href="#sec-overview">OVERVIEW</a>
+    <a href="#sec-australia-now">AUSTRALIA NOW</a>
     <a href="#sec-global-cyber">GLOBAL CYBER</a>
     <a href="#sec-ai-cyber">AI + CYBER</a>
+    <span class="site-nav__group" aria-hidden="true">THREATS</span>
     <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
     <a href="#sec-developing-events">DEVELOPING</a>
     <a href="#sec-emerging-threats">EMERGING</a>
     <a href="#sec-threat-actors">ACTORS</a>
     <a href="#sec-vulnerabilities">VULNERABILITIES</a>
+    <span class="site-nav__group" aria-hidden="true">CONTEXT</span>
     <a href="#sec-research">RESEARCH</a>
     <a href="#sec-policy-regulation">POLICY</a>
+    <span class="site-nav__group" aria-hidden="true">ABOUT</span>
     <a href="#sec-the-crew">THE CREW</a>
     <a href="#sec-system">SYSTEM</a>
   </nav>
@@ -224,7 +237,7 @@
 </main>
 
 <footer class="site-footer wrap">
-  <p>CyberPulse-AI publishes canonical, evidence-linked events from public sources. Times are shown in Australia/Sydney and stored in UTC. The CyberPulse Index is our own composite measure, not an official scale.</p>
+  <p>CyberPulse-AI publishes canonical, evidence-linked events from public sources. Each page is a snapshot of the last completed collection, not a continuous feed. Times are shown in Australia/Sydney and stored in UTC. The CyberPulse Index is our own composite measure, not an official scale.</p>
 </footer>
 </body>
 </html>
