@@ -1,6 +1,9 @@
+import httpx
 import pytest
+from pydantic import SecretStr
 
 from worker import main as main_mod
+from worker.ai.budget import KEY_URL
 from worker.ai.ladder import (
     Breach,
     CatalogueUnavailable,
@@ -10,6 +13,7 @@ from worker.ai.ladder import (
     VerifiedLadder,
 )
 from worker.models import Lane
+from worker.settings import Settings
 
 
 @pytest.fixture
@@ -37,6 +41,7 @@ def calls(monkeypatch):
     monkeypatch.setattr(
         main_mod, "_check_models", lambda *, required: log.append(("check", required)) or 0
     )
+    monkeypatch.setattr(main_mod, "_check_budget", lambda: log.append(("budget",)) or 0)
     return log
 
 
@@ -102,7 +107,7 @@ def test_check_models_runs_first_and_a_failure_stops_the_rest(calls, monkeypatch
     assert calls == [("check", True)]
 
 
-# ─── _check_models itself: a breach fails the command but never the scheduler ──────────────────────
+# ─── _check_models itself: a breach fails the command but never the scheduler ─────────────────────
 
 
 def _rejecting(exc):
@@ -140,3 +145,59 @@ def test_a_passing_ladder_is_logged(monkeypatch, caplog):
     caplog.set_level("INFO")
     assert main_mod._check_models(required=True) == 0
     assert "model ladder passed" in caplog.text
+
+
+def test_check_budget_runs_after_check_models_and_exits(calls):
+    assert main_mod.main(["--check-budget", "--check-models"]) == 0
+    assert calls == [("check", True), ("budget",)]
+
+
+def test_a_failed_budget_check_stops_the_rest(calls, monkeypatch):
+    monkeypatch.setattr(main_mod, "_check_budget", lambda: calls.append(("budget",)) or 1)
+    assert main_mod.main(["--check-budget", "--migrate"]) == 1
+    assert calls == [("budget",)]
+
+
+# ─── _check_budget itself: a read of the key, never a spend ───────────────────────────────────────
+
+
+def _with_key(monkeypatch, key="fake-key-TESTONLY"):
+    settings = Settings(
+        _env_file=None,
+        database_url="sqlite://",
+        openrouter_api_key=SecretStr(key) if key else None,
+    )
+    monkeypatch.setattr(main_mod, "get_settings", lambda: settings)
+
+
+def test_check_budget_without_a_key_fails(monkeypatch, caplog):
+    _with_key(monkeypatch, key=None)
+    assert main_mod._check_budget() == 1
+    assert "OPENROUTER_API_KEY is not set" in caplog.text
+
+
+def test_check_budget_logs_the_mode_and_never_the_label(monkeypatch, caplog, respx_mock):
+    _with_key(monkeypatch)
+    body = {
+        "data": {
+            "label": "fake-label-TESTONLY...890",
+            "limit": 20,
+            "limit_remaining": 14,
+            "limit_reset": "monthly",
+            "usage_daily": 0.5,
+            "usage_monthly": 6,
+            "free_model_daily_requests": {"used": 0, "limit": 1000, "remaining": 1000},
+        }
+    }
+    respx_mock.get(KEY_URL).mock(return_value=httpx.Response(200, json=body))
+    caplog.set_level("INFO")
+    assert main_mod._check_budget() == 0
+    assert "mode full" in caplog.text and "$14.00 of $20.00" in caplog.text
+    assert "fake-label" not in caplog.text
+
+
+def test_check_budget_fails_when_the_key_cannot_be_read(monkeypatch, caplog, respx_mock):
+    _with_key(monkeypatch)
+    respx_mock.get(KEY_URL).mock(return_value=httpx.Response(401))
+    assert main_mod._check_budget() == 1
+    assert "did not accept the key" in caplog.text
