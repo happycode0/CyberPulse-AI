@@ -1,5 +1,8 @@
 # the VM build runbook — every command, and who runs it
 
+[Wiki home](wiki/README.md) — the owner's step-by-step guide and "what's next". This file is the
+build record behind it; each wiki stage links to its Part here.
+
 A single ordered record of the commands that build the CyberPulse-AI host: the ones already run,
 the ones still to run, and the ones that only the owner can run. README §4 is the reference
 design; this is the log of applying it to the actual box, with the real values filled in.
@@ -13,7 +16,8 @@ design; this is the log of applying it to the actual box, with the real values f
 
 ## The box as it actually is
 
-Measured on the VM, 2026-10-01, not copied from the design table:
+Measured on the VM, 2026-10-01 (disk and status re-measured 2026-10-02), not copied from the
+design table:
 
 | | |
 |---|---|
@@ -21,9 +25,9 @@ Measured on the VM, 2026-10-01, not copied from the design table:
 | Address | `10.0.0.0/24` on `eth0` (DHCP), reachable from the WSL box |
 | Login | `deploy-user`, passwordless sudo, key-only (`~/.ssh/cyberpulse_vm_ed25519`) |
 | CPU / RAM | 4 vCPU / 11 GiB usable (created with `--memory 12288 --balloon 8192`) |
-| Disk | 59 GB usable on `/dev/sda1`, 55 GB free after Docker and the images (resized — see Part 2) |
+| Disk | 59 GB usable on `/dev/sda1`, 42 GB free with all three images pulled, Paperclip's included (resized — see Part 2) |
 | Docker | 29.8.2, Compose v5.5.1, `local` log driver capped at 3 × 10 MB |
-| Status | **Stage 1 is running.** FAST every 15 min, NORMAL every 4 h, publishing after each run. |
+| Status | **Stage 1 is running:** FAST every 15 min, NORMAL every 4 h, ground truth every 6 h, the `data/*.json` files rebuilt after each run — but **not pushed to GitHub yet** (Part 5d). **Paperclip is running and claimed** (Part 6). |
 
 An SSH alias is configured on the WSL box, so every 🟢 command below is reachable as
 `ssh cyberpulse-vm '<command>'`:
@@ -133,7 +137,7 @@ the larger disk so no SCSI rescan was needed. `df -h /` now reports 59G.
 
 ---
 
-## Part 3 🟢 — Prepare the guest
+## Part 3 🟢 — Prepare the guest *(done)*
 
 Already done:
 
@@ -223,11 +227,19 @@ Three deliberate choices here:
 - **Fresh credentials, not copied.** The laptop's `.env` is not transferred. It lives on a
   `/mnt/c` Windows mount where it is `-rwxrwxrwx` and cannot be `chmod`-ed; copying it would
   spread that exposure rather than contain it. On the VM, `chmod 600` actually holds.
-- **No `CYBERPULSE_PUBLISH_TOKEN` yet.** It is only needed by the publish step (Part 5d). A
+- **No `CYBERPULSE_PUBLISH_TOKEN` at first.** It is only needed by the publish step (Part 5d). A
   collection-only host has no reason to hold a token that can write to a public repository, so it
-  is added when publishing starts and not before.
+  was added when publishing started (2026-10-02) and not before.
 - **`.env` is git-ignored and must stay so.** The repository is public. Verified with
   `git check-ignore -v .env`, which reported `.gitignore:2`.
+
+**The file has grown since, on 2026-10-02:** the owner added the API keys and the publish token
+(wiki [Stage 0](wiki/stage-0-prerequisites.md)), and the Paperclip section was appended (wiki
+[4a step 0](wiki/stage-4a-paperclip-setup.md#0--add-the-paperclip-settings-to-env-once)). The
+owner also set a new `POSTGRES_PASSWORD`; Postgres only reads that when its volume is first
+created, so the database role was brought into line with `ALTER ROLE` (Part 6). The block above is
+the original six lines, not the current file. Check what is there by name only:
+`grep -oE '^[A-Z0-9_]+' .env`.
 
 Validate with `docker compose config -q`, not `docker compose config`. The unquiet form prints the
 fully resolved file, `POSTGRES_PASSWORD` included, into your terminal and scrollback. `-q` exits 0
@@ -338,12 +350,23 @@ Wrote **501 files** — `live.json`, `index.json`, `source-health.json`, `system
 under `data/history/`. `--publish` only builds and writes; pushing is a separate module, so this is
 safe to run on a host holding no token.
 
-🔴 **This is where the owner is needed.** Pushing the `data` branch needs a token with
-`contents: write` on this repo and **nothing else** — specifically **not** `workflow` scope, since a
-worker able to rewrite `.github/workflows/**` could bypass Stage 6's approval gates. Add it to
-`.env` as `CYBERPULSE_PUBLISH_TOKEN`. **Until that exists the live site keeps serving the synthetic
-fixture events and its AWAITING DATA banners**, because the VM is producing correct files that
-nothing is allowed to push.
+🔴 **This is where the owner was needed** *(done 2026-10-02)*. Pushing the `data` branch needs a
+token with `contents: write` on this repo and **nothing else** — specifically **not** `workflow`
+scope, since a worker able to rewrite `.github/workflows/**` could bypass Stage 6's approval gates.
+It is in `.env` as `CYBERPULSE_PUBLISH_TOKEN`, and a dry run authenticated:
+
+```bash
+docker compose exec -T worker python -m worker.publish.push --dry-run </dev/null
+```
+
+**The live site still serves the synthetic fixture events and AWAITING DATA banners**, for three
+reasons, all in the wiki's [Stage 1, "What's left"](wiki/stage-1-foundation.md#whats-left):
+
+1. Nothing runs the push yet. The scheduler rebuilds `data/*.json` after every run, but
+   `worker.publish.push` is only a command.
+2. A push to `data` does not redeploy Pages: a push runs the workflow file inside the pushed
+   commit, and the `data` branch has none, on purpose.
+3. Pages builds from `main`, and `stage-1-foundation` is not merged into it.
 
 **e. Run continuously.** Replaces the one-shot with the scheduler the design intends — FAST every
 15 minutes, NORMAL every 4 hours, owned by the worker so collection survives the control plane
@@ -355,8 +378,13 @@ docker compose ps
 docker compose logs -f worker
 ```
 
+Since Part 6, `docker compose up -d` starts Paperclip's `server` as well; the first time, it
+downloads a 1.8 GB image before starting anything. To bring up only this stage, use
+`docker compose up -d --no-deps db worker`.
+
 This is the step that makes the VM worth having over the laptop: a 15-minute cadence needs a
-machine that is always on. The worker logs `scheduler started: lane-fast, lane-normal`, then
+machine that is always on. The worker logs `scheduler started: lane-fast, lane-normal,
+groundtruth-sync` (the third job arrived with Part 5f), then
 publishes after each run — collection and publishing are one unit now, so `data/*.json` cannot
 describe an older collection than the database holds.
 
@@ -594,6 +622,7 @@ Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, an
 docker compose exec -T db pg_dump -U cyberpulse cyber_intel | gzip > /backup/cyber_intel.sql.gz
 docker compose exec -T db pg_dump -U cyberpulse paperclip  | gzip > /backup/paperclip.sql.gz
 docker compose cp server:/paperclip/instances/default/secrets /backup/paperclip-secrets
+cp -p .env /backup/env                                       # keep this copy private
 ```
 
 The database and Paperclip's secrets folder are both required; neither restores without the
@@ -641,5 +670,6 @@ docker compose run --rm worker python -m worker.ops.cost --month      # ROGUE's 
 docker compose run --rm worker python -m worker.ops.sources --status  # SERAPH's view
 ```
 
-The worker CLI today is exactly four flags: `--migrate`, `--lane {fast,normal,deep}`, `--once`,
-`--publish`.
+The worker CLI today is exactly six flags: `--migrate`, `--lane {fast,normal,deep}`, `--once`,
+`--groundtruth`, `--cvss-batch N` and `--publish`. The push to GitHub is a separate command,
+`python -m worker.publish.push [--dry-run]`.
