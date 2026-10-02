@@ -3,7 +3,8 @@
 [← Stage 1 — Foundation](stage-1-foundation.md) · [Wiki home](README.md) ·
 [Stage 3 — Correlation →](stage-3-correlation.md)
 
-**Status: 🟡 half.** The ground-truth half runs on VM 200; the AI half is not built. Plan:
+**Status: 🟡 half.** The ground-truth half runs on VM 200. Of the AI half, the money controls
+are three-quarters built (client, ledger, price guard) and the enrichment is not started. Plan:
 [PLAN.md §9, Stage 2](../../PLAN.md#9-stages) and §2.5 (the severity chain) · §7 (models and money)
 
 ---
@@ -32,8 +33,16 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
 
 **Money first, before any agent spends:**
 
-1. **OpenRouter client** with strict output schemas.
-2. **Cost ledger** from each response's billed `usage.cost`. This is ROGUE's source of truth.
+1. ✅ **OpenRouter client** (2026-10-03, `worker/ai/client.py`). Every call asks for strict
+   JSON output and checks the answer itself. It goes only to providers that support that, at
+   US$1.00/M output or less, cheapest first, with the tier's fallback models behind it. Out of
+   money (402), rate limited (429) and a billed but unusable answer each raise their own error,
+   so the budget logic can tell them apart. Nothing calls it yet: enrichment (item 6) will.
+2. ✅ **Cost ledger** (2026-10-03, migration 005). One row per billed call: the agent, the
+   pipeline stage and the event, the model asked for and the model that answered (they differ
+   when a fallback served), and the cost OpenRouter billed. An unusable answer still gets a row,
+   because it was still paid for. A cost OpenRouter did not report is stored as unknown, never
+   as $0. This is ROGUE's source of truth.
 3. ✅ **Price-ceiling guard** (2026-10-03). The ladder is now in `config/models.yaml`, not
    `.env`. When the worker starts, it checks every model there against OpenRouter's live list of
    routes (the providers serving it). A model passes only if at least one route offers tools and
