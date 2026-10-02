@@ -42,7 +42,7 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | # | Who | Step | Where |
 |---|---|---|---|
 | 1–2 | ✅ | Claim it; turn sign-up off | [4a steps 2–3](stage-4a-paperclip-setup.md#2--open-it) |
-| 3 | 🔴 **next** | Board-approval toggle, the company's mission and US$12 budget, the 16 agents, the routines | [4a steps 4–7](stage-4a-paperclip-setup.md#4--harden-it--the-five-toggles-runbook-part-6) |
+| 3 | 🔴 **next** | Import the crew package (16 agents, routines, mission) in one go, then the US$12 budget and the connection settings. Board approval is on | [4a steps 4–7](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6) |
 | 4 | 🟢 | OpenCode in the container, using the OpenRouter key | — |
 | 5 | 🟢 | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#whats-left--all-claude) |
 | 6 | 🟢 | The worker's ops API and its token; the `http` agents' URL and auth; max daily runs | — |

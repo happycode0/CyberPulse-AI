@@ -74,7 +74,9 @@ prompt, and press **Save**. A new hire also gets **SOUL.md**, **HEARTBEAT.md** a
 a generic start-up CEO persona ("default to action, ship over deliberate"), a checklist that
 hires agents and writes memory notes on every run, and an empty tools list. Select each one and
 press **Delete**. The built-in `paperclip` skill already carries the steps for handling a
-wake-up, so nothing is lost.
+wake-up, so nothing is lost. The [crew package](stage-4a-paperclip-setup.md#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go)
+writes every agent's AGENTS.md in one import. After it, still delete any leftover SOUL.md,
+HEARTBEAT.md or TOOLS.md.
 
 ---
 
