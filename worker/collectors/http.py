@@ -33,6 +33,7 @@ class FetchResult:
         last_modified: str | None = None,
         duration_ms: int = 0,
         error: str | None = None,
+        status_code: int | None = None,
     ):
         """Initialize a FetchResult.
 
@@ -50,6 +51,12 @@ class FetchResult:
             Time taken for the fetch in milliseconds.
         error : str | None
             Error message if status is ERROR.
+        status_code : int | None
+            The HTTP status actually returned, or None when no response arrived (a timeout, a DNS
+            failure, a connection reset). Kept alongside `error` because callers need to tell one
+            4xx from another and parsing it back out of the message would be guesswork: a 404 from
+            a per-record register means that record does not exist, which is an answer, while a 503
+            means the register is unreachable, which is not. `error` stays the human-readable form.
         """
         self.status = status
         self.body = body
@@ -57,6 +64,7 @@ class FetchResult:
         self.last_modified = last_modified
         self.duration_ms = duration_ms
         self.error = error
+        self.status_code = status_code
 
 
 async def fetch(
@@ -128,6 +136,7 @@ async def fetch(
                 return FetchResult(
                     status=FetchStatus.NOT_MODIFIED,
                     duration_ms=duration_ms,
+                    status_code=response.status_code,
                 )
 
             # Handle 2xx success
@@ -145,6 +154,7 @@ async def fetch(
                     etag=etag_header,
                     last_modified=last_modified_header,
                     duration_ms=duration_ms,
+                    status_code=response.status_code,
                 )
 
             # Handle 4xx (don't retry)
@@ -153,6 +163,7 @@ async def fetch(
                     status=FetchStatus.ERROR,
                     error=f"HTTP {response.status_code}",
                     duration_ms=duration_ms,
+                    status_code=response.status_code,
                 )
 
             # Handle 5xx (retry)
@@ -167,6 +178,7 @@ async def fetch(
                         status=FetchStatus.ERROR,
                         error=f"HTTP {response.status_code} after {max_retries} attempts",
                         duration_ms=duration_ms,
+                        status_code=response.status_code,
                     )
 
             # Unexpected status code
@@ -174,6 +186,7 @@ async def fetch(
                 status=FetchStatus.ERROR,
                 error=f"Unexpected HTTP status {response.status_code}",
                 duration_ms=duration_ms,
+                status_code=response.status_code,
             )
 
         except httpx.TimeoutException as e:
