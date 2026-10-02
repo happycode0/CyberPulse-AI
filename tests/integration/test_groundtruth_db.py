@@ -38,6 +38,12 @@ NOW = datetime(2026, 10, 2, 2, 25, tzinfo=UTC)
 LISTED = "CVE-2024-3400"
 UNLISTED = "CVE-2023-1234"
 
+# `events_event_id_check` requires `evt-<yyyy>-<nnnnnn>`, so these are ids `next_event_id` could
+# actually have allocated rather than labels.
+EVENT = "evt-2026-000001"
+EVENT_2 = "evt-2026-000002"
+EVENT_3 = "evt-2026-000003"
+
 
 @pytest.fixture
 def conn(pg_engine):
@@ -336,19 +342,19 @@ def test_an_outcome_the_schema_does_not_know_is_refused(conn):
 
 
 def test_an_event_is_banded_from_its_cves_score(conn):
-    insert_event(conn, "evt-1", LISTED)
+    insert_event(conn, EVENT, LISTED)
     record_cvss(conn, LISTED, CvssScore(score=9.8, vector="v", source="cna"))
-    assert set_event_severity(conn) == ["evt-1"]
-    assert severity_of(conn, "evt-1") == ("critical", "cna")
+    assert set_event_severity(conn) == [EVENT]
+    assert severity_of(conn, EVENT) == ("critical", "cna")
 
 
 def test_an_event_takes_the_worst_of_its_cves(conn):
-    insert_event(conn, "evt-1", LISTED, UNLISTED)
+    insert_event(conn, EVENT, LISTED, UNLISTED)
     record_cvss(conn, LISTED, CvssScore(score=5.0, vector="v", source="nvd"))
     record_cvss(conn, UNLISTED, CvssScore(score=9.1, vector="v", source="cisa_adp"))
     set_event_severity(conn)
     # The provenance follows the winning score, not some other CVE in the same advisory.
-    assert severity_of(conn, "evt-1") == ("critical", "cisa_adp")
+    assert severity_of(conn, EVENT) == ("critical", "cisa_adp")
 
 
 def test_an_event_with_no_scored_cve_is_left_alone(conn):
@@ -357,55 +363,55 @@ def test_an_event_with_no_scored_cve_is_left_alone(conn):
     The column defaults to 'unknown' anyway, so an event nothing has assessed still reads as unknown
     without this function asserting it — and a vendor rating survives until a CVSS outranks it.
     """
-    insert_event(conn, "evt-1", LISTED, severity="high", severity_source="vendor")
+    insert_event(conn, EVENT, LISTED, severity="high", severity_source="vendor")
     assert set_event_severity(conn) == []
-    assert severity_of(conn, "evt-1") == ("high", "vendor")
+    assert severity_of(conn, EVENT) == ("high", "vendor")
 
 
 def test_a_measured_score_outranks_an_estimate(conn):
-    insert_event(conn, "evt-1", LISTED, severity="low", severity_source="ai_estimate")
+    insert_event(conn, EVENT, LISTED, severity="low", severity_source="ai_estimate")
     record_cvss(conn, LISTED, CvssScore(score=9.8, vector="v", source="cna"))
     set_event_severity(conn)
-    assert severity_of(conn, "evt-1") == ("critical", "cna")
+    assert severity_of(conn, EVENT) == ("critical", "cna")
 
 
 def test_an_unchanged_band_is_not_rewritten(conn):
-    insert_event(conn, "evt-1", LISTED)
+    insert_event(conn, EVENT, LISTED)
     record_cvss(conn, LISTED, CvssScore(score=9.8, vector="v", source="cna"))
     set_event_severity(conn)
     assert set_event_severity(conn) == []
 
 
 def test_a_provider_the_enum_does_not_know_keeps_the_band_but_not_the_provenance(conn):
-    insert_event(conn, "evt-1", LISTED)
+    insert_event(conn, EVENT, LISTED)
     record_cvss(conn, LISTED, CvssScore(score=9.8, vector="v", source="some-new-adp"))
     set_event_severity(conn)
-    assert severity_of(conn, "evt-1") == ("critical", "unknown")
+    assert severity_of(conn, EVENT) == ("critical", "unknown")
 
 
 def test_a_zero_score_bands_low_rather_than_unknown(conn):
     # `Severity` has no NONE member, so 0.0 lands in LOW: it overstates by one band and never
     # understates, and scoring.yaml weights `low: 1` below `unknown: 1.5` so a CVE known to have no
     # impact still ranks beneath an unrated one.
-    insert_event(conn, "evt-1", LISTED)
+    insert_event(conn, EVENT, LISTED)
     record_cvss(conn, LISTED, CvssScore(score=0.0, vector="v", source="cna"))
     set_event_severity(conn)
-    assert severity_of(conn, "evt-1") == ("low", "cna")
+    assert severity_of(conn, EVENT) == ("low", "cna")
 
 
 # --- joining CVEs back to events --------------------------------------------------------------
 
 
 def test_the_events_mentioning_a_cve_are_found(conn):
-    insert_event(conn, "evt-1", LISTED)
-    insert_event(conn, "evt-2", LISTED, UNLISTED)
-    insert_event(conn, "evt-3", UNLISTED)
-    assert events_for_cves(conn, [LISTED]) == ["evt-1", "evt-2"]
+    insert_event(conn, EVENT, LISTED)
+    insert_event(conn, EVENT_2, LISTED, UNLISTED)
+    insert_event(conn, EVENT_3, UNLISTED)
+    assert events_for_cves(conn, [LISTED]) == [EVENT, EVENT_2]
 
 
 def test_an_event_mentioning_two_changed_cves_is_listed_once(conn):
-    insert_event(conn, "evt-1", LISTED, UNLISTED)
-    assert events_for_cves(conn, [LISTED, UNLISTED]) == ["evt-1"]
+    insert_event(conn, EVENT, LISTED, UNLISTED)
+    assert events_for_cves(conn, [LISTED, UNLISTED]) == [EVENT]
 
 
 def test_no_cves_means_no_query_and_no_events(conn):

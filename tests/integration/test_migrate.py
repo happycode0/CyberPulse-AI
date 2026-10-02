@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 
-from worker.db.migrate import current_version, run_migrations
+from worker.db.migrate import _migration_files, current_version, run_migrations
 from worker.version import (
     ENRICHMENT_VERSION,
     PIPELINE_VERSION,
@@ -52,9 +52,15 @@ def test_all_plan_tables_present(pg_engine):
 
 
 def test_migrations_are_idempotent(pg_engine):
+    # Read off the directory rather than hardcoded: the claim under test is "a second run applies
+    # nothing and the ledger agrees with what is on disk", and a literal here would instead fail every
+    # time a migration is added, which says nothing about idempotency. The highest prefix rather than
+    # the file count, because that is what `current_version` returns and the two differ the moment a
+    # number is ever skipped.
     run_migrations(pg_engine)
     assert run_migrations(pg_engine) == []
-    assert current_version(pg_engine) == 3
+    newest = max(int(p.name.split("_")[0]) for p in _migration_files())
+    assert current_version(pg_engine) == newest
 
 
 def test_required_extensions_present(pg_engine):
