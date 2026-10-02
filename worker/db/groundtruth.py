@@ -24,7 +24,7 @@ NVD, and nothing on the site asks a question that needs one.
 
 import logging
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
 
 from sqlalchemy import Connection, text
@@ -55,13 +55,18 @@ class KevResult:
         The CVEs actually written, listed and de-listed together. KEV is an input to `urgency`, so
         these are the CVEs whose events now hold a stale score — `events_for_cves` turns them into
         the `touched` set `pipeline.run.rescore` needs.
+
+        Excluded from the repr. The first live sync wrote 1,731 listings, and because this result is
+        logged as a whole dataclass by both `sync_groundtruth` and `worker.main`, every id appeared
+        in the log twice — some 140 KB for one line that was supposed to be a summary. Nothing is
+        lost: `len(changed_cves)` is `updated + delisted`, both of which are in the repr.
     """
 
     updated: int = 0
     delisted: int = 0
     unchanged: int = 0
     delist_withheld: int = 0
-    changed_cves: tuple[str, ...] = ()
+    changed_cves: tuple[str, ...] = field(default=(), repr=False)
 
 
 @dataclass(frozen=True)

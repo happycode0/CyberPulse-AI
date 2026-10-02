@@ -290,3 +290,18 @@ def test_a_zero_score_is_a_score_and_not_an_absence():
 @pytest.mark.parametrize("outcome", ["absent", "error"])
 def test_a_lookup_that_found_nothing_keeps_its_own_outcome(outcome):
     assert classify_lookup(RecordLookup(outcome, detail="why")) == (outcome, None)
+
+
+# --- the summary is logged, so it has to stay a summary ----------------------------------------
+
+
+def test_the_kev_result_does_not_spill_every_changed_cve_into_the_log():
+    """The first live sync listed 1,731 CVEs and logged all of them, twice.
+
+    `sync_groundtruth` and `worker.main` both log this dataclass whole, so a repr carrying
+    `changed_cves` turned one summary line into roughly 140 KB. The counts say the same thing.
+    """
+    result = KevResult(updated=2, changed_cves=("CVE-2024-3400", "CVE-2023-1234"))
+    assert "CVE-2024-3400" not in repr(result)
+    assert "updated=2" in repr(result)
+    assert result.changed_cves == ("CVE-2024-3400", "CVE-2023-1234")
