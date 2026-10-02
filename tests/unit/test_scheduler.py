@@ -5,7 +5,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from worker import scheduler
 from worker.models import Lane
-from worker.scheduler import build_scheduler, job_id
+from worker.scheduler import GROUNDTRUTH_JOB_ID, build_scheduler, job_id
 
 
 def fields(trigger: CronTrigger) -> dict[str, str]:
@@ -14,7 +14,22 @@ def fields(trigger: CronTrigger) -> dict[str, str]:
 
 def test_fast_and_normal_are_scheduled_deep_is_not():
     jobs = {j.id for j in build_scheduler().get_jobs()}
-    assert jobs == {job_id(Lane.FAST), job_id(Lane.NORMAL)}
+    assert jobs == {job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID}
+
+
+def test_the_ground_truth_sync_runs_four_times_a_day_off_the_lane_hours():
+    job = {j.id: j for j in build_scheduler().get_jobs()}[GROUNDTRUTH_JOB_ID]
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("25", "*/6")
+    # Off the hour on purpose: both lanes fire at :00, and the sync competing with a collection for
+    # the connection pool makes both slower for no gain.
+    assert fields(job.trigger)["minute"] != fields(build_scheduler().get_jobs()[1].trigger)["minute"]
+    assert str(job.trigger.timezone) == "UTC"
+
+
+def test_asking_for_one_lane_does_not_bring_the_register_sync_along():
+    # `--lane fast` means "schedule this one thing". A sync arriving uninvited would make the narrow
+    # form impossible to ask for, and on a machine running one lane deliberately that is a surprise.
+    assert GROUNDTRUTH_JOB_ID not in {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
 
 
 def test_cadences():

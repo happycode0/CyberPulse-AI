@@ -11,8 +11,14 @@ unrelated advisory happens to mention:
             CNA record → CISA Vulnrichment ADP → NVD)
 - `severity` — which published band that score falls in, and which rung it came from
 
-The shared rule across all three is that an absent answer is `unknown`. A CVE with no CVSS is not
-a 0.0, a CVE EPSS has not modelled is not a 0% chance, and a register that failed to download
+Those four are pure: bytes in, answers out. The other two are the moving parts around them —
+`registers` downloads the payloads and `sync` writes the answers to the database and rescores
+whatever they changed. They are kept apart from the parsers because the parsers are the part worth
+testing exhaustively, and a parser that needs a network and a Postgres to run is a parser nobody
+tests exhaustively.
+
+The shared rule across all three registers is that an absent answer is `unknown`. A CVE with no CVSS
+is not a 0.0, a CVE EPSS has not modelled is not a 0% chance, and a register that failed to download
 says nothing at all about anything — hence `GroundTruthError` rather than an empty register.
 """
 
