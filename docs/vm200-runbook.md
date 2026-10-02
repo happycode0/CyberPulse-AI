@@ -417,7 +417,7 @@ visible in production rather than a number:
   CISA's ADP enrichment. The live ratio is that sample holding at scale. Had the chain been built
   NVD-first, as the obvious reading of "use NVD for CVSS" would suggest, 355 of these 367 events
   would still read `unknown`.
-- **1,832 events still `unknown`, and that is correct.** `--cvss-batch 400` resolved 400 of 5,013
+- **Most events still `unknown`, and that is correct.** `--cvss-batch 400` resolved 400 of 5,013
   CVEs by design: one HTTP request per CVE, so an uncapped first run would fire five thousand at a
   free public register. The backfill drains over about three days at four passes a day, and
   `RECHECK_HOURS` then idles it. An event with no scored CVE is **left alone** rather than written
@@ -431,6 +431,24 @@ visible in production rather than a number:
   from a shrunken catalogue — `delist_withheld` would be non-zero and **no listing would have been
   removed**. That is the guard worth knowing about: a truncated KEV response acted on naively would
   report thousands of known-exploited CVEs as unexploited.
+
+**Two passes were needed, and the reason is worth knowing.** After the first pass the database held
+367 banded events and `live.json` still read `{unknown: 152}` — not one visible event had a severity.
+The batch had ordered never-checked CVEs by `cve_id`, so it spent all 400 lookups between
+CVE-2002-0367 and CVE-2018-19953: the oldest ids in the table, and the least likely to be on the
+front page. It was banding the archive. The ordering now tie-breaks on the newest event mentioning
+each CVE — only 73 of the 5,013 belong to events first seen in the preceding week, so one batch
+covers the whole visible site and the backlog fills in behind it. A second pass, same batch size:
+
+```
+                   events   critical   high   unknown
+first pass            152          0      0       152
+second pass           199         49     16       134
+```
+
+Published per-CVE coverage after the two passes: 152 CVE references, 142 with a CVSS score, 60
+KEV-listed, 137 with an EPSS probability and **15 carrying `{"score": null, "status": "unknown"}`** —
+which is what honest absence looks like once it reaches the wire.
 
 > **A sync that logs an error is not a failed sync.** Each register is read and written
 > independently, so KEV being down does not stop EPSS, and neither stops the CVSS batch. The CLI
