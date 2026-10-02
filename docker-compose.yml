@@ -27,6 +27,49 @@ services:
       - rawcache:/var/cache/cyberpulse
     restart: unless-stopped
 
+  # Paperclip — the agents' control plane (Stage 4). Optional by design: if it is
+  # stopped or broken, the worker keeps collecting and publishing (PLAN.md §2.3).
+  server:
+    # Pinned by digest. Bump the tag and the digest together, on purpose.
+    image: ghcr.io/paperclipai/paperclip:2026.1001.0@sha256:08dbadebd4d40550eb336c25c3691f582322a88bae3f1cca101c5dd096bdc9d3
+    # No `init: true`: the image already runs tini as PID 1. pids_limit is upstream's backstop.
+    pids_limit: 2048
+    ports:
+      # Home network only — never 0.0.0.0, never a router port forward. Docker-published
+      # ports bypass the host firewall, so this address is the only thing limiting exposure.
+      - "192.168.128.39:3100:3100"
+    # Explicit list, not env_file: Paperclip gets its own settings and nothing else
+    # (no publish token, no API keys).
+    environment:
+      # Its own database in the shared Postgres; create it once (wiki: paperclip-setup step 1).
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/paperclip
+      PORT: "3100"
+      SERVE_UI: "true"
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      PAPERCLIP_AGENT_JWT_SECRET: ${PAPERCLIP_AGENT_JWT_SECRET}
+      PAPERCLIP_TOOL_ACTION_SIGNING_SECRET: ${PAPERCLIP_TOOL_ACTION_SIGNING_SECRET}
+      PAPERCLIP_PUBLIC_URL: ${PAPERCLIP_PUBLIC_URL}
+      PAPERCLIP_DEPLOYMENT_MODE: ${PAPERCLIP_DEPLOYMENT_MODE:-authenticated}
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: ${PAPERCLIP_DEPLOYMENT_EXPOSURE:-private}
+      PAPERCLIP_AUTH_BASE_URL_MODE: ${PAPERCLIP_AUTH_BASE_URL_MODE:-explicit}
+      PAPERCLIP_AUTH_DISABLE_SIGN_UP: ${PAPERCLIP_AUTH_DISABLE_SIGN_UP:-false}
+      PAPERCLIP_TELEMETRY_DISABLED: ${PAPERCLIP_TELEMETRY_DISABLED:-1}
+      PAPERCLIP_ANNOUNCEMENTS_ENABLED: ${PAPERCLIP_ANNOUNCEMENTS_ENABLED:-false}
+      PAPERCLIP_SECRETS_STRICT_MODE: ${PAPERCLIP_SECRETS_STRICT_MODE:-true}
+    volumes:
+      - paperclip-data:/paperclip
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1:3100/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
 volumes:
   pgdata:
   rawcache:
+  paperclip-data:
