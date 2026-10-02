@@ -178,6 +178,21 @@ Check that it worked: `curl -s http://192.168.128.39:3100/api/health` no longer 
 prefix `CYB`), but its mission is empty and its monthly budget is 0. Open that company's
 settings and fill in the two missing fields below rather than creating a second one.
 
+**The setup wizard only asks for the name, then says "Create your first agent". Press Esc there
+and leave it.** Release 2026.1001.0's wizard goes name → first agent → *Connect a model* → *Let's
+get started*, and none of the last three suits this build:
+
+- *Connect a model* tests the model before it creates the agent. Until Claude has given OpenCode
+  the OpenRouter key (Stage 4, "What's left" step 4) it finds no models and stops.
+- Its other choices, signing in to a Claude or ChatGPT subscription or pasting an API key, go
+  around the OpenRouter key and its US$20 hard limit, and put a key in a form.
+- *Let's get started* creates a project and a first task and wakes the agent at once, before the
+  cost ledger and price guard exist.
+- The wizard gives the first agent a generic "chief of staff" prompt, not MORPHEUS's.
+
+The wizard is a dialog: Esc closes it and keeps the company. It may offer itself again while the
+company has no agents; Esc again. The agents are created at step 6 instead.
+
 **New Company** (or the existing company's settings):
 
 | Field | Type this |
