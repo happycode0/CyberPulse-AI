@@ -535,6 +535,11 @@ and large in production will not be caught by a test that only checks behaviour.
 
 **Status: not possible from this repository yet, and the README is ahead of the code here.**
 
+> To *learn* Paperclip before then, use the loopback-only sandbox in
+> [docs/wiki/paperclip-lab.md](wiki/paperclip-lab.md). Its first lesson came from running it here:
+> started from `~/CyberPulse-AI`, Paperclip auto-loads that folder's `.env`, inherits
+> `DATABASE_URL=…@db…`, and fails with `getaddrinfo ENOTFOUND db` even though `doctor` passes.
+
 Being specific, because this is the part most likely to waste an evening:
 `docker-compose.yml` defines exactly two services, `db` and `worker`. There is **no Paperclip
 service, image, or configuration in the repo** — the only mention is a docstring in
