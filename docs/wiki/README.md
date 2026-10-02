@@ -5,10 +5,11 @@ exact record of how the VM was built. This wiki is the "what do I do next" layer
 
 | Page | What it is for |
 |---|---|
-| [Paperclip lab](paperclip-lab.md) | Install Paperclip in a throwaway sandbox on the VM and learn it hands-on |
-| [Paperclip prompts](paperclip-prompts.md) | Copy-paste prompts: the company, the CEO, the first desks, the first tickets |
+| [Paperclip setup](paperclip-setup.md) | Open Paperclip, claim it, harden it, create the company, the 16 agents and their routines |
+| [The crew](paperclip-crew.md) | All 16 agents: the settings for each one and the prompt to paste |
+| [How the crew works together](how-the-crew-works.md) | Who wakes whom, how work is handed off, where money and code are stopped |
 | [the VM runbook](../vm200-runbook.md) | How the production box was built, command by command |
-| [The plan](../../PLAN.md) | Architecture, the sixteen-agent crew, the stages |
+| [The plan](../../PLAN.md) | Architecture, the crew, the stages |
 
 ---
 
@@ -16,15 +17,19 @@ exact record of how the VM was built. This wiki is the "what do I do next" layer
 
 ```text
 Stage 0  Prerequisites ............................ ✅ done   (.env, keys, the VM built)
-Stage 1  Foundation: pipeline + site .............. ✅ done   (collecting, scoring, site renders)
+Stage 1  Foundation: pipeline + site .............. ✅ done   (runbook Part 5: collecting every 15 min)
+           └─ publish token on the VM (Part 5d) ... ⏳ the site still shows sample data until this
 Stage 2  Ground truth + enrichment ................ 🟡 half   (KEV / EPSS / CVSS live on the VM)
-           ├─ ground-truth sync ................... ✅ running every 6 h
-           ├─ publish token (fine-grained) ........ ✅ created, ⏳ not yet on the VM
-           └─ OpenRouter client + cost ledger ..... ⏳ next build
+           └─ OpenRouter client + cost ledger ..... ⏳ built with Stage 4, before any agent spends
 Stage 3  Correlation depth + trends ............... ⬜
-Stage 4  Proxmox + Paperclip + first agents ....... 🟡 VM built; ▶ YOU ARE HERE: learning Paperclip in the lab
-Stage 5  Full crew + notifications ................ ⬜
-Stage 6  Self-healing ............................. ⬜
+Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
+           ├─ Paperclip Docker service ............ 🟢 Claude builds next
+           ├─ open, claim, harden ................. 🔴 you — setup steps 2–4
+           ├─ company + 16 agents + routines ...... 🔴 you — setup steps 5–7 (9 agents start paused)
+           └─ ops API + http agents ............... 🟢 Claude
+Stage 5  Full crew + notifications ................ ⬜   (un-pauses BLASTER, WINTERMUTE, TACHIKOMA,
+                                                          DECKARD, VOIGHT, RIPPERDOC)
+Stage 6  Self-healing ............................. ⬜   (un-pauses WHEELJACK, TRON)
 Stage 7  Hardening + backups ...................... ⬜   (off-host backup target still needed)
 ```
 
@@ -35,14 +40,15 @@ Stage 7  Hardening + backups ...................... ⬜   (off-host backup targe
 | Repo (your checkout) | `C:\Users\REDACTED-USER\HappyCode\CyberPulse-AI` | branch `stage-1-foundation`; `main` not merged yet |
 | the VM | `ssh cyberpulse-vm` → `deploy-user@10.0.0.0` | Debian 13, 4 vCPU / 12 GB / 60 GB |
 | SSH key | WSL `~/.ssh/cyberpulse_vm_ed25519` | no passphrase, no backup |
-| CyberPulse stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db` + `worker` |
+| CyberPulse stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db` + `worker` (+ `server` once Stage 4 lands) |
 | CyberPulse secrets | VM `~/CyberPulse-AI/.env` | git-ignored; never committed |
-| Paperclip lab | VM `~/paperclip-lab` (run folder), `~/.paperclip` (data) | loopback only, `127.0.0.1:3100` |
+| Paperclip dashboard | http://10.0.0.0:3100 | home network only, login required — once Stage 4 lands |
 
 **What is yours to do (🔴), in order**
 
-1. Copy the fine-grained publish token to the VM — or ask Claude to (it will not do it unasked).
-2. Learn Paperclip in the lab → [Paperclip lab](paperclip-lab.md).
+1. **Publish token onto the VM** (runbook Part 5d) — paste it into `.env` yourself, or tell Claude
+   to copy it (it will not do it unasked). This is what makes the site show real data.
+2. **When the Paperclip service lands:** [setup](paperclip-setup.md) steps 2–8 — open it, claim
+   it, harden it, create the company, the 16 agents and the routines.
 3. Provide an off-host backup target (NAS, USB disk or PBS). The host has a single disk.
-4. When Stage 4 lands for real: NetBird, claim the production instance, the five hardening toggles
-   (runbook Part 6).
+4. Later: NetBird, if you want the dashboard from outside the house.

@@ -535,9 +535,10 @@ and large in production will not be caught by a test that only checks behaviour.
 
 **Status: not possible from this repository yet, and the README is ahead of the code here.**
 
-> To *learn* Paperclip before then, use the loopback-only sandbox in
-> [docs/wiki/paperclip-lab.md](wiki/paperclip-lab.md). Its first lesson came from running it here:
-> started from `~/CyberPulse-AI`, Paperclip auto-loads that folder's `.env`, inherits
+> The owner's step-by-step guide — opening and claiming it, the 16 agents with their prompts, the
+> routines, and how the crew hands work between them — is
+> [docs/wiki/paperclip-setup.md](wiki/paperclip-setup.md). One lesson from a hand-started test
+> here: started from `~/CyberPulse-AI`, Paperclip auto-loads that folder's `.env`, inherits
 > `DATABASE_URL=…@db…`, and fails with `getaddrinfo ENOTFOUND db` even though `doctor` passes.
 
 Being specific, because this is the part most likely to waste an evening:
