@@ -131,19 +131,24 @@ def _insert_timeline(conn: Connection, event_id: str, entries: Iterable[Timeline
 def insert_new_event(
     conn: Connection, event: Event, item: NormalisedItem, *, payload_hash: str | None
 ) -> None:
-    """Insert a freshly built event with its single source, CVEs and opening timeline."""
+    """Insert a freshly built event with its single source, CVEs and opening timeline.
+
+    The feed's text goes into `source_summary` as well as `summary`: enrichment replaces the
+    second with an original summary and reads the first (migration 006).
+    """
     (source,) = event.sources
     conn.execute(
         text(
             "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
             "enrichment_version, first_seen, last_seen, last_material_update, "
             "last_independent_confirmation, status, title, normalised_title, summary, "
-            "severity, severity_source, au_directly_reported, au_reasons, categories, "
-            "pending_enrichment) values (:event_id, :schema_version, :pipeline_version, "
-            ":scoring_version, :enrichment_version, :first_seen, :last_seen, "
+            "source_summary, severity, severity_source, au_directly_reported, au_reasons, "
+            "categories, pending_enrichment) values (:event_id, :schema_version, "
+            ":pipeline_version, :scoring_version, :enrichment_version, :first_seen, :last_seen, "
             ":last_material_update, :last_independent_confirmation, :status, :title, "
-            ":normalised_title, :summary, :severity, :severity_source, :au_directly_reported, "
-            "cast(:au_reasons as text[]), cast(:categories as text[]), :pending_enrichment)"
+            ":normalised_title, :summary, :summary, :severity, :severity_source, "
+            ":au_directly_reported, cast(:au_reasons as text[]), cast(:categories as text[]), "
+            ":pending_enrichment)"
         ),
         {
             "event_id": event.event_id,
