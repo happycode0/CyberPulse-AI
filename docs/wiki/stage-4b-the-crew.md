@@ -66,8 +66,10 @@ it keeps these current, and nothing above US$1/M output is ever allowed.
   used up the daily run caps.
 - `deepseek/deepseek-v4-flash` called the house rules "injected" and refused them on 3 of 6
   agents (TRON twice).
-- `deepseek/deepseek-v4-flash-0731` passed, but its output price rose to $1.28/M, over the
-  ceiling.
+- `deepseek/deepseek-v4-flash-0731` passed, but its listed output price rose to $1.28/M, over
+  the ceiling. That is one provider's price. Others serve it for $0.18 to $1.60, and an agent
+  cannot choose which one it gets, so it is not used for agents. The worker can cap the price on
+  each call, so it stays in the worker's ladder.
 - `mimo-v2.6-flash` passed on every agent it ran, and each one closed its own ticket.
   `mimo-v2.6-pro` passed on MORPHEUS and VOIGHT, and `qwen3.8-flash` (the plan's AUDIT fallback)
   passed on TRON.

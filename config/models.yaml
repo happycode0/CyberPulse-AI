@@ -1,0 +1,46 @@
+# Versioned model ladder (PLAN.md section 7.1). Each tier is a fallback chain, default first.
+#
+# Every model here is checked against OpenRouter's live routes by worker/ai/ladder.py, at worker
+# start and on `python -m worker --check-models`. A model passes only if at least one route offers
+# both tools and structured outputs at no more than US$1.00 per million output tokens (in tier 2,
+# also at bf16, fp8 or unknown quantisation). If any model fails, the AI layer stays off;
+# collection and publishing carry on without it. The ceiling lives in that file, not here, so
+# raising it is a code change.
+#
+# Prices drift, so the figures below are notes, not inputs. They are the cheapest capable route,
+# in/out per million tokens, measured 2026-10-03.
+#
+# Changed on 2026-10-03 from the PLAN.md 7.1 picks, by the guard and by the Paperclip smoke tests:
+#   tier2_strong  minimax/minimax-m2.7 out: no route has structured outputs.
+#   code          xiaomi/mimo-v2.5 out: listed at $0.28, but every capable route is $2.00 or more.
+#   audit         qwen/qwen3.8-flash first: it is the model TRON passed its smoke test on.
+
+tiers:
+  # Classification, entity extraction, tagging, source relevance. :free variants are withdrawn
+  # without notice, so the chain must end in a paid model (the loader refuses one that does not).
+  tier0_free:
+    - nvidia/nemotron-3-super-120b-a12b:free  # $0 / $0
+    - qwen/qwen3.8-27b:free                   # $0 / $0
+    - openai/gpt-oss-20b                      # $0.018 / $0.09
+
+  # Short summaries, AU relevance reasoning, ambiguous matching, desk digests.
+  tier1_cheap:
+    - openai/gpt-oss-20b                      # $0.018 / $0.09
+    - deepseek/deepseek-v4-flash-0731         # from $0.18 out; listed at $1.28, see ladder.py
+    - z-ai/glm-5.3-flash                      # from $0.25 out
+
+  # Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass.
+  tier2_strong:
+    - xiaomi/mimo-v2.6-pro                    # $0.435 / $0.83 (bf16)
+    - xiaomi/mimo-v2.6-flash                  # $0.14 / $0.27
+    - qwen/qwen3.8-flash                      # $0.15 / $0.47
+
+  # WHEELJACK.
+  code:
+    - xiaomi/mimo-v2.6-flash                  # $0.14 / $0.27
+    - mistralai/codestral-2508                # $0.30 / $0.90
+
+  # TRON. No vendor here may appear under `code` (two-person rule; the loader enforces it).
+  audit:
+    - qwen/qwen3.8-flash                      # $0.15 / $0.47
+    - deepseek/deepseek-v4-flash-0731         # from $0.18 out

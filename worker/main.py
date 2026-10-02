@@ -1,8 +1,9 @@
-"""Command line: `python -m worker [--migrate] [--lane LANE [--once]] [--groundtruth] [--publish]`.
+"""Command line:
+`python -m worker [--check-models] [--migrate] [--lane LANE [--once]] [--groundtruth] [--publish]`.
 
 With no arguments the scheduler runs FAST, NORMAL and the ground-truth sync until interrupted.
-Explicit actions run in a fixed order (migrate, collect, ground truth, publish) and then exit,
-unless `--lane` is given without `--once`, which schedules that one lane instead.
+Explicit actions run in a fixed order (check models, migrate, collect, ground truth, publish) and
+then exit, unless `--lane` is given without `--once`, which schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -15,6 +16,12 @@ import logging
 import sys
 from collections.abc import Sequence
 
+from worker.ai.ladder import (
+    OUTPUT_CEILING_USD_PER_MTOK,
+    LadderRejected,
+    LadderUnusable,
+    verify_ladder,
+)
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
 from worker.groundtruth.sync import DEFAULT_CVSS_BATCH, sync_groundtruth
@@ -33,6 +40,11 @@ EXIT_USAGE = 2
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="worker", description="CyberPulse-AI worker")
+    p.add_argument(
+        "--check-models",
+        action="store_true",
+        help="check config/models.yaml against OpenRouter's live prices; non-zero if any model fails",
+    )
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
     p.add_argument(
@@ -55,6 +67,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
     return p
+
+
+def _check_models(*, required: bool) -> int:
+    """Run the price-ceiling guard (worker/ai/ladder.py) and log what it found.
+
+    `required` separates asking from starting. `--check-models` fails the command on a breach. The
+    scheduler logs the same errors and starts anyway, because what a failed check switches off is
+    the AI layer, and collection and publishing do not depend on it.
+    """
+    try:
+        verified = asyncio.run(verify_ladder())
+    except LadderUnusable as exc:
+        problems = exc.breaches if isinstance(exc, LadderRejected) else [exc]
+        for problem in problems:
+            logger.error("model ladder: %s", problem)
+        logger.error("the AI layer stays off until the model ladder passes")
+        return EXIT_FAILED if required else EXIT_OK
+    logger.info(
+        "model ladder passed: %d models, each with a capable route at or under $%s/M output",
+        len(verified.ladder.slugs()),
+        OUTPUT_CEILING_USD_PER_MTOK,
+    )
+    return EXIT_OK
 
 
 def _groundtruth(cvss_batch: int) -> int:
@@ -101,6 +136,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if lane is not None and not args.once and lane not in SCHEDULE:
         parser.error(f"the {lane.value} lane has no schedule; use --lane {lane.value} --once")
 
+    if args.check_models:
+        code = _check_models(required=True)
+        if code != EXIT_OK:
+            return code
+
     if args.migrate:
         applied = run_migrations(get_engine())
         logger.info("migrations applied: %s", ", ".join(applied) or "none")
@@ -120,9 +160,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             return code
 
     schedule = (lane is not None and not args.once) or not (
-        args.migrate or args.publish or args.groundtruth or lane
+        args.check_models or args.migrate or args.publish or args.groundtruth or lane
     )
     if schedule:
+        _check_models(required=False)
         asyncio.run(serve((lane,) if lane is not None else None))
     return EXIT_OK
 
