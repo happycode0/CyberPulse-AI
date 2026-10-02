@@ -287,3 +287,35 @@ def test_http2_not_enabled():
     # (httpx doesn't expose http2 setting directly, but we document this constraint)
     pass  # This test documents the constraint; the default behavior is correct
 
+
+
+# --- status_code: what the response actually was, not just whether it worked -------------------
+
+
+@pytest.mark.parametrize(
+    "status,expected",
+    [(200, FetchStatus.OK), (304, FetchStatus.NOT_MODIFIED), (404, FetchStatus.ERROR)],
+)
+async def test_the_http_status_is_reported_alongside_the_outcome(respx_mock, src, status, expected):
+    """Callers need to tell one 4xx from another, and `error` is a sentence, not a field.
+
+    The ground-truth registers are the case that forced this: a 404 from a per-record register means
+    that record does not exist, which is an answer worth storing, while a 503 means the register is
+    unreachable, which says nothing about the CVE. Recovering the difference by matching on the text
+    of `error` would make the register's behaviour depend on this module's phrasing.
+    """
+    respx_mock.get(src.url).respond(status, content=b"{}")
+    result = await fetch(httpx.AsyncClient(), src)
+    assert (result.status, result.status_code) == (expected, status)
+
+
+async def test_a_response_that_never_arrived_has_no_status(respx_mock, src):
+    respx_mock.get(src.url).mock(side_effect=httpx.ConnectError("no route to host"))
+    result = await fetch(httpx.AsyncClient(), src)
+    assert result.status is FetchStatus.ERROR and result.status_code is None
+
+
+async def test_a_retried_server_error_still_reports_the_status_it_gave_up_on(respx_mock, src):
+    respx_mock.get(src.url).respond(503)
+    result = await fetch(httpx.AsyncClient(), src, max_retries=2)
+    assert result.status_code == 503 and "503" in result.error
