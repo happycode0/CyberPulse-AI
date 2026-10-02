@@ -235,7 +235,7 @@ on success and says nothing.
 
 ---
 
-## Part 5 🟢 — Bring up Stage 1 *(done; 5d is blocked on the owner)*
+## Part 5 🟢 — Bring up Stage 1 *(done; the push to GitHub is not scheduled yet)*
 
 ```bash
 cd ~/CyberPulse-AI
@@ -531,67 +531,65 @@ and large in production will not be caught by a test that only checks behaviour.
 
 ---
 
-## Part 6 — Paperclip
+## Part 6 — Paperclip *(service running; claiming is the owner's)*
 
-**Status: not possible from this repository yet, and the README is ahead of the code here.**
+> The owner's step-by-step guide is the wiki's
+> [Stage 4 pages](wiki/stage-4-paperclip.md): opening and claiming it, the 16 agents with their
+> prompts, the routines, and how the crew hands work between them.
 
-> The owner's step-by-step guide — opening and claiming it, the 16 agents with their prompts, the
-> routines, and how the crew hands work between them — is
-> [docs/wiki/paperclip-setup.md](wiki/paperclip-setup.md). One lesson from a hand-started test
-> here: started from `~/CyberPulse-AI`, Paperclip auto-loads that folder's `.env`, inherits
-> `DATABASE_URL=…@db…`, and fails with `getaddrinfo ENOTFOUND db` even though `doctor` passes.
+**2026-10-02, what was done:**
 
-Being specific, because this is the part most likely to waste an evening:
-`docker-compose.yml` defines exactly two services, `db` and `worker`. There is **no Paperclip
-service, image, or configuration in the repo** — the only mention is a docstring in
-`worker/scheduler.py` noting that the DEEP lane is a Paperclip routine. README §4.5's
-`docker compose up -d` and `docker compose logs -f server` refer to a `server` service that Stage 4
-adds and that does not exist today. Running them now brings up the worker stack, not Paperclip.
+- The `server` service was added to `docker-compose.yml` (commit 184bb0d). It runs
+  `ghcr.io/paperclipai/paperclip:2026.1001.0`, pinned by digest, with upstream's
+  `pids_limit: 2048` and no `init` (the image runs tini itself). Its environment is an
+  explicit list, so it never sees the publish token or the API keys.
+- **It is published on `10.0.0.0:3100` only.** The owner chose the home network over
+  NetBird for now. Published Docker ports bypass `ufw` and `firewalld`, so that bind address is
+  the only thing limiting exposure. **Never** `0.0.0.0`, never a router port forward.
+  Confirmed with `ss -ltn`.
+- Its own database, `paperclip`, sits next to `cyber_intel` in the shared Postgres. **It must be
+  created by hand**: the image only creates its database when running its embedded Postgres.
+  Command: wiki 4a step 1.
+- A DB login fault came up first. `POSTGRES_PASSWORD` in `.env` had been changed after the volume
+  was created, so the worker had been failing since 19:27 Sydney. The role was set to the `.env`
+  value with `ALTER ROLE` from inside the db container, so no value was shown (wiki 4a
+  troubleshooting).
+- The first pull is 1.8 GB compressed, 7.3 GB unpacked. Mid-pull, a `docker compose down`
+  removed `db` and `worker`, and `up -d` then waited for the image before starting anything. They
+  were started on their own with `docker compose up -d --no-deps db worker`.
+- Result at 20:15 Sydney: `server` `(healthy)`; `/api/health` reports `authenticated` /
+  `private` / `bootstrap_pending`; migrations applied; the worker's 20:15 run `ok=7 failed=0`.
 
-`.env.example` already reserves the variable names, which is why it looks ready:
+**Lesson kept from the earlier hand-started test:** started from `~/CyberPulse-AI` with `npx`,
+Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, and fails with
+`getaddrinfo ENOTFOUND db`, even though `doctor` passes. Only run it as the Docker service.
 
-```
-BETTER_AUTH_SECRET                     PAPERCLIP_AUTH_BASE_URL_MODE
-PAPERCLIP_AGENT_JWT_SECRET             PAPERCLIP_AUTH_DISABLE_SIGN_UP
-PAPERCLIP_TOOL_ACTION_SIGNING_SECRET   PAPERCLIP_TELEMETRY_DISABLED
-PAPERCLIP_PUBLIC_URL                   PAPERCLIP_ANNOUNCEMENTS_ENABLED
-PAPERCLIP_DEPLOYMENT_MODE              PAPERCLIP_SECRETS_STRICT_MODE
-PAPERCLIP_DEPLOYMENT_EXPOSURE          CYBERPULSE_ENGINEER_TOKEN
-```
+### 🔴 Owner-only, from a browser
 
-### 🔴 When Stage 4 adds the service, these steps are owner-only
-
-Claimed from a browser, so they cannot be automated:
-
-1. **NetBird first** (README §4.4). Join the VM to the existing mesh, so the dashboard is
-   reachable from the owner's devices and nowhere else. Paperclip binds `127.0.0.1:3100` by
-   default; to expose it on the NetBird interface only, set `PAPERCLIP_BIND=custom` and
-   `PAPERCLIP_BIND_HOST=<netbird-ip>`. **Never** bind `0.0.0.0` or forward a router port.
-   Published Docker ports bypass `ufw` and `firewalld`, so a host firewall will not save a
-   mistake here.
-2. **Claim the instance immediately** after first start, while only the owner can reach it.
-   Deployment mode is `authenticated` + `private`, so the first account to sign in claims it.
-   Open `http://<netbird-ip>:3100` → sign in → **Claim this instance**.
-3. **Harden the defaults.** Validation found several permissive, so this is a checklist and not a
-   formality:
-   - [ ] Require board approval for new agents — defaults to **off**
-   - [ ] `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`, once the owner's account exists
-   - [ ] Secrets strict mode on
-   - [ ] Telemetry off (defaults to **on**)
-   - [ ] Announcements off (defaults to **on**)
+1. **Claim the instance now**, while only the home network can reach it. In
+   `authenticated` + `private` mode the first signed-in account to click **Claim this instance**
+   becomes the admin. Fallback: `docker compose exec server pnpm paperclipai auth bootstrap-ceo`.
+2. **Harden the defaults.** Four of the five toggles are set in `.env` already:
+   - [ ] Require board approval for new hires (company settings, defaults to **off**)
+   - [ ] `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`, straight after the claim
+   - [x] Secrets strict mode on
+   - [x] Telemetry off (defaults to **on**)
+   - [x] Announcements off (defaults to **on**)
 
 ---
 
 ## Part 7 🔴 — Backups
 
 ```bash
-# in the VM, once Paperclip exists
+# in the VM
 docker compose exec -T db pg_dump -U cyberpulse cyber_intel | gzip > /backup/cyber_intel.sql.gz
 docker compose exec -T db pg_dump -U cyberpulse paperclip  | gzip > /backup/paperclip.sql.gz
-docker compose cp server:/paperclip/instances/default/secrets/master.key /backup/master.key
+docker compose cp server:/paperclip/instances/default/secrets /backup/paperclip-secrets
 ```
 
-The database and the secrets master key are both required; neither restores without the other.
+The database and Paperclip's secrets folder are both required; neither restores without the
+other. Copy the whole folder, not a single file. On 2026-10-02 it held only
+`decision-signing.key`; `master.key` appears there once Paperclip first stores a secret.
 
 On the Proxmox host, add a `vzdump` job in **snapshot** mode with `prune-backups` set to
 `keep-daily=7,keep-weekly=4,keep-monthly=3` and *Repeat missed* enabled.
@@ -613,11 +611,13 @@ Everything that needs a human, in order:
 
 - [x] **Part 2 — `qm disk resize 200 scsi0 60G`** on the Proxmox host. Done 2026-10-01; everything
       after it followed.
-- [ ] **Part 5d — the publish token.** `contents: write` only, **no `workflow` scope**. This is the
-      one thing standing between a VM producing correct data and a site showing it. Nothing else is
-      blocked on it.
+- [x] **Part 5d — the publish token.** `contents: write` only, **no `workflow` scope**. In `.env`
+      since 2026-10-02; a dry-run push authenticated. The push is not scheduled yet, and a push to
+      `data` does not redeploy Pages (wiki Stage 1, "What's left").
+- [ ] **Part 6 — claim Paperclip** and set the remaining hardening toggles. Actionable now.
+- [ ] Approve merging `stage-1-foundation` into `main`, which Pages builds from.
 - [ ] Part 7 — provide an off-host backup target. There is now real data to lose.
-- [ ] Part 6 — NetBird, claiming Paperclip, and the five hardening toggles. Not yet actionable.
+- [ ] Later: NetBird, for the dashboard from outside the house.
 
 ## Commands the README lists that do not exist yet
 

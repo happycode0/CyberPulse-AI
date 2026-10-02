@@ -1,28 +1,20 @@
-# Paperclip setup — open it, claim it, create the crew
+# 4a — Paperclip setup: open it, claim it, create the crew
 
-The production Paperclip on the VM: one control panel for all 16 agents. The steps are in order;
+[← Stage 4 — overview](stage-4-paperclip.md) · [Wiki home](README.md) ·
+[4b — The crew →](stage-4b-the-crew.md)
+
+The production Paperclip on the VM: one control panel for all 16 agents. Do the steps in order;
 each one says who does it (🔴 you · 🟢 Claude).
 
-Related pages: [the crew — settings and prompts](paperclip-crew.md) ·
-[how the crew works together](how-the-crew-works.md).
+| Step | | State |
+|---|---|---|
+| 0 | `.env` settings | ✅ done 2026-10-02 |
+| 1 | Start Paperclip | ✅ done 2026-10-02, healthy |
+| 2–3 | Open it, claim it | 🔴 **next** |
+| 4–7 | Harden it, company, 16 agents, routines | 🔴 straight after |
+| 8 | First test ticket | 🔴 once Claude has wired OpenCode ([Stage 4](stage-4-paperclip.md#whats-left-in-order)) |
 
----
-
-## What exists today, and what is being built
-
-Be clear on this before you start, because it decides which steps you can do now:
-
-| Piece | Status |
-|---|---|
-| Worker collecting, scoring, ground truth, building the site | ✅ running on the VM |
-| Paperclip as a Docker service (`server`) in `docker-compose.yml` | ✅ built — waits on the Postgres login fix to start |
-| OpenCode inside the Paperclip container, using the OpenRouter key | 🟢 Stage 4 build |
-| The worker's ops API (the agents read data and the `http` agents call it) | 🟢 Stage 4 build |
-| Routines that open `[DIGEST]` / `[INCIDENT]` issues with real data behind them | 🟢 Stage 4 build |
-
-**Steps 1–4 work as soon as the `server` service lands. Steps 5–7 can be typed in straight
-after.** The AI agents will not do useful work until the ops API exists, which is why only MORPHEUS
-and ZION get their routines switched on at first.
+You need [4b — the crew](stage-4b-the-crew.md) open at step 6.
 
 ---
 
@@ -101,8 +93,12 @@ has to be redone. Keep `.env` off the repo — it is git-ignored, and the repo i
 
 ## 1. 🟢 Start Paperclip
 
+**✅ Done 2026-10-02.** Healthy since 20:15 Sydney. This is kept as the record, and as the
+commands for a rebuild.
+
 The `server` service in `docker-compose.yml` runs the official image, **pinned to release
-2026.1001.0 by digest**, so it only changes when someone bumps it on purpose.
+2026.1001.0 by digest**, so it only changes when someone bumps it on purpose. The first download
+is 1.8 GB (7.3 GB unpacked); on this connection that took about 15 minutes.
 
 **Before it can start, the worker must be able to log in to Postgres.** Paperclip uses the same
 `POSTGRES_USER` / `POSTGRES_PASSWORD`. If the worker logs `password authentication failed`, fix
@@ -143,11 +139,23 @@ later, without opening anything to the internet.
 
 ## 3. 🔴 Create your account and claim the instance — straight away
 
-1. **Create account** with your email and a strong password.
-2. Click **Claim this instance**. The first account to claim it owns it, so do this before
-   anything else.
+1. **Create account** with your email and a strong password. Use **Create account**, not
+   **Sign in**: there are no accounts yet.
+2. On the setup screen ("Instance setup required"), click **Claim this instance**. The first
+   signed-in account to claim it becomes the instance admin, so do this before anything else.
 3. Tell Claude it is claimed. Claude sets `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true` in `.env` and
    restarts the service, so nobody else can create an account.
+
+**If there is no Claim button**, or it fails: the release has a fallback that prints a one-time
+admin invite link. Open the link while signed in:
+
+```bash
+cd ~/CyberPulse-AI
+docker compose exec server pnpm paperclipai auth bootstrap-ceo
+```
+
+Check that it worked: `curl -s http://10.0.0.0:3100/api/health` no longer says
+`"bootstrapStatus":"bootstrap_pending"`.
 
 ## 4. 🔴 Harden it — the five toggles (runbook Part 6)
 
@@ -252,7 +260,7 @@ Then open **Company settings** and turn on **Require board approval for new hire
 ## 6. 🔴 Create the 16 agents
 
 Go to the agents list → **New Agent** (or **Add Agent**). Do them **in the order on the
-[crew page](paperclip-crew.md#the-crew-at-a-glance)**, because **Reports to** needs the manager
+[crew page](stage-4b-the-crew.md#the-crew-at-a-glance)**, because **Reports to** needs the manager
 to exist already.
 
 For each agent, copy from its card on the crew page:
@@ -364,6 +372,8 @@ tell Claude.
 | An agent is "Budget paused" | It hit 100% of its monthly budget | Working as designed. Raise it only as the board, on purpose |
 | You can't reach :3100 from the phone | The phone is on mobile data or a guest Wi-Fi | Join the home Wi-Fi. The site is not on the internet, by design |
 | Worker or `server` logs `password authentication failed for user "cyberpulse"` | `POSTGRES_PASSWORD` in `.env` was changed after the database was created. Postgres only reads it when the data volume is first set up, so the database still expects the old one | Put the old password back in `.env`, or set the database to the new one (see below). **Never** fix it with `docker compose down -v`: that deletes the database |
+| Server log `WARN [Better Auth]: User not found` | Someone used **Sign in** with an email that has no account yet | Use **Create account** first (step 3) |
+| `docker compose up -d` sits at `Pulling` for minutes | The first download of the Paperclip image is 1.8 GB | Wait. It is slow, not stuck. Check with `docker compose ps -a`: if `db` and `worker` are gone too, start them on their own with `docker compose up -d --no-deps db worker` |
 | `server` stays `(unhealthy)` or keeps restarting | Usually the database: the login above, or the `paperclip` database was never created | `docker compose logs --tail 50 server` shows which |
 | `database "paperclip" does not exist` | Step 1's one-off `CREATE DATABASE` was skipped | Run it, then `docker compose restart server` |
 
@@ -389,3 +399,8 @@ ssh cyberpulse-vm
 rm -rf ~/.paperclip ~/paperclip-lab
 sudo rm -rf /root/.paperclip
 ```
+
+---
+
+[← Stage 4 — overview](stage-4-paperclip.md) · [Wiki home](README.md) ·
+**Next:** [4b — The crew →](stage-4b-the-crew.md)
