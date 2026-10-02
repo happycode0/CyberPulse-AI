@@ -69,7 +69,8 @@ it keeps these current, and nothing above US$1/M output is ever allowed.
 - `deepseek/deepseek-v4-flash-0731` passed, but its output price rose to $1.28/M, over the
   ceiling.
 - `mimo-v2.6-flash` passed on every agent it ran, and each one closed its own ticket.
-  `mimo-v2.6-pro` passed on MORPHEUS and VOIGHT.
+  `mimo-v2.6-pro` passed on MORPHEUS and VOIGHT, and `qwen3.8-flash` (the plan's AUDIT fallback)
+  passed on TRON.
 
 An agent's own claim about its model is not proof. Check the run's cost entry instead.
 

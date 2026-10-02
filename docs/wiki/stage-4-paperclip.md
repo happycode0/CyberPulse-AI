@@ -3,8 +3,9 @@
 [← Stage 3 — Correlation](stage-3-correlation.md) · [Wiki home](README.md) ·
 [4a — Paperclip setup →](stage-4a-paperclip-setup.md)
 
-**Status: ▶ in progress — you are here.** Paperclip is running and claimed; the next step is
-yours: the board-approval toggle and the company's mission and budget (4a steps 4–5).
+**Status: ▶ in progress — you are here.** Paperclip is running with the whole crew imported, and
+the AI agents pass their smoke test. The routines stay paused until the worker's ops API exists
+(row 6 below).
 Plan: [PLAN.md §9, Stage 4](../../PLAN.md#9-stages) · Build record:
 [runbook Part 6](../vm200-runbook.md)
 
@@ -35,21 +36,24 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | Health: `ok`, `authenticated` / `private` | ✅ since 2026-10-02 20:15 Sydney |
 | Claimed: your account is the only one and holds `instance_admin` | ✅ 2026-10-02 20:21 Sydney |
 | Sign-up off (`PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`); a test sign-up is refused | ✅ 2026-10-02 |
-| Company `CyberPulse` created (issue prefix `CYB`) | ✅ name only — mission and budget still empty |
+| Company `CyberPulse` created (issue prefix `CYB`) | ✅ |
+| Crew imported from the package: 16 agents, 10 routines (paused) | ✅ 2026-10-02 |
+| Mission, US$12 company budget, the 11 agent budgets | ✅ 2026-10-03 |
+| Smoke test: each AI agent replies, follows the house rules and closes its own ticket | ✅ 9 of 11 on 2026-10-03; TACHIKOMA and RIPPERDOC run when their daily cap resets |
 
 ## What's left, in order
 
 | # | Who | Step | Where |
 |---|---|---|---|
 | 1–2 | ✅ | Claim it; turn sign-up off | [4a steps 2–3](stage-4a-paperclip-setup.md#2--open-it) |
-| 3 | 🔴 **next** | Import the crew package (16 agents, routines, mission) in one go, then the US$12 budget and the connection settings. Board approval is on | [4a steps 4–7](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6) |
-| 4 | 🟢 | OpenCode in the container, using the OpenRouter key | — |
-| 5 | 🟢 | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#whats-left--all-claude) |
-| 6 | 🟢 | The worker's ops API and its token; the `http` agents' URL and auth; max daily runs | — |
-| 7 | 🔴 | First test ticket for MORPHEUS | [4a step 8](stage-4a-paperclip-setup.md#8--first-test--one-ticket-one-agent) |
+| 3 | ✅ | Import the crew package, then the budgets and the mission | [4a steps 4–7](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6) |
+| 4 | ✅ | OpenCode in the container, using the one OpenRouter key through the connection | — |
+| 5 | 🟢 **next** | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#whats-left--all-claude) |
+| 6 | 🟢 | The worker's ops API and its token; the `http` agents' URL and auth | — |
+| 7 | ✅ | First test tickets, one per AI agent | [4a step 8](stage-4a-paperclip-setup.md#8--first-test--one-ticket-one-agent) |
 
-Step 3 works now. MORPHEUS and ZION do real work only after 4–6, which is why only their
-routines (and ROGUE's) are switched on at first.
+MORPHEUS and ZION do real work only after 5–6. Until then every routine stays paused; after
+that only theirs (and ROGUE's) are switched on at first.
 
 **A change from the plan, on purpose:** PLAN.md puts the dashboard behind NetBird. You chose the
 home network instead, so it is published on the LAN address only, with login required. NetBird
