@@ -67,6 +67,15 @@ keeps these current, and nothing above US$1/M output is ever allowed.
 | Max daily runs | as in each card | A second cap under the budget |
 | Instructions | **house rules** (below) **+** the agent's prompt | Paste both, house rules first |
 
+**Where the prompt goes in release 2026.1001.0:** the agent's page → **Instructions** (not
+Skills). It is a set of files. **AGENTS.md** (marked *entry*) is the one Paperclip loads.
+Click it, then **edit**, replace everything in it with the house rules followed by the agent's
+prompt, and press **Save**. A new hire also gets **SOUL.md**, **HEARTBEAT.md** and **TOOLS.md**:
+a generic start-up CEO persona ("default to action, ship over deliberate"), a checklist that
+hires agents and writes memory notes on every run, and an empty tools list. Select each one and
+press **Delete**. The built-in `paperclip` skill already carries the steps for handling a
+wake-up, so nothing is lost.
+
 ---
 
 ## House rules — paste this at the top of every AI agent's Instructions
