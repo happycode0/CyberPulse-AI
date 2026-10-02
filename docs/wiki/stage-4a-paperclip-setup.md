@@ -307,7 +307,8 @@ routines into a package for Paperclip's **Import** page. It holds:
 - the `http` agents' URL and job;
 - the 10 routines;
 - the board-approval setting;
-- the short mission, as the company Description.
+- the short mission. Importing into an existing company leaves the Description as it was
+  (2026-10-02), so paste the mission by hand as in step 5.
 
 It holds no secret values and asks for none.
 
@@ -324,6 +325,25 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
    warnings that the `paperclipai/paperclip/*` skills are "not present in the package". The
    package leaves them out on purpose: replacing them would swap the built-in copies for ones
    that track GitHub. The agents keep using the built-in skills.
+
+   🔴 **On the finish screen, do not press "Activate selected".** Its list, *Activate imported
+   agents and routines*, arrives with all 26 items ticked. Pressing it resumes every agent and
+   switches on all 10 routines, including the seven that wait for later stages. If it was
+   pressed, put everything back to paused with this, in the browser console (**F12 → Console**):
+
+   ```js
+   const call = (url, method, body) => fetch(url, method && { method,
+     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) })
+     .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
+   const [co] = await call('/api/companies?scope=accessible');
+   for (const r of await call(`/api/companies/${co.id}/routines`))
+     if (r.status === 'active') console.log((await call(`/api/routines/${r.id}`, 'PATCH',
+       { status: 'paused' })).title, 'paused');
+   for (const a of await call(`/api/companies/${co.id}/agents`))
+     if (a.status !== 'paused') console.log((await call(`/api/agents/${a.id}/pause`, 'POST')).name, 'paused');
+   ```
+
+   It prints each routine and agent it pauses: 10 routines and 16 agents the first time.
 4. **Let the 10 new AI agents use your OpenRouter key.** The importer does not carry this.
    **Connectors → My OpenRouter API → Permissions → Which agents can use this connection? → Just
    agents I pick**. Tick TELETRAAN, ZION, BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT,
