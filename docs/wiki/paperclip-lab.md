@@ -84,6 +84,71 @@ ssh -N -L 3100:127.0.0.1:3100 cyberpulse-vm
 Then browse to **http://localhost:3100** in Windows. The tunnel is why no firewall rule, port
 forward or NetBird is needed for the lab — Paperclip still only listens on the VM's loopback.
 
+### 3b. Or: open it straight from the home LAN (no tunnel)
+
+The owner chose this on 2026-10-02 — VM 200 is on the home network, not the internet. Two things
+change together, and the second is not optional:
+
+1. **Bind to the VM's LAN address only** — `192.168.128.39`, not `0.0.0.0` (which would also listen
+   on the Docker bridges).
+2. **Switch from `local_trusted` to `authenticated`.** `local_trusted` has *no login*: on loopback
+   that means only you, but on the LAN it means every phone, guest and smart TV on the Wi-Fi gets
+   admin over agents that run commands on the VM.
+
+`onboard --bind lan` does (2) but binds `0.0.0.0` and leaves telemetry on, so set it directly:
+
+```bash
+C=~/.paperclip/instances/default/config.json
+cp -p $C $C.bak-$(date +%Y%m%d%H%M%S)
+python3 - "$C" <<'PY'
+import json, sys
+p = sys.argv[1]; c = json.load(open(p))
+c["server"].update({"deploymentMode": "authenticated", "exposure": "private", "bind": "custom",
+                    "host": "192.168.128.39", "allowedHostnames": ["192.168.128.39"]})
+c["telemetry"]["enabled"] = False
+c["$meta"]["source"] = "configure"   # doctor only accepts onboard | configure | doctor here
+json.dump(c, open(p, "w"), indent=2)
+PY
+~/paperclip-lab/start.sh
+```
+
+Then, **straight away**, from a browser on the home network:
+
+1. Open **http://192.168.128.39:3100** and create your account — the first account claims the
+   instance, so do it before anyone else can.
+2. Turn sign-up off, then restart: in `config.json` set `"auth": {"disableSignUp": true}`.
+
+Loopback (`127.0.0.1:3100`) stops answering in this mode; the SSH tunnel from step 3 still works if
+you point it at the LAN address: `ssh -N -L 3100:192.168.128.39:3100 cyberpulse-vm`.
+
+**Keep it running across reboots (optional, your call).** A system service, running as `oxygen`:
+
+```bash
+sudo tee /etc/systemd/system/paperclip-lab.service >/dev/null <<'UNIT'
+[Unit]
+Description=Paperclip lab (LAN, authenticated)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=oxygen
+Group=oxygen
+Environment=HOME=/home/oxygen
+WorkingDirectory=/home/oxygen/paperclip-lab
+ExecStart=/home/oxygen/paperclip-lab/start.sh
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+sudo systemctl daemon-reload && sudo systemctl enable --now paperclip-lab
+journalctl -u paperclip-lab -f          # watch it start; Ctrl-c to stop watching
+```
+
+Undo: `sudo systemctl disable --now paperclip-lab`, and restore the `config.json.bak-*` file.
+
 ## 4. Learn it — the exercises, in order
 
 Each one teaches one idea. Prompts to paste are in [Paperclip prompts](paperclip-prompts.md).
