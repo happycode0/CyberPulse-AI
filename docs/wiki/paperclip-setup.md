@@ -26,6 +26,79 @@ and ZION get their routines switched on at first.
 
 ---
 
+## 0. 🔴 Add the Paperclip settings to `.env` (once)
+
+Paperclip reads its settings from the same `~/CyberPulse-AI/.env` as the rest of the stack. On
+2026-10-02 that file had every other key (OpenRouter, Tavily, the publish token) but **no
+Paperclip section yet**. This adds it.
+
+The three secrets are generated **on the VM itself**, so they never appear on screen, in a chat
+or in git. `.env` is backed up first:
+
+```bash
+ssh cyberpulse-vm
+cd ~/CyberPulse-AI
+cp -p .env .env.bak-$(date +%Y%m%d%H%M%S)
+{
+  echo
+  echo "# ═══ STAGE 4 — Paperclip control plane ═══"
+  echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)"
+  echo "PAPERCLIP_AGENT_JWT_SECRET=$(openssl rand -base64 32)"
+  echo "PAPERCLIP_TOOL_ACTION_SIGNING_SECRET=$(openssl rand -base64 32)"
+  echo "PAPERCLIP_PUBLIC_URL=http://10.0.0.0:3100"
+  echo "PAPERCLIP_DEPLOYMENT_MODE=authenticated"
+  echo "PAPERCLIP_DEPLOYMENT_EXPOSURE=private"
+  echo "PAPERCLIP_AUTH_BASE_URL_MODE=explicit"
+  echo "PAPERCLIP_AUTH_DISABLE_SIGN_UP=false"
+  echo "PAPERCLIP_TELEMETRY_DISABLED=1"
+  echo "PAPERCLIP_ANNOUNCEMENTS_ENABLED=false"
+  echo "PAPERCLIP_SECRETS_STRICT_MODE=true"
+} >> .env
+chmod 600 .env
+grep -c '^PAPERCLIP_\|^BETTER_AUTH' .env      # expect 11
+```
+
+**Run it once.** Running it again adds duplicate lines, and new secrets would sign everyone out.
+To check what is there without showing any value:
+
+```bash
+grep -E '^(BETTER_AUTH|PAPERCLIP_)' .env | cut -d= -f1
+```
+
+Afterwards the section looks like this (your three secrets are your own random values):
+
+```bash
+# ═══ STAGE 4 — Paperclip control plane ═══
+BETTER_AUTH_SECRET=<random, generated on the VM>
+PAPERCLIP_AGENT_JWT_SECRET=<random, generated on the VM>
+PAPERCLIP_TOOL_ACTION_SIGNING_SECRET=<random, generated on the VM>
+PAPERCLIP_PUBLIC_URL=http://10.0.0.0:3100
+PAPERCLIP_DEPLOYMENT_MODE=authenticated
+PAPERCLIP_DEPLOYMENT_EXPOSURE=private
+PAPERCLIP_AUTH_BASE_URL_MODE=explicit
+PAPERCLIP_AUTH_DISABLE_SIGN_UP=false     # becomes true right after you claim it (step 3)
+PAPERCLIP_TELEMETRY_DISABLED=1
+PAPERCLIP_ANNOUNCEMENTS_ENABLED=false
+PAPERCLIP_SECRETS_STRICT_MODE=true
+```
+
+| Setting | What it does |
+|---|---|
+| `BETTER_AUTH_SECRET` | Signs your login sessions |
+| `PAPERCLIP_AGENT_JWT_SECRET` | Signs each agent's identity when it calls Paperclip |
+| `PAPERCLIP_TOOL_ACTION_SIGNING_SECRET` | Signs approved agent actions. It has **no fallback**: approvals fail without it |
+| `PAPERCLIP_PUBLIC_URL` | The address you open, on the home network. Replaces the NetBird address the template expects |
+| `PAPERCLIP_DEPLOYMENT_MODE=authenticated` | Login required. The other mode, `local_trusted`, has no login at all |
+| `PAPERCLIP_DEPLOYMENT_EXPOSURE=private` | Treated as a private network, not the internet |
+| `PAPERCLIP_AUTH_BASE_URL_MODE=explicit` | Use `PAPERCLIP_PUBLIC_URL` exactly, rather than guessing it from requests |
+| `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `false` until you have claimed it, then `true` so nobody else can sign up |
+| `PAPERCLIP_TELEMETRY_DISABLED=1` | Telemetry defaults to **on** upstream |
+| `PAPERCLIP_ANNOUNCEMENTS_ENABLED=false` | Announcements phone home by default |
+| `PAPERCLIP_SECRETS_STRICT_MODE=true` | Paperclip's stricter handling of secrets in agent configuration. Off by default upstream |
+
+**Back up the secrets with the rest of `.env`.** Lose them and every login and agent identity
+has to be redone. Keep `.env` off the repo — it is git-ignored, and the repo is public.
+
 ## 1. 🟢 Start Paperclip
 
 ```bash
@@ -68,9 +141,9 @@ ssh -N -L 3100:10.0.0.0:3100 cyberpulse-vm
 |---|---|---|
 | **Require board approval for new hires** | Company settings (after step 5) | **on** — it defaults to off, and agents can hire agents |
 | Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) |
-| Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (already) |
-| Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (already) |
-| Announcements | `.env` `PAPERCLIP_ANNOUNCEMENTS_ENABLED` | `false` (already) |
+| Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) |
+| Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (step 0) |
+| Announcements | `.env` `PAPERCLIP_ANNOUNCEMENTS_ENABLED` | `false` (step 0) |
 
 ## 5. 🔴 Create the company
 
@@ -82,13 +155,83 @@ ssh -N -L 3100:10.0.0.0:3100 cyberpulse-vm
 | Mission | *(below)* |
 | Monthly budget | US$12 |
 
+Every agent sees the company mission, so this is the one text that sets the direction for the
+whole crew. Paste it whole:
+
 ```text
-Produce an accurate, Australia-first picture of cyber security and AI security, updated
-around the clock. Accuracy beats speed: every claim links to a primary source; every severity
-comes from a published score (CVSS, CISA KEV, EPSS), never an opinion; anything not known is
-written as "unknown", never guessed and never shown as zero. Public copy is plain Australian
-English. Spend as little as the work allows, and ask the board before hiring.
+MISSION
+Produce the most accurate, evidence-based picture of cyber security, AI security and
+AI-related developments, with an Australia-first perspective and global coverage. Monitor and
+update continuously, covering Australian and international cyber security news, threat
+intelligence, vulnerabilities, incidents, ransomware activity, data breaches, regulatory
+changes, emerging threats, AI security research, adversarial AI risks, model vulnerabilities,
+AI governance, AI safety, and significant AI industry developments that affect security.
+
+ACCURACY
+Accuracy always beats speed. Every claim must be traceable to a primary source. Every
+vulnerability, threat or incident severity must be backed by a published score or
+authoritative framework: CVSS, CISA Known Exploited Vulnerabilities (KEV), EPSS, MITRE ATT&CK,
+vendor advisories, government alerts, or an equivalent recognised standard. Never invent,
+estimate or assume missing facts. Any unknown value is written as "Unknown" and is never shown
+as zero or as a guessed value. Analytical judgment (for example a suggested ATT&CK technique or
+an Australian-relevance assessment) is allowed only when it is clearly labelled as AI
+assessment, with its confidence and the evidence it rests on - never presented as fact.
+
+AUSTRALIA FIRST
+Prioritise Australian organisations, government agencies, critical infrastructure sectors,
+regulatory updates, vendor advisories and threat activity affecting Australia, while also
+tracking significant global developments that may affect Australian businesses, government,
+cyber defenders and AI practitioners.
+
+IN SCOPE
+- Australian cyber security news and incident reporting
+- Global cyber security news and threat intelligence
+- Vulnerability disclosures and exploit activity
+- CISA KEV additions and actively exploited vulnerabilities
+- Nation-state and cybercrime activity
+- Ransomware, extortion and data breach reporting
+- AI security news, research and vulnerabilities
+- AI model attacks, jailbreaks, prompt injection techniques and supply-chain risks
+- AI governance, regulation, compliance and safety developments
+- Major AI company announcements where there is a security, governance or risk implication
+- Emerging technologies that materially affect cyber security or AI security
+
+WRITING
+Public-facing content is written in clear, concise Australian English, avoiding jargon where
+possible while keeping technical accuracy. Distinguish clearly between verified facts, vendor
+statements, analyst assessments and community reports. Where sources disagree, present the
+disagreement openly and cite every relevant source.
+
+COST
+Cost efficiency is a core requirement. Use the lowest-cost approach that achieves the required
+quality, accuracy and coverage. Minimise unnecessary computation, API calls and storage. Any
+proposed new agent, paid subscription, new vendor, external service or material budget
+increase must be approved by the board before it is committed.
+
+SUCCESS IS MEASURED BY
+- Accuracy over speed
+- Source transparency and traceability
+- Australian relevance with global awareness
+- Comprehensive cyber security and AI security coverage
+- Zero hallucinations and zero fabricated data
+- Cost efficiency and operational sustainability
+- Actionable intelligence for security leaders, analysts and decision-makers
+
+GOLDEN RULES
+1. Never guess.
+2. Never hide uncertainty.
+3. Cite primary sources whenever available.
+4. Mark missing information as "Unknown".
+5. Australia first, global by necessity.
+6. Accuracy beats speed.
+7. Cyber security, AI security and AI developments are all in scope.
+8. Spend as little as the mission allows.
+9. Board approval is required before hiring agents or people, or increasing recurring costs.
+10. Every published insight must be explainable, traceable and defensible.
 ```
+
+If the **Mission** box has a length limit and cuts this off, put the first paragraph in
+**Mission** and paste the whole text into a **New Goal** called `CyberPulse charter`.
 
 Then open **Company settings** and turn on **Require board approval for new hires**.
 
@@ -206,6 +349,19 @@ tell Claude.
 | An `http` agent times out too early | That adapter reads `timeoutMs`, not the `timeoutSec` its help text shows | Set `timeoutMs` |
 | An agent is "Budget paused" | It hit 100% of its monthly budget | Working as designed. Raise it only as the board, on purpose |
 | You can't reach :3100 from the phone | The phone is on mobile data or a guest Wi-Fi | Join the home Wi-Fi. The site is not on the internet, by design |
+| Worker logs `password authentication failed for user "cyberpulse"` | `POSTGRES_PASSWORD` in `.env` was changed after the database was created. Postgres only reads it when the data volume is first set up, so the database still expects the old one | Put the old password back in `.env`, or set the database to the new one (see below). **Never** fix it with `docker compose down -v`: that deletes the database |
+
+**Making the database match a new `POSTGRES_PASSWORD`.** This runs inside the db container and
+reads the password from its environment, so the value is never typed or shown:
+
+```bash
+cd ~/CyberPulse-AI
+docker compose exec -T db sh -c 'psql -q -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v pw="$POSTGRES_PASSWORD" -v u="$POSTGRES_USER"' <<'SQL'
+ALTER ROLE :"u" PASSWORD :'pw';
+SQL
+docker compose restart worker
+docker compose logs -f worker      # the next run should log "done: ok=" and "published"
+```
 
 ### The old test install (from 2026-10-02)
 
