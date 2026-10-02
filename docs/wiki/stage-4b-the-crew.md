@@ -1,8 +1,11 @@
-# The crew — all 16 agents, their settings and their prompts
+# 4b — The crew: all 16 agents, their settings and their prompts
+
+[← 4a — Paperclip setup](stage-4a-paperclip-setup.md) · [Wiki home](README.md) ·
+[4c — How the crew works together →](stage-4c-how-the-crew-works.md)
 
 Everything you type into Paperclip for each agent, built from PLAN.md §4 (who they are), §7.1
-(models) and §7.7 (which agent gets which model). Follow [Paperclip setup](paperclip-setup.md) for
-*where* to click; this page is *what* to type.
+(models) and §7.7 (which agent gets which model). Follow [4a — Paperclip setup](stage-4a-paperclip-setup.md)
+step 6 for *where* to click; this page is *what* to type.
 
 > **A persona is presentation, not licence** (PLAN.md §4). An agent can only do what its role,
 > budget and approvals allow. The prompt teaches it its lane; Paperclip's budget and approval gate
@@ -583,3 +586,8 @@ A PASS goes to the board. A human always merges.
 NEVER: be the final approval; review your own or WHEELJACK's work as if it were already
 approved.
 ```
+
+---
+
+[← 4a — Paperclip setup](stage-4a-paperclip-setup.md) · [Wiki home](README.md) ·
+**Next:** [4c — How the crew works together →](stage-4c-how-the-crew-works.md)

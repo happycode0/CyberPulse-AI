@@ -1,6 +1,9 @@
-# How the crew works together
+# 4c — How the crew works together
 
-The [crew page](paperclip-crew.md) says what each agent is. This page shows how the work moves
+[← 4b — The crew](stage-4b-the-crew.md) · [Wiki home](README.md) ·
+[Stage 5 — Full crew →](stage-5-full-crew.md)
+
+The [crew page](stage-4b-the-crew.md) says what each agent is. This page shows how the work moves
 between them — who starts it, who hands it to whom, and where it stops.
 
 ---
@@ -154,3 +157,8 @@ The prompt asks nicely. These are the controls that actually enforce it:
 - **The daily report** — MORPHEUS's 07:30 comment is the one thing to read each day.
 - **`needs human`** — the circuit breaker or VOIGHT is asking you something.
 - **Pause** — any agent, any time, from its page. Collection and publishing carry on without it.
+
+---
+
+[← 4b — The crew](stage-4b-the-crew.md) · [Wiki home](README.md) ·
+**Next:** [Stage 5 — Full crew + notifications →](stage-5-full-crew.md)
