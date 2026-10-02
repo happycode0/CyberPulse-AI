@@ -166,7 +166,7 @@ Check that it worked: `curl -s http://192.168.128.39:3100/api/health` no longer 
 
 | Check | Where | Set it to |
 |---|---|---|
-| **Require board approval for new hires** | Company settings (after step 5) | **on** — it defaults to off, and agents can hire agents. 🔴 **Still off** on 2026-10-02 |
+| **Require board approval for new hires** | http://192.168.128.39:3100/CYB/company/settings | **on** — it defaults to off, and agents can hire agents. 🔴 **Still off** on 2026-10-02 |
 | Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) ✅ |
 | Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) ✅ |
 | Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (step 0) ✅ |
@@ -175,12 +175,12 @@ Check that it worked: `curl -s http://192.168.128.39:3100/api/health` no longer 
 ## 5. 🔴 Create the company
 
 **Already started:** on 2026-10-02 the setup screen created a company named `CyberPulse` (issue
-prefix `CYB`), but its mission is empty and its monthly budget is 0. Open that company's
-settings and fill in the two missing fields below rather than creating a second one.
+prefix `CYB`), but it has no mission and its monthly budget is 0, which Paperclip reads as
+**unlimited**. Fill those in on the pages below rather than creating a second company.
 
-**The setup wizard only asks for the name, then says "Create your first agent". Press Esc there
-and leave it.** Release 2026.1001.0's wizard goes name → first agent → *Connect a model* → *Let's
-get started*, and none of the last three suits this build:
+**The setup wizard only asks for the name, then says "Create your first agent". Don't go further
+in it.** Release 2026.1001.0's wizard goes name → first agent → *Connect a model* → *Let's get
+started*, and none of the last three suits this build:
 
 - *Connect a model* tests the model before it creates the agent. Until Claude has given OpenCode
   the OpenRouter key (Stage 4, "What's left" step 4) it finds no models and stops.
@@ -190,16 +190,16 @@ get started*, and none of the last three suits this build:
   cost ledger and price guard exist.
 - The wizard gives the first agent a generic "chief of staff" prompt, not MORPHEUS's.
 
-The wizard is a dialog: Esc closes it and keeps the company. It may offer itself again while the
-company has no agents; Esc again. The agents are created at step 6 instead.
+**Esc does not get you out.** While the company has no agents, the **Dashboard** sends you back
+to the wizard every time. Only the Dashboard does that, so open the other pages by their address
+instead (the agents are created at step 6, not in the wizard):
 
-**New Company** (or the existing company's settings):
-
-| Field | Type this |
-|---|---|
-| Name | `CyberPulse` |
-| Mission | *(below)* |
-| Monthly budget | US$12 |
+| What | Page | What to do |
+|---|---|---|
+| Board approval | http://192.168.128.39:3100/CYB/company/settings | Turn on **Require board approval for new hires** (step 4) |
+| Short mission | the same page, **Description** | The first paragraph of the mission below |
+| Full mission | http://192.168.128.39:3100/CYB/goals | **New Goal**, title `CyberPulse charter`, level **Organization**, the whole text below as its description. This release keeps a company's mission as its organization goal |
+| Monthly budget | http://192.168.128.39:3100/CYB/costs → **Budgets** tab | Company budget **US$12** |
 
 Every agent sees the company mission, so this is the one text that sets the direction for the
 whole crew. Paste it whole:
@@ -276,10 +276,8 @@ GOLDEN RULES
 10. Every published insight must be explainable, traceable and defensible.
 ```
 
-If the **Mission** box has a length limit and cuts this off, put the first paragraph in
-**Mission** and paste the whole text into a **New Goal** called `CyberPulse charter`.
-
-Then open **Company settings** and turn on **Require board approval for new hires**.
+That is: the first paragraph (from "Produce the most accurate…" to "…that affect security.") in
+**Description**, and all of it in the `CyberPulse charter` goal.
 
 ## 6. 🔴 Create the 16 agents
 
