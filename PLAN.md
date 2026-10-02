@@ -739,6 +739,17 @@ use** — the catalogue changes weekly. All slugs configurable via `config/model
 | **CODE** | `xiaomi/mimo-v2.6-flash` | `xiaomi/mimo-v2.5` → `mistralai/codestral-2508` | $0.14 / $0.28 | WHEELJACK |
 | **AUDIT** | `deepseek/deepseek-v4-flash-0731` | `qwen/qwen3.8-flash` | $0.018 / $0.32 | TRON — must be a different vendor from CODE (two-person rule) |
 
+**Changed 2026-10-03** by the price-ceiling guard and the Paperclip smoke tests. The live ladder
+is `config/models.yaml`:
+
+- Tier 2's last fallback is `qwen/qwen3.8-flash`. `minimax/minimax-m2.7` has no route with
+  structured outputs.
+- CODE drops `xiaomi/mimo-v2.5`: every capable route costs $2.00/M output or more.
+- AUDIT now leads with `qwen/qwen3.8-flash`, the model TRON passed on, with 0731 as its
+  fallback.
+
+The guard checks each route, not the headline price (`worker/ai/ladder.py`).
+
 **CODE and AUDIT were chosen on measured session cost and adoption trend, not token price**
 (§7.6). All three signals were needed, and each alone would have picked wrong:
 

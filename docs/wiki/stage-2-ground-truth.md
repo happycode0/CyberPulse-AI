@@ -34,9 +34,15 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
 
 1. **OpenRouter client** with strict output schemas.
 2. **Cost ledger** from each response's billed `usage.cost`. This is ROGUE's source of truth.
-3. **Price-ceiling guard:** the worker refuses to start if any configured model costs more than
-   US$1 per million output tokens. `.env.example` describes this guard, but **it is not enforced
-   in code yet**.
+3. ✅ **Price-ceiling guard** (2026-10-03). The ladder is now in `config/models.yaml`, not
+   `.env`. When the worker starts, it checks every model there against OpenRouter's live list of
+   routes (the providers serving it). A model passes only if at least one route offers tools and
+   structured outputs at US$1.00 or less per million output tokens. If any model fails, the AI
+   layer stays off and collection and publishing carry on. Check by hand with
+   `python -m worker --check-models`.
+   Its first run caught two models the plan had picked. `minimax/minimax-m2.7` has no route with
+   structured outputs. `xiaomi/mimo-v2.5` is listed at $0.28, but every route that can do the
+   job costs $2.00 or more. Both are out of the ladder.
 4. **ROGUE's degradation tiers:** cheaper models automatically when spend runs ahead of plan.
 
 These four are built alongside [Stage 4](stage-4-paperclip.md)'s agents, because they are what
@@ -59,7 +65,7 @@ docker compose logs --since 7h worker | grep -i 'ground-truth'     # one sync ev
 - [ ] Events carry real KEV / CVSS / EPSS **and** AI enrichment
 - [ ] The ledger shows per-event cost under budget
 - [ ] Degradation demonstrably works when the tier is forced
-- [ ] The ceiling guard rejects an over-priced model in a test
+- [x] The ceiling guard rejects an over-priced model in a test (`tests/unit/test_ladder.py`)
 
 ---
 
