@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     # rejects this string — but only in combination with httpx's default Accept-Encoding, so
     # that conflict is settled in the headers rather than here. See worker/collectors/http.py.
     user_agent: str = "CyberPulse-AI/1.0"
+    # OpenRouter app attribution (PLAN.md section 7.2), sent as HTTP-Referer and
+    # X-OpenRouter-Title on every model call.
+    openrouter_app_title: str = "CyberPulse-AI"
+    openrouter_app_url: str = "https://github.com/happycode0/CyberPulse-AI"
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -56,6 +60,8 @@ class Settings(BaseSettings):
             f"raw_cache_dir={self.raw_cache_dir!r}",
             f"data_dir={self.data_dir!r}",
             f"user_agent={self.user_agent!r}",
+            f"openrouter_app_title={self.openrouter_app_title!r}",
+            f"openrouter_app_url={self.openrouter_app_url!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 
