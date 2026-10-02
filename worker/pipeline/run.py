@@ -321,10 +321,17 @@ def _store_source(engine: Engine, c: Collected, *, now: datetime) -> SourceOutco
     )
 
 
-def _rescore(
+def rescore(
     engine: Engine, config: ScoringConfig, touched: Iterable[str], *, now: datetime
 ) -> list[str]:
-    """Rescore every event whose stored score may be stale. Returns error messages."""
+    """Rescore every event whose stored score may be stale. Returns error messages.
+
+    Public because the ground-truth sync needs it too: KEV listings and CVSS bands are two of the
+    three inputs to `urgency`, so a sync that changed them has left stored scores wrong in exactly
+    the way this repairs. `touched` matters there — `events_needing_score` skips events already
+    scored below `RESCORE_FLOOR`, so an event whose severity just went from unknown to critical
+    only gets looked at again if it is named.
+    """
     errors: list[str] = []
     with engine.begin() as conn:
         ids = events_needing_score(
@@ -419,7 +426,7 @@ async def run_lane(
             touched |= outcome.tally.touched
             errors.extend(outcome.errors)
 
-    errors.extend(await asyncio.to_thread(_rescore, engine, scoring, touched, now=started))
+    errors.extend(await asyncio.to_thread(rescore, engine, scoring, touched, now=started))
 
     try:
         prune_cache()
