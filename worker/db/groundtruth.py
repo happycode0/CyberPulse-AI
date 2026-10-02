@@ -322,15 +322,25 @@ def cves_due_for_cvss(conn: Connection, *, now: datetime, limit: int) -> list[st
     way to be rate-limited into looking like an outage. A bounded batch per run spreads the
     backfill over a few days and then settles into whatever `RECHECK_HOURS` asks for.
 
-    Never-checked CVEs sort first because they are the ones holding an event at `severity=unknown`
-    on the live site right now.
+    Never-checked CVEs sort first, because they have no recorded answer at all while a re-check is
+    only confirming one. Among those, the CVEs on the most recently seen events go first — and that
+    tie-break is the whole difference between a useful first pass and a useless one. Ordering by
+    `cve_id` instead, as the obvious reading of "stable order" suggests, sorts `CVE-2002-…` ahead of
+    `CVE-2026-…`: the first live run here resolved 400 CVEs between CVE-2002-0367 and CVE-2018-19953
+    and left every CVE on the front page unscored. Only 73 distinct CVEs belonged to events first
+    seen in the preceding week, so in event order the entire visible site is banded inside the first
+    fifth of one batch and the decade-old backlog fills in behind it.
     """
     sql = (
         "select c.cve_id from cves c "
         "left join cve_cvss_checks k on k.cve_id = c.cve_id "
+        "left join ("
+        "  select ec.cve_id, max(e.first_seen) as newest_event from event_cves ec "
+        "  join events e on e.event_id = ec.event_id group by ec.cve_id"
+        ") m on m.cve_id = c.cve_id "
         "where k.checked_at is null or k.checked_at < cast(:now as timestamptz) - "
         f"make_interval(hours => {_RECHECK_CASE}) "
-        "order by k.checked_at nulls first, c.cve_id limit :limit"
+        "order by k.checked_at nulls first, m.newest_event desc nulls last, c.cve_id limit :limit"
     )
     params: dict[str, object] = {"now": now, "limit": limit}
     params.update({f"h_{name}": hours for name, hours in RECHECK_HOURS.items()})

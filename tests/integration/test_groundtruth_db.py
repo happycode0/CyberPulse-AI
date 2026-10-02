@@ -79,13 +79,15 @@ def catalogue(*cve_ids, declared=None, skipped=0, **dates) -> KevCatalogue:
     )
 
 
-def insert_event(conn, event_id, *cve_ids, severity="unknown", severity_source="unknown"):
+def insert_event(
+    conn, event_id, *cve_ids, severity="unknown", severity_source="unknown", first_seen=NOW
+):
     conn.execute(
         text(
             "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
             "enrichment_version, first_seen, last_seen, title, normalised_title, summary, "
             "severity, severity_source) values (:id, :schema, :pipeline, :scoring, :enrichment, "
-            ":now, :now, 't', 't', 's', :severity, :source)"
+            ":first_seen, :now, 't', 't', 's', :severity, :source)"
         ),
         {
             "id": event_id,
@@ -94,6 +96,7 @@ def insert_event(conn, event_id, *cve_ids, severity="unknown", severity_source="
             "scoring": SCORING_VERSION,
             "enrichment": ENRICHMENT_VERSION,
             "now": NOW,
+            "first_seen": first_seen,
             "severity": severity,
             "source": severity_source,
         },
@@ -298,6 +301,25 @@ def test_a_cve_never_checked_is_due(conn):
 def test_never_checked_cves_come_first(conn):
     record_cvss_check(conn, LISTED, "error")
     assert cves_due_for_cvss(conn, now=NOW + timedelta(days=30), limit=10)[0] == UNLISTED
+
+
+def test_the_cves_on_the_newest_events_are_resolved_first(conn):
+    """The tie-break that decides whether a first pass bands the front page or the archive.
+
+    `UNLISTED` sorts before `LISTED` by id, so ordering never-checked CVEs by `cve_id` resolves the
+    older one first. On a real database that meant the first live pass spent all 400 lookups between
+    CVE-2002 and CVE-2018 while every CVE on the published site stayed unscored.
+    """
+    insert_event(conn, EVENT, UNLISTED, first_seen=NOW - timedelta(days=900))
+    insert_event(conn, EVENT_2, LISTED, first_seen=NOW - timedelta(hours=2))
+    assert cves_due_for_cvss(conn, now=NOW, limit=1) == [LISTED]
+
+
+def test_a_cve_no_event_mentions_is_resolved_last(conn):
+    # It cannot be the reason anything on the site reads `unknown`, so it waits behind the ones that
+    # can be.
+    insert_event(conn, EVENT, UNLISTED, first_seen=NOW - timedelta(days=900))
+    assert cves_due_for_cvss(conn, now=NOW, limit=2) == [UNLISTED, LISTED]
 
 
 def test_the_limit_is_honoured(conn):
