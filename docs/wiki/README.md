@@ -18,7 +18,7 @@ exact record of how VM 200 was built. This wiki is the "what do I do next" layer
 ```text
 Stage 0  Prerequisites ............................ ✅ done   (.env, keys, VM 200 built)
 Stage 1  Foundation: pipeline + site .............. ✅ done   (runbook Part 5: collecting every 15 min)
-           └─ publish token on the VM (Part 5d) ... ⏳ the site still shows sample data until this
+           └─ publish token on the VM (Part 5d) ... ✅ in .env since 2026-10-02 (first live push pending)
 Stage 2  Ground truth + enrichment ................ 🟡 half   (KEV / EPSS / CVSS live on VM 200)
            └─ OpenRouter client + cost ledger ..... ⏳ built with Stage 4, before any agent spends
 Stage 3  Correlation depth + trends ............... ⬜
@@ -41,13 +41,13 @@ Stage 7  Hardening + backups ...................... ⬜   (off-host backup targe
 | VM 200 | `ssh cyberpulse-vm` → `oxygen@192.168.128.39` | Debian 13, 4 vCPU / 12 GB / 60 GB |
 | SSH key | WSL `~/.ssh/cyberpulse_vm_ed25519` | no passphrase, no backup |
 | CyberPulse stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db` + `worker` (+ `server` once Stage 4 lands) |
-| CyberPulse secrets | VM `~/CyberPulse-AI/.env` | git-ignored; never committed |
+| CyberPulse secrets | VM `~/CyberPulse-AI/.env` | git-ignored; never committed. What goes in it: [setup step 0](paperclip-setup.md#0--add-the-paperclip-settings-to-env-once) |
 | Paperclip dashboard | http://192.168.128.39:3100 | home network only, login required — once Stage 4 lands |
 
 **What is yours to do (🔴), in order**
 
-1. **Publish token onto the VM** (runbook Part 5d) — paste it into `.env` yourself, or tell Claude
-   to copy it (it will not do it unasked). This is what makes the site show real data.
+1. **Add the Paperclip section to `.env`** — [setup step 0](paperclip-setup.md#0--add-the-paperclip-settings-to-env-once).
+   One command; it generates the secrets on the VM.
 2. **When the Paperclip service lands:** [setup](paperclip-setup.md) steps 2–8 — open it, claim
    it, harden it, create the company, the 16 agents and the routines.
 3. Provide an off-host backup target (NAS, USB disk or PBS). The host has a single disk.
