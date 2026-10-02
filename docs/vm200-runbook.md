@@ -305,7 +305,8 @@ investigating cyber…"* and *"Critical alert: Aussie organisations targeted in 
 `cisa_kev` contributed 1730 — which matches the live KEV catalogue size independently measured
 while building `worker/groundtruth/kev.py`, a useful cross-check that nothing was dropped.
 
-**Expect every severity to be `unknown` at this point, and do not treat it as a fault.**
+**Expect every severity to be `unknown` until the ground-truth sync has run, and do not treat it as
+a fault.** A collection run on its own produces:
 
 ```
 severity | severity_source | count          counts in live.json
@@ -313,15 +314,18 @@ severity | severity_source | count          counts in live.json
 unknown  | unknown         |  1742          unknown 20   pending_enrichment 20
 ```
 
-Severity arrives from the Stage 2 ground-truth chain (CNA → CISA-ADP → NVD), which is written but
-not yet wired into the pipeline, so `unknown` is the honest answer and PLAN.md §2 forbids inventing
-anything else. The same is true of `au_relevance`, which is NULL rather than 0.
+Severity comes from the Stage 2 ground-truth chain (CNA → CISA-ADP → NVD), which nothing in a lane
+run reads, so `unknown` is the honest answer and PLAN.md §2 forbids inventing anything else. The
+same is true of `au_relevance`, which is NULL rather than 0.
 
 One visible consequence: `urgency` is **0.273 for every single event**, because
 `worker/pipeline/score.py:121` computes it from the severity weight plus a KEV bonus, and with
-severity unknown and no CVE yet flagged as KEV-listed every event gets the identical number. Flat
-urgency is the symptom of the missing ground truth, not a scoring bug — it is the single clearest
-argument for wiring Stage 2 in next.
+severity unknown and no CVE flagged as KEV-listed every event gets the identical number. Flat
+urgency is the symptom of missing ground truth, not a scoring bug.
+
+**c-bis. Fill in the ground truth.** This is the step that turns that flat column into a ranking —
+see *Part 5f* below. Run it once by hand after the first collection; after that the scheduler owns
+it.
 
 **d. Publish.** Writes `data/*.json` against the JSON Schemas, secret-scans the output and fails
 closed if anything matches:
@@ -368,6 +372,73 @@ every four hours, which is why publishes hold a lock), and each published afterw
 22:01:42 published 531 files after the normal lane
 ```
 
+**f. The ground-truth sync.** The lanes collect; this is what gives the collected CVEs a severity,
+an exploitation status and an exploitation probability. It reads three registers — CISA KEV, the
+EPSS daily snapshot, and the CVE.org record for one CVE at a time — writes what changed, re-bands
+every affected event and rescores it.
+
+```bash
+docker compose exec -T worker python -m worker.main --groundtruth --cvss-batch 400 </dev/null
+```
+
+It is also a scheduler job (`25 */6 * * *` — four times a day, off the lane hours so a sync and a
+collection do not contend for the same tables), so `docker compose up -d` covers it from then on.
+`--cvss-batch 0` refreshes only the two bulk registers, which is the quick form.
+
+First live run on this box, against 5,013 collected CVEs and 2,199 events:
+
+```
+kev=KevResult(updated=1731, delisted=0, unchanged=3282, delist_withheld=0)
+epss=ScoreResult(recorded=5013, unchanged=0)
+cvss=CvssTally(scored=400, unscored=0, absent=0, errored=0, recorded=400, backed_off=False)
+severity_changed=367 rescored=1665 errors=0
+```
+
+Took 23 seconds, and the column it was built for stopped being a constant:
+
+```
+severity | severity_source | count        urgency: 6 distinct values, 0.273 → 1.000
+---------+-----------------+------        (was: 1 distinct value, 0.273 for all 2,199)
+unknown  | unknown         |  1832
+high     | cisa_adp        |   237
+critical | cisa_adp        |    84
+medium   | cisa_adp        |    32
+high     | cna             |     5
+critical | cna             |     4
+medium   | cna             |     3
+low      | cisa_adp        |     2
+```
+
+Four things in that table are worth reading deliberately, because each one is a design decision
+visible in production rather than a number:
+
+- **`cisa_adp` 355 to `cna` 12.** PLAN.md §2.5 ordered the chain CNA → CISA-ADP → NVD on the
+  strength of a 300-CVE sample that found *zero* NVD-authored CVSS and most scoring coming from
+  CISA's ADP enrichment. The live ratio is that sample holding at scale. Had the chain been built
+  NVD-first, as the obvious reading of "use NVD for CVSS" would suggest, 355 of these 367 events
+  would still read `unknown`.
+- **1,832 events still `unknown`, and that is correct.** `--cvss-batch 400` resolved 400 of 5,013
+  CVEs by design: one HTTP request per CVE, so an uncapped first run would fire five thousand at a
+  free public register. The backfill drains over about three days at four passes a day, and
+  `RECHECK_HOURS` then idles it. An event with no scored CVE is **left alone** rather than written
+  to `unknown` — a missing lookup is not evidence, so it must not overwrite a vendor rating.
+- **19 EPSS rows written with a NULL score and `status='unknown'`.** Those are CVEs the EPSS model
+  does not cover. The row is the whole point: it distinguishes "EPSS has not modelled this" from
+  "nobody has looked", and stops a gap being read as 0% on the site. `config/scoring.yaml` weights
+  `unknown: 1.5` above `low: 1` for the same reason — unrated is not the same as harmless.
+- **`delisted=0, delist_withheld=0`.** The catalogue's declared `count` matched what was parsed, so
+  absence was trusted. Had the download been truncated — valid JSON, short array, indistinguishable
+  from a shrunken catalogue — `delist_withheld` would be non-zero and **no listing would have been
+  removed**. That is the guard worth knowing about: a truncated KEV response acted on naively would
+  report thousands of known-exploited CVEs as unexploited.
+
+> **A sync that logs an error is not a failed sync.** Each register is read and written
+> independently, so KEV being down does not stop EPSS, and neither stops the CVSS batch. The CLI
+> exits 0 on a register failure on purpose — "CISA was unreachable for ten minutes" is not a reason
+> for a container to exit non-zero and be restarted into trying again immediately. What never
+> happens on a failure is a *default* being written: every answer that register would have given
+> stays as it was.
+
 ### Expect sources to go `degraded`, and do not treat it as breakage
 
 The same tick logged `source cisa_news: lifecycle active -> degraded`, and the same for
@@ -390,8 +461,9 @@ any source is degraded at all.
 
 ## Defects this build surfaced
 
-Three, all of which only appear when the stack actually runs in containers, which is why the laptop
-never showed them. Recorded because each is the kind that hides rather than announces itself.
+Four. The first three only appear when the stack actually runs in containers, which is why the laptop
+never showed them; the fourth only appears at production data volumes. Recorded because each is the
+kind that hides rather than announces itself.
 
 **1. The worker image could not start at all.** `--migrate` died on
 `ModuleNotFoundError: No module named 'yaml'`. PyYAML was never in `requirements.txt`, and
@@ -429,6 +501,15 @@ contradicts §11's *"keeps collecting and publishing"*. `worker/publish/run.py` 
 connection and output directory, both `--publish` and the scheduler go through it, publishes are
 serialised with a lock (the two cadences coincide at 00:00, 04:00, 08:00), and the build runs off
 the event loop so a slow publish cannot look like a stalled collection.
+
+**4. The ground-truth summary line was 140 KB.** `KevResult` carries `changed_cves` so the sync can
+name which events need rescoring, and both `sync_groundtruth` and `worker.main` log the result as a
+whole dataclass. On the first live run that was 1,731 CVE ids, printed twice, in what is meant to be
+a one-line summary. Every test had passed — the unit fixtures move one or two CVEs, so the repr was
+a normal length at test scale and only misbehaved at catalogue scale. `changed_cves` is now
+`repr=False`; `len(changed_cves)` is `updated + delisted` and both are still in the repr, so nothing
+diagnostic was lost. The general shape is worth remembering: a field that is small in every fixture
+and large in production will not be caught by a test that only checks behaviour.
 
 ---
 
