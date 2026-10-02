@@ -50,13 +50,28 @@ spends tokens finding that out.
 
 | Tier | Model | Price in / out per M tokens |
 |---|---|---|
-| 1 — CHEAP | `openrouter/openai/gpt-oss-20b` | $0.018 / $0.09 |
+| 1 — CHEAP | `openrouter/xiaomi/mimo-v2.6-flash` | $0.14 / $0.28 |
 | 2 — STRONG | `openrouter/xiaomi/mimo-v2.6-pro` | $0.435 / $0.87 |
 | CODE | `openrouter/xiaomi/mimo-v2.6-flash` | $0.14 / $0.28 |
-| AUDIT | `openrouter/deepseek/deepseek-v4-flash-0731` | $0.018 / $0.32 — a different vendor from CODE on purpose |
+| AUDIT | `openrouter/qwen/qwen3.8-flash` | $0.15 / $0.47 — a different vendor from CODE on purpose |
 
-Checked on 2026-09-29 (PLAN.md §7.1). The catalogue changes weekly; once RIPPERDOC is active it
-keeps these current, and nothing above US$1/M output is ever allowed.
+Prices checked on OpenRouter on 2026-10-03. The catalogue changes weekly; once RIPPERDOC is active
+it keeps these current, and nothing above US$1/M output is ever allowed.
+
+**Changed on 2026-10-03, after three rounds of smoke tests in Paperclip.** The first picks
+(PLAN.md §7.1) failed as agents:
+
+- `openai/gpt-oss-20b` replied but never set the ticket's status, and named the wrong model.
+  Paperclip re-woke it on every such ticket until a board decision was needed, and those re-wakes
+  used up the daily run caps.
+- `deepseek/deepseek-v4-flash` called the house rules "injected" and refused them on 3 of 6
+  agents (TRON twice).
+- `deepseek/deepseek-v4-flash-0731` passed, but its output price rose to $1.28/M, over the
+  ceiling.
+- `mimo-v2.6-flash` passed on every agent it ran, and each one closed its own ticket.
+  `mimo-v2.6-pro` passed on MORPHEUS and VOIGHT.
+
+An agent's own claim about its model is not proof. Check the run's cost entry instead.
 
 ### Settings that are the same for every AI agent
 
@@ -159,7 +174,7 @@ NEVER: collect or research news yourself; edit code; raise any budget; publish a
 |---|---|
 | Name / Title | `ZION` / `Australian Intelligence Desk` |
 | Role · Reports to | Researcher · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` |
 | Budget · Max daily runs | US$1.00 · 8 |
 | Wakes on | Routine *AU desk digest* every 4 h; FAST-lane escalations where AU relevance ≥ 0.7 |
 
@@ -202,7 +217,7 @@ NEVER: override ground truth (CVSS, KEV, EPSS); publish high or critical without
 |---|---|
 | Name / Title | `BLASTER` / `Global Cyber Desk` |
 | Role · Reports to | Researcher · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` |
 | Budget · Max daily runs | US$1.00 · 8 |
 | Wakes on | Routine *Global desk digest* every 4 h; FAST-lane critical escalations |
 
@@ -241,7 +256,7 @@ confirmation of anything.
 |---|---|
 | Name / Title | `WINTERMUTE` / `AI Intelligence Desk` |
 | Role · Reports to | Researcher · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` |
 | Budget · Max daily runs | US$1.00 · 8 |
 | Wakes on | Routine *AI desk digest* every 4 h; any AI-security escalation |
 
@@ -282,7 +297,7 @@ NEVER: let general AI industry news crowd out security intelligence.
 |---|---|
 | Name / Title | `TACHIKOMA` / `Source Discovery` |
 | Role · Reports to | Researcher · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` (+ Tavily, ~30 searches a day) |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` (+ Tavily, ~30 searches a day) |
 | Budget · Max daily runs | US$1.00 · 2 |
 | Wakes on | Routine *Source discovery* 03:00 Sydney; `[GAP]` issues from MORPHEUS |
 
@@ -317,7 +332,7 @@ NEVER: activate a source. SERAPH decides, always.
 |---|---|
 | Name / Title | `DECKARD` / `Follow-up & Developing Events` |
 | Role · Reports to | Researcher · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` (MORPHEUS can move critical cases to STRONG) |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` (MORPHEUS can move critical cases to STRONG) |
 | Budget · Max daily runs | US$1.00 · 6 |
 | Wakes on | Routine *Follow-up* every 6 h; `[FOLLOW-UP]` issues from MORPHEUS |
 
@@ -454,7 +469,7 @@ one audit log and one place to pause anything.
 |---|---|
 | Name / Title | `TELETRAAN` / `Watchdog / SRE` |
 | Role · Reports to | DevOps · MORPHEUS |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` |
 | Budget · Max daily runs | US$0.50 · 10 |
 | Wakes on | Only when the worker's 5-minute health checks open an `[INCIDENT]` issue. The checks cost nothing; the model only diagnoses |
 
@@ -492,7 +507,7 @@ NEVER: disable a security control; retry a failing fix again and again.
 |---|---|
 | Name / Title | `RIPPERDOC` / `Model Scout` |
 | Role · Reports to | Researcher · ROGUE |
-| Adapter · Model | `opencode_local` · `openrouter/openai/gpt-oss-20b` (the scan and the tests are run by the worker; the model only writes the recommendation) |
+| Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` (the scan and the tests are run by the worker; the model only writes the recommendation) |
 | Budget · Max daily runs | US$0.50 · 3 |
 | Wakes on | Routine *Model scan* 04:00 daily; *Model gauntlet* Sunday 04:00; within minutes when TELETRAAN reports a failing model |
 
@@ -571,7 +586,7 @@ the issue; read or ask for any credential other than your branch token.
 |---|---|
 | Name / Title | `TRON` / `Independent Verification` |
 | Role · Reports to | QA · TELETRAAN |
-| Adapter · Model | `opencode_local` · `openrouter/deepseek/deepseek-v4-flash-0731` — **a different vendor from WHEELJACK** |
+| Adapter · Model | `opencode_local` · `openrouter/qwen/qwen3.8-flash` — **a different vendor from WHEELJACK** |
 | Budget · Max daily runs | US$0.50 · 6 |
 | Environment | Read-only repo token |
 | Wakes on | A pull request opened by WHEELJACK |
