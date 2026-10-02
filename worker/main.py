@@ -1,9 +1,10 @@
-"""Command line:
-`python -m worker [--check-models] [--migrate] [--lane LANE [--once]] [--groundtruth] [--publish]`.
+"""Command line: `python -m worker [--check-models] [--check-budget] [--migrate]
+[--lane LANE [--once]] [--groundtruth] [--publish]`.
 
 With no arguments the scheduler runs FAST, NORMAL and the ground-truth sync until interrupted.
-Explicit actions run in a fixed order (check models, migrate, collect, ground truth, publish) and
-then exit, unless `--lane` is given without `--once`, which schedules that one lane instead.
+Explicit actions run in a fixed order (check models, check budget, migrate, collect, ground
+truth, publish) and then exit, unless `--lane` is given without `--once`, which schedules that
+one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -16,6 +17,9 @@ import logging
 import sys
 from collections.abc import Sequence
 
+import httpx
+
+from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status
 from worker.ai.ladder import (
     OUTPUT_CEILING_USD_PER_MTOK,
     LadderRejected,
@@ -30,6 +34,7 @@ from worker.pipeline.run import run_lane
 from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
+from worker.settings import get_settings
 
 logger = logging.getLogger("worker")
 
@@ -44,6 +49,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--check-models",
         action="store_true",
         help="check config/models.yaml against OpenRouter's live prices; non-zero if any model fails",
+    )
+    p.add_argument(
+        "--check-budget",
+        action="store_true",
+        help="read the OpenRouter key's spend and show the mode it allows; spends nothing",
     )
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
@@ -88,6 +98,47 @@ def _check_models(*, required: bool) -> int:
         "model ladder passed: %d models, each with a capable route at or under $%s/M output",
         len(verified.ladder.slugs()),
         OUTPUT_CEILING_USD_PER_MTOK,
+    )
+    return EXIT_OK
+
+
+def _check_budget() -> int:
+    """Read the key's spend from OpenRouter and log the mode it allows (worker/ai/budget.py).
+
+    Costs nothing: `GET /api/v1/key` is a read. Non-zero only when there is no reading, because
+    that is the case in which the worker would refuse paid calls for want of one.
+    """
+    settings = get_settings()
+    key = settings.openrouter_api_key
+    if key is None:
+        logger.error("budget: OPENROUTER_API_KEY is not set, so the AI layer stays off")
+        return EXIT_FAILED
+
+    async def read():
+        async with httpx.AsyncClient() as http:
+            return await fetch_key_status(http, key, settings.user_agent)
+
+    try:
+        status = asyncio.run(read())
+    except BudgetUnreadable as exc:
+        logger.error("budget: %s; paid AI calls stay off until a reading succeeds", exc)
+        return EXIT_FAILED
+    reading = assess(status, settings.ai_monthly_budget_usd)
+    limit = (
+        f"${status.limit:.2f} ({status.limit_reset or 'never resets'}), "
+        f"${status.limit_remaining:.2f} left"
+        if status.limit is not None and status.limit_remaining is not None
+        else "none"
+    )
+    logger.info(
+        "budget: mode %s, %s; spent $%.4f today and $%.4f this month; key limit %s; "
+        "free-model requests left today: %s",
+        reading.mode.value,
+        reading.reason,
+        status.usage_daily,
+        status.usage_monthly,
+        limit,
+        "unknown" if status.free_requests_remaining is None else status.free_requests_remaining,
     )
     return EXIT_OK
 
@@ -141,6 +192,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if code != EXIT_OK:
             return code
 
+    if args.check_budget:
+        code = _check_budget()
+        if code != EXIT_OK:
+            return code
+
     if args.migrate:
         applied = run_migrations(get_engine())
         logger.info("migrations applied: %s", ", ".join(applied) or "none")
@@ -160,7 +216,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             return code
 
     schedule = (lane is not None and not args.once) or not (
-        args.check_models or args.migrate or args.publish or args.groundtruth or lane
+        args.check_models
+        or args.check_budget
+        or args.migrate
+        or args.publish
+        or args.groundtruth
+        or lane
     )
     if schedule:
         _check_models(required=False)

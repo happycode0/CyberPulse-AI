@@ -1,6 +1,7 @@
 """Settings and configuration for CyberPulse-AI worker."""
 
 import functools
+from decimal import Decimal
 from pathlib import Path
 
 from pydantic import SecretStr
@@ -39,6 +40,9 @@ class Settings(BaseSettings):
     # X-OpenRouter-Title on every model call.
     openrouter_app_title: str = "CyberPulse-AI"
     openrouter_app_url: str = "https://github.com/happycode0/CyberPulse-AI"
+    # What the AI layer may spend in a calendar month (UTC, as OpenRouter counts it). The
+    # degradation modes in worker/ai/budget.py are shares of this.
+    ai_monthly_budget_usd: Decimal = Decimal("20")
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -62,6 +66,7 @@ class Settings(BaseSettings):
             f"user_agent={self.user_agent!r}",
             f"openrouter_app_title={self.openrouter_app_title!r}",
             f"openrouter_app_url={self.openrouter_app_url!r}",
+            f"ai_monthly_budget_usd={self.ai_monthly_budget_usd!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 

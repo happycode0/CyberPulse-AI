@@ -379,3 +379,29 @@ def test_a_strict_schema_passes_the_check():
             "additionalProperties": False,
         }
     )
+
+
+# ─── Narrowing the chain: what the budget does when only some models may be used ─────────────────
+
+
+async def test_models_can_narrow_the_chain(respx_mock, client, ledger):
+    route = respx_mock.post(CHAT_URL).mock(return_value=answer(model="vendor-b/backup-model"))
+    await call(client, models=["vendor-b/backup-model"])
+    assert sent(route)["models"] == ["vendor-b/backup-model"]
+    assert ledger[0].requested_model == "vendor-b/backup-model"
+
+
+@pytest.mark.parametrize(
+    "models",
+    [
+        [],
+        ["vendor-x/never-checked"],
+        ["vendor-b/backup-model", "vendor-a/paid-model"],
+        ["vendor-a/paid-model", "vendor-a/paid-model"],
+    ],
+)
+async def test_models_can_only_drop_from_the_chain(respx_mock, client, models):
+    route = respx_mock.post(CHAT_URL).mock(return_value=answer())
+    with pytest.raises(ValueError, match="part of the tier1_cheap chain"):
+        await call(client, models=models)
+    assert route.call_count == 0

@@ -314,8 +314,13 @@ class OpenRouterClient:
         messages: Sequence[Mapping[str, str]],
         max_tokens: int,
         attribution: Attribution,
+        models: Sequence[str] | None = None,
     ) -> Completion:
         """One structured call on `tier`'s chain.
+
+        `models` narrows the chain, as the budget's `Route.models` does when only free models
+        may be used. It can drop models but never add or reorder them, so nothing the guard has
+        not passed is called.
 
         Raises `ValueError` for a request that is wrong before it is sent, and a `CallFailed`
         for one that was sent and gave nothing usable: `BudgetExhausted` (402), `RateLimited`
@@ -328,6 +333,11 @@ class OpenRouterClient:
         check_strict_schema(schema)
         validator = jsonschema.Draft202012Validator(schema)
         chain = self._verified.ladder.tiers[tier]
+        if models is not None:
+            narrowed = tuple(models)
+            if not narrowed or narrowed != tuple(m for m in chain if m in narrowed):
+                raise ValueError(f"models must be a non-empty part of the {tier.value} chain")
+            chain = narrowed
         body = request_body(
             tier,
             chain,
