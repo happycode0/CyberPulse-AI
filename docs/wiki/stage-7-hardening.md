@@ -37,6 +37,10 @@ The secrets folder holds the keys Paperclip signs and encrypts with. On 2026-10-
 `decision-signing.key`; Paperclip adds `master.key` there when it first stores a secret. Copy the
 whole folder so whatever is there gets saved.
 
+Paperclip also dumps its own database every 60 minutes (kept 7 days) into
+`/paperclip/instances/default/data/backups` inside the `paperclip-data` volume. Useful for undoing
+a bad change, but it lives on the same disk, so it does not count as the backup.
+
 Keep the Docker volumes as named volumes. `vzdump` captures those, but Proxmox does not back up
 bind mounts.
 

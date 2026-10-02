@@ -531,7 +531,7 @@ and large in production will not be caught by a test that only checks behaviour.
 
 ---
 
-## Part 6 — Paperclip *(service running; claiming is the owner's)*
+## Part 6 — Paperclip *(running and claimed; company setup is the owner's)*
 
 > The owner's step-by-step guide is the wiki's
 > [Stage 4 pages](wiki/stage-4-paperclip.md): opening and claiming it, the 16 agents with their
@@ -559,6 +559,14 @@ and large in production will not be caught by a test that only checks behaviour.
   were started on their own with `docker compose up -d --no-deps db worker`.
 - Result at 20:15 Sydney: `server` `(healthy)`; `/api/health` reports `authenticated` /
   `private` / `bootstrap_pending`; migrations applied; the worker's 20:15 run `ok=7 failed=0`.
+- 20:21 Sydney: the owner created their account and claimed the instance. Checked in the
+  `paperclip` database: one user, holding `instance_admin`. `PAPERCLIP_AUTH_DISABLE_SIGN_UP` was
+  then set to `true` (`.env` copied to `~/env-backup-20261002-signup` first; only that line
+  changed) and the `server` alone was recreated. A test sign-up now gets HTTP 400 and the user
+  count stays at one.
+- Paperclip runs its own database backup every 60 minutes, kept 7 days, into
+  `/paperclip/instances/default/data/backups` in the `paperclip-data` volume. Same disk, so it
+  does not replace Part 7.
 
 **Lesson kept from the earlier hand-started test:** started from `~/CyberPulse-AI` with `npx`,
 Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, and fails with
@@ -566,12 +574,13 @@ Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, an
 
 ### 🔴 Owner-only, from a browser
 
-1. **Claim the instance now**, while only the home network can reach it. In
+1. [x] **Claim the instance**, while only the home network can reach it. In
    `authenticated` + `private` mode the first signed-in account to click **Claim this instance**
    becomes the admin. Fallback: `docker compose exec server pnpm paperclipai auth bootstrap-ceo`.
+   Done 2026-10-02.
 2. **Harden the defaults.** Four of the five toggles are set in `.env` already:
-   - [ ] Require board approval for new hires (company settings, defaults to **off**)
-   - [ ] `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`, straight after the claim
+   - [ ] Require board approval for new hires (company settings, defaults to **off**; still off)
+   - [x] `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`, straight after the claim
    - [x] Secrets strict mode on
    - [x] Telemetry off (defaults to **on**)
    - [x] Announcements off (defaults to **on**)
@@ -614,7 +623,9 @@ Everything that needs a human, in order:
 - [x] **Part 5d — the publish token.** `contents: write` only, **no `workflow` scope**. In `.env`
       since 2026-10-02; a dry-run push authenticated. The push is not scheduled yet, and a push to
       `data` does not redeploy Pages (wiki Stage 1, "What's left").
-- [ ] **Part 6 — claim Paperclip** and set the remaining hardening toggles. Actionable now.
+- [x] **Part 6 — claim Paperclip.** Done 2026-10-02; sign-up turned off straight after.
+- [ ] Part 6 — board approval for new hires, then the company mission and budget (wiki 4a steps
+      4–5). Actionable now.
 - [ ] Approve merging `stage-1-foundation` into `main`, which Pages builds from.
 - [ ] Part 7 — provide an off-host backup target. There is now real data to lose.
 - [ ] Later: NetBird, for the dashboard from outside the house.
