@@ -199,7 +199,23 @@ instead (the agents are created at step 6, not in the wizard):
 | Board approval | http://10.0.0.0:3100/CYB/company/settings | Turn on **Require board approval for new hires** (step 4) |
 | Short mission | the same page, **Description** | The first paragraph of the mission below |
 | Full mission | http://10.0.0.0:3100/CYB/goals | **New Goal**, title `CyberPulse charter`, level **Organization**, the whole text below as its description. This release keeps a company's mission as its organization goal |
-| Monthly budget | http://10.0.0.0:3100/CYB/costs → **Budgets** tab | Company budget **US$12** |
+| Monthly budget | the browser console, below | Company budget **US$12** |
+
+**The budget has no form in this release.** `/CYB/costs` now opens *Audit → Budgets*, which
+only edits budgets that already exist and shows "No budget policies yet" until one does. Set the
+first one through Paperclip's own API, from the tab you are logged in on: press **F12**, open
+**Console**, and paste this (Chrome asks you to type `allow pasting` first):
+
+```js
+fetch('/api/companies?scope=accessible').then(r => r.json()).then(([c]) =>
+  fetch(`/api/companies/${c.id}/budgets`, { method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ budgetMonthlyCents: 1200 }) }))
+  .then(r => r.json()).then(c => console.log(c.name, c.budgetMonthlyCents))
+```
+
+It prints `CyberPulse 1200`. It sets the company's monthly budget and creates its hard-stop
+policy, which then appears on *Audit → Budgets*, where later changes can be made.
 
 Every agent sees the company mission, so this is the one text that sets the direction for the
 whole crew. Paste it whole:
