@@ -4,7 +4,7 @@
 [Stage 3 — Correlation →](stage-3-correlation.md)
 
 **Status: 🟡 half.** The ground-truth half runs on the VM. Of the AI half, the money controls
-are three-quarters built (client, ledger, price guard) and the enrichment is not started. Plan:
+are built (client, ledger, price guard, degradation tiers) and the enrichment is not started. Plan:
 [PLAN.md §9, Stage 2](../../PLAN.md#9-stages) and §2.5 (the severity chain) · §7 (models and money)
 
 ---
@@ -52,7 +52,17 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
    Its first run caught two models the plan had picked. `minimax/minimax-m2.7` has no route with
    structured outputs. `xiaomi/mimo-v2.5` is listed at $0.28, but every route that can do the
    job costs $2.00 or more. Both are out of the ladder.
-4. **ROGUE's degradation tiers:** cheaper models automatically when spend runs ahead of plan.
+4. ✅ **ROGUE's degradation tiers** (2026-10-03, `worker/ai/budget.py`). Before spending, the
+   worker asks OpenRouter how much the key has spent this month and picks a mode. With over half
+   the budget (`AI_MONTHLY_BUDGET_USD`) left, every task gets its own tier. With 20–50% left,
+   only critical and KEV-linked events get the strong tier. Under 20%, only critical, high,
+   KEV-linked and developing events get the free tier. At zero, free models only. A key limit
+   lower than the budget counts, so it degrades early. If no reading has come in for 30 minutes,
+   it uses free models only rather than spending blind. Out-of-money errors change the mode at
+   once: a busy-budget 402 pauses paid calls briefly, a key-limit 402 stops them until a reading
+   shows money, and an out-of-credits 402 stops all AI until a person tops up and restarts. It
+   never raises a limit. Check by hand with `python -m worker --check-budget` (it spends
+   nothing).
 
 These four are built alongside [Stage 4](stage-4-paperclip.md)'s agents, because they are what
 makes it safe to switch the AI agents on.
@@ -67,13 +77,14 @@ makes it safe to switch the AI agents on.
 
 ```bash
 docker compose logs --since 7h worker | grep -i 'ground-truth'     # one sync every 6 h
+docker compose exec worker python -m worker --check-budget          # the mode the spend allows
 ```
 
 ## Done when
 
 - [ ] Events carry real KEV / CVSS / EPSS **and** AI enrichment
 - [ ] The ledger shows per-event cost under budget
-- [ ] Degradation demonstrably works when the tier is forced
+- [x] Degradation demonstrably works when the tier is forced (`tests/unit/test_budget.py`)
 - [x] The ceiling guard rejects an over-priced model in a test (`tests/unit/test_ladder.py`)
 
 ---
