@@ -253,6 +253,10 @@ class Governor:
     def reading(self) -> Reading | None:
         return self._reading
 
+    def adopt(self, verified: VerifiedLadder) -> None:
+        """Route on a ladder that passed the guard again. The budget state carries over."""
+        self._ladder = verified.ladder
+
     def mode(self) -> tuple[Mode, str]:
         """The mode now, and the strictest reason for it."""
         now = self._now()

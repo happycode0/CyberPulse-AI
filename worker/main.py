@@ -1,14 +1,15 @@
 """Command line: `python -m worker [--check-models] [--check-budget] [--migrate]
-[--lane LANE [--once]] [--groundtruth] [--publish]`.
+[--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
 
-With no arguments the scheduler runs FAST, NORMAL and the ground-truth sync until interrupted.
-Explicit actions run in a fixed order (check models, check budget, migrate, collect, ground
-truth, publish) and then exit, unless `--lane` is given without `--once`, which schedules that
-one lane instead.
+With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync and AI enrichment until
+interrupted. Explicit actions run in a fixed order (check models, check budget, migrate, collect,
+ground truth, enrich, publish) and then exit, unless `--lane` is given without `--once`, which
+schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
-severity into the same set of files rather than the next one.
+severity into the same set of files rather than the next one. Enrichment comes after it so a
+severity judgment is only asked for where the registers still have no official score.
 """
 
 import argparse
@@ -20,6 +21,7 @@ from collections.abc import Sequence
 import httpx
 
 from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status
+from worker.ai.enrich import DEFAULT_BATCH, enrich_pending
 from worker.ai.ladder import (
     OUTPUT_CEILING_USD_PER_MTOK,
     LadderRejected,
@@ -74,6 +76,18 @@ def build_parser() -> argparse.ArgumentParser:
             "how many CVEs --groundtruth resolves CVSS for in this pass "
             f"(default {DEFAULT_CVSS_BATCH}; 0 reads only the bulk registers)"
         ),
+    )
+    p.add_argument(
+        "--enrich",
+        action="store_true",
+        help="run one AI enrichment pass over pending events, within the budget mode",
+    )
+    p.add_argument(
+        "--enrich-batch",
+        type=int,
+        default=DEFAULT_BATCH,
+        metavar="N",
+        help=f"how many events --enrich takes in this pass (default {DEFAULT_BATCH})",
     )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
     return p
@@ -164,6 +178,15 @@ def _groundtruth(cvss_batch: int) -> int:
     return EXIT_OK
 
 
+def _enrich(batch: int) -> int:
+    """Run one pass. Like the ground-truth sync, only a failure the pass could not absorb is
+    non-zero: a task that failed or waited for money is a normal outcome, not an error."""
+    summary = asyncio.run(enrich_pending(batch=batch))
+    for error in summary.errors:
+        logger.warning("enrichment: %s", error)
+    return EXIT_OK
+
+
 def _publish() -> int:
     try:
         written = asyncio.run(publish_now())
@@ -210,6 +233,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if code != EXIT_OK:
             return code
 
+    if args.enrich:
+        code = _enrich(args.enrich_batch)
+        if code != EXIT_OK:
+            return code
+
     if args.publish:
         code = _publish()
         if code != EXIT_OK:
@@ -221,6 +249,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.migrate
         or args.publish
         or args.groundtruth
+        or args.enrich
         or lane
     )
     if schedule:

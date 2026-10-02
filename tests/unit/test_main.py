@@ -84,6 +84,22 @@ def test_migrate_alone_exits_without_starting_the_scheduler(calls):
     assert calls == [("migrate", "engine")]
 
 
+def test_enrich_runs_after_ground_truth_and_before_publish(calls, monkeypatch):
+    # A severity judgment is asked for only where the registers still have no official score,
+    # and the publish that follows carries what both wrote.
+    monkeypatch.setattr(main_mod, "_groundtruth", lambda n: calls.append(("groundtruth", n)) or 0)
+    monkeypatch.setattr(main_mod, "_enrich", lambda n: calls.append(("enrich", n)) or 0)
+    argv = ["--publish", "--enrich", "--enrich-batch", "4", "--groundtruth", "--cvss-batch", "7"]
+    assert main_mod.main(argv) == 0
+    assert calls == [("groundtruth", 7), ("enrich", 4), ("publish",)]
+
+
+def test_enrich_alone_exits_without_starting_the_scheduler(calls, monkeypatch):
+    monkeypatch.setattr(main_mod, "_enrich", lambda n: calls.append(("enrich", n)) or 0)
+    assert main_mod.main(["--enrich"]) == 0
+    assert calls == [("enrich", main_mod.DEFAULT_BATCH)]
+
+
 def test_failed_publish_returns_a_failure_code(calls, monkeypatch):
     monkeypatch.setattr(main_mod, "_publish", lambda: 1)
     assert main_mod.main(["--publish"]) == 1

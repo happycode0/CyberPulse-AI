@@ -1,5 +1,6 @@
-"""Scheduling. FAST and NORMAL lanes plus the ground-truth sync run in the worker; DEEP is a
-Paperclip routine, so it has no schedule here and is only reachable through `--lane deep --once`."""
+"""Scheduling. FAST and NORMAL lanes, the ground-truth sync and AI enrichment run in the worker;
+DEEP is a Paperclip routine, so it has no schedule here and is only reachable through
+`--lane deep --once`."""
 
 import asyncio
 import logging
@@ -8,6 +9,7 @@ import signal
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from worker.ai.enrich import AiLayer, enrich_pending
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
 from worker.pipeline import run as pipeline_run
@@ -39,6 +41,17 @@ GROUNDTRUTH_JOB_ID = "groundtruth-sync"
 # nothing permanent — the registers are read in full every time, not as a delta — but KEV is the
 # strongest exploitation signal the site has and there is no reason to skip a reading of it.
 GROUNDTRUTH_MISFIRE_GRACE_SECONDS = 3600
+
+# Twice an hour, five minutes after the FAST lane's :00 and :30 runs, so a new event is usually
+# enriched within half an hour of being collected. Each pass takes a small batch, which keeps
+# the spend per pass small and lets the budget mode change between passes.
+ENRICH_SCHEDULE = "5,35 * * * *"
+ENRICH_JOB_ID = "ai-enrichment"
+ENRICH_MISFIRE_GRACE_SECONDS = 900
+
+# Kept for the life of the process: the governor in it must remember a 402 from one pass to the
+# next (worker/ai/enrich.py).
+_ai_layer: AiLayer | None = None
 
 
 def job_id(lane: Lane) -> str:
@@ -102,15 +115,40 @@ async def _groundtruth_job() -> None:
         logger.info("published %d files after the ground-truth sync", len(written))
 
 
+async def _enrich_job() -> None:
+    """Enrich a batch of pending events, and republish if any of them changed.
+
+    Never fatal to the schedule. With no key, a ladder that fails the guard or no money, the pass
+    calls nothing and returns, and the events stay `pending_enrichment` on the site.
+    """
+    global _ai_layer
+    if _ai_layer is None:
+        _ai_layer = AiLayer()
+    try:
+        summary = await enrich_pending(layer=_ai_layer)
+    except Exception:
+        logger.exception("scheduled enrichment failed")
+        return
+
+    if not summary.changed_anything:
+        return
+    try:
+        written = await publish_now()
+    except Exception:
+        logger.exception("publish after enrichment failed; the enrichment itself stands")
+    else:
+        logger.info("published %d files after enrichment", len(written))
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync is added only for the default schedule. `lanes` comes from `--lane`, which
-    means "schedule this one thing", and silently bringing a register sync along with it would make
-    the narrow form impossible to ask for.
+    The ground-truth sync and enrichment are added only for the default schedule. `lanes` comes
+    from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
+    model calls along with it would make the narrow form impossible to ask for.
     """
     scheduler = AsyncIOScheduler(timezone="UTC")
     if lanes is None:
@@ -122,6 +160,16 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
             max_instances=1,
             coalesce=True,
             misfire_grace_time=GROUNDTRUTH_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _enrich_job,
+            CronTrigger.from_crontab(ENRICH_SCHEDULE, timezone="UTC"),
+            id=ENRICH_JOB_ID,
+            name="AI enrichment",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=ENRICH_MISFIRE_GRACE_SECONDS,
             replace_existing=True,
         )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):
