@@ -23,7 +23,7 @@ Stage 2  Ground truth + enrichment ................ 🟡 half   (KEV / EPSS / CV
            └─ OpenRouter client + cost ledger ..... ⏳ built with Stage 4, before any agent spends
 Stage 3  Correlation depth + trends ............... ⬜
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
-           ├─ Paperclip Docker service ............ 🟢 Claude builds next
+           ├─ Paperclip Docker service ............ ✅ built (starts once the Postgres login is fixed)
            ├─ open, claim, harden ................. 🔴 you — setup steps 2–4
            ├─ company + 16 agents + routines ...... 🔴 you — setup steps 5–7 (9 agents start paused)
            └─ ops API + http agents ............... 🟢 Claude
@@ -46,9 +46,11 @@ Stage 7  Hardening + backups ...................... ⬜   (off-host backup targe
 
 **What is yours to do (🔴), in order**
 
-1. **Add the Paperclip section to `.env`** — [setup step 0](paperclip-setup.md#0--add-the-paperclip-settings-to-env-once).
-   One command; it generates the secrets on the VM.
-2. **When the Paperclip service lands:** [setup](paperclip-setup.md) steps 2–8 — open it, claim
-   it, harden it, create the company, the 16 agents and the routines.
-3. Provide an off-host backup target (NAS, USB disk or PBS). The host has a single disk.
-4. Later: NetBird, if you want the dashboard from outside the house.
+1. ~~Add the Paperclip section to `.env`~~ ✅ done 2026-10-02 (all keys present).
+2. **Fix the Postgres login.** `.env` and the database disagree on the `cyberpulse` password,
+   which stops the worker and Paperclip alike. Put the old password back in `.env`, or set the
+   database to the new one ([troubleshooting](paperclip-setup.md#troubleshooting)).
+3. **Once Paperclip is up:** [setup](paperclip-setup.md) steps 2–8 — open it, claim it, harden
+   it, create the company, the 16 agents and the routines.
+4. Provide an off-host backup target (NAS, USB disk or PBS). The host has a single disk.
+5. Later: NetBird, if you want the dashboard from outside the house.

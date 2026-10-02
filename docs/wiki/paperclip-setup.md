@@ -15,7 +15,7 @@ Be clear on this before you start, because it decides which steps you can do now
 | Piece | Status |
 |---|---|
 | Worker collecting, scoring, ground truth, building the site | ✅ running on the VM |
-| Paperclip as a Docker service (`server`) in `docker-compose.yml` | 🟢 **Stage 4 build — next** |
+| Paperclip as a Docker service (`server`) in `docker-compose.yml` | ✅ built — waits on the Postgres login fix to start |
 | OpenCode inside the Paperclip container, using the OpenRouter key | 🟢 Stage 4 build |
 | The worker's ops API (the agents read data and the `http` agents call it) | 🟢 Stage 4 build |
 | Routines that open `[DIGEST]` / `[INCIDENT]` issues with real data behind them | 🟢 Stage 4 build |
@@ -101,16 +101,33 @@ has to be redone. Keep `.env` off the repo — it is git-ignored, and the repo i
 
 ## 1. 🟢 Start Paperclip
 
+The `server` service in `docker-compose.yml` runs the official image, **pinned to release
+2026.1001.0 by digest**, so it only changes when someone bumps it on purpose.
+
+**Before it can start, the worker must be able to log in to Postgres.** Paperclip uses the same
+`POSTGRES_USER` / `POSTGRES_PASSWORD`. If the worker logs `password authentication failed`, fix
+that first ([troubleshooting](#troubleshooting)).
+
 ```bash
 ssh cyberpulse-vm
 cd ~/CyberPulse-AI
-docker compose up -d server
-docker compose logs -f server      # wait for "Server listening"; Ctrl-c stops watching, not the server
+git pull
+
+# Once only: Paperclip's own database, next to cyber_intel in the shared Postgres
+docker compose exec -T db sh -c 'psql -q -U "$POSTGRES_USER" -d "$POSTGRES_DB"' <<'SQL'
+CREATE DATABASE paperclip ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;
+SQL
+
+docker compose up -d server        # the first start downloads the image (a few GB)
+docker compose ps server           # wait for "(healthy)" — the first boot sets up its tables
+docker compose logs -f server      # Ctrl-c stops watching, not the server
 ```
 
-It runs in Docker, keeps its data in the shared Postgres (`paperclip` database), and restarts
-itself after a reboot, like the rest of the stack. It listens on **`10.0.0.0:3100` only** —
-the home network, never `0.0.0.0`, never a router port forward.
+It keeps its data in the shared Postgres (the `paperclip` database) and its files in the
+`paperclip-data` volume, and it comes back up after a reboot like the rest of the stack. It
+listens on **`10.0.0.0:3100` only**: the home network, never `0.0.0.0`, never a router port
+forward. It gets only its own settings from `.env`, so it never sees the publish token or the API
+keys.
 
 ## 2. 🔴 Open it
 
@@ -118,14 +135,11 @@ From any browser **on your home network**:
 
 > **http://10.0.0.0:3100**
 
+Use exactly that address. Login only works at the address in `PAPERCLIP_PUBLIC_URL`, so
+`localhost`, an SSH tunnel or the VM's hostname will load the page but fail to sign you in.
+
 From outside the house: not possible, on purpose. NetBird (runbook Part 6) is the way to add that
 later, without opening anything to the internet.
-
-From WSL, if the browser cannot reach the LAN address, tunnel it and open http://localhost:3100:
-
-```bash
-ssh -N -L 3100:10.0.0.0:3100 cyberpulse-vm
-```
 
 ## 3. 🔴 Create your account and claim the instance — straight away
 
@@ -349,7 +363,9 @@ tell Claude.
 | An `http` agent times out too early | That adapter reads `timeoutMs`, not the `timeoutSec` its help text shows | Set `timeoutMs` |
 | An agent is "Budget paused" | It hit 100% of its monthly budget | Working as designed. Raise it only as the board, on purpose |
 | You can't reach :3100 from the phone | The phone is on mobile data or a guest Wi-Fi | Join the home Wi-Fi. The site is not on the internet, by design |
-| Worker logs `password authentication failed for user "cyberpulse"` | `POSTGRES_PASSWORD` in `.env` was changed after the database was created. Postgres only reads it when the data volume is first set up, so the database still expects the old one | Put the old password back in `.env`, or set the database to the new one (see below). **Never** fix it with `docker compose down -v`: that deletes the database |
+| Worker or `server` logs `password authentication failed for user "cyberpulse"` | `POSTGRES_PASSWORD` in `.env` was changed after the database was created. Postgres only reads it when the data volume is first set up, so the database still expects the old one | Put the old password back in `.env`, or set the database to the new one (see below). **Never** fix it with `docker compose down -v`: that deletes the database |
+| `server` stays `(unhealthy)` or keeps restarting | Usually the database: the login above, or the `paperclip` database was never created | `docker compose logs --tail 50 server` shows which |
+| `database "paperclip" does not exist` | Step 1's one-off `CREATE DATABASE` was skipped | Run it, then `docker compose restart server` |
 
 **Making the database match a new `POSTGRES_PASSWORD`.** This runs inside the db container and
 reads the password from its environment, so the value is never typed or shown:
