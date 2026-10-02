@@ -20,7 +20,7 @@ layer on top of both.
 | 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS, then AI enrichment within budget | 🟡 half |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ⬜ |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
-| 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ step 2 next |
+| 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
 | 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
 | 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ⬜ |
@@ -36,8 +36,9 @@ Stage 2  Ground truth + enrichment ................ 🟡 KEV / EPSS / CVSS live;
 Stage 3  Correlation depth + trends ............... ⬜
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ Paperclip Docker service ............ ✅ running, healthy, since 2026-10-02 20:15 Sydney
-           ├─ open, claim, harden ................. 🔴 you: 4a steps 2–4
-           ├─ company + 16 agents + routines ...... 🔴 you: 4a steps 5–7 (9 agents start paused)
+           ├─ open, claim, sign-up off ............ ✅ claimed 2026-10-02 20:21 Sydney
+           ├─ board-approval toggle, company ...... 🔴 you: 4a steps 4–5 (company exists, mission + budget empty)
+           ├─ 16 agents + routines ................ 🔴 you: 4a steps 6–7 (9 agents start paused)
            └─ OpenCode, ops API, http agents ...... 🟢 Claude
 Stage 5  Full crew + notifications ................ ⬜
 Stage 6  Self-healing ............................. ⬜
@@ -46,11 +47,10 @@ Stage 7  Hardening + operations ................... ⬜
 
 ## What is yours to do (🔴), in order
 
-1. **Claim Paperclip.** Open http://192.168.128.39:3100, create your account, click
-   **Claim this instance** ([4a steps 2–3](stage-4a-paperclip-setup.md#2--open-it)), then tell
-   Claude.
+1. ~~**Claim Paperclip.**~~ ✅ Done 2026-10-02; sign-up is now off.
 2. **Set it up:** [4a steps 4–8](stage-4a-paperclip-setup.md#4--harden-it--the-five-toggles-runbook-part-6):
-   the toggles, the company, the 16 agents, the routines, a first test ticket.
+   turn on board approval for new hires, give the existing `CyberPulse` company its mission and
+   US$12 budget, then the 16 agents, the routines, a first test ticket.
 3. **Approve merging `stage-1-foundation` into `main`.** The public site is built from `main`
    ([Stage 1](stage-1-foundation.md#whats-left)).
 4. **Provide an off-host backup target** (NAS, USB disk or PBS). The host has a single disk

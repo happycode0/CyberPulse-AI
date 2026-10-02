@@ -10,8 +10,9 @@ each one says who does it (🔴 you · 🟢 Claude).
 |---|---|---|
 | 0 | `.env` settings | ✅ done 2026-10-02 |
 | 1 | Start Paperclip | ✅ done 2026-10-02, healthy |
-| 2–3 | Open it, claim it | 🔴 **next** |
-| 4–7 | Harden it, company, 16 agents, routines | 🔴 straight after |
+| 2–3 | Open it, claim it | ✅ done 2026-10-02 20:21 Sydney — your account is instance admin, sign-up is off |
+| 4–5 | Board approval toggle; company mission and budget | 🔴 **next** — the company `CyberPulse` exists, the rest is not set yet |
+| 6–7 | 16 agents, routines | 🔴 straight after |
 | 8 | First test ticket | 🔴 once Claude has wired OpenCode ([Stage 4](stage-4-paperclip.md#whats-left-in-order)) |
 
 You need [4b — the crew](stage-4b-the-crew.md) open at step 6.
@@ -139,6 +140,10 @@ later, without opening anything to the internet.
 
 ## 3. 🔴 Create your account and claim the instance — straight away
 
+**✅ Done 2026-10-02.** Your account was created at 20:21 Sydney and holds `instance_admin`; it is
+the only account. Sign-up was then turned off (`PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`); a test
+sign-up is now refused with HTTP 400. Kept as the record:
+
 1. **Create account** with your email and a strong password. Use **Create account**, not
    **Sign in**: there are no accounts yet.
 2. On the setup screen ("Instance setup required"), click **Claim this instance**. The first
@@ -161,15 +166,19 @@ Check that it worked: `curl -s http://192.168.128.39:3100/api/health` no longer 
 
 | Check | Where | Set it to |
 |---|---|---|
-| **Require board approval for new hires** | Company settings (after step 5) | **on** — it defaults to off, and agents can hire agents |
-| Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) |
-| Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) |
-| Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (step 0) |
-| Announcements | `.env` `PAPERCLIP_ANNOUNCEMENTS_ENABLED` | `false` (step 0) |
+| **Require board approval for new hires** | Company settings (after step 5) | **on** — it defaults to off, and agents can hire agents. 🔴 **Still off** on 2026-10-02 |
+| Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) ✅ |
+| Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) ✅ |
+| Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (step 0) ✅ |
+| Announcements | `.env` `PAPERCLIP_ANNOUNCEMENTS_ENABLED` | `false` (step 0) ✅ |
 
 ## 5. 🔴 Create the company
 
-**New Company**:
+**Already started:** on 2026-10-02 the setup screen created a company named `CyberPulse` (issue
+prefix `CYB`), but its mission is empty and its monthly budget is 0. Open that company's
+settings and fill in the two missing fields below rather than creating a second one.
+
+**New Company** (or the existing company's settings):
 
 | Field | Type this |
 |---|---|
@@ -376,6 +385,7 @@ tell Claude.
 | `docker compose up -d` sits at `Pulling` for minutes | The first download of the Paperclip image is 1.8 GB | Wait. It is slow, not stuck. Check with `docker compose ps -a`: if `db` and `worker` are gone too, start them on their own with `docker compose up -d --no-deps db worker` |
 | `server` stays `(unhealthy)` or keeps restarting | Usually the database: the login above, or the `paperclip` database was never created | `docker compose logs --tail 50 server` shows which |
 | `database "paperclip" does not exist` | Step 1's one-off `CREATE DATABASE` was skipped | Run it, then `docker compose restart server` |
+| `/api/health` warns `database_backup_missing` | Paperclip backs up its own database every 60 minutes (kept 7 days) into its `paperclip-data` volume; a fresh instance has none yet | Clears after the first hourly backup. Those copies sit on the same single disk, so they are not the real backup — [Stage 7](stage-7-hardening.md#backups--do-this-one-early) is |
 
 **Making the database match a new `POSTGRES_PASSWORD`.** This runs inside the db container and
 reads the password from its environment, so the value is never typed or shown:
