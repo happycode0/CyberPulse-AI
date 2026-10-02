@@ -48,7 +48,7 @@ Stage 7  Hardening + operations ................... ⬜
 ## What is yours to do (🔴), in order
 
 1. ~~**Claim Paperclip.**~~ ✅ Done 2026-10-02; sign-up is now off.
-2. **Set it up:** [4a steps 4–8](stage-4a-paperclip-setup.md#4--harden-it--the-five-toggles-runbook-part-6):
+2. **Set it up:** [4a steps 4–8](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6):
    turn on board approval for new hires, give the existing `CyberPulse` company its mission and
    US$12 budget, then the 16 agents, the routines, a first test ticket.
 3. **Approve merging `stage-1-foundation` into `main`.** The public site is built from `main`

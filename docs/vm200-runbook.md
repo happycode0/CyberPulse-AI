@@ -606,8 +606,9 @@ Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, an
    `authenticated` + `private` mode the first signed-in account to click **Claim this instance**
    becomes the admin. Fallback: `docker compose exec server pnpm paperclipai auth bootstrap-ceo`.
    Done 2026-10-02.
-2. **Harden the defaults.** Four of the five toggles are set in `.env` already:
-   - [ ] Require board approval for new hires (company settings, defaults to **off**; still off)
+2. **Harden the defaults.** Four of the six toggles are set in `.env`; two are company settings:
+   - [x] Require board approval for new hires (company settings, defaults to **off**; on since 2026-10-02)
+   - [ ] Connection requests: **Human only** (company settings; still unset)
    - [x] `PAPERCLIP_AUTH_DISABLE_SIGN_UP=true`, straight after the claim
    - [x] Secrets strict mode on
    - [x] Telemetry off (defaults to **on**)

@@ -11,8 +11,8 @@ each one says who does it (🔴 you · 🟢 Claude).
 | 0 | `.env` settings | ✅ done 2026-10-02 |
 | 1 | Start Paperclip | ✅ done 2026-10-02, healthy |
 | 2–3 | Open it, claim it | ✅ done 2026-10-02 20:21 Sydney — your account is instance admin, sign-up is off |
-| 4–5 | Board approval toggle; company mission and budget | 🔴 **next** — the company `CyberPulse` exists, the rest is not set yet |
-| 6–7 | 16 agents, routines | 🔴 straight after |
+| 4–5 | Board approval toggle; company mission and budget | 🟡 board approval on, charter goal saved, MORPHEUS hired. Budget, Description and connection requests still to do |
+| 6–7 | 16 agents, routines | 🔴 **next** — one import does both ([step 6](#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go)) |
 | 8 | First test ticket | 🔴 once Claude has wired OpenCode ([Stage 4](stage-4-paperclip.md#whats-left-in-order)) |
 
 You need [4b — the crew](stage-4b-the-crew.md) open at step 6.
@@ -162,11 +162,12 @@ docker compose exec server pnpm paperclipai auth bootstrap-ceo
 Check that it worked: `curl -s http://10.0.0.0:3100/api/health` no longer says
 `"bootstrapStatus":"bootstrap_pending"`.
 
-## 4. 🔴 Harden it — the five toggles (runbook Part 6)
+## 4. 🔴 Harden it — the six toggles (runbook Part 6)
 
 | Check | Where | Set it to |
 |---|---|---|
-| **Require board approval for new hires** | http://10.0.0.0:3100/CYB/company/settings | **on** — it defaults to off, and agents can hire agents. 🔴 **Still off** on 2026-10-02 |
+| **Require board approval for new hires** | http://10.0.0.0:3100/CYB/company/settings | **on** — it defaults to off, and agents can hire agents. ✅ on since 2026-10-02 |
+| **Connection requests** | the same page, the agent-request settings | **Human only**, so only a person can answer an agent's request to use a connection. 🔴 Still unset on 2026-10-02 |
 | Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) ✅ |
 | Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) ✅ |
 | Telemetry | `.env` `PAPERCLIP_TELEMETRY_DISABLED` | `1` (step 0) ✅ |
@@ -296,6 +297,74 @@ That is: the first paragraph (from "Produce the most accurate…" to "…that af
 **Description**, and all of it in the `CyberPulse charter` goal.
 
 ## 6. 🔴 Create the 16 agents
+
+### The quick way: import the whole crew (and the routines) in one go
+
+`ops/build-paperclip-package.py` turns the [crew page](stage-4b-the-crew.md) and step 7's
+routines into a package for Paperclip's **Import** page. It holds:
+- all 16 agents, each with its title, role, manager, icon, model, budget and max daily runs;
+- every AI agent's instructions, with the house rules first;
+- the `http` agents' URL and job;
+- the 10 routines;
+- the board-approval setting;
+- the short mission, as the company Description.
+
+It holds no secret values and asks for none.
+
+```bash
+python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
+```
+
+1. **Company Settings → Import**, choose the zip, and target **the existing CyberPulse** (not a
+   new company).
+2. Collisions: choose **Replace**. That updates MORPHEUS in place, which is how it gets the house
+   rules, and keeps its OpenRouter connection. It also matches the existing `CyberPulse-AI`
+   project, so the routines attach to it.
+3. Keep **Start imported agents and routines paused** ticked. **Preview**, then apply. Expect
+   warnings that the `paperclipai/paperclip/*` skills are "not present in the package". The
+   package leaves them out on purpose: replacing them would swap the built-in copies for ones
+   that track GitHub. The agents keep using the built-in skills.
+4. **Let the 10 new AI agents use your OpenRouter key.** The importer does not carry this.
+   **Connectors → My OpenRouter API → Permissions → Which agents can use this connection? → Just
+   agents I pick**. Tick TELETRAAN, ZION, BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT,
+   RIPPERDOC, WHEELJACK and TRON next to MORPHEUS. Leave the five `http` agents out; they never
+   call a model.
+5. **Make the budgets real.** The importer writes each agent's budget figure but not the
+   hard-stop policy that enforces it, so the Budget tab shows a limit that does nothing. In the
+   browser console (**F12 → Console**), run this. It replaces the company-budget snippet in
+   step 5:
+
+   ```js
+   const cents = { MORPHEUS: 200, TELETRAAN: 50, ZION: 100, BLASTER: 100, WINTERMUTE: 100,
+     TACHIKOMA: 100, DECKARD: 100, VOIGHT: 200, RIPPERDOC: 50, WHEELJACK: 100, TRON: 50 };
+   const call = (url, body) => fetch(url, body && { method: 'PATCH',
+     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+     .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
+   const [co] = await call('/api/companies?scope=accessible');
+   for (const a of await call(`/api/companies/${co.id}/agents`))
+     if (a.name in cents) console.log((await call(`/api/agents/${a.id}/budgets`,
+       { budgetMonthlyCents: cents[a.name] })).name, cents[a.name]);
+   const c = await call(`/api/companies/${co.id}/budgets`, { budgetMonthlyCents: 1200 });
+   console.log(c.name, c.budgetMonthlyCents);
+   ```
+
+   It prints 11 agents, then `CyberPulse 1200`. Saving a budget never resumes an agent the
+   import paused.
+6. Everything is now paused, MORPHEUS included. **Resume nothing** until the Stage 2 money pieces
+   (cost ledger and price guard) exist. After that, resume only the agents and the three routines
+   marked "now", following the crew page and step 7.
+
+What the import cannot set:
+- **The `http` agents' auth header.** It waits for the ops API in the Stage 4 build. Paperclip
+  also refuses to call a private address such as `http://worker:8700` unless that address is
+  listed in the server's `PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST`, which is part of the
+  same build.
+- **Connection requests → Human only** (step 4). Set it by hand.
+
+The import gives every AI agent **one run at a time** (`maxConcurrentRuns: 1`), so a burst of
+tickets queues up instead of spending in parallel.
+
+### The manual way
 
 Go to the agents list → **New Agent** (or **Add Agent**). Do them **in the order on the
 [crew page](stage-4b-the-crew.md#the-crew-at-a-glance)**, because **Reports to** needs the manager
