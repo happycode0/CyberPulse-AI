@@ -21,8 +21,8 @@ rolled back. None of this touches the `server`: Paperclip runs from its pinned i
 
 ## A normal deploy
 
-**When.** After you merge a pull request on GitHub. At a safe minute: `date -u +%M`, about :10 or
-:40.
+**When.** After you merge a pull request on GitHub. At a safe minute: `date -u +%M`, between :10
+and :45.
 
 **Check** first what is coming, without changing anything:
 

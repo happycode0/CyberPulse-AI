@@ -51,7 +51,7 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
          └────────────────────────────────┼────────────────────────────────┘
                                           ▼
                               CYBER WORKER  (Python 3.13)
-                              own scheduler: FAST 15m / NORMAL 4h
+                              own scheduler: FAST 1h / NORMAL 4h
                                           │
                         ┌─────────────────┼─────────────────┐
                         ▼                 ▼                 ▼

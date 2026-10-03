@@ -76,7 +76,7 @@ def _check_slug(tier: Tier, slug: str) -> None:
     # checked in advance. That covers openrouter/free as well as openrouter/auto.
     if author == "openrouter":
         raise ValueError(f"{tier.value}: {slug} is a router, not a model")
-    # Batch is asynchronous, which cannot serve a 15-minute collection lane (§7.1).
+    # Batch is asynchronous, which cannot keep up with the FAST collection lane (§7.1).
     if slug.endswith(":batch"):
         raise ValueError(f"{tier.value}: {slug} is a batch variant")
 

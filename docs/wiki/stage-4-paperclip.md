@@ -82,9 +82,9 @@ needs no token, so the agents' package carries none.
 | Check (`{"job": "pipeline"}`) | Passes when |
 |---|---|
 | `groundtruth` | A ground-truth pass completed in the last 7 hours (it runs every 6) |
-| `source-verify` | A source was checked recently; the summary counts each enabled source's latest status and lifecycle state |
-| `correlation-report` | A collection finished recently; the summary gives its counts and the merges in the last 24 hours |
-| `publish` | `data/system-status.json` was written recently |
+| `source-verify` | A source was checked in the last two hours (two FAST intervals); the summary counts each enabled source's latest status and lifecycle state |
+| `correlation-report` | A collection finished in the last two hours (two FAST intervals); the summary gives its counts and the merges in the last 24 hours |
+| `publish` | `data/system-status.json` was written in the last two hours (two FAST intervals) |
 
 The wake of a retired `http` agent (ROGUE, LIBRARIAN, PROWL or LINK) answers **404**, saying it
 was retired: terminate it in Paperclip. The old `cost-reconcile` check (ROGUE's) is now in
@@ -135,7 +135,7 @@ curl -s -m 3 http://192.168.128.39:8700/ops/health || echo "not reachable: good"
 
 - [ ] Agents are visible in Paperclip, waking on schedule and spending within budget
 - [ ] The pipeline survives Paperclip being stopped. Test it: `docker compose stop server`, wait
-      for the next 15-minute run, check the worker still logs `done:` and `published`, then
+      for the next hourly run at :00 UTC, check the worker still logs `done:` and `published`, then
       `docker compose start server`
 
 ---

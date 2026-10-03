@@ -32,7 +32,7 @@ reminder in your calendar for day 80 as well.
 2. **Edit `.env` with an editor,** as `oxygen` and without `sudo`: `nano .env`, then replace the
    value after the `=`. Never paste a token into a command line, a chat or a ticket.
 3. **Check it parses:** `docker compose config -q` is silent when the file is fine.
-4. **Recreate what reads it,** at a safe minute (`date -u +%M`, about :10 or :40). A restart keeps
+4. **Recreate what reads it,** at a safe minute (`date -u +%M`, between :10 and :45). A restart keeps
    the old environment:
 
    ```bash
@@ -202,7 +202,7 @@ Each takes [the same six steps](#the-same-six-steps-every-time), and a recreate 
 
 | Key | Make the new one | Check it works | Revoke the old one |
 |---|---|---|---|
-| `TAVILY_API_KEY` | [app.tavily.com](https://app.tavily.com), a new API key | The next discovery pass (03:00 Sydney) completes: `q "select finished_at, completed, note from job_runs where job = 'discovery' order by finished_at desc limit 1"` | Delete it on Tavily |
+| `TAVILY_API_KEY` | [app.tavily.com](https://app.tavily.com), a new API key | The next discovery pass (03:10 Sydney) completes: `q "select finished_at, completed, note from job_runs where job = 'discovery' order by finished_at desc limit 1"` | Delete it on Tavily |
 | `NVD_API_KEY` | [Request a new one](https://nvd.nist.gov/developers/request-an-api-key). Blank is fine too | The next ground-truth pass (:25, every 6 hours) completes, as above with `job = 'groundtruth'` | NVD's site has no revoke. The key only raises a free rate limit |
 | `TELEGRAM_BOT_TOKEN` | **@BotFather** → `/revoke` → your bot. The old one stops at once, so do the rest straight away | `docker compose logs worker --since 5m \| grep -i telegram` says `Telegram notifications are on`. The chat id does not change | Done by `/revoke` |
 | `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Paperclip → **Routines → Incident**, the webhook trigger card → **Rotate secret**. It is shown once | The start-up log says `incidents go to the Incident routine in Paperclip`. On the next sent incident, no `paperclip:incident:<n>: failed` line; if there is one, see [Stage 6's table](../wiki/stage-6-self-healing.md#the-incident-routine) | Done by the rotation |

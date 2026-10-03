@@ -58,7 +58,7 @@ HEALTH_ERROR_MAX_CHARS = 300
 
 # crew.json: how recent an agent's last piece of work must be for it to read ACTIVE: the
 # ledger takes a row whenever the pipeline calls a model. SERAPH needs none, because writing
-# crew.json is its publish job, so it is active whenever the file is written.
+# crew.json is its publish job, so it is active whenever the file is written, at any cadence.
 CREW_FRESH = {
     "ripperdoc": timedelta(hours=24),
 }

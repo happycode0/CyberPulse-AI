@@ -27,7 +27,7 @@ design table:
 | CPU / RAM | 4 vCPU / 11 GiB usable (created with `--memory 12288 --balloon 8192`) |
 | Disk | 59 GB usable on `/dev/sda1`, 42 GB free with all three images pulled, Paperclip's included (resized — see Part 2) |
 | Docker | 29.8.2, Compose v5.5.1, `local` log driver capped at 3 × 10 MB |
-| Status | **Stage 1 is running:** FAST every 15 min, NORMAL every 4 h, ground truth every 6 h, the `data/*.json` files rebuilt after each run — but **not pushed to GitHub yet** (Part 5d). **Paperclip is running and claimed** (Part 6). |
+| Status | **Stage 1 is running:** FAST every hour at :00 UTC (every 15 min until 2026-10-04), NORMAL every 4 h, ground truth every 6 h, the `data/*.json` files rebuilt after each run — but **not pushed to GitHub yet** (Part 5d). **Paperclip is running and claimed** (Part 6). |
 
 An SSH alias is configured on the WSL box, so every 🟢 command below is reachable as
 `ssh cyberpulse-vm '<command>'`:
@@ -369,8 +369,8 @@ reasons, all in the wiki's [Stage 1, "What's left"](wiki/stage-1-foundation.md#w
 3. Pages builds from `main`, and `stage-1-foundation` is not merged into it.
 
 **e. Run continuously.** Replaces the one-shot with the scheduler the design intends — FAST every
-15 minutes, NORMAL every 4 hours, owned by the worker so collection survives the control plane
-being down:
+hour at :00 UTC (every 15 minutes until 2026-10-04), NORMAL every 4 hours, owned by the worker so
+collection survives the control plane being down:
 
 ```bash
 docker compose up -d
@@ -382,14 +382,15 @@ Since Part 6, `docker compose up -d` starts Paperclip's `server` as well; the fi
 downloads a 1.8 GB image before starting anything. To bring up only this stage, use
 `docker compose up -d --no-deps db worker`.
 
-This is the step that makes the VM worth having over the laptop: a 15-minute cadence needs a
+This is the step that makes the VM worth having over the laptop: an hourly cadence needs a
 machine that is always on. The worker logs `scheduler started: lane-fast, lane-normal,
 groundtruth-sync` (the third job arrived with Part 5f), then
 publishes after each run — collection and publishing are one unit now, so `data/*.json` cannot
 describe an older collection than the database holds.
 
-Confirmed unattended at 12:00 UTC. Both lanes fired on the same tick (`*/15` and `0 */4` coincide
-every four hours, which is why publishes hold a lock), and each published afterwards:
+Confirmed unattended at 12:00 UTC. Both lanes fired on the same tick (FAST was `*/15` then, and is
+`0 * * * *` now; either meets `0 */4` every four hours, which is why publishes hold a lock), and
+each published afterwards:
 
 ```
 22:00:00 Running job "fast lane" ... (scheduled at 2026-10-01 12:00:00+00:00)
@@ -399,6 +400,49 @@ every four hours, which is why publishes hold a lock), and each published afterw
 22:01:34 run ...-686f8a done: ok=19 failed=1 stale=2 items=320 new=2 updated=0 dup=318
 22:01:42 published 531 files after the normal lane
 ```
+
+**The schedule since 2026-10-04.** The FAST lane runs hourly, for stability (PLAN.md §2.3). Its
+interval is one constant, `FAST_INTERVAL_MINUTES` in `worker/cadence.py`; the FAST cron, the
+alert minutes and the watchdog's FAST thresholds follow it. Times are UTC unless marked Sydney.
+Sydney is a whole number of hours ahead, so its minutes are the same.
+
+| Job | Cron | Why then |
+|---|---|---|
+| FAST lane | `0 * * * *` | Hourly, on the hour. |
+| NORMAL lane | `0 */4 * * *` | Every 4 hours. It shares :00 with FAST, which the publish lock makes safe. |
+| Watchdog | `2-57/5 * * * *` | Every 5 minutes from :02, a minute no other job starts on. At :02 the :00 run has finished. |
+| Critical alerts | `3,18,48 * * * *` | :03, just after the FAST run. :18 and :48, 13 minutes after each enrichment pass, which can raise an event's Australian relevance. |
+| Enrichment | `5,35 * * * *` | :05 enriches what :00 collected. :35 is a backlog pass, so enrichment keeps pace. |
+| Ground truth | `25 */6 * * *` | Four times a day, off the lanes' hour and clear of the passes around it. |
+| Source gate | `50 3-23/4 * * *` | Ten minutes before each NORMAL run, which then collects what it activated. |
+| Daily digest | `10 7,8,9 * * *` Sydney | 07:10, after the 07:00 run and its enrichment. 08:10 and 09:10 retry. |
+| Discovery search | `10 3 * * *` Sydney | Nightly, off the hourly run's minute. |
+| Model scan | `20 3 * * *` Sydney | After the discovery search. |
+| Gauntlet | `40 3 * * sun` Sydney | Sunday, after that day's model scan. |
+
+**Deploy or restart between :10 and :45 past any hour.** The job store is in memory, so a
+restart across a job's minute loses that run. The window keeps clear of the :00 collection and
+the :03 alerts and :05 enrichment that follow it. A restart inside it can still miss a smaller
+pass (alerts at :18, enrichment at :35, ground truth at :25, a nightly job at 03:10 to 03:40
+Sydney). Each runs again at its next time, and nothing is lost. Around 07:10 Sydney, let the
+digest go first.
+
+🔴 **Owner: make the Pages build hourly.** `.github/workflows/pages.yml` still rebuilds the site
+every 15 minutes (`*/15 * * * *`). That still works, but three builds in four now find nothing
+new. The file is yours to commit: changing it needs `workflow` scope, which the publish token
+must never have. Replace its schedule with:
+
+```yaml
+  schedule:
+    - cron: "12 * * * *"
+```
+
+Twelve past gives the :00 run's publish and push time to land, and the :05 enrichment pass's
+too. GitHub delays scheduled runs when it is busy, most of all at the start of each hour, and
+can drop them, so twelve past also keeps off the busiest minute. The watchdog's `site-stale`
+limit (3 hours) allows for one build that GitHub drops or runs late. Change the comment above
+the schedule too. It says the cadence sits under the FAST lane's 15 minutes; it should say the
+build runs hourly, 12 minutes after the FAST run at :00 UTC.
 
 **f. The ground-truth sync.** The lanes collect; this is what gives the collected CVEs a severity,
 an exploitation status and an exploitation probability. It reads three registers — CISA KEV, the
@@ -491,8 +535,8 @@ The same tick logged `source cisa_news: lifecycle active -> degraded`, and the s
 `acsc_alerts` and `acsc_publications`. This is correct:
 
 - `worker/pipeline/health.py:49` counts `STALE` among the failure statuses, and `DEGRADE_AFTER = 5`
-  demotes an ACTIVE source after five consecutive ones. At a 15-minute cadence a genuinely quiet
-  feed crosses that in about 75 minutes. `acsc_publications` has published nothing for 14 days
+  demotes an ACTIVE source after five consecutive ones. At the 15-minute cadence of the time, a
+  genuinely quiet feed crossed that in about 75 minutes; hourly, it takes about 5 hours. `acsc_publications` has published nothing for 14 days
   against a 7-day expectation, so it is being reported accurately.
 - **A degraded source is still collected.** `sources_for_lane` filters on lane and `enabled` only,
   never on lifecycle state, so demotion cannot create a catch-22 where a quiet source stops being
@@ -540,8 +584,8 @@ docker compose run --rm -T worker python -m worker.main --lane fast --once </dev
 All 11 FAST sources now hold provenance, and a spot check confirms the filename really is the
 payload's hash: `41a998d171e4b29a.raw` ⇄ `sha256sum | cut -c1-16` = `41a998d171e4b29a`.
 
-**3. The scheduler never published.** It ran lanes only, so the database would advance every 15
-minutes while `data/*.json` kept describing whichever collection was last published by hand — a
+**3. The scheduler never published.** It ran lanes only, so the database would advance with every
+run while `data/*.json` kept describing whichever collection was last published by hand — a
 stale snapshot presented as current, which is exactly what §2.6 exists to prevent, and it
 contradicts §11's *"keeps collecting and publishing"*. `worker/publish/run.py` now supplies the
 connection and output directory, both `--publish` and the scheduler go through it, publishes are
@@ -657,6 +701,8 @@ Everything that needs a human, in order:
 - [ ] Part 6 — board approval for new hires, then the company mission and budget (wiki 4a steps
       4–5). Actionable now.
 - [ ] Approve merging `stage-1-foundation` into `main`, which Pages builds from.
+- [ ] Part 5e — set the Pages workflow's schedule to hourly, `- cron: "12 * * * *"`. It needs
+      `workflow` scope, so it is yours to commit.
 - [ ] Part 7 — provide an off-host backup target. There is now real data to lose.
 - [ ] Later: NetBird, for the dashboard from outside the house.
 
