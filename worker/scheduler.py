@@ -5,6 +5,7 @@ Paperclip routine, so it has no schedule here and is only reachable through `--l
 import asyncio
 import logging
 import signal
+from collections.abc import Iterable
 from datetime import UTC, datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -14,6 +15,7 @@ from worker import ops_api
 from worker.ai.enrich import AiLayer, enrich_pending
 from worker.ai.mitre import suggest_techniques
 from worker.ai.scout import run_gauntlet, scan_models
+from worker.cadence import FAST_INTERVAL_MINUTES, fast_minutes
 from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
 from worker.discovery.run import run_gate, run_search
@@ -34,23 +36,34 @@ from worker.watchdog.run import Watchdog
 
 logger = logging.getLogger(__name__)
 
+
+def _minute_list(minutes: Iterable[int]) -> str:
+    return ",".join(str(m) for m in sorted(minutes))
+
+
+# The FAST lane runs every FAST_INTERVAL_MINUTES (worker/cadence.py), from the top of the hour:
+# hourly since 2026-10-04, for stability (PLAN.md §2.3). The two lanes share :00 every four
+# hours, which is safe: `publish_now` holds a lock (worker/publish/run.py).
+FAST_MINUTES = fast_minutes()
 SCHEDULE: dict[Lane, str] = {
-    Lane.FAST: "*/15 * * * *",
+    Lane.FAST: f"{_minute_list(FAST_MINUTES)} * * * *",
     Lane.NORMAL: "0 */4 * * *",
 }
 
-# A run that started late (the loop was busy, or the process was paused) is still worth
-# running if it is less than one cadence overdue.
-MISFIRE_GRACE_SECONDS = {Lane.FAST: 600, Lane.NORMAL: 1800}
+# A run that started late (the loop was busy, or the process was paused) is still worth running
+# while it can finish well before the next one: two thirds of the cadence for FAST, half an hour
+# for NORMAL.
+MISFIRE_GRACE_SECONDS = {Lane.FAST: FAST_INTERVAL_MINUTES * 60 * 2 // 3, Lane.NORMAL: 1800}
 
 # The registers answer on their own clock, which is much slower than any feed: EPSS republishes once
 # a day, KEV on CISA's working days. Four passes a day is enough to pick either up within hours while
 # leaving the CVSS backfill four batches a day to work through — and the sync writes only what moved,
 # so the three passes a day that find an unchanged EPSS file cost a download and no rows.
 #
-# :25 rather than :00 keeps it off the hour the FAST and NORMAL lanes share. Nothing breaks if they
-# overlap — `publish_now` holds a lock and `rescore` is idempotent — but a sync competing with a
-# collection for the same connection pool makes both slower for no reason.
+# :25 rather than :00 keeps it off the hour the FAST and NORMAL lanes share, and clear of the
+# enrichment passes and the alerts. Nothing breaks if they overlap — `publish_now` holds a lock and
+# `rescore` is idempotent — but a sync competing with a collection for the same connection pool
+# makes both slower for no reason.
 GROUNDTRUTH_SCHEDULE = "25 */6 * * *"
 GROUNDTRUTH_JOB_ID = "groundtruth-sync"
 
@@ -59,30 +72,47 @@ GROUNDTRUTH_JOB_ID = "groundtruth-sync"
 # strongest exploitation signal the site has and there is no reason to skip a reading of it.
 GROUNDTRUTH_MISFIRE_GRACE_SECONDS = 3600
 
-# Twice an hour, five minutes after the FAST lane's :00 and :30 runs, so a new event is usually
-# enriched within half an hour of being collected. Each pass takes a small batch, which keeps
-# the spend per pass small and lets the budget mode change between passes.
-ENRICH_SCHEDULE = "5,35 * * * *"
+# Twice an hour, whatever the FAST cadence. :05 enriches what the :00 run collected, once it is
+# stored. :35 is the backlog pass: events arrive at the same rate however often we collect, and
+# each pass takes a small batch, so one pass an hour would halve what gets enriched. A small batch
+# keeps the spend per pass small and lets the budget mode change between passes. A pass with
+# nothing pending costs a budget reading and no calls.
+ENRICH_MINUTES = (5, 35)
+ENRICH_SCHEDULE = f"{_minute_list(ENRICH_MINUTES)} * * * *"
 ENRICH_JOB_ID = "ai-enrichment"
 ENRICH_MISFIRE_GRACE_SECONDS = 900
 
-# The daily digest at 07:00 Sydney time. 08:00 and 09:00 send it only if 07:00 failed or was
-# missed: each Sydney date's digest is sent once (worker/notify/jobs.py).
-DIGEST_SCHEDULE = "0 7,8,9 * * *"
+# The daily digest at 07:10 Sydney time: ten minutes past the hour, so it reports the 07:00 run
+# and the enrichment pass after it. 08:10 and 09:10 send it only if 07:10 failed or was missed:
+# each Sydney date's digest is sent once (worker/notify/jobs.py).
+DIGEST_SCHEDULE = "10 7,8,9 * * *"
 DIGEST_TIMEZONE = "Australia/Sydney"
 DIGEST_JOB_ID = "daily-digest"
 DIGEST_MISFIRE_GRACE_SECONDS = 1800
 
-# Three minutes after each FAST run, which is over in seconds, so a critical event collected at
-# :00 is in the chat by :03. :18 and :48 also follow the enrichment passes (:05 and :35), which
-# can raise an event's Australian relevance.
-ALERT_SCHEDULE = "3,18,33,48 * * * *"
+# Minutes an alert pass waits after a FAST run, which is over in seconds, and after an enrichment
+# pass, which can take several minutes.
+ALERT_AFTER_COLLECTION = 3
+ALERT_AFTER_ENRICHMENT = 13
+
+
+def alert_minutes(fast: Iterable[int], enrich: Iterable[int]) -> tuple[int, ...]:
+    """The alert pass follows every FAST run, so a critical event collected at :00 is in the
+    chat by :03. It also follows every enrichment pass, which can raise an event's Australian
+    relevance. Hourly, that is :03, :18 (after :05) and :48 (after the :35 backlog pass)."""
+    after_runs = {(m + ALERT_AFTER_COLLECTION) % 60 for m in fast}
+    after_passes = {(m + ALERT_AFTER_ENRICHMENT) % 60 for m in enrich}
+    return tuple(sorted(after_runs | after_passes))
+
+
+ALERT_SCHEDULE = f"{_minute_list(alert_minutes(FAST_MINUTES, ENRICH_MINUTES))} * * * *"
 ALERT_JOB_ID = "critical-alerts"
 ALERT_MISFIRE_GRACE_SECONDS = 600
 
-# The nightly discovery search at 03:00 Sydney time. Tavily's credits are counted over the last 24
-# hours (worker/discovery/run.py), so a pass that runs late still keeps within the day's allowance.
-DISCOVERY_SCHEDULE = "0 3 * * *"
+# The nightly discovery search at 03:10 Sydney time, off the hourly run's minute. Tavily's credits
+# are counted over the last 24 hours (worker/discovery/run.py), so a pass that runs late still
+# keeps within the day's allowance.
+DISCOVERY_SCHEDULE = "10 3 * * *"
 DISCOVERY_JOB_ID = "source-discovery"
 DISCOVERY_MISFIRE_GRACE_SECONDS = 3600
 
@@ -106,9 +136,10 @@ GAUNTLET_SCHEDULE = "40 3 * * sun"
 GAUNTLET_JOB_ID = "model-gauntlet"
 GAUNTLET_MISFIRE_GRACE_SECONDS = 3600
 
-# The watchdog every five minutes, two minutes off the FAST lane's quarter hours and the alerts'
-# :03, so a pass reads a run that has just finished rather than one in progress
-# (worker/watchdog/run.py).
+# The watchdog every five minutes from :02 (worker/watchdog/run.py). Every other job starts on a
+# minute that is a multiple of five, or three past one (:00, :03, :05, :18 and so on), so the
+# watchdog never starts with one. At :02 it reads the :00 run once it has finished, not while it
+# is in progress.
 WATCHDOG_SCHEDULE = "2-57/5 * * * *"
 WATCHDOG_JOB_ID = "watchdog"
 WATCHDOG_MISFIRE_GRACE_SECONDS = 240
@@ -191,7 +222,7 @@ async def _run_lane_job(lane: Lane) -> None:
 
     Publishing belongs here rather than only behind `--publish`. PLAN.md §11's failure model says
     that with Paperclip down the worker "keeps collecting and publishing", which it can only do if
-    a scheduled run is what triggers a publish — otherwise the database advances every 15 minutes
+    a scheduled run is what triggers a publish — otherwise the database advances with every run
     while data/*.json keeps describing whichever collection was last published by hand, and the
     site reports a stale snapshot as current.
     """
@@ -207,8 +238,8 @@ async def _run_lane_job(lane: Lane) -> None:
         return
 
     # Deliberately not fatal. Collection is the irreplaceable half: a missed publish is corrected
-    # by the next run 15 minutes later, whereas a lane that stops running loses items that have
-    # already fallen off the end of their feed and cannot be re-fetched.
+    # by the next publish, one FAST interval later at most, whereas a lane that stops running
+    # loses items that have already fallen off the end of their feed and cannot be re-fetched.
     await _publish(f"the {lane.value} lane", stands="collection is unaffected")
 
 
@@ -278,7 +309,7 @@ async def _enrich_job() -> None:
 
 
 async def _digest_job() -> None:
-    """Never fatal to the schedule; 08:00 and 09:00 try again."""
+    """Never fatal to the schedule; 08:10 and 09:10 try again."""
     try:
         await send_daily_digest(get_engine(), get_settings(), now=_now())
     except Exception:

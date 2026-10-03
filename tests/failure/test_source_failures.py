@@ -14,6 +14,7 @@ import pytest
 from pydantic import SecretStr
 
 from worker import scheduler
+from worker.cadence import FAST_INTERVAL
 from worker.collectors import http as http_mod
 from worker.collectors.http import FetchStatus
 from worker.db.jobs import JobRun
@@ -24,7 +25,13 @@ from worker.models import HealthStatus, LifecycleState, SourceConfig, SourceHeal
 from worker.pipeline import run as pipeline_run
 from worker.pipeline.health import assess, next_lifecycle_state
 from worker.settings import Settings
-from worker.watchdog.checks import Jobs, SourceState, job_findings, source_findings
+from worker.watchdog.checks import (
+    FAILING_AFTER,
+    Jobs,
+    SourceState,
+    job_findings,
+    source_findings,
+)
 
 from .conftest import KEY
 
@@ -124,24 +131,32 @@ async def test_one_failing_source_does_not_stop_the_others():
 
 
 def failed(n: int) -> list[SourceHealth]:
+    """`n` failed checks, one FAST run apart."""
     return [
-        SourceHealth(source_id="down", checked_at=NOW - timedelta(minutes=15 * i),
+        SourceHealth(source_id="down", checked_at=NOW - FAST_INTERVAL * i,
                      status=HealthStatus.ERROR, error="HTTP 503 after 3 attempts")
         for i in range(n)
     ]  # fmt: skip
 
 
-def test_five_failures_in_a_row_degrade_a_source_and_open_a_finding():
+def watched(failures: int) -> SourceState:
+    return SourceState(
+        source_id="down", name="Down", lane="fast", priority=1, host="down.example.org",
+        lifecycle="active", statuses=("error",) * failures, had_items=True,
+        last_error="HTTP 503 after 3 attempts", last_checked=NOW,
+    )  # fmt: skip
+
+
+def test_five_failures_in_a_row_degrade_a_source_and_its_lane_s_count_opens_a_finding():
     active = source("down").model_copy(update={"lifecycle_state": LifecycleState.ACTIVE})
     assert next_lifecycle_state(active, failed(4)) is LifecycleState.ACTIVE
     assert next_lifecycle_state(active, failed(5)) is LifecycleState.DEGRADED
 
-    state = SourceState(
-        source_id="down", name="Down", lane="fast", priority=1, host="down.example.org",
-        lifecycle="active", statuses=("error",) * 5, had_items=True,
-        last_error="HTTP 503 after 3 attempts", last_checked=NOW,
-    )  # fmt: skip
-    [finding] = source_findings([state])
+    # A fast source's finding does not wait for it to degrade: hourly, 5 checks is 5 hours.
+    opens = FAILING_AFTER["fast"]
+    assert opens <= 5
+    assert source_findings([watched(opens - 1)]) == []
+    [finding] = source_findings([watched(opens)])
     assert (finding.kind, finding.subject, finding.severity) == ("feed-failing", "down", "high")
 
 

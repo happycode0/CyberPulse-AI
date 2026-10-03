@@ -24,6 +24,7 @@ from typing import Any
 from pydantic import ValidationError
 from sqlalchemy import Connection
 
+from worker.cadence import FAST_INTERVAL
 from worker.db.crew import load_crew_activity, load_pipeline_ai
 from worker.db.events import load_event_dates, load_live_events
 from worker.db.merge import merged_redirects
@@ -57,12 +58,13 @@ MERGED_REDIRECT_WINDOW = timedelta(days=90)
 HEALTH_ERROR_MAX_CHARS = 300
 
 # crew.json: how recent an agent's last piece of work must be for it to read ACTIVE. The jobs'
-# own cadences, with slack: collection and source checks every 15 minutes, ground truth every
-# 6 hours, and the ledger whenever the pipeline calls a model.
+# own cadences, with slack: collection and source checks with every FAST run (worker/cadence.py),
+# ground truth every 6 hours, and the ledger whenever the pipeline calls a model. Two FAST
+# intervals, so an enrichment pass's publish between runs still reads PROWL and SERAPH as active.
 CREW_FRESH = {
     "librarian": timedelta(hours=7),
-    "prowl": timedelta(minutes=30),
-    "seraph": timedelta(minutes=30),
+    "prowl": 2 * FAST_INTERVAL,
+    "seraph": 2 * FAST_INTERVAL,
     "rogue": timedelta(hours=24),
 }
 

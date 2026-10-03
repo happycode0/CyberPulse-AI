@@ -459,10 +459,10 @@ Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it
 
 If the date placeholder is not accepted, drop it — Paperclip records when each issue was created.
 
-**What is *not* a routine, on purpose:** the 15-minute and 4-hour collection lanes, the
+**What is *not* a routine, on purpose:** the hourly and 4-hour collection lanes, the
 ground-truth sync and publishing. The worker owns those. As Paperclip routines they would create
-about 35,000 issues a year of pure noise, and would stop the site whenever Paperclip was down
-(PLAN.md §2.3).
+about 8,800 issues a year from the hourly lane alone, all noise, and would stop the site whenever
+Paperclip was down (PLAN.md §2.3).
 
 ## 8. 🔴 First test — one ticket, one agent
 
@@ -518,8 +518,8 @@ docker compose up -d --force-recreate worker server   # a restart keeps the old 
 docker compose logs -f worker      # the next run should log "done: ok=" and "published"
 ```
 
-Recreate both between collection runs (:00, :15, :30, :45 UTC): each reads the password only when
-its container is created, so `docker compose restart` would leave them on the old one.
+Recreate both between :10 and :45 past the hour, clear of the hourly collection run at :00 UTC:
+each reads the password only when its container is created, so `docker compose restart` would leave them on the old one.
 
 ### The old test install (from 2026-10-02)
 

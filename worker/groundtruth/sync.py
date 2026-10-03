@@ -4,7 +4,7 @@ This is to `worker/groundtruth/` what `worker/pipeline/run.py` is to the collect
 wires pure parsers to a database and a clock. It is deliberately a separate pass from a lane run,
 because the registers answer on a different clock than the feeds do: EPSS republishes once a day,
 KEV on CISA's working days, and a CVE's CNA record may gain a CVSS metric weeks after the advisory
-that made us care about it. Polling them at the 15-minute FAST cadence would be noise.
+that made us care about it. Polling them at the hourly FAST cadence would be noise.
 
 The failure model is the lane's, applied per register (PLAN.md §11): KEV failing must not stop EPSS,
 and neither failing may stop the CVSS batch. Each register is read and written in its own
@@ -156,8 +156,8 @@ class SyncSummary:
         Counts writes, not reads: a pass that confirmed 5,000 unchanged EPSS scores and re-checked
         400 CVEs that still have no CVSS changed nothing a reader could see. The scheduler uses this
         to decide whether to republish, and in the steady state the answer is usually no — the FAST
-        lane is republishing every 15 minutes regardless, so the only thing at stake is whether a
-        sync makes the site wait for it.
+        lane republishes after every run regardless, so the only thing at stake is whether a sync
+        makes the site wait for it.
         """
         kev_moved = bool(self.kev and (self.kev.updated or self.kev.delisted))
         epss_moved = bool(self.epss and self.epss.recorded)

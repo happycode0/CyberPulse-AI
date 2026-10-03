@@ -61,7 +61,7 @@ async def test_it_builds_into_the_configured_data_dir(wired):
 
 
 async def test_the_connection_is_closed_even_when_the_build_fails(wired, monkeypatch):
-    """A publish that leaked a connection every 15 minutes would exhaust the pool within a day."""
+    """A publish that leaked a connection after every run would exhaust the pool within a day."""
     log, _, _ = wired
 
     def boom(conn, out_dir, *, now):

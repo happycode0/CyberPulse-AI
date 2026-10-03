@@ -52,8 +52,9 @@ helper reads it inside the container, and every ops API answer passes the secret
 - **No one-off SQL that changes production rows.** These pages only read the database. If a repair
   needs a change, take a backup first ([backup and restore](backup-and-restore.md)) and decide it
   yourself.
-- **Restart between collection runs.** The fast lane runs at :00, :15, :30 and :45 UTC. Restart at
-  about :10 or :40 past. `date -u +%M` prints the minute.
+- **Restart between :10 and :45 past the hour.** The fast lane runs every hour at :00 UTC. Its
+  alerts and enrichment follow at :03 and :05, and the gate runs at :50. `date -u +%M` prints
+  the minute.
 - **A restart keeps the old environment.** After changing `.env`, use
   `docker compose up -d --force-recreate <service>`.
 - **Never print `.env`.** To check it parses: `docker compose config -q` (silent when fine). To
