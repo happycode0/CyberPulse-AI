@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import pytest
@@ -6,6 +7,7 @@ from apscheduler.triggers.cron import CronTrigger
 from worker import scheduler
 from worker.models import Lane
 from worker.ai.enrich import EnrichSummary
+from worker.publish.push import PushResult
 from worker.scheduler import ENRICH_JOB_ID, GROUNDTRUTH_JOB_ID, build_scheduler, job_id
 
 
@@ -85,16 +87,62 @@ def lane_job(monkeypatch):
             raise RuntimeError("schema validation failed")
         return [Path("data/live.json")]
 
-    state = {"run_raises": False, "publish_raises": False}
+    async def fake_push_now():
+        log.append(("push",))
+        if state["push_raises"]:
+            raise RuntimeError("git push failed: could not resolve host")
+        return state["pushed"]
+
+    state = {
+        "run_raises": False,
+        "publish_raises": False,
+        "push_raises": False,
+        "pushed": PushResult(pushed=True, commit_sha="a" * 40, reason=None),
+    }
     monkeypatch.setattr(scheduler.pipeline_run, "run_lane", fake_run_lane)
     monkeypatch.setattr(scheduler, "publish_now", fake_publish_now)
+    monkeypatch.setattr(scheduler, "push_now", fake_push_now)
     return log, state
 
 
-async def test_a_scheduled_lane_run_publishes_what_it_collected(lane_job):
+async def test_a_scheduled_lane_run_publishes_what_it_collected_and_pushes_it(lane_job, caplog):
     log, _ = lane_job
+    caplog.set_level(logging.INFO, logger="worker.scheduler")
     await scheduler._run_lane_job(Lane.FAST)
-    assert log == [("run", Lane.FAST), ("publish",)]
+    assert log == [("run", Lane.FAST), ("publish",), ("push",)]
+    assert "published 1 files after the fast lane" in caplog.text
+    assert f"pushed {'a' * 40} to the data branch" in caplog.text
+
+
+async def test_a_failed_publish_is_not_pushed(lane_job):
+    """The push would send the previous files again, as if they were this run's."""
+    log, state = lane_job
+    state["publish_raises"] = True
+    await scheduler._run_lane_job(Lane.FAST)
+    assert ("push",) not in log
+
+
+async def test_a_failed_push_does_not_stop_the_schedule(lane_job, caplog):
+    log, state = lane_job
+    state["push_raises"] = True
+    await scheduler._run_lane_job(Lane.FAST)  # must not raise
+    assert log[-1] == ("push",) and "push after the fast lane failed" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "pushed, says",
+    [
+        (None, None),  # no token on this host
+        (PushResult(pushed=False, commit_sha=None, reason="no changes"), "already current"),
+    ],
+)
+async def test_a_push_with_nothing_to_send_is_quiet(lane_job, caplog, pushed, says):
+    _, state = lane_job
+    state["pushed"] = pushed
+    caplog.set_level(logging.INFO, logger="worker.scheduler")
+    await scheduler._run_lane_job(Lane.FAST)
+    assert "pushed " not in caplog.text
+    assert says is None or says in caplog.text
 
 
 async def test_a_lane_that_could_not_run_does_not_publish(lane_job):
@@ -111,6 +159,21 @@ async def test_a_broken_publisher_does_not_stop_the_schedule(lane_job):
     state["publish_raises"] = True
     await scheduler._run_lane_job(Lane.FAST)  # must not raise
     assert log == [("run", Lane.FAST), ("publish",)]
+
+
+async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_job, monkeypatch):
+    log, _ = lane_job
+
+    class Changed:
+        changed_anything = True
+
+    async def fake_sync():
+        log.append(("sync",))
+        return Changed()
+
+    monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
+    await scheduler._groundtruth_job()
+    assert log == [("sync",), ("publish",), ("push",)]
 
 
 async def test_a_failed_run_is_swallowed_so_the_next_tick_still_fires(lane_job):
@@ -135,18 +198,22 @@ def enrich_job(monkeypatch):
         log.append(("publish",))
         return [Path("data/live.json")]
 
+    async def fake_push_now():  # as on a host with no publish token
+        log.append(("push",))
+
     monkeypatch.setattr(scheduler, "enrich_pending", fake_enrich_pending)
     monkeypatch.setattr(scheduler, "publish_now", fake_publish_now)
+    monkeypatch.setattr(scheduler, "push_now", fake_push_now)
     monkeypatch.setattr(scheduler, "AiLayer", lambda: "the layer")
     monkeypatch.setattr(scheduler, "_ai_layer", None)
     return log, state
 
 
-async def test_an_enrichment_that_changed_something_is_published(enrich_job):
+async def test_an_enrichment_that_changed_something_is_published_and_pushed(enrich_job):
     log, state = enrich_job
     state["summary"].done["brief"] = 1
     await scheduler._enrich_job()
-    assert log == [("enrich", "the layer"), ("publish",)]
+    assert log == [("enrich", "the layer"), ("publish",), ("push",)]
 
 
 async def test_an_enrichment_that_changed_nothing_is_not_published(enrich_job):

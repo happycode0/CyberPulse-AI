@@ -300,6 +300,24 @@ def test_a_cve_the_record_names_may_be_mentioned_in_any_case():
     assert b.summary == "Patch cve-2026-1234 now."
 
 
+def test_a_cve_written_with_non_breaking_hyphens_is_published_with_plain_ones():
+    # What gpt-oss-20b wrote on the first live pass, which the site could not search or link.
+    b = BRIEF.parse(brief_answer(summary="Patch CVE\u20112026\u20111234 now."), subject())
+    assert b.summary == "Patch CVE-2026-1234 now."
+
+
+@pytest.mark.parametrize("dash", ["\u2011", "\u2013", "\u2212", "\uff0d"])
+def test_a_cve_the_record_does_not_name_is_caught_whatever_dash_it_uses(dash):
+    summary = f"Attackers also used CVE{dash}2025{dash}0001 in the attack."
+    with pytest.raises(Rejected, match="CVE the record does not"):
+        BRIEF.parse(brief_answer(summary=summary), subject())
+
+
+def test_en_and_em_dashes_in_prose_are_kept():
+    summary = "Acme patched it \u2014 eventually \u2013 last week."
+    assert BRIEF.parse(brief_answer(summary=summary), subject()).summary == summary
+
+
 def test_copying_the_source_is_rejected_but_sharing_short_phrases_is_not():
     words = SOURCE_TEXT.split()
     copied = " ".join(words[:COPY_RUN]) + "."

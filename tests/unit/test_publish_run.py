@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from worker.publish import run as publish_run
+from worker.publish.push import PushResult
 from worker.publish.validate import ValidationFailure
 
 
@@ -133,3 +134,48 @@ async def test_the_build_runs_off_the_event_loop(monkeypatch):
     monkeypatch.setattr(publish_run, "_build", record)
     await publish_run.publish_now()
     assert seen["thread"] != threading.get_ident()
+
+
+# ─── Pushing ──────────────────────────────────────────────────────────────────────────────────────
+
+
+async def test_a_host_without_a_publish_token_pushes_nothing(wired, monkeypatch):
+    monkeypatch.setattr(publish_run, "publish_token_configured", lambda: False)
+    monkeypatch.setattr(publish_run, "push_data", lambda *a, **k: pytest.fail("pushed"))
+    assert await publish_run.push_now() is None
+
+
+async def test_a_push_sends_the_configured_data_dir(wired, monkeypatch):
+    _, _, data_dir = wired
+    sent = []
+    result = PushResult(pushed=True, commit_sha="a" * 40, reason=None)
+    monkeypatch.setattr(publish_run, "publish_token_configured", lambda: True)
+    monkeypatch.setattr(publish_run, "push_data", lambda d: sent.append(d) or result)
+    assert await publish_run.push_now() is result
+    assert sent == [data_dir]
+
+
+async def test_a_push_never_overlaps_a_build(wired, monkeypatch):
+    """The push hashes data/ while it runs; a build renaming new files in meanwhile would push a
+    tree no single build produced."""
+    events = []
+
+    def slow(name):
+        def run(*_):
+            events.append(f"{name} in")
+            time.sleep(0.05)
+            events.append(f"{name} out")
+            return [] if name == "build" else PushResult(False, None, "no changes")
+
+        return run
+
+    monkeypatch.setattr(publish_run, "_build", slow("build"))
+    monkeypatch.setattr(publish_run, "push_data", slow("push"))
+    monkeypatch.setattr(publish_run, "publish_token_configured", lambda: True)
+    # A lock binds to the loop that first waits on it, and each test has its own loop.
+    monkeypatch.setattr(publish_run, "_PUBLISH_LOCK", asyncio.Lock())
+    await asyncio.gather(publish_run.push_now(), publish_run.publish_now())
+    assert events in (
+        ["push in", "push out", "build in", "build out"],
+        ["build in", "build out", "push in", "push out"],
+    )
