@@ -117,7 +117,7 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 | **3** | Material change, source lineage, trends, decay, extra adapters | 🟢 | ✅ done, live on the VM |
 | **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | ▶ in progress |
 | **5** | Full crew + follow-up + Telegram + public crew page | 🟢🔴 | ▶ built, live on the VM; agents wait for you to resume them |
-| **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢 | |
+| **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢🔴 | ▶ watchdog and breaker live on the VM; the crew's part waits for your token and routine |
 | **7** | Hardening: backups, observability, failure injection, runbooks | 🟢🔴 | |
 
 **Stages 1–3 run entirely on your laptop or WSL.** No Proxmox needed until Stage 4, so you
