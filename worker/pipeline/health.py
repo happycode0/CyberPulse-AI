@@ -35,6 +35,8 @@ STALE_AFTER_DAYS: dict[str, int] = {
     "daily": 7,
     "weekly": 30,
     "monthly": 90,
+    # ASD's own news page: months between posts (231 days in 2025).
+    "quarterly": 270,
 }
 DEFAULT_STALE_AFTER_DAYS = STALE_AFTER_DAYS["daily"]
 

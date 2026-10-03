@@ -31,8 +31,8 @@ sources:
     enabled: true
     url: https://www.cyber.gov.au/rss/alerts
     parser: rss
-    expected_frequency: hourly
-    notes: null
+    expected_frequency: monthly
+    notes: "Measured on the VM over the year to 2026-10-03: median 8 days between alerts, longest 41"
 
   - id: acsc_advisories
     name: ACSC Advisories
@@ -46,8 +46,8 @@ sources:
     enabled: true
     url: https://www.cyber.gov.au/rss/advisories
     parser: rss
-    expected_frequency: daily
-    notes: null
+    expected_frequency: monthly
+    notes: "Measured on the VM over the year to 2026-10-03: median 10 days between advisories, longest 47"
 
   - id: acsc_news
     name: ACSC News
@@ -61,8 +61,8 @@ sources:
     enabled: true
     url: https://www.cyber.gov.au/rss/news
     parser: rss
-    expected_frequency: daily
-    notes: null
+    expected_frequency: weekly
+    notes: "Measured on the VM over the year to 2026-10-03: median 5 days between items, longest 21"
 
   - id: acsc_publications
     name: ACSC Publications
@@ -76,8 +76,8 @@ sources:
     enabled: true
     url: https://www.cyber.gov.au/rss/publications
     parser: rss
-    expected_frequency: daily
-    notes: null
+    expected_frequency: weekly
+    notes: "Measured on the VM over the year to 2026-10-03: 4 publications, at most 7 days apart"
 
   - id: cisa_advisories
     name: CISA Advisories
@@ -641,6 +641,66 @@ sources:
     # NVD and KEV status from cisa_kev, both of which are in this registry and work.
     notes: CVE update feed; disabled while behind a Cloudflare challenge.
 
+  # Sources with no feed (Stage 3): a listing page read by a named parser
+  # (worker/collectors/web_page.py), or a vendor API (worker/collectors/json_api.py).
+  - id: asd
+    name: ASD (Australian Signals Directorate)
+    publisher: asd
+    type: web_page
+    region: au
+    category: advisory
+    class: web_page
+    priority: 1
+    lane: normal
+    enabled: true
+    url: https://www.asd.gov.au/news
+    parser: asd_news
+    expected_frequency: quarterly
+    notes: "ASD's own news (cyber.gov.au is ACSC's). No feed; the listing page is read (worker/collectors/web_page.py). Months between posts: 231 days in 2025"
+
+  - id: oaic
+    name: Office of the Australian Information Commissioner
+    type: web_page
+    region: au
+    category: advisory
+    class: web_page
+    priority: 2
+    lane: normal
+    enabled: true
+    url: https://www.oaic.gov.au/news/media-centre
+    parser: oaic_media
+    expected_frequency: monthly
+    notes: "No feed; the media centre listing is read (worker/collectors/web_page.py). Up to 49 days between releases in Jun-Sep 2026"
+
+  - id: msrc_cvrf
+    name: Microsoft Security Updates
+    publisher: microsoft
+    type: json_api
+    region: global
+    category: vendor_advisory
+    class: feed
+    priority: 2
+    lane: normal
+    enabled: true
+    url: https://api.msrc.microsoft.com/cvrf/v3.0/updates
+    parser: msrc_cvrf
+    expected_frequency: monthly
+    notes: "Microsoft's monthly security releases, newest 12. Up to 35 days between releases since 2024"
+
+  - id: anthropic_news
+    name: Anthropic News
+    type: web_page
+    region: global
+    category: ai_security
+    class: web_page
+    priority: 4
+    lane: deep
+    enabled: true
+    url: https://www.anthropic.com/news
+    parser: anthropic_news
+    expected_frequency: weekly
+    notes: "No feed; the listing page is read (worker/collectors/web_page.py). Up to 9 days between posts in Aug-Sep 2026"
+
   # Disabled sources with reasons
   - id: securityweek
     name: SecurityWeek
@@ -670,21 +730,6 @@ sources:
     expected_frequency: real_time
     notes: "Blocked: Requires cost-gated API access"
 
-  - id: asd
-    name: ASD (Australian Signals Directorate)
-    publisher: asd
-    type: web_page
-    region: au
-    category: advisory
-    class: web_page
-    priority: 1
-    lane: fast
-    enabled: false
-    url: https://www.asdefence.gov.au/
-    parser: web_page
-    expected_frequency: daily
-    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
-
   - id: msrc_blog
     name: Microsoft Security Response Center Blog
     publisher: microsoft
@@ -698,35 +743,7 @@ sources:
     url: https://msrc.microsoft.com/blog/
     parser: web_page
     expected_frequency: daily
-    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
-
-  - id: anthropic_news
-    name: Anthropic News
-    type: web_page
-    region: global
-    category: ai_security
-    class: web_page
-    priority: 4
-    lane: deep
-    enabled: false
-    url: https://www.anthropic.com/news
-    parser: web_page
-    expected_frequency: daily
-    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
-
-  - id: oaic
-    name: Office of the Australian Information Commissioner
-    type: web_page
-    region: au
-    category: advisory
-    class: web_page
-    priority: 2
-    lane: normal
-    enabled: false
-    url: https://www.oaic.gov.au/
-    parser: web_page
-    expected_frequency: weekly
-    notes: "No feed endpoint - requires Stage 3 web_page/sitemap adapter"
+    notes: "Rendered by script, so the page holds no posts, and its feeds return 403. Microsoft's security releases come from msrc_cvrf instead"
 
   - id: acsc_threats
     name: ACSC Threats

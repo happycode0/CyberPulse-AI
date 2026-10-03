@@ -90,11 +90,69 @@ def kev_parser(source: SourceConfig, data: dict) -> list[RawItem]:
     return items
 
 
+MSRC_RELEASE_NOTE_URL = "https://msrc.microsoft.com/update-guide/releaseNote/"
+
+# The updates list goes back to 2016. A year of monthly releases is what a reader can still
+# act on; older ones would only be stored to be archived on the same run.
+MSRC_RELEASES_KEPT = 12
+
+
+def msrc_cvrf_parser(source: SourceConfig, data: dict) -> list[RawItem]:
+    """
+    Parse Microsoft's security release list (api.msrc.microsoft.com/cvrf/v3.0/updates).
+
+    Expects a top-level `value` list, one entry per release: ID ("2026-Oct"), DocumentTitle
+    ("October 2026 Security Updates"), InitialReleaseDate, CurrentReleaseDate.
+
+    The ID is the GUID, so a release that is revised, or loses "Early" from its title when the
+    month's main release ships, stays the one event. Only the newest MSRC_RELEASES_KEPT
+    releases are returned, by first release date.
+    """
+    releases = data.get("value")
+    if not isinstance(releases, list):
+        return []
+
+    now = datetime.now(UTC)
+    items: list[RawItem] = []
+    for release in releases:
+        if not isinstance(release, dict):
+            continue
+        release_id = str(release.get("ID") or "").strip()
+        document_title = str(release.get("DocumentTitle") or "").strip()
+        published = parse_date(release.get("InitialReleaseDate") or "")
+        if not release_id or not document_title or published is None:
+            continue
+
+        # Name the vendor: "October 2026 Security Updates" says nothing about whose.
+        title = (
+            document_title
+            if document_title.lower().startswith("microsoft")
+            else f"Microsoft {document_title}"
+        )
+        canonical = f"{release_id}|{title}".encode()
+        items.append(
+            RawItem(
+                source_id=source.id,
+                url=f"{MSRC_RELEASE_NOTE_URL}{release_id}",
+                guid=release_id,
+                title=title,
+                raw_summary=None,
+                published=published,
+                fetched_at=now,
+                payload_hash=hashlib.sha256(canonical).hexdigest(),
+            )
+        )
+
+    items.sort(key=lambda item: item.published, reverse=True)
+    return items[:MSRC_RELEASES_KEPT]
+
+
 # Registry of parser name -> callable
 JSON_PARSERS: dict[str, Callable[[SourceConfig, dict], list[RawItem]]] = {
     "kev": kev_parser,
     # The name config/sources.yaml uses for the CISA KEV source.
     "json_kev": kev_parser,
+    "msrc_cvrf": msrc_cvrf_parser,
 }
 
 
