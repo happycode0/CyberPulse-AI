@@ -1030,155 +1030,226 @@ settles it; until then a manual comment is the fallback.
 Static, no build step, no secrets, everything pre-computed. Design borrows technique from
 CYBERCORE CSS (MIT) and augmented-ui (BSD-2) but **depends on neither** — CYBERCORE is
 77 KB with unresolved "is this dead?" issues and no HUD primitives, and ARWES is
-explicitly unmaintained and React-bound. We ship ~15 KB of our own CSS.
+explicitly unmaintained and React-bound. We ship ~47 KB of our own CSS, unminified, since there
+is no build step.
 
 ### 8.1 Palette
 
-Cyan carries structure; warm colours mean severity — the discipline that makes a dashboard
-readable. Ratios below are measured against **both** card backgrounds and asserted, not just
-recorded, by `test_palette_meets_the_contrast_ratios_the_plan_claims`. Measuring against
-`--bg-panel` alone is how `--line-strong` shipped at 2.8:1 on the surface it actually draws
-`.btn` and `.input` borders on — under the 3.0 WCAG 1.4.11 requires. Cards sit on the lighter
-of the two, so the lighter one is the case that has to pass.
+Slate and cyan, from the owner's October 2026 spec: a slate page, panels and cards one step
+lighter on a 1px border, one cyan accent and four severity hues. **Colour is spent, not
+sprinkled.** Cyan means structure — a link, the selected control, the CYBER beat, a headline
+figure. Warm colours mean severity and nothing else. Violet means the AI beat. Pink means one
+thing: a value a model inferred rather than read off a source. Hierarchy in small print comes
+from size, weight and tracking, so micro-labels are grey.
 
-**Colour is spent, not sprinkled.** Cyan means exactly three things — a link, the selected
-tab, and a headline figure. Magenta means one: a value a model inferred rather than read off a
-source. Every micro-label on the page was cyan or teal in the first pass, which left no
-emphasis to spend on anything; hierarchy in small print now comes from size, weight and
-tracking, and the labels are grey.
+**Where the spec and a contrast floor disagree, the floor wins**, and a tint moves only as far as
+the floor needs. The floors are 4.5:1 for anything that carries text (WCAG 1.4.3 at the small
+sizes used here) and 3:1 for control borders and for hues used only as fills and borders (WCAG
+1.4.11). Ratios are measured against **both** backgrounds and asserted, not just recorded, by
+`test_palette_meets_the_contrast_ratios_the_plan_claims`. The surface is the lighter of the two,
+so it is the case that has to pass; an earlier palette shipped a control border at 2.8:1 because
+it was measured against the other one only.
 
-`--brand` is a token of its own, so that the `-AI` in the wordmark can have a colour meaning
-nothing else on the site. `--magenta` was the obvious reuse and is wrong: it marks model
-inference, so a magenta `-AI` would read as *unverified*. Red is unavailable too — the severity
-ramp owns 354° through 50°, and any red light enough to clear 4.5:1 on this background is a
-coral you cannot tell from `--sev-critical` at a glance. Violet is the one hue nothing else in
-the palette claims, which is what a brand colour has to be.
-
-A studio palette, not a neon one. The first pass paired a near-black page with saturated
-primaries (`#00E5FF`, `#FF2A6D`); at the sizes text is actually set that reads as glare.
-Backgrounds now lift off pure black, the accents come down to the soft blue-cyan the
-crew portraits glow with, and every severity hue is desaturated far enough that the label
-does the shouting and the colour only confirms it.
-
-| Token | Hex | Ratio | Role |
+| Token | Hex | Page / surface | Role |
 |---|---|---|---|
-| `--bg-void` | `#121926` | — | Page |
-| `--bg-panel` | `#19212D` | — | Panels |
-| `--bg-raised` | `#24303E` | — | Cards, inside a panel |
-| `--line` | `#394B62` | 1.8 / 1.5 | Container borders only |
-| `--line-strong` | `#5E7E9C` | 3.8 / 3.2 | Control borders, and nothing else (WCAG 1.4.11) |
-| `--text` | `#EDF2F7` | 14.4 / 11.9 | Body |
-| `--text-dim` | `#AFC0CD` | 8.7 / 7.2 | Secondary |
-| `--text-muted` | `#8A9CAB` | 5.7 / 4.7 | Micro-labels; minimum for small text |
-| `--cyan` | `#5BD6E8` | 9.4 / 7.8 | Links, selected tab, headline figure |
-| `--teal` | `#34A9BC` | 5.8 / 4.8 | Secondary lines |
-| `--magenta` | `#F2789F` | 6.1 / 5.1 | Model-inferred values only |
-| `--brand` | `#B184EB` | 5.7 / 4.7 | The `-AI` in the wordmark, and nothing else |
-| `--sev-critical` | `#F56C79` | 5.6 / 4.7 | Critical |
-| `--sev-high` | `#F09A4A` | 7.3 / 6.0 | High |
-| `--sev-medium` | `#E8C766` | 9.9 / 8.2 | Medium |
-| `--sev-low` | `#58C79C` | 7.8 / 6.4 | Low |
-| `--sev-info` | `#6FBEEA` | 7.9 / 6.5 | Info |
+| `--bg-page` | `#0F172A` | — | Page; the map's ocean; the inside of chips |
+| `--bg-surface` | `#1E293B` | 1.22 vs page | Panels, cards, sidebar |
+| `--line` | `#334155` | 1.72 / 1.41 | Container borders only |
+| `--line-strong` | `#64748B` | 3.75 / 3.07 | Control borders, and nothing else (1.4.11) |
+| `--text-head` | `#F8FAFC` | 17.06 / 13.98 | Headings and card titles |
+| `--text` | `#E2E8F0` | 14.48 / 11.87 | Body |
+| `--text-dim` | `#CBD5E1` | 12.02 / 9.85 | Card summaries |
+| `--text-muted` | `#94A3B8` | 6.96 / 5.71 | Secondary text and micro-labels; the floor for small text |
+| `--accent` | `#06B6D4` | 7.35 / 6.03 | Links, the selected control, the CYBER beat. `--bg-page` text on a cyan fill: 7.35 |
+| `--beat-ai` | `#A78BFA` | 6.56 / 5.38 | The AI beat, AI significance, the `-AI` in the wordmark |
+| `--ai-inference` | `#F472B6` | 6.74 / 5.52 | Model-inferred values only (`AI-SUGGESTED`) |
+| `--sev-critical` | `#EF4444` | 4.74 / 3.89 | Critical as a fill, border or bar. Never text |
+| `--sev-critical-text` | `#F26B6B` | 6.03 / 4.94 | Critical as text |
+| `--sev-high` | `#F59E0B` | 8.31 / 6.81 | High |
+| `--sev-medium` | `#FBBF24` | 10.69 / 8.76 | Medium |
+| `--sev-low` | `#10B981` | 7.04 / 5.77 | Low |
+| `--sev-info` | `#38BDF8` | 8.33 / 6.83 | Info |
 
-Ratios are `--bg-panel` / `--bg-raised`. The backgrounds have been lifted twice. The first step
-moved `--bg-raised` from `#18202B` to `#1A232E`, so that a card separates from its panel by tone
-alone; with that step visible, the nine inner card types dropped their 1px `--line` rectangles —
-roughly forty fewer hairlines on a full dashboard, and the borders that remain now mean
-something because they are the only rectangles left. Nothing that carries state lost its edge:
-an event card keeps its 4px severity bar, a source node its state colour, a pipeline node its
-lamp.
+**One spec hue failed as text, and only one token moved.** A badge is the spec's: the hue at 10%
+behind text in the hue, on a 1px border in the hue. Its text is read on the tint, which is
+lighter than the surface under it, so it is measured there. On that tint the spec red is 3.56:1.
+`#EF4444` therefore stays the token for fills, borders and bars, where the bar is 3:1 and it
+clears it, and anything *written* in red uses `--sev-critical-text`: the same hue moved 21% of the
+way to white, the least that clears 4.5 (20% is 4.47). Every other spec hue passes as given.
+`test_badge_text_clears_4_5_on_its_own_tint` measures each badge on its own tint over both
+backgrounds, and `test_the_spec_red_is_never_used_as_text` keeps `--sev-critical` out of every
+`color:`.
 
-The second step lifted all three backgrounds together — `--bg-raised` `#1A232E` → `#24303E`,
-0.0162 → 0.0284 relative luminance — because the page still read as switched off rather than
-dark. Every foreground ratio falls when a background rises, so the palette was re-derived
-against the new pair rather than carried across: `--line-strong` and `--sev-critical` came up to
-hold their floors, and `--line` came up furthest, because at `#253140` it sat within a hair of
-the new `--bg-raised` and every rule separating two rows of a table would have disappeared into
-the card drawing it. Lifting `--line` then broke something a contrast floor does not see: the
-map filled a country with no events in `--line`, so one event had become *quieter* than none and
-the legend read backwards. Tier 1 moved to `#29657D`, and the no-events fill stopped borrowing a
-border token altogether: `--map-none` `#334357` sits 2.1× below tier 1, which is the step the
-ramp had before the lift, and 3.6× above the ocean so land still reads as land. The five tiers
-now climb 0.054, 0.113, 0.195, 0.327, 0.561 relative luminance — an even geometric ramp — and
-`test_the_map_load_ramp_ascends_in_luminance` asserts the ordering.
+| Badge text, on its own 10% tint | Over page | Over surface |
+|---|---|---|
+| Critical in the spec red `#EF4444` (not used) | 4.35 | 3.56 |
+| Critical, `--sev-critical-text` | 5.53 | 4.53 |
+| High | 7.17 | 5.72 |
+| Medium | 8.85 | 7.10 |
+| Low | 6.09 | 4.94 |
+| Info | 6.99 | 5.63 |
+| Unrated (`--text-muted`) | 5.97 | 4.81 |
+| AI significance (`--beat-ai`) | 5.64 | 4.56 |
 
-Shape: one radius (`--radius` 14px, `--radius-sm` 8px) on panels, cards, inputs and
-controls; chips and tabs are full pills. The chamfered corner the first pass clipped onto
-every panel was the loudest piece of HUD costume on the page, and it fought the subject —
-the crew are drawn as soft-radius bots.
+The world map's load ramp is cyan only. It climbs from `--map-none` `#334155` through `#155E75`,
+`#0E7490` and `#0891B2` to `--accent`: 0.051, 0.094, 0.146, 0.235 and 0.382 relative luminance,
+each step 1.36–1.52×. Against the ocean (`--bg-page`) that is 1.72, 2.46, 3.33, 4.85 and 7.35, so
+land with no events still reads as land. `test_the_map_load_ramp_ascends_in_luminance` asserts
+the order, because an earlier lift of `--line` once made one event render *quieter* than none and
+the legend read backwards. The count is never carried by the ramp alone: each country's
+`aria-label` and the paired `<select>` carry it as a number.
 
-**Typography: two faces, one job each.** `--font-sans` — the system UI stack — sets every
-word; `--font-mono` — JetBrains Mono 400/600, self-hosted, SIL OFL — sets every figure.
+Shape: `--radius` 8px on panels, cards and inputs, `--radius-sm` 4px on chips and badges, and 6px
+on buttons. Containers draw a 1px `--line` and anything pressable a 1px `--line-strong`. The one
+stripe that carries state is the 3px left border on a top-signal or watch row, in its severity
+colour (violet on the AI beat).
 
-There were four tokens across three families before, and the two display families were the
-reason the page read as costume. Orbitron is a squared-off sci-fi face and Chakra Petch a
-semi-technical one, and between them they set the brand, every panel title and every caption.
-Neither is more readable than the reader's own UI font, and each cost a download. Both were
-deleted — six `woff2` files, ~49 KB, and two `<link rel=preload>` per page — along with their
-OFL sections. Hierarchy now comes from size, weight and tracking: body at 17px/1.65, panel
-titles 15px/600 at `.09em` uppercase, micro-labels 12px/600 at `.08–.09em`. Uppercase caption
-text carries more tracking than it did, because a humanist face needs more of it than a squared
-one to stay legible at caps.
+**Typography: two faces, one job each.** `--font-sans` — the system UI stack — sets body text:
+titles, summaries and prose. `--font-mono` — JetBrains Mono 400/600, self-hosted, SIL OFL — sets
+data and system text only: timestamps, counts, identifiers, CVEs, tags, badges, panel titles and
+controls. A proportional face genuinely cannot hold columns of figures and identifiers in line,
+which is the whole of mono's job; a figure belongs in the face with `tabular-nums`. No font is
+fetched from anywhere else: both faces ship in `site/assets/fonts/`, and the CSP's
+`font-src 'self'` would refuse any other origin. Sizes follow the spec: body 16px/1.6; card titles
+1.1rem/600 in `--text-head`; summaries 0.95rem/1.5 in `--text-dim`; card headers mono 0.85rem;
+tags mono 0.75rem; panel titles mono 12.5px/600 at `.1em` uppercase. Two display faces (Orbitron
+and Chakra Petch) were removed in an earlier pass as costume. `test_fonts_ship_with_their_licence`
+derives the family list from the `@font-face` rules and asserts that the served files and the
+shipped files are the same set, so a face cannot drift out of its licence or leave dead bytes
+behind.
 
-Mono earns its download on the one thing a proportional face genuinely cannot do: hold columns
-of figures, timestamps and identifiers in line. It also now sets the two large numerals — the
-CyberPulse Index and the gauge counts — which were in the display face; a figure belongs in the
-face with `tabular-nums`. `test_fonts_ship_with_their_licence` derives the family list from the
-`@font-face` rules and asserts served files and shipped files are the same set, so a face cannot
-drift out of its licence or leave dead bytes behind.
-
-The page background is flat. The graph-paper grid and the scanline film that preceded it were
+The page background is flat. The graph-paper grid and the scanline film that came before it were
 both atmosphere paid for in legibility — ruled lines running under body copy, and a translucent
 wash over every glyph.
 
-Crew portraits: each of the sixteen agents is drawn as a little bot in inline SVG — one shared
-shell (head, visor, two eyes, vents, a seam across the jaw, a highlight across the visor) plus
-one accessory per agent, keyed by `CREW[].face`, that says what the agent does. Accessories run
-four to seven nodes each rather than one or two: the akubra has a dented dome, a hatband and a
-chin cord; the hard hat has ridges and a lamp; the tally closes with its fifth stroke; the
-clipboard has a clip. Two ink weights exist for that detail — `.bot-etch` strokes in the page
-colour, because a ridge on a filled shape cannot be drawn in the same ink as the fill, and
-`.bot-glint` is a half-opacity highlight. Inline because the CSP serves no external images, and
-because drawn eyes inherit `--bot-accent` from the card's desk, so the roster follows the
-palette instead of a sprite sheet.
+Crew portraits: each of the eight agents is drawn as a little bot in inline SVG. There is one
+shared shell (head, visor, two eyes, vents, a seam across the jaw, a highlight across the visor),
+plus one accessory per agent, keyed by `CREW[].face`, that says what the agent does: a crown, a
+lens, a scanner, an antenna tilted towards a find, a hard hat, a dish, a shield and a mirror.
+Accessories run four to seven nodes each rather than one or two. Two ink weights exist for that
+detail: `.bot-etch` strokes in the page colour, because a ridge on a filled shape cannot be drawn
+in the same ink as the fill, and `.bot-glint` is a half-opacity highlight. The portraits are
+inline because the CSP serves no external images, and because drawn eyes inherit `--bot-accent`
+from the card's desk, so the roster follows the palette instead of a sprite sheet.
 
 The same drawing appears twice: at 62px on the crew card, and at 30px in the first column of the
-run table, which is what ties the two views of the roster together. At the smaller size the
-etched detail drops out and the accessory silhouette does the identifying, so a row still reads
-as a particular agent rather than a generic bot. One vector serves both — `botFace()` takes its
-class as a parameter — rather than a second, coarser set of paths to keep in step with the
-first.
+run table, which ties the two views of the roster together. At the smaller size the etched detail
+drops out and the accessory silhouette does the identifying, so a row still reads as a particular
+agent rather than a generic bot. One vector serves both — `botFace()` takes its class as a
+parameter — rather than a second, coarser set of paths to keep in step with the first.
 
 ### 8.2 Sections
 
-`AUSTRALIA NOW` (visually dominant) · `GLOBAL CYBER` · `AI + CYBER` ·
-`ACTIVE EXPLOITATION` · `DEVELOPING EVENTS` · `EMERGING THREATS` · `THREAT ACTORS` ·
-`VULNERABILITIES` · `RESEARCH` · `POLICY / REGULATION` · `THE CREW` (sanitised agent
-status — the org made visible) · `SYSTEM`.
+The page has one header, one sidebar and three views, and every section the page used to have
+lives in one of them.
 
-Twelve sections, five tabs: `AUSTRALIA NOW` · `GLOBAL CYBER` · `AI + CYBER` · `OVERVIEW` ·
-`THE CREW`. One tab per section was a strip of thirteen pills that read as a wall and made the
-choice harder than the content behind it, so `OVERVIEW` carries the seven threat and context
-sections stacked inside it behind a jump list, and `SYSTEM` sits inside `THE CREW` — both answer
-who and what produced the page. Every section keeps its own id and heading, so `#sec-vulnerabilities`
-and friends stay linkable from the headline list, from `event.html`, from `history.html` and from
-anyone's bookmark; `initTabs()` resolves an id that has no tab to the panel holding it.
+**Header** (sticky above 720px):
+- The wordmark.
+- `LAST COMPLETED COLLECTION <UTC>`, with the Sydney time beside it; never "LIVE".
+- HISTORY and FX OFF.
+- Under these, the filter row:
+  - SCOPE: `AUSTRALIA` (preselected) · `GLOBAL` · `ALL`, a radio group.
+  - BEAT: `CYBER` · `AI`, two toggles.
+  - `TAG FILTERS`, a popover that holds every tag facet.
+  - `CLEAR FILTERS`, and `n OF N EVENTS`.
+
+GLOBAL means *not Australian*, decided by the same `isAu()` that defines AUSTRALIA, so the two
+partition ALL exactly. A beat toggle matches its own beat and `both`. With neither pressed every
+story shows, `other` included. Facets are OR within a dimension and AND across dimensions.
+Scope, beat and tags apply to every view, the dashboard included.
+
+**Sidebar.** It lists the three views first, then two groups of presets that open Events:
+- **GEOGRAPHIC SCOPE** sets the scope: `AUSTRALIA NOW` and `GLOBAL CYBER`.
+- **INTELLIGENCE FEEDS** keep the scope and add a feed: `AI + CYBER` (the AI beat), `ACTIVE EXPLOITATION`, `VULNERABILITIES`, `THREAT ACTORS`, `POLICY & RESEARCH`, `DEVELOPING EVENTS` and `EMERGING THREATS`.
+
+Every preset shows its count at the current scope, beat and tags. A feed with matches outside
+the scope also shows `+n IN ALL`, which widens to ALL in one click. Under 900px the sidebar folds
+behind MENU and opens in the flow above the view, never over it.
+
+**Views:**
+- **DASHBOARD** (the default) shows the WORLD MAP, SEVERITY DISTRIBUTION, PULSE (the CyberPulse Index and the threat radar), TOP SIGNALS, DEVELOPING EVENTS, EMERGING THREATS and TRENDS.
+- **EVENTS** is one list of event cards, headed by the preset that opened it. A notice offers to widen when the scope hides matches.
+- **THE CREW & SYSTEM** shows the eight agents, then SYSTEM: how this runs, the collection replay, sources and versions.
+
+The old sections map onto this layout as follows:
+- The three domain sections are now the scope and the beat.
+- The seven threat and context sections are now feeds of the one Events list: `active-exploitation`, `developing-events`, `emerging-threats`, `threat-actors`, `vulnerabilities`, `research` and `policy-regulation`.
+- POLICY & RESEARCH applies the last two. These match the AI desk's equivalents too: `research` includes `ai-research`, and `policy-regulation` includes `ai-governance`.
+
+The tag filter keeps its facets, without the old AI facet. The AI subdomains are now the AI
+SUBDOMAIN tag, and the beat has its own row. Category tags show their labels (AI INDUSTRY, MODEL
+RELEASE and so on), while cards keep the raw `#slug`.
+`test_every_section_the_js_renders_has_a_home_in_the_markup` requires every feed to be applied by
+a sidebar preset, so a feed cannot be lost in silence.
+
+**The URL is the state:** `?view=&scope=&beat=&feed=&tag=dim:value&event=`. `parseLocation()` and
+`toSearch()` round-trip it, so any state a reader can reach is a link. A link can name a story
+that the current scope or tags hide: `?event=`, a link from `event.html`, or a related event. In
+that case only what is in the way is lifted (`sectionFor()`): the scope goes to ALL, the beat and
+any tag that excludes the story are dropped, and every other tag stays.
+
+**Old anchors.** No `#sec-*` id is a place on the page any more. Bookmarks, older builds of
+`event.html` and `history.html`, and other people's pages still carry them. `LEGACY_ANCHORS`
+sends each one to the view and scope that show what it used to, and `replaceState` rewrites the
+address. An anchor on a URL this version wrote is not treated as legacy.
+
+| Old anchor | Opens |
+|---|---|
+| `#sec-australia-now` | `?view=events&scope=au` |
+| `#sec-global-cyber` | `?view=events&scope=global` |
+| `#sec-ai-cyber` | `?view=events&scope=all&beat=ai` |
+| `#sec-overview` | `?view=dashboard&scope=all` |
+| `#sec-trends` | `?view=dashboard&scope=all#sec-trends` |
+| `#sec-active-exploitation` | `?view=events&scope=all&feed=active-exploitation` |
+| `#sec-developing-events` | `?view=events&scope=all&feed=developing-events` |
+| `#sec-emerging-threats` | `?view=events&scope=all&feed=emerging-threats` |
+| `#sec-threat-actors` | `?view=events&scope=all&feed=threat-actors` |
+| `#sec-vulnerabilities` | `?view=events&scope=all&feed=vulnerabilities` |
+| `#sec-research` | `?view=events&scope=all&feed=research` |
+| `#sec-policy-regulation` | `?view=events&scope=all&feed=policy-regulation` |
+| `#sec-the-crew` | `?view=crew&scope=au` |
+| `#sec-system` | `?view=crew&scope=au#sec-system` |
+
+A section link used to show everything that section held, so the old section anchors open at ALL.
+`#sec-australia-now` and `#sec-global-cyber` keep their own scope. `event.html` and
+`history.html` share the theme, and their header nav reads DASHBOARD · AUSTRALIA NOW · ALL EVENTS ·
+VULNERABILITIES · THE CREW & SYSTEM · HISTORY.
 
 ### 8.3 Components
 
-1. **HUD panel** — chamfered `clip-path`, bracket corners, header strip with panel ID and status dot, tick ruler.
+1. **Panel** — `--bg-surface` on a 1px `--line`, an 8px radius, and a header strip with a mono title, a status LED and a count. There are no chamfers, bracket corners or tick rulers.
 2. **CyberPulse Index** — our own composite index (explicitly ours, not an official scale) with an EKG pulse line of 24 h event volume.
 3. **Threat radar** — concentric rings, conic-gradient sweep; blips positioned by severity (ring) and category (angle); AU events double-ringed.
 4. **Severity gauges** — 270° SVG arc with `pathLength=100`, plus segmented bars; `role="img"` with `aria-label`.
-5. **Event card** — severity stripe with shape *and* label, source-class badge, mono CVE/IOC, magenta `AI-SUGGESTED` chip, AEST time, hex region badge.
-6. **Event detail** — the full §5 field set, evidence separated from AI inference, timeline, related events, source reports.
+5. **Event card** — built to the owner's spec, all by class and with no inline styles:
+   - **Box:** `margin: 0 0 16px`, 16px padding, `--bg-surface` on a 1px `--line`.
+   - **Header:** mono 0.85rem, with the AEST/AEDT time on the left and the rank badge on the right.
+   - **Title:** 1.1rem, linking to `event.html`.
+   - **Summary:** 0.95rem/1.5.
+   - **Tag footer:** an 8px gap and mono 0.75rem, in this order:
+     - the beat chip: CYBER in cyan, AI and CYBER + AI in violet, OTHER in grey;
+     - `AU` when the story was reported directly in Australia;
+     - the `#category` chips;
+     - the mono CVE chips, with `KEV` in the critical text tint on a red border;
+     - the pink `AI-SUGGESTED` chip;
+     - the source class.
+   - Categories and CVEs beyond the first few collapse to `+n` and `+n CVE`.
+   - DETAIL expands in place.
+6. **Event detail** — the full §5 field set, evidence separated from AI inference, timeline, related events and source reports. A `SEVERITY VIA` chip names the severity's source; an AI-only story has no severity, so it has no such chip.
 7. **Timeline** — tick-mark axis, hex nodes, day grouping, keyboard navigable.
 8. **Pipeline flow** — SOURCES → COLLECT → MATCH → VERIFY → ENRICH → CROSS-REF → SCORE → PUBLISH, circuit-trace SVG paths with travelling dash pulses, per-node counter and status LED, source nodes coloured healthy/degraded/broken.
-9. **World map** — world-atlas `countries-110m.json` (Natural Earth, **public domain**, 108 KB) + `d3-geo` as ES modules, Equal Earth rotated to 150°E so Australia sits centre. ISO-3166 numeric `id` per country enables click-to-filter; paired with a `<select>` for keyboard/screen-reader parity.
-10. **Ticker** — pausable, `aria-hidden` duplicate track, static list under reduced motion.
+9. **World map** — world-atlas `countries-110m.json` (Natural Earth, **public domain**, 108 KB) + `d3-geo` as ES modules, Equal Earth rotated to 150°E so Australia sits centre. ISO-3166 numeric `id` per country enables click-to-filter, which filters every view; paired with a `<select>` for keyboard/screen-reader parity. The ramp is in §8.1.
+10. **Top signals** — the static list that replaced the scrolling ticker. It shows the highest-prominence stories at the current scope, beat and tags. Each row has its rank badge and a 3px left border in its severity, and choosing one opens it in Events.
 11. **Boot sequence** — ≤2.5 s typed terminal, once per session, skippable, skipped entirely under reduced motion, never blocking content.
-12. **Tag filter** — client-side across severity, CVE, country, source, org, product, sector, actor, MITRE, AU, AI, category.
-13. **History** — previous/next day and jump-to-date via `data/index.json`.
+12. **Tag filter** — client-side across severity, AI significance, Australia, category, AI subdomain, source, CVE, country, organisation, product, sector, actor and MITRE. It sits in a popover under the filter row, stays open while chips are chosen, and closes on Escape or an outside click.
+13. **History** — previous/next day and jump-to-date via `data/index.json`, in the same theme and card.
+14. **Rank badge** — a story is ranked by severity on the cyber desk and by significance on the AI desk.
+    - **Severity badge:** a glyph (◆ ▲ ● ■ ○), a label and a bar count. The text is in `--sev-text` on a 10% tint of the hue, with a 1px border in the hue. With a CVSS score it reads `CRITICAL (CVSS: 9.8)`. An unrated story reads `UNRATED`, never a zero.
+    - **AI-only story:** shows its significance instead: `AI · MAJOR`, `NOTABLE`, `MINOR` or `UNRATED`, with three bars, in violet, on a dashed border so it never reads as a severity.
+    - **Story on both desks:** shows severity first and significance beside it as the secondary badge.
+    - The detail page uses the same badges.
+15. **Scope and beat** — the header's SCOPE radio group (AUSTRALIA preselected) and BEAT toggles. Each is a real `<input>` or a `<button aria-pressed>`, with a filled cyan state and `--bg-page` text (7.35:1), so the pressed state is never colour alone: a ✓ marks a pressed beat.
+16. **Sidebar presets** — the geographic scopes and the intelligence feeds of §8.2, each with its count in the snapshot at the current filters and, for a feed, the one-click `+n IN ALL` widen.
 
 ### 8.4 Non-negotiables
 

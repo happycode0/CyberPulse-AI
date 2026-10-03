@@ -55,7 +55,7 @@ def test_canvas_loop_pauses_when_hidden_and_offscreen():
 
 # The scrolling headline banner was removed: perpetual motion above the fold competed with
 # the content and could not be read at a glance. "Top signals" replaces it as a static list
-# inside the OVERVIEW tab, so there is nothing left to pause.
+# on the Dashboard, so there is nothing left to pause.
 def test_headline_banner_does_not_move():
     for rel in ("site/index.html", "site/assets/hud.js", "site/assets/hud.css"):
         assert "ticker" not in read(rel).lower(), rel
@@ -78,53 +78,78 @@ def test_absent_detail_fields_render_nothing_not_the_word_null():
     assert "append(root, [" in fn
 
 
-def test_every_tab_panel_is_a_sibling_under_the_tab_strip():
-    """Guards the reason the tabs looked broken.
+def _section_ids(js: str) -> list[str]:
+    block = js.split("export const SECTIONS", 1)[1].split("];", 1)[0]
+    return re.findall(r"\{\s*id: '([\w-]+)',\s*match:", block)
+
+
+def test_every_view_is_a_sibling_under_main():
+    """Guards the reason the old tabs looked broken.
 
     The panels used to be split: AUSTRALIA NOW above, the rest below the gauges, the world
     map and the filter panel. Selecting a tab swapped a panel ~1900px down the page, so the
-    viewport did not visibly change and the tab read as dead. Every target the nav links to
-    has to live in the single .tab-panels container, with nothing untabbed between them.
+    viewport did not visibly change and the tab read as dead. Every view the sidebar links to
+    has to be a direct child of the one <main>, and the sidebar has to link to every view.
     """
     html = read("site/index.html")
-    nav = html.split('<nav class="site-nav"', 1)[1].split("</nav>", 1)[0]
-    targets = re.findall(r'href="#(sec-[\w-]+)"', nav)
-    assert len(targets) == 5, targets
-    panels = html.split('<div class="tab-panels">', 1)[1]
-    for target in targets:
-        assert f'id="{target}"' in panels, target
+    js = read("site/assets/hud.js")
+    declared = re.findall(r"'([\w-]+)'", re.search(r"export const VIEWS = \[([^\]]*)\]", js).group(1))
+    sidebar = html.split('<nav class="sidebar"', 1)[1].split("</nav>", 1)[0]
+    assert re.findall(r'data-view-link="([\w-]+)"', sidebar) == declared
+    main = html.split('<main id="main"', 1)[1].split("</main>", 1)[0]
+    for name in declared:
+        assert re.search(rf'\n    <section class="view" id="view-{name}"', main), name
+    assert main.count('class="view"') == len(declared), "a view the sidebar cannot reach"
 
 
 def test_every_section_the_js_renders_has_a_home_in_the_markup():
-    """Thirteen tabs became five, and the other sections moved inside two of the panels.
+    """Thirteen tabs became five, and five tabs became three views with one Events list.
 
-    A section that renders into no container is silently empty, and one that sits outside every
-    panel is the opposite failure: initTabs() only hides the panels it knows about, so an
-    orphaned section would show on every tab at once. Both are invisible in a diff, hence this.
+    The three domain sections became the scope and the beat, and the other seven became feeds of
+    that list. A feed nothing can turn on is as lost as a section that renders into no container,
+    so every feed has to be applied by a sidebar preset, every preset needs its link and count in
+    the sidebar, and the list renders into exactly one body: a second would be a container
+    nothing fills. Each is invisible in a diff, hence this.
     """
     html = read("site/index.html")
     js = read("site/assets/hud.js")
-    ids = re.findall(r"\{\s*id: '([\w-]+)',\s*match:", js.split("export const SECTIONS", 1)[1].split("];", 1)[0])
-    assert len(ids) == 10, ids
-    panels = html.split('<div class="tab-panels">', 1)[1].split("</main>", 1)[0]
-    for section_id in ids:
-        assert f'data-section-body="{section_id}"' in panels, section_id
-        assert f'data-count-for="{section_id}"' in panels, section_id
-    assert html.count('data-section-body=') == len(ids), "a body with no section renders nothing"
+    ids = _section_ids(js)
+    assert len(ids) == 7, ids
+    presets = js.split("export const PRESETS = [", 1)[1].split("\n];", 1)[0]
+    fed = set()
+    for feeds in re.findall(r"feedPreset\('[\w-]+', '[^']+', \[([^\]]*)\]\)", presets):
+        fed.update(re.findall(r"'([\w-]+)'", feeds))
+    assert set(ids) <= fed, f"no preset applies: {sorted(set(ids) - fed)}"
+    sidebar = html.split('<nav class="sidebar"', 1)[1].split("</nav>", 1)[0]
+    preset_ids = re.findall(r"(?:\{ id: |feedPreset\()'([\w-]+)'", presets)
+    assert len(preset_ids) == 9, preset_ids
+    for preset in preset_ids:
+        assert f'data-preset="{preset}"' in sidebar, preset
+        assert f'data-preset-count="{preset}"' in sidebar, preset
+    assert html.count("data-section-body=") == 1 and 'data-section-body="events"' in html
+    assert 'data-count-for="events"' in html
 
 
-def test_a_section_id_that_is_not_a_tab_resolves_to_its_panel():
-    """Most section ids no longer have a tab, and three callers still pass them.
+def test_every_old_anchor_opens_the_view_that_now_holds_it():
+    """No #sec-* id is a place on the page any more, and old links still carry all of them.
 
-    renderHeadlines() builds href="#sec-<section>", revealEvent() calls activateTab('sec-...'),
-    and old bookmarks carry the same ids. initTabs() has to map such an id to the panel that
-    contains it; the failure mode if it does not is a link that quietly opens the first tab,
+    Bookmarks, event.html and history.html before this change, and other people's pages link to
+    the sections the dashboard used to have. Each has to open the view and scope that show what
+    it used to; the failure mode if one does not is a link that quietly opens the dashboard,
     which looks like a working link to the wrong place rather than a broken one.
     """
     js = read("site/assets/hud.js")
-    tabs = js.split("export function initTabs", 1)[1]
-    assert "closest('[role=\"tabpanel\"]')" in tabs, "no resolution from a section id to its panel"
-    assert "scrollIntoView({ block: 'start' })" in tabs, "a sub-section target is not scrolled to"
+    block = js.split("export const LEGACY_ANCHORS = {", 1)[1].split("\n};", 1)[0]
+    mapped = set(re.findall(r"'(sec-[\w-]+)':", block))
+    old = {"sec-australia-now", "sec-global-cyber", "sec-ai-cyber", "sec-overview", "sec-trends",
+           "sec-the-crew", "sec-system"} | {f"sec-{i}" for i in _section_ids(js)}
+    assert old <= mapped, f"unmapped: {sorted(old - mapped)}"
+    assert "'sec-global-cyber': { view: 'events', scope: 'global' }" in block
+    parse = js.split("export function parseLocation", 1)[1].split("\n}\n", 1)[0]
+    assert "Object.hasOwn(LEGACY_ANCHORS, anchor)" in parse, "an old anchor is not looked up"
+    views = js.split("export function initViews", 1)[1]
+    assert "if (legacy) window.history.replaceState" in views, "the old address is not rewritten"
+    assert "addEventListener('hashchange'" in views, "an in-page old anchor is not followed"
 
 
 def test_a_sub_section_jump_keeps_correcting_until_it_settles():
@@ -137,9 +162,9 @@ def test_a_sub_section_jump_keeps_correcting_until_it_settles():
     single call is wrong, and so is a loop that stops at the first frame that looks right — that is
     the frame before the one that spoils it.
     """
-    tabs = read("site/assets/hud.js").split("export function initTabs", 1)[1]
-    assert "requestAnimationFrame(step)" in tabs, "the scroll correction is not a loop"
-    assert "good < 3" in tabs, "stopping on one good frame stops one frame too early"
+    views = read("site/assets/hud.js").split("export function initViews", 1)[1]
+    assert "requestAnimationFrame(step)" in views, "the scroll correction is not a loop"
+    assert "good < 3" in views, "stopping on one good frame stops one frame too early"
 
 
 def test_the_sticky_header_height_is_measured_not_assumed():
@@ -147,7 +172,7 @@ def test_the_sticky_header_height_is_measured_not_assumed():
 
     .site-header measures 93px at 1320 and 222px at 375, and grows again once renderStrip() puts
     real timestamps in the status strip and the strip wraps. A fixed 120px hid every jump at 375px
-    behind the header; a value sampled when initTabs() runs was still 24px short of the final
+    behind the header; a value sampled when initViews() runs was still 24px short of the final
     height. Only observing it is correct, so .subsection reads the measurement and the literal in
     the CSS is just the no-JS fallback.
     """
@@ -201,14 +226,15 @@ def test_the_crew_roster_renders_even_when_the_feed_cannot_be_read():
 
 
 def test_a_deep_link_to_a_sub_section_is_finished_after_the_first_render():
-    """initTabs() runs before the data arrives, so on load the target is not where it will end up.
+    """initViews() runs before the data arrives, so on load the target is not where it will end up.
 
     Measured on a cold load of #sec-vulnerabilities: the scroll settled at 960 against a final
     heading position of 3926 — the right tab open, several screens short of the section the link
-    named. main() has to come back to it once the sections hold their events.
+    named. main() has to come back to a block inside a view (#sec-trends, #sec-system) once the
+    views hold their content.
     """
     js = read("site/assets/hud.js")
-    assert "return { activate, rescrollToHash }" in js, "initTabs does not expose the deep-link fix"
+    assert "return { activate, rescrollToHash }" in js, "initViews does not expose the deep-link fix"
     assert "rescrollToHash" in js.split("export async function main", 1)[1], "main() never calls it"
 
 
@@ -217,18 +243,20 @@ def _main_body(js: str) -> str:
 
 
 def test_trends_have_a_home_and_a_jump_link_but_no_section_body():
-    """TRENDS reads trends.json, not the event list, so it is not one of the ten sections.
+    """TRENDS reads trends.json, not the event list, so it is not one of the feeds.
 
-    Given a data-section-body it would be counted as a section with nothing to render; outside
-    every panel it would show on every tab. It sits inside OVERVIEW with its own host.
+    Given a data-section-body it would be counted as a list with nothing to render; outside every
+    view it would show on all of them. It sits inside the Dashboard with its own host, and the
+    old #sec-trends link (and a #sec-trends fragment on the dashboard) still lands on it.
     """
     html = read("site/index.html")
-    panels = html.split('<div class="tab-panels">', 1)[1].split("</main>", 1)[0]
-    overview = panels.split('id="sec-overview"', 1)[1].split('id="sec-the-crew"', 1)[0]
+    main = html.split('<main id="main"', 1)[1].split("</main>", 1)[0]
+    dashboard = main.split('id="view-dashboard"', 1)[1].split('id="view-events"', 1)[0]
     for needle in ('id="sec-trends"', 'id="trends"', 'id="trends-count"', 'id="trends-led"'):
-        assert needle in overview, needle
-    subnav = html.split('<nav class="subnav"', 1)[1].split("</nav>", 1)[0]
-    assert 'href="#sec-trends"' in subnav
+        assert needle in dashboard, needle
+    js = read("site/assets/hud.js")
+    assert "'sec-trends': { view: 'dashboard', scope: 'all', anchor: 'sec-trends' }" in js
+    assert "dashboard: ['sec-trends']" in js, "#sec-trends is not an anchor inside the dashboard"
     assert 'data-section-body="trends"' not in html
 
 
@@ -248,7 +276,7 @@ def test_trends_are_read_before_the_sections_and_the_deep_link_settle():
     body = _main_body(read("site/assets/hud.js"))
     readable = body.split("if (!data) {", 1)[1].split("\n  }\n", 1)[1]
     trends = readable.index("renderTrends(await getJson(`${data.base}trends.json`")
-    assert trends < readable.index("refresh();\n") < readable.rindex("tabs?.rescrollToHash()")
+    assert trends < readable.index("refresh();\n") < readable.rindex("views?.rescrollToHash()")
     unread = body.split("if (!data) {", 1)[1].split("\n  }\n", 1)[0]
     assert "renderTrends(null, [], { unread: true })" in unread
     assert unread.index("renderTrends") < unread.index("rescrollToHash")
