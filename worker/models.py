@@ -7,10 +7,10 @@ from typing import Annotated, Any, ClassVar
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 from worker.version import (
-    ENRICHMENT_VERSION,
     PIPELINE_VERSION,
     SCHEMA_VERSION,
     SCORING_VERSION,
+    UNENRICHED,
 )
 
 EVENT_ID_PATTERN = r"^evt-\d{4}-\d{6}$"
@@ -226,7 +226,7 @@ class Event(_Model):
     schema_version: str = SCHEMA_VERSION
     pipeline_version: str = PIPELINE_VERSION
     scoring_version: str = SCORING_VERSION
-    enrichment_version: str = ENRICHMENT_VERSION
+    enrichment_version: str = UNENRICHED
 
     first_seen: AwareDatetime
     last_seen: AwareDatetime

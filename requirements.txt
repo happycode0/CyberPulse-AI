@@ -1,8 +1,14 @@
 pydantic>=2
 pydantic-settings>=2
 python-dotenv>=1
+pyyaml>=6
 pytest>=9
 jsonschema>=4
+# Imported directly by worker/publish/validate.py, which builds a referencing.Registry so the
+# schemas can $ref each other offline. It arrives anyway as a dependency of jsonschema, but an
+# import we write ourselves is declared ourselves: jsonschema is free to drop it in a future
+# release, and that would break the publisher for a reason nothing here would explain.
+referencing>=0.35
 sqlalchemy>=2
 psycopg[binary]>=3
 httpx>=0.28

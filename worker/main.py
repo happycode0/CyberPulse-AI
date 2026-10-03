@@ -1,8 +1,15 @@
-"""Command line: `python -m worker [--migrate] [--lane LANE [--once]] [--publish]`.
+"""Command line: `python -m worker [--check-models] [--check-budget] [--migrate]
+[--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
 
-With no arguments the scheduler runs FAST and NORMAL until interrupted. Explicit actions run
-in a fixed order (migrate, collect, publish) and then exit, unless `--lane` is given without
-`--once`, which schedules that one lane instead.
+With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync and AI enrichment until
+interrupted. Explicit actions run in a fixed order (check models, check budget, migrate, collect,
+ground truth, enrich, publish) and then exit, unless `--lane` is given without `--once`, which
+schedules that one lane instead.
+
+The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
+`urgency` is computed from, so running it before the publish is what gets a freshly looked-up
+severity into the same set of files rather than the next one. Enrichment comes after it so a
+severity judgment is only asked for where the registers still have no official score.
 """
 
 import argparse
@@ -10,13 +17,23 @@ import asyncio
 import logging
 import sys
 from collections.abc import Sequence
-from datetime import UTC, datetime
 
+import httpx
+
+from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status
+from worker.ai.enrich import DEFAULT_BATCH, enrich_pending
+from worker.ai.ladder import (
+    OUTPUT_CEILING_USD_PER_MTOK,
+    LadderRejected,
+    LadderUnusable,
+    verify_ladder,
+)
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
+from worker.groundtruth.sync import DEFAULT_CVSS_BATCH, sync_groundtruth
 from worker.models import Lane
 from worker.pipeline.run import run_lane
-from worker.publish.build import build_all
+from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
 from worker.settings import get_settings
@@ -30,20 +47,149 @@ EXIT_USAGE = 2
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="worker", description="CyberPulse-AI worker")
+    p.add_argument(
+        "--check-models",
+        action="store_true",
+        help="check config/models.yaml against OpenRouter's live prices; non-zero if any model fails",
+    )
+    p.add_argument(
+        "--check-budget",
+        action="store_true",
+        help="read the OpenRouter key's spend and show the mode it allows; spends nothing",
+    )
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
     p.add_argument(
         "--once", action="store_true", help="run --lane a single time and exit (default: schedule it)"
     )
+    p.add_argument(
+        "--groundtruth",
+        action="store_true",
+        help="read the KEV, EPSS and CVSS registers once and record what they say",
+    )
+    p.add_argument(
+        "--cvss-batch",
+        type=int,
+        default=DEFAULT_CVSS_BATCH,
+        metavar="N",
+        help=(
+            "how many CVEs --groundtruth resolves CVSS for in this pass "
+            f"(default {DEFAULT_CVSS_BATCH}; 0 reads only the bulk registers)"
+        ),
+    )
+    p.add_argument(
+        "--enrich",
+        action="store_true",
+        help="run one AI enrichment pass over pending events, within the budget mode",
+    )
+    p.add_argument(
+        "--enrich-batch",
+        type=int,
+        default=DEFAULT_BATCH,
+        metavar="N",
+        help=f"how many events --enrich takes in this pass (default {DEFAULT_BATCH})",
+    )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
     return p
 
 
-def _publish() -> int:
-    now = datetime.now(UTC)
+def _check_models(*, required: bool) -> int:
+    """Run the price-ceiling guard (worker/ai/ladder.py) and log what it found.
+
+    `required` separates asking from starting. `--check-models` fails the command on a breach. The
+    scheduler logs the same errors and starts anyway, because what a failed check switches off is
+    the AI layer, and collection and publishing do not depend on it.
+    """
     try:
-        with get_engine().connect() as conn:
-            written = build_all(conn, get_settings().data_dir, now=now)
+        verified = asyncio.run(verify_ladder())
+    except LadderUnusable as exc:
+        problems = exc.breaches if isinstance(exc, LadderRejected) else [exc]
+        for problem in problems:
+            logger.error("model ladder: %s", problem)
+        logger.error("the AI layer stays off until the model ladder passes")
+        return EXIT_FAILED if required else EXIT_OK
+    logger.info(
+        "model ladder passed: %d models, each with a capable route at or under $%s/M output",
+        len(verified.ladder.slugs()),
+        OUTPUT_CEILING_USD_PER_MTOK,
+    )
+    return EXIT_OK
+
+
+def _check_budget() -> int:
+    """Read the key's spend from OpenRouter and log the mode it allows (worker/ai/budget.py).
+
+    Costs nothing: `GET /api/v1/key` is a read. Non-zero only when there is no reading, because
+    that is the case in which the worker would refuse paid calls for want of one.
+    """
+    settings = get_settings()
+    key = settings.openrouter_api_key
+    if key is None:
+        logger.error("budget: OPENROUTER_API_KEY is not set, so the AI layer stays off")
+        return EXIT_FAILED
+
+    async def read():
+        async with httpx.AsyncClient() as http:
+            return await fetch_key_status(http, key, settings.user_agent)
+
+    try:
+        status = asyncio.run(read())
+    except BudgetUnreadable as exc:
+        logger.error("budget: %s; paid AI calls stay off until a reading succeeds", exc)
+        return EXIT_FAILED
+    reading = assess(status, settings.ai_monthly_budget_usd)
+    limit = (
+        f"${status.limit:.2f} ({status.limit_reset or 'never resets'}), "
+        f"${status.limit_remaining:.2f} left"
+        if status.limit is not None and status.limit_remaining is not None
+        else "none"
+    )
+    logger.info(
+        "budget: mode %s, %s; spent $%.4f today and $%.4f this month; key limit %s; "
+        "free-model requests left today: %s",
+        reading.mode.value,
+        reading.reason,
+        status.usage_daily,
+        status.usage_monthly,
+        limit,
+        "unknown" if status.free_requests_remaining is None else status.free_requests_remaining,
+    )
+    return EXIT_OK
+
+
+def _groundtruth(cvss_batch: int) -> int:
+    """Run one sync. Only a failure the sync itself could not absorb is non-zero.
+
+    Register errors land in `summary.errors` and are logged as warnings rather than failing the
+    command, because "CISA was unreachable for ten minutes" is not a reason for a container to exit
+    non-zero and be restarted into trying again immediately.
+    """
+    summary = asyncio.run(sync_groundtruth(cvss_batch=cvss_batch))
+    for error in summary.errors:
+        logger.warning("ground truth: %s", error)
+    logger.info(
+        "ground truth: kev=%s epss=%s cvss=%s severity_changed=%d rescored=%d",
+        summary.kev,
+        summary.epss,
+        summary.cvss,
+        summary.severity_changed,
+        summary.rescored,
+    )
+    return EXIT_OK
+
+
+def _enrich(batch: int) -> int:
+    """Run one pass. Like the ground-truth sync, only a failure the pass could not absorb is
+    non-zero: a task that failed or waited for money is a normal outcome, not an error."""
+    summary = asyncio.run(enrich_pending(batch=batch))
+    for error in summary.errors:
+        logger.warning("enrichment: %s", error)
+    return EXIT_OK
+
+
+def _publish() -> int:
+    try:
+        written = asyncio.run(publish_now())
     except ValidationFailure as exc:
         logger.error("publish blocked, nothing written: %s", exc)
         return EXIT_FAILED
@@ -64,6 +210,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     if lane is not None and not args.once and lane not in SCHEDULE:
         parser.error(f"the {lane.value} lane has no schedule; use --lane {lane.value} --once")
 
+    if args.check_models:
+        code = _check_models(required=True)
+        if code != EXIT_OK:
+            return code
+
+    if args.check_budget:
+        code = _check_budget()
+        if code != EXIT_OK:
+            return code
+
     if args.migrate:
         applied = run_migrations(get_engine())
         logger.info("migrations applied: %s", ", ".join(applied) or "none")
@@ -72,13 +228,32 @@ def main(argv: Sequence[str] | None = None) -> int:
         summary = asyncio.run(run_lane(lane, once=True))
         logger.info("run %s finished: %s", summary.run_id, summary.model_dump_json())
 
+    if args.groundtruth:
+        code = _groundtruth(args.cvss_batch)
+        if code != EXIT_OK:
+            return code
+
+    if args.enrich:
+        code = _enrich(args.enrich_batch)
+        if code != EXIT_OK:
+            return code
+
     if args.publish:
         code = _publish()
         if code != EXIT_OK:
             return code
 
-    schedule = (lane is not None and not args.once) or not (args.migrate or args.publish or lane)
+    schedule = (lane is not None and not args.once) or not (
+        args.check_models
+        or args.check_budget
+        or args.migrate
+        or args.publish
+        or args.groundtruth
+        or args.enrich
+        or lane
+    )
     if schedule:
+        _check_models(required=False)
         asyncio.run(serve((lane,) if lane is not None else None))
     return EXIT_OK
 

@@ -1,6 +1,7 @@
 """Settings and configuration for CyberPulse-AI worker."""
 
 import functools
+from decimal import Decimal
 from pathlib import Path
 
 from pydantic import SecretStr
@@ -35,6 +36,13 @@ class Settings(BaseSettings):
     # rejects this string — but only in combination with httpx's default Accept-Encoding, so
     # that conflict is settled in the headers rather than here. See worker/collectors/http.py.
     user_agent: str = "CyberPulse-AI/1.0"
+    # OpenRouter app attribution (PLAN.md section 7.2), sent as HTTP-Referer and
+    # X-OpenRouter-Title on every model call.
+    openrouter_app_title: str = "CyberPulse-AI"
+    openrouter_app_url: str = "https://github.com/happycode0/CyberPulse-AI"
+    # What the AI layer may spend in a calendar month (UTC, as OpenRouter counts it). The
+    # degradation modes in worker/ai/budget.py are shares of this.
+    ai_monthly_budget_usd: Decimal = Decimal("20")
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -56,6 +64,9 @@ class Settings(BaseSettings):
             f"raw_cache_dir={self.raw_cache_dir!r}",
             f"data_dir={self.data_dir!r}",
             f"user_agent={self.user_agent!r}",
+            f"openrouter_app_title={self.openrouter_app_title!r}",
+            f"openrouter_app_url={self.openrouter_app_url!r}",
+            f"ai_monthly_budget_usd={self.ai_monthly_budget_usd!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 

@@ -1,0 +1,1306 @@
+{
+ "_note": "Trimmed from GET https://openrouter.ai/api/v1/models/{slug}/endpoints on 2026-10-03. Only the fields worker/ai/ladder.py reads.",
+ "routes": {
+  "xiaomi/mimo-v2.5": [
+   {
+    "tag": "gmicloud/fp8",
+    "provider_name": "GMICloud",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000119",
+     "completion": "0.000000238"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "xiaomi/fp8",
+    "provider_name": "Xiaomi",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000014",
+     "completion": "0.00000028"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "frequency_penalty",
+     "presence_penalty"
+    ]
+   },
+   {
+    "tag": "streamlake",
+    "provider_name": "StreamLake",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000168",
+     "completion": "0.000000336"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "response_format",
+     "structured_outputs"
+    ]
+   },
+   {
+    "tag": "novita/fp8",
+    "provider_name": "Novita",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000168",
+     "completion": "0.000000336"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "seed",
+     "top_k",
+     "repetition_penalty",
+     "response_format",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "venice/fp8",
+    "provider_name": "Venice",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000004",
+     "completion": "0.000002"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "top_k",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice"
+    ]
+   }
+  ],
+  "google/gemini-3.8-flash": [
+   {
+    "tag": "google-ai-studio/flex",
+    "provider_name": "Google AI Studio",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000375",
+     "completion": "0.000001875"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "structured_outputs",
+     "tool_choice",
+     "tools",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "google-vertex/global/flex",
+    "provider_name": "Google",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000375",
+     "completion": "0.000001875"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "seed",
+     "response_format",
+     "stop",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "google-ai-studio",
+    "provider_name": "Google AI Studio",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000075",
+     "completion": "0.00000375"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "structured_outputs",
+     "tool_choice",
+     "tools",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "google-vertex/global",
+    "provider_name": "Google",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000075",
+     "completion": "0.00000375"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "seed",
+     "response_format",
+     "stop",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "google-ai-studio/priority",
+    "provider_name": "Google AI Studio",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000135",
+     "completion": "0.00000675"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "structured_outputs",
+     "tool_choice",
+     "tools",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "google-vertex/global/priority",
+    "provider_name": "Google",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000135",
+     "completion": "0.00000675"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "seed",
+     "response_format",
+     "stop",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   }
+  ],
+  "minimax/minimax-m2.7": [
+   {
+    "tag": "gmicloud/fp8",
+    "provider_name": "GMICloud",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000021",
+     "completion": "0.00000084"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "novita/fp8",
+    "provider_name": "Novita",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000027",
+     "completion": "0.00000108"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "seed",
+     "top_k",
+     "repetition_penalty",
+     "tools",
+     "tool_choice",
+     "response_format"
+    ]
+   },
+   {
+    "tag": "atlas-cloud/fp8",
+    "provider_name": "AtlasCloud",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000003",
+     "completion": "0.0000012"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "top_k",
+     "stop",
+     "min_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "seed",
+     "logit_bias",
+     "response_format",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "minimax/fp8",
+    "provider_name": "Minimax",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000003",
+     "completion": "0.0000012"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "response_format",
+     "tool_choice",
+     "tools"
+    ]
+   },
+   {
+    "tag": "groq",
+    "provider_name": "Groq",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.0000006",
+     "completion": "0.0000018"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "seed",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "sambanova",
+    "provider_name": "SambaNova",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.0000006",
+     "completion": "0.0000024"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "top_k",
+     "stop",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "minimax/highspeed",
+    "provider_name": "Minimax",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000006",
+     "completion": "0.0000024"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "response_format",
+     "tool_choice",
+     "tools"
+    ]
+   }
+  ],
+  "xiaomi/mimo-v2.6-pro": [
+   {
+    "tag": "gmicloud/bf16",
+    "provider_name": "GMICloud",
+    "quantization": "bf16",
+    "pricing": {
+     "prompt": "0.00000041325",
+     "completion": "0.0000008265"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "deepinfra/fp8",
+    "provider_name": "DeepInfra",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000043",
+     "completion": "0.00000087"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "top_k",
+     "seed",
+     "min_p",
+     "logit_bias",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "novita/fp8",
+    "provider_name": "Novita",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000435",
+     "completion": "0.00000087"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "seed",
+     "top_k",
+     "repetition_penalty",
+     "response_format",
+     "tools",
+     "tool_choice"
+    ]
+   },
+   {
+    "tag": "xiaomi/fp8",
+    "provider_name": "Xiaomi",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000435",
+     "completion": "0.00000087"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "frequency_penalty",
+     "presence_penalty",
+     "structured_outputs"
+    ]
+   }
+  ],
+  "deepseek/deepseek-v4-flash-0731": [
+   {
+    "tag": "open-inference/fp8",
+    "provider_name": "OpenInference",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000005775",
+     "completion": "0.0000016"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "max_tokens",
+     "stop",
+     "seed",
+     "response_format",
+     "top_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "top_k",
+     "min_p",
+     "logit_bias",
+     "repetition_penalty",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "relace/fp4",
+    "provider_name": "Relace",
+    "quantization": "fp4",
+    "pricing": {
+     "prompt": "0.0000000077",
+     "completion": "0.00000128"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "tools",
+     "tool_choice",
+     "temperature",
+     "top_p",
+     "top_k",
+     "min_p",
+     "stop",
+     "max_tokens",
+     "logit_bias",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "sail-research/fp4",
+    "provider_name": "Sail Research",
+    "quantization": "fp4",
+    "pricing": {
+     "prompt": "0.000000019",
+     "completion": "0.0000003"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "structured_outputs",
+     "logprobs",
+     "top_logprobs",
+     "temperature",
+     "top_p",
+     "top_k",
+     "frequency_penalty",
+     "presence_penalty",
+     "stop",
+     "seed",
+     "max_tokens",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "sail-research/us",
+    "provider_name": "Sail Research",
+    "quantization": "fp4",
+    "pricing": {
+     "prompt": "0.000000019",
+     "completion": "0.00000042"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "frequency_penalty",
+     "max_tokens",
+     "presence_penalty",
+     "seed",
+     "stop",
+     "temperature",
+     "top_k",
+     "top_p",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "reka",
+    "provider_name": "Reka",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000021",
+     "completion": "0.000000528"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "temperature",
+     "top_p",
+     "max_tokens",
+     "stop",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "streamlake/fp8",
+    "provider_name": "StreamLake",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000044",
+     "completion": "0.000000132"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "inceptron/fp4",
+    "provider_name": "Inceptron",
+    "quantization": "fp4",
+    "pricing": {
+     "prompt": "0.00000005",
+     "completion": "0.00000065"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "max_tokens",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "logit_bias",
+     "parallel_tool_calls",
+     "presence_penalty",
+     "seed",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "structured_outputs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "deepinfra/fp8",
+    "provider_name": "DeepInfra",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000006",
+     "completion": "0.00000018"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "top_k",
+     "seed",
+     "min_p",
+     "tools",
+     "tool_choice",
+     "structured_outputs",
+     "logit_bias",
+     "response_format",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "makora",
+    "provider_name": "Makora",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000009",
+     "completion": "0.000000195"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "structured_outputs",
+     "response_format",
+     "temperature",
+     "top_p",
+     "top_k",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "stop",
+     "max_tokens",
+     "seed",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "digitalocean",
+    "provider_name": "DigitalOcean",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000119",
+     "completion": "0.000000238"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "max_tokens",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "structured_outputs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "wafer/fast",
+    "provider_name": "Wafer",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000012",
+     "completion": "0.0000007"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "top_k",
+     "min_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "stop",
+     "seed",
+     "max_tokens",
+     "logit_bias",
+     "response_format",
+     "structured_outputs",
+     "logprobs",
+     "top_logprobs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "baseten/fp8",
+    "provider_name": "BaseTen",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000013",
+     "completion": "0.00000026"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "baseten/fp8",
+    "provider_name": "BaseTen",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000013",
+     "completion": "0.00000026"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "coreweave/fp8",
+    "provider_name": "CoreWeave",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000013",
+     "completion": "0.00000028"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "top_k",
+     "repetition_penalty",
+     "frequency_penalty",
+     "presence_penalty",
+     "stop",
+     "seed",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "cohere",
+    "provider_name": "Cohere",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000014",
+     "completion": "0.00000028"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "top_k",
+     "seed",
+     "structured_outputs",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "parallel_tool_calls",
+     "logprobs",
+     "top_logprobs",
+     "repetition_penalty",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "together",
+    "provider_name": "Together",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000014",
+     "completion": "0.00000028"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "top_k",
+     "repetition_penalty",
+     "logit_bias",
+     "min_p",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "parasail/fp8",
+    "provider_name": "Parasail",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000014",
+     "completion": "0.00000028"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "seed",
+     "stop",
+     "top_k",
+     "logit_bias",
+     "structured_outputs",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "morph/bf16",
+    "provider_name": "Morph",
+    "quantization": "bf16",
+    "pricing": {
+     "prompt": "0.000000142",
+     "completion": "0.0000004"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "stop",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "top_p",
+     "top_k",
+     "min_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "seed",
+     "logit_bias",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "venice",
+    "provider_name": "Venice",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000175",
+     "completion": "0.00000035"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "top_k",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "alibaba",
+    "provider_name": "Alibaba",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000176",
+     "completion": "0.000000528"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "presence_penalty",
+     "response_format",
+     "top_k",
+     "frequency_penalty",
+     "stop",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "mancer/fp8",
+    "provider_name": "Mancer 2",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000002",
+     "completion": "0.0000006"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "logit_bias",
+     "top_k",
+     "min_p",
+     "seed",
+     "top_a",
+     "response_format",
+     "logprobs",
+     "top_logprobs",
+     "tools",
+     "tool_choice",
+     "structured_outputs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "siliconflow/fp8",
+    "provider_name": "SiliconFlow",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000022",
+     "completion": "0.00000066"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "top_k",
+     "frequency_penalty",
+     "max_tokens",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "gmicloud/fp8",
+    "provider_name": "GMICloud",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000286",
+     "completion": "0.000000858"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "seed",
+     "response_format",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "phala",
+    "provider_name": "Phala",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.000000308",
+     "completion": "0.000000924"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "seed",
+     "top_k",
+     "min_p",
+     "repetition_penalty",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "nextbit/fp8",
+    "provider_name": "NextBit",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.000000352",
+     "completion": "0.000001056"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "response_format",
+     "structured_outputs",
+     "repetition_penalty",
+     "seed",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "novita/fp8",
+    "provider_name": "Novita",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.0000004092",
+     "completion": "0.0000012276"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "stop",
+     "frequency_penalty",
+     "presence_penalty",
+     "seed",
+     "top_k",
+     "repetition_penalty",
+     "tools",
+     "response_format",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "baidu/fp8",
+    "provider_name": "Baidu",
+    "quantization": "fp8",
+    "pricing": {
+     "prompt": "0.00000044",
+     "completion": "0.00000132"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "max_tokens",
+     "stop",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "atlas-cloud/fp4",
+    "provider_name": "AtlasCloud",
+    "quantization": "fp4",
+    "pricing": {
+     "prompt": "0.00000044",
+     "completion": "0.00000132"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "top_k",
+     "min_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "stop",
+     "seed",
+     "logit_bias",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ]
+   },
+   {
+    "tag": "cloudflare",
+    "provider_name": "Cloudflare",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0.00000044",
+     "completion": "0.00000132"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "max_tokens",
+     "temperature",
+     "top_p",
+     "top_k",
+     "seed",
+     "repetition_penalty",
+     "frequency_penalty",
+     "presence_penalty",
+     "min_p",
+     "stop",
+     "logit_bias",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ]
+   }
+  ],
+  "nvidia/nemotron-3-super-120b-a12b:free": [
+   {
+    "tag": "nvidia",
+    "provider_name": "Nvidia",
+    "quantization": "unknown",
+    "pricing": {
+     "prompt": "0",
+     "completion": "0"
+    },
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "max_tokens",
+     "seed",
+     "top_p",
+     "tools",
+     "tool_choice",
+     "structured_outputs",
+     "response_format",
+     "reasoning_effort"
+    ]
+   }
+  ]
+ }
+}

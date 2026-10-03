@@ -34,6 +34,10 @@ from worker.models import (
 
 SUMMARY_MAX_CHARS = 600
 
+# The AU reason a fact gives, not a model: an Australian source reported the event. Enrichment
+# keeps it in front of whatever reasons it adds (worker/db/enrichment.py).
+AU_SOURCE_REASON = "reported by an Australian source"
+
 # Registry `category` -> how strong a source of that kind is as evidence. Unknown
 # categories are COMMUNITY: the least trusted class a real (non-AI) source can have.
 EVIDENCE_CLASS_BY_CATEGORY: dict[str, EvidenceClass] = {
@@ -101,7 +105,7 @@ def build_new_event(
         categories=[source.category],
         au=AuRelevance(
             directly_reported_in_au=is_au,
-            reasons=["reported by an Australian source"] if is_au else [],
+            reasons=[AU_SOURCE_REASON] if is_au else [],
         ),
         cves=[CveRef(id=c) for c in item.cves],
         sources=[source_ref(item, source, independent=True)],
