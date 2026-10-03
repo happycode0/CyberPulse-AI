@@ -9,9 +9,10 @@ from when we fetched them. A feed backfilled with year-old articles must not pro
 that look brand new, so `first_seen` is the earliest published time among the sources and
 `last_material_update` starts there too. `last_seen` is the one field that tracks ingestion.
 
-Only a genuinely new fact (a CVE the event did not have) moves `last_material_update`
-forward. Another outlet repeating the story adds evidence and corroboration but does not
-refresh prominence, which is the scoring engine's contract.
+Only a material change (a CVE the event did not have, or what worker/pipeline/material.py
+finds) moves `last_material_update` forward and marks a new event as developing. Another outlet
+repeating the story adds evidence and corroboration but does not refresh prominence, which is
+the scoring engine's contract.
 """
 
 import html
@@ -31,7 +32,8 @@ from worker.models import (
     SourceRef,
     TimelineEntry,
 )
-from worker.pipeline.resolve import is_generic_title
+from worker.pipeline.material import report_changes
+from worker.pipeline.resolve import EventCandidate, is_generic_title
 
 SUMMARY_MAX_CHARS = 600
 
@@ -138,6 +140,8 @@ class EventUpdate:
     # A headline for an event whose own is a generic notice ("CISA Adds Two Known Exploited
     # Vulnerabilities to Catalog"); None keeps the event's title.
     title: str | None = None
+    # Something material changed: a new event becomes a developing one.
+    material: bool = False
 
 
 def plan_update(
@@ -154,7 +158,6 @@ def plan_update(
 
     timeline: list[TimelineEntry] = []
     if new_cves:
-        material = max(material, when)
         timeline.append(
             TimelineEntry(
                 timestamp=when,
@@ -163,9 +166,14 @@ def plan_update(
                 sources=[source.id],
             )
         )
+    headlines = event.source_titles if isinstance(event, EventCandidate) else ()
+    timeline += report_changes(event, headlines, item.title, source, when=when)
+    if timeline:
+        material = max(material, when)
+    changed = bool(timeline)
     if independent:
         confirmation = max(confirmation, when) if confirmation else when
-        if not new_cves:
+        if not changed:
             timeline.append(
                 TimelineEntry(
                     timestamp=when,
@@ -186,4 +194,5 @@ def plan_update(
         title=item.title
         if is_generic_title(event.title) and not is_generic_title(item.title)
         else None,
+        material=changed,
     )

@@ -79,10 +79,12 @@ class AdvisoryChange:
     """What `record_advisories` changed for one CVE."""
 
     written: tuple[str, ...] = ()  # advisory ids inserted or updated
-    # Advisory ids whose packages or fixed versions moved, which is what an event's timeline
-    # cares about: a fix published is a NEW_PATCH (Stage 3).
+    # Advisory ids whose packages or fixed versions moved.
     packages_moved: tuple[str, ...] = ()
     removed: int = 0
+    # Advisory ids already on record with no fixed version that now name one: a NEW_PATCH on
+    # the CVE's events (worker/pipeline/material.py). A first reading is not a change.
+    fixed: tuple[str, ...] = ()
 
     @property
     def changed(self) -> bool:
@@ -114,6 +116,7 @@ def record_advisories(
     }
     written: list[str] = []
     moved: list[str] = []
+    fixed: list[str] = []
     for advisory in advisories:
         row = _row(advisory)
         old = stored.get(advisory.id)
@@ -142,6 +145,8 @@ def record_advisories(
         written.append(advisory.id)
         if old is None or old.packages != new_packages:
             moved.append(advisory.id)
+        if old is not None and not _names_a_fix(old.packages) and _names_a_fix(new_packages):
+            fixed.append(advisory.id)
     removed = 0
     if complete:
         removed = conn.execute(
@@ -151,7 +156,11 @@ def record_advisories(
             ),
             {"c": cve_id, "ids": [a.id for a in advisories]},
         ).rowcount
-    return AdvisoryChange(tuple(written), tuple(moved), removed)
+    return AdvisoryChange(tuple(written), tuple(moved), removed, tuple(fixed))
+
+
+def _names_a_fix(packages: Sequence[dict[str, Any]]) -> bool:
+    return any(p.get("fixed") for p in packages)
 
 
 def advisories_for(conn: Connection, cve_ids: Iterable[str]) -> dict[str, list[dict[str, Any]]]:
