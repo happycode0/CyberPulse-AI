@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trends.schema.json",
+  "title": "CyberPulse-AI trends.json",
+  "description": "Counts of independent reports, never a model's estimate. Velocity compares the last 24 hours with the per-day rate before them, only over the time collection has been running.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at", "pipeline_version", "trends_version", "coverage", "activity", "topics", "cves"
+  ],
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "state": { "enum": ["warming_up", "new", "rising", "steady", "falling"] },
+    "event_ids": {
+      "type": "array",
+      "maxItems": 3,
+      "items": { "type": "string", "pattern": "^evt-[0-9]{4}-[0-9]{6}$" }
+    }
+  },
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "pipeline_version": { "type": "string" },
+    "trends_version": { "type": "string" },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collecting_since", "recent_hours", "baseline_hours", "baseline_hours_wanted",
+        "baseline_hours_needed", "warming_up"
+      ],
+      "properties": {
+        "collecting_since": { "type": ["string", "null"], "format": "date-time" },
+        "recent_hours": { "type": "number", "exclusiveMinimum": 0 },
+        "baseline_hours": { "type": "number", "minimum": 0 },
+        "baseline_hours_wanted": { "type": "number", "exclusiveMinimum": 0 },
+        "baseline_hours_needed": { "type": "number", "exclusiveMinimum": 0 },
+        "warming_up": { "type": "boolean" }
+      }
+    },
+    "activity": {
+      "description": "One entry per UTC day. Stories and reports count only from when collection began, and `coverage` says how much of the day that was; `kev_added` is CISA's own date over its whole catalogue, so it is complete on every day.",
+      "type": "array",
+      "maxItems": 31,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date", "coverage", "stories", "reports", "kev_added", "critical_high", "au_stories"
+        ],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "coverage": { "enum": ["full", "partial", "none"] },
+          "stories": { "$ref": "#/$defs/count" },
+          "reports": { "$ref": "#/$defs/count" },
+          "kev_added": { "$ref": "#/$defs/count" },
+          "critical_high": { "$ref": "#/$defs/count" },
+          "au_stories": { "$ref": "#/$defs/count" }
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key", "label", "kind", "recent", "baseline", "baseline_per_day", "ratio", "state",
+          "stories", "event_ids"
+        ],
+        "properties": {
+          "key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "label": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["vendor", "actor", "malware", "threat"] },
+          "recent": { "$ref": "#/$defs/count" },
+          "baseline": { "$ref": "#/$defs/count" },
+          "baseline_per_day": { "type": "number", "minimum": 0 },
+          "ratio": { "type": "number", "exclusiveMinimum": 0 },
+          "state": { "$ref": "#/$defs/state" },
+          "stories": { "$ref": "#/$defs/count" },
+          "event_ids": { "$ref": "#/$defs/event_ids" }
+        }
+      }
+    },
+    "cves": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cve_id", "recent", "week", "ratio", "state", "stories", "kev", "event_ids"],
+        "properties": {
+          "cve_id": { "type": "string", "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$" },
+          "recent": { "$ref": "#/$defs/count" },
+          "week": { "$ref": "#/$defs/count" },
+          "ratio": { "type": "number", "exclusiveMinimum": 0 },
+          "state": { "$ref": "#/$defs/state" },
+          "stories": { "$ref": "#/$defs/count" },
+          "kev": { "type": "boolean" },
+          "event_ids": { "$ref": "#/$defs/event_ids" }
+        }
+      }
+    }
+  }
+}

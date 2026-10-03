@@ -13,6 +13,7 @@ import pytest
 
 import worker.publish.build as build
 from worker.db.sources import RegistryRow
+from worker.db.trends import TrendInputs
 from worker.models import (
     Event,
     HealthStatus,
@@ -21,6 +22,7 @@ from worker.models import (
     RunSummary,
     SourceHealth,
 )
+from worker.pipeline.trends import Report, Story
 from worker.publish.build import build_all
 from worker.publish.validate import ValidationFailure
 
@@ -66,6 +68,7 @@ def db(monkeypatch):
         },
         "lifecycle": {"old-feed": LifecycleState.RETIRED},
         "merged": {},
+        "trends": TrendInputs([], [], {}, NOW - timedelta(days=3)),
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
@@ -77,6 +80,7 @@ def db(monkeypatch):
     )
     monkeypatch.setattr(build, "load_lifecycle_states", lambda conn: state["lifecycle"])
     monkeypatch.setattr(build, "merged_redirects", lambda conn, **kw: state["merged"])
+    monkeypatch.setattr(build, "load_trend_inputs", lambda conn, **kw: state["trends"])
     return state
 
 
@@ -95,10 +99,28 @@ def read(directory, name):
 def test_build_emits_expected_files(tmp_path, db):
     names = {p.relative_to(tmp_path).as_posix() for p in build_all(None, tmp_path, now=NOW)}
     assert names == {
-        "live.json", "index.json", "source-health.json", "system-status.json",
+        "live.json", "index.json", "source-health.json", "system-status.json", "trends.json",
         "history/2026-09-30.json",
     }
     assert {p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*") if p.is_file()} == names
+
+
+def test_trends_are_counted_from_the_stored_reports(tmp_path, db):
+    reports = [
+        Report("evt-2026-000001", f"Akira ransomware hits firm {n}", NOW - timedelta(hours=n))
+        for n in range(1, 4)
+    ]
+    stories = [Story("evt-2026-000001", NOW - timedelta(hours=3), 0.9, True, False)]
+    db["trends"] = TrendInputs(reports, stories, {NOW.date(): 2}, NOW - timedelta(days=3))
+    build_all(None, tmp_path, now=NOW)
+    trends = read(tmp_path, "trends.json")
+    akira = next(t for t in trends["topics"] if t["key"] == "akira")
+    assert (akira["recent"], akira["state"], akira["event_ids"]) == (3, "new", ["evt-2026-000001"])
+    assert trends["activity"][-1] | {"coverage": "-"} == {
+        "date": "2026-09-30", "coverage": "-", "stories": 1, "reports": 3, "kev_added": 2,
+        "critical_high": 1, "au_stories": 0,
+    }
+    assert trends["generated_at"] == read(tmp_path, "live.json")["generated_at"]
 
 
 def test_live_filters_by_strict_prominence_and_keeps_order(tmp_path, db):

@@ -1,0 +1,143 @@
+# What the trend engine counts (worker/pipeline/trends.py). A report counts towards a topic when
+# its own headline names one of the topic's terms. Headlines are read as the resolver reads them:
+# lowercase, punctuation dropped ("zero-day" is "zeroday", "D-Link" is "dlink"), and a term of
+# several words matches those words in a row.
+#
+# Words that are also everyday English are left out ("progress", "play", "edge", "intel",
+# "exchange", "ios" which is Apple's and Cisco's): a topic must rise on news, not on prose.
+# A model may propose a topic; it lands here by review, never at run time.
+version: "1"
+
+topics:
+  # --- vendors and their flagship products ----------------------------------------------------
+  - {key: microsoft, label: Microsoft, kind: vendor, terms: [microsoft, windows, sharepoint, azure, entra, outlook, hyperv]}
+  - {key: cisco, label: Cisco, kind: vendor, terms: [cisco, webex]}
+  - {key: citrix, label: Citrix, kind: vendor, terms: [citrix, netscaler]}
+  - {key: fortinet, label: Fortinet, kind: vendor, terms: [fortinet, fortios, fortigate, fortiweb, fortimanager, fortisiem, fortiproxy, forticlient]}
+  - {key: ivanti, label: Ivanti, kind: vendor, terms: [ivanti]}
+  - {key: palo-alto, label: Palo Alto Networks, kind: vendor, terms: [palo alto, panos, globalprotect, cortex xdr]}
+  - {key: apple, label: Apple, kind: vendor, terms: [apple, macos, iphone, ipad, safari, webkit]}
+  - {key: google, label: Google, kind: vendor, terms: [google, chrome, chromium, android]}
+  - {key: mozilla, label: Mozilla, kind: vendor, terms: [mozilla, firefox, thunderbird]}
+  - {key: adobe, label: Adobe, kind: vendor, terms: [adobe, acrobat, coldfusion]}
+  - {key: oracle, label: Oracle, kind: vendor, terms: [oracle, weblogic]}
+  - {key: vmware, label: VMware / Broadcom, kind: vendor, terms: [vmware, esxi, vcenter, broadcom]}
+  - {key: sap, label: SAP, kind: vendor, terms: [sap, netweaver]}
+  - {key: atlassian, label: Atlassian, kind: vendor, terms: [atlassian, confluence, jira, bitbucket]}
+  - {key: juniper, label: Juniper, kind: vendor, terms: [juniper, junos]}
+  - {key: sonicwall, label: SonicWall, kind: vendor, terms: [sonicwall]}
+  - {key: f5, label: F5, kind: vendor, terms: [f5, bigip]}
+  - {key: linux, label: Linux, kind: vendor, terms: [linux]}
+  - {key: mikrotik, label: MikroTik, kind: vendor, terms: [mikrotik, routeros]}
+  - {key: qnap, label: QNAP, kind: vendor, terms: [qnap]}
+  - {key: synology, label: Synology, kind: vendor, terms: [synology]}
+  - {key: zyxel, label: Zyxel, kind: vendor, terms: [zyxel]}
+  - {key: dlink, label: D-Link, kind: vendor, terms: [dlink]}
+  - {key: tplink, label: TP-Link, kind: vendor, terms: [tplink]}
+  - {key: netgear, label: Netgear, kind: vendor, terms: [netgear]}
+  - {key: apache, label: Apache, kind: vendor, terms: [apache, tomcat, struts, log4j]}
+  - {key: openssl, label: OpenSSL, kind: vendor, terms: [openssl]}
+  - {key: wordpress, label: WordPress, kind: vendor, terms: [wordpress]}
+  - {key: gitlab, label: GitLab, kind: vendor, terms: [gitlab]}
+  - {key: github, label: GitHub, kind: vendor, terms: [github]}
+  - {key: jenkins, label: Jenkins, kind: vendor, terms: [jenkins]}
+  - {key: kubernetes, label: Kubernetes, kind: vendor, terms: [kubernetes, docker]}
+  - {key: aws, label: AWS, kind: vendor, terms: [aws, amazon web services]}
+  - {key: openai, label: OpenAI, kind: vendor, terms: [openai, chatgpt]}
+  - {key: anthropic, label: Anthropic, kind: vendor, terms: [anthropic, claude]}
+  - {key: nvidia, label: NVIDIA, kind: vendor, terms: [nvidia]}
+  - {key: samsung, label: Samsung, kind: vendor, terms: [samsung]}
+  - {key: dell, label: Dell, kind: vendor, terms: [dell]}
+  - {key: hpe, label: HP / HPE, kind: vendor, terms: [hpe, hewlett packard, aruba]}
+  - {key: ibm, label: IBM, kind: vendor, terms: [ibm, qradar]}
+  - {key: siemens, label: Siemens, kind: vendor, terms: [siemens]}
+  - {key: schneider, label: Schneider Electric, kind: vendor, terms: [schneider electric]}
+  - {key: rockwell, label: Rockwell Automation, kind: vendor, terms: [rockwell]}
+  - {key: veeam, label: Veeam, kind: vendor, terms: [veeam]}
+  - {key: sophos, label: Sophos, kind: vendor, terms: [sophos]}
+  - {key: crowdstrike, label: CrowdStrike, kind: vendor, terms: [crowdstrike]}
+  - {key: okta, label: Okta, kind: vendor, terms: [okta]}
+  - {key: cloudflare, label: Cloudflare, kind: vendor, terms: [cloudflare]}
+  - {key: zimbra, label: Zimbra, kind: vendor, terms: [zimbra]}
+  - {key: roundcube, label: Roundcube, kind: vendor, terms: [roundcube]}
+  - {key: moveit, label: MOVEit, kind: vendor, terms: [moveit]}
+  - {key: solarwinds, label: SolarWinds, kind: vendor, terms: [solarwinds]}
+  - {key: trend-micro, label: Trend Micro, kind: vendor, terms: [trend micro]}
+  - {key: check-point, label: Check Point, kind: vendor, terms: [check point]}
+  - {key: watchguard, label: WatchGuard, kind: vendor, terms: [watchguard]}
+  - {key: commvault, label: Commvault, kind: vendor, terms: [commvault]}
+  - {key: sitecore, label: Sitecore, kind: vendor, terms: [sitecore]}
+  - {key: connectwise, label: ConnectWise, kind: vendor, terms: [connectwise, screenconnect]}
+  - {key: kaseya, label: Kaseya, kind: vendor, terms: [kaseya]}
+  - {key: salesforce, label: Salesforce, kind: vendor, terms: [salesforce]}
+  - {key: servicenow, label: ServiceNow, kind: vendor, terms: [servicenow]}
+  - {key: netscout, label: NETSCOUT, kind: vendor, terms: [netscout]}
+
+  # --- threat actors (groups and gangs) ---------------------------------------------------------
+  - {key: lockbit, label: LockBit, kind: actor, terms: [lockbit]}
+  - {key: alphv, label: ALPHV / BlackCat, kind: actor, terms: [alphv, blackcat]}
+  - {key: clop, label: Cl0p, kind: actor, terms: [clop, cl0p]}
+  - {key: akira, label: Akira, kind: actor, terms: [akira]}
+  - {key: black-basta, label: Black Basta, kind: actor, terms: [black basta, blackbasta]}
+  - {key: rhysida, label: Rhysida, kind: actor, terms: [rhysida]}
+  - {key: medusa, label: Medusa, kind: actor, terms: [medusa]}
+  - {key: qilin, label: Qilin, kind: actor, terms: [qilin]}
+  - {key: ransomhub, label: RansomHub, kind: actor, terms: [ransomhub]}
+  - {key: interlock, label: Interlock, kind: actor, terms: [interlock]}
+  - {key: safepay, label: SafePay, kind: actor, terms: [safepay]}
+  - {key: dragonforce, label: DragonForce, kind: actor, terms: [dragonforce]}
+  - {key: warlock, label: Warlock, kind: actor, terms: [warlock]}
+  - {key: killsec, label: KillSec, kind: actor, terms: [killsec]}
+  - {key: everest, label: Everest, kind: actor, terms: [everest ransomware, everest gang]}
+  - {key: scattered-spider, label: Scattered Spider, kind: actor, terms: [scattered spider, unc3944]}
+  - {key: shinyhunters, label: ShinyHunters, kind: actor, terms: [shinyhunters, shiny hunters]}
+  - {key: lapsus, label: Lapsus$, kind: actor, terms: [lapsus]}
+  - {key: salt-typhoon, label: Salt Typhoon, kind: actor, terms: [salt typhoon]}
+  - {key: volt-typhoon, label: Volt Typhoon, kind: actor, terms: [volt typhoon]}
+  - {key: silk-typhoon, label: Silk Typhoon, kind: actor, terms: [silk typhoon, hafnium]}
+  - {key: flax-typhoon, label: Flax Typhoon, kind: actor, terms: [flax typhoon]}
+  - {key: apt28, label: APT28, kind: actor, terms: [apt28, fancy bear, forest blizzard]}
+  - {key: apt29, label: APT29, kind: actor, terms: [apt29, cozy bear, midnight blizzard]}
+  - {key: apt40, label: APT40, kind: actor, terms: [apt40]}
+  - {key: lazarus, label: Lazarus, kind: actor, terms: [lazarus]}
+  - {key: kimsuky, label: Kimsuky, kind: actor, terms: [kimsuky]}
+  - {key: sandworm, label: Sandworm, kind: actor, terms: [sandworm]}
+  - {key: turla, label: Turla, kind: actor, terms: [turla]}
+  - {key: muddywater, label: MuddyWater, kind: actor, terms: [muddywater]}
+  - {key: fin7, label: FIN7, kind: actor, terms: [fin7]}
+  - {key: killnet, label: Killnet, kind: actor, terms: [killnet]}
+  - {key: noname057, label: NoName057(16), kind: actor, terms: [noname05716, noname057]}
+
+  # --- malware families -------------------------------------------------------------------------
+  - {key: emotet, label: Emotet, kind: malware, terms: [emotet]}
+  - {key: qakbot, label: QakBot, kind: malware, terms: [qakbot, qbot]}
+  - {key: lumma, label: Lumma Stealer, kind: malware, terms: [lumma, lummac2]}
+  - {key: redline, label: RedLine Stealer, kind: malware, terms: [redline stealer]}
+  - {key: cobalt-strike, label: Cobalt Strike, kind: malware, terms: [cobalt strike]}
+  - {key: mirai, label: Mirai, kind: malware, terms: [mirai]}
+  - {key: plugx, label: PlugX, kind: malware, terms: [plugx]}
+  - {key: xworm, label: XWorm, kind: malware, terms: [xworm]}
+  - {key: asyncrat, label: AsyncRAT, kind: malware, terms: [asyncrat]}
+  - {key: remcos, label: Remcos, kind: malware, terms: [remcos]}
+  - {key: darkgate, label: DarkGate, kind: malware, terms: [darkgate]}
+  - {key: latrodectus, label: Latrodectus, kind: malware, terms: [latrodectus]}
+  - {key: stealc, label: StealC, kind: malware, terms: [stealc]}
+  - {key: vidar, label: Vidar, kind: malware, terms: [vidar]}
+
+  # --- kinds of threat --------------------------------------------------------------------------
+  - {key: ransomware, label: Ransomware, kind: threat, terms: [ransomware]}
+  - {key: phishing, label: Phishing, kind: threat, terms: [phishing, smishing, vishing, quishing]}
+  - {key: zero-day, label: Zero-days, kind: threat, terms: [zeroday, zerodays, 0day]}
+  - {key: supply-chain, label: Supply chain, kind: threat, terms: [supply chain, supplychain]}
+  - {key: ddos, label: DDoS, kind: threat, terms: [ddos]}
+  - {key: data-breach, label: Data breaches, kind: threat, terms: [breach, breaches, data leak, leaked]}
+  - {key: botnet, label: Botnets, kind: threat, terms: [botnet, botnets]}
+  - {key: infostealer, label: Infostealers, kind: threat, terms: [infostealer, infostealers, stealer]}
+  - {key: wiper, label: Wipers, kind: threat, terms: [wiper, wipers]}
+  - {key: espionage, label: Espionage, kind: threat, terms: [espionage, cyberespionage]}
+  - {key: backdoor, label: Backdoors, kind: threat, terms: [backdoor, backdoors, backdoored]}
+  - {key: deepfake, label: Deepfakes, kind: threat, terms: [deepfake, deepfakes]}
+  - {key: extortion, label: Extortion, kind: threat, terms: [extortion, sextortion]}
+  - {key: cryptojacking, label: Cryptojacking, kind: threat, terms: [cryptojacking, cryptominer, cryptominers]}
+  - {key: prompt-injection, label: Prompt injection, kind: threat, terms: [prompt injection, jailbreak, jailbreaks]}
+  - {key: scam, label: Scams and fraud, kind: threat, terms: [scam, scams, scammers, fraud]}
