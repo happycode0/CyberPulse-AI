@@ -3,8 +3,8 @@
 [← Stage 1 — Foundation](stage-1-foundation.md) · [Wiki home](README.md) ·
 [Stage 3 — Correlation →](stage-3-correlation.md)
 
-**Status: 🟡 most of it running.** Ground truth, the money controls and AI enrichment all run on
-the VM (enrichment since 2026-10-03). The extra registers (item 5) and the AU relevance and
+**Status: 🟡 most of it running.** Ground truth, the extra registers, the money controls, AI
+enrichment and MITRE suggestions all run on the VM (since 2026-10-03). The AU relevance and
 evidence engines (item 7) are left. Plan:
 [PLAN.md §9, Stage 2](../../PLAN.md#9-stages) and §2.5 (the severity chain) · §7 (models and money)
 
@@ -24,6 +24,8 @@ labelled as AI assessment, within a hard budget.
 | CISA KEV (Known Exploited Vulnerabilities) | ✅ |
 | FIRST EPSS (exploit prediction score) | ✅ |
 | CVSS chain: CNA record → CISA Vulnrichment ADP → NVD, highest CVSS version first | ✅ |
+| OSV and GitHub advisories per CVE: affected packages and fixed versions | ✅ |
+| MITRE ATT&CK and ATLAS catalogues, cached per release | ✅ |
 | Event detail page (`site/event.html`) | ✅ |
 
 The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs, 223 were
@@ -70,7 +72,33 @@ makes it safe to switch the AI agents on.
 
 **Then the rest of the ground truth and the enrichment:**
 
-5. More registers: OSV, GitHub Advisories, MITRE ATT&CK and ATLAS.
+5. ✅ **More registers** (2026-10-03, migration 007; `worker/groundtruth/osv.py`,
+   `worker/groundtruth/mitre.py`, `worker/ai/mitre.py`). Each ground-truth sync now also:
+   - **Looks up to 200 CVEs up in OSV** (`api.osv.dev`), then each GitHub advisory (GHSA) that
+     OSV's record names. That gives GitHub's reviewed advisories without a GitHub token. An
+     advisory is kept only if it names the CVE back and hasn't been withdrawn. What is kept is
+     what a reader can act on: the affected packages, the versions that fix them, and GitHub's
+     own rating. That rating is shown beside the CVSS chain, never inside it. OSV's own record
+     of a CVE is kept only when it names a package. A CVE is asked again after 3 days if found,
+     2 days if OSV had nothing, and 6 hours after an error. Only a complete answer can remove an
+     advisory recorded earlier. The site lists them under each CVE.
+   - **Checks for a new MITRE release**: ATT&CK Enterprise from MITRE's STIX index, ATLAS from
+     its manifest. A release is downloaded only when it is new (the ATT&CK file is 54 MB), and
+     it is loaded whole or not at all. Revoked and deprecated techniques are left out. Older
+     releases stay, because a published suggestion names the release it came from.
+
+   Then, after each enrichment pass, **MITRE suggestions** (strong tier, as §7.1 asks) run for
+   up to 5 enriched events about an attack, most prominent first. The model doesn't recall
+   ATT&CK: it is shown at most 30 techniques from the loaded release and may only pick from
+   those. The schema's list of allowed ids is that shortlist, so an id it invents fails the
+   schema. The shortlist is each category's usual techniques (for example T1190 and T1203 for
+   a vulnerability, T1486 and T1490 for ransomware), then techniques whose names share words
+   with the story. ATLAS joins for stories about attacks on or with AI. The model keeps at most
+   three, each at confidence 0.5 or more, with a one-sentence basis that must pass the same
+   checks as a brief. "None" is a valid answer. They are published as `ai_suggested` with the
+   confidence and release, and the site labels them AI SUGGESTED. The basis is kept as AI
+   inference evidence, not published. When money is short the suggestions wait; they never
+   drop to the free tier, and they never hold an event in `pending_enrichment`.
 6. ✅ **AI enrichment** (2026-10-03, running on the VM; `worker/ai/tasks.py`,
    `worker/ai/enrich.py`, migration 006). Each pending event gets up to three separate calls:
    - **Triage** (free tier): categories, entities, tags.
@@ -95,7 +123,7 @@ makes it safe to switch the AI agents on.
    Only events the site would publish are enriched, most prominent first, in batches of 10 at
    :05 and :35 past each hour, inside the budget mode above. Free models never write editorial
    text: when only the free tier is open, briefs and judgments wait. Every call is a ledger row
-   against its event. The MITRE suggestion waits for ATT&CK and ATLAS (item 5).
+   against its event. MITRE suggestions are a separate pass (item 5).
 
    The first live pass (2026-10-03 00:35 UTC, conserve mode) took 10 events: 9 finished and 1
    brief failed the copy check. It made 21 billed calls for US$0.00068 in all, about US$0.00007
@@ -107,8 +135,9 @@ makes it safe to switch the AI agents on.
 ```bash
 docker compose logs --since 7h worker | grep -i 'ground-truth'     # one sync every 6 h
 docker compose exec worker python -m worker --check-budget          # the mode the spend allows
-docker compose exec worker python -m worker --enrich                # one enrichment pass now
+docker compose exec worker python -m worker --enrich                # enrichment + MITRE pass now
 docker compose logs --since 1h worker | grep 'enrichment:'           # counts per pass
+docker compose logs --since 1h worker | grep 'MITRE suggestions'     # counts per MITRE pass
 ```
 
 To stop all AI spending at once, set `AI_MONTHLY_BUDGET_USD=0` in `.env`, then run
@@ -122,6 +151,8 @@ and collection and publishing carry on.
   event)
 - [x] Degradation demonstrably works when the tier is forced (`tests/unit/test_budget.py`)
 - [x] The ceiling guard rejects an over-priced model in a test (`tests/unit/test_ladder.py`)
+- [x] CVEs carry OSV / GitHub advisories, and technique suggestions come only from the cached
+  ATT&CK / ATLAS release (`tests/unit/test_ai_mitre.py`)
 
 ---
 

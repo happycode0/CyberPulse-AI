@@ -10,6 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from worker.ai.enrich import AiLayer, enrich_pending
+from worker.ai.mitre import suggest_techniques
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
 from worker.pipeline import run as pipeline_run
@@ -134,21 +135,27 @@ async def _groundtruth_job() -> None:
 
 
 async def _enrich_job() -> None:
-    """Enrich a batch of pending events, and republish if any of them changed.
+    """Enrich a batch of pending events, suggest MITRE techniques for a few enriched ones, and
+    republish if either changed anything.
 
     Never fatal to the schedule. With no key, a ladder that fails the guard or no money, the pass
-    calls nothing and returns, and the events stay `pending_enrichment` on the site.
+    calls nothing and returns, and the events stay `pending_enrichment` on the site. The two
+    passes fail apart: suggestions still run after an enrichment pass that raised.
     """
     global _ai_layer
     if _ai_layer is None:
         _ai_layer = AiLayer()
+    changed = False
     try:
-        summary = await enrich_pending(layer=_ai_layer)
+        changed |= (await enrich_pending(layer=_ai_layer)).changed_anything
     except Exception:
         logger.exception("scheduled enrichment failed")
-        return
+    try:
+        changed |= (await suggest_techniques(layer=_ai_layer)).changed_anything
+    except Exception:
+        logger.exception("scheduled MITRE suggestions failed")
 
-    if not summary.changed_anything:
+    if not changed:
         return
     await _publish("enrichment", stands="the enrichment itself stands")
 

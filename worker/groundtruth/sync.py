@@ -13,6 +13,11 @@ one thing that is never done on failure is writing a default — `GroundTruthErr
 that register would have given stays `unknown`, which is the whole reason the registers raise instead
 of returning empty.
 
+Two slower registers ride along. OSV is asked, a batch at a time, which packages each CVE affects
+and which versions fix it, with GitHub's reviewed advisories read through OSV's mirror of them. The
+MITRE ATT&CK and ATLAS indexes are read every pass, and a catalogue is downloaded only when a release
+appears that is not loaded yet; technique suggestions choose from what is loaded (worker/ai/mitre.py).
+
 Severity and rescoring come last, because they are the consequences rather than the inputs: `urgency`
 is computed from the severity band and the KEV bonus, so a sync that moved either has left stored
 scores describing a world that no longer exists.
@@ -20,13 +25,16 @@ scores describing a world that no longer exists.
 
 import asyncio
 import logging
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import TypeVar
 
 import httpx
 from sqlalchemy import Engine
 
+from worker.db.advisories import cves_due_for_advisories, record_advisories, record_advisory_check
 from worker.db.groundtruth import (
     KevResult,
     ScoreResult,
@@ -38,23 +46,43 @@ from worker.db.groundtruth import (
     record_epss,
     set_event_severity,
 )
+from worker.db.mitre import load_catalogue, loaded_versions
 from worker.db.session import get_engine
 from worker.groundtruth.cvss import resolve_cvss
 from worker.groundtruth.epss import EpssSnapshot
 from worker.groundtruth.errors import GroundTruthError
 from worker.groundtruth.kev import KevCatalogue
-from worker.groundtruth.registers import RecordLookup, fetch_cve_record, fetch_epss, fetch_kev
+from worker.groundtruth.mitre import Catalogue
+from worker.groundtruth.registers import (
+    AdvisoryLookup,
+    RecordLookup,
+    fetch_advisories,
+    fetch_cve_record,
+    fetch_epss,
+    fetch_kev,
+    fetch_mitre_catalogue,
+    fetch_mitre_release,
+)
 from worker.models import CvssScore
 from worker.pipeline.run import DEFAULT_SCORING_PATH, rescore
 from worker.pipeline.score import ScoringConfig
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
 # How many CVEs to look CVSS up for in one pass. At four passes a day this backfills a few thousand
 # CVEs in under a week and then idles at whatever `RECHECK_HOURS` asks for. The number is a courtesy
 # budget, not a performance limit: the register is a free public service and the honest way to use it
 # is slowly.
 DEFAULT_CVSS_BATCH = 400
+
+# CVEs to read OSV advisories for in one pass. Each costs one request for OSV's own record and one
+# per GitHub advisory it names (at most three), so this is up to 800 requests to a free service.
+DEFAULT_ADVISORY_BATCH = 200
+
+# The matrices whose catalogues are kept. ATLAS is MITRE's matrix for attacks on AI systems.
+MITRE_MATRICES = ("enterprise", "atlas")
 
 # Four at a time. The register publishes no rate limit, so this is chosen to stay obviously below any
 # plausible one rather than to go fast — the backfill has days to finish and nothing is waiting on it.
@@ -93,12 +121,26 @@ class CvssTally:
 
 
 @dataclass
+class AdvisoryTally:
+    """Outcomes of one advisory batch. `recorded` counts CVEs whose advisories changed."""
+
+    found: int = 0
+    absent: int = 0
+    errored: int = 0
+    recorded: int = 0
+    backed_off: bool = False
+
+
+@dataclass
 class SyncSummary:
     """What one pass did. `None` for a register means it could not be read at all."""
 
     kev: KevResult | None = None
     epss: ScoreResult | None = None
     cvss: CvssTally = field(default_factory=CvssTally)
+    advisories: AdvisoryTally = field(default_factory=AdvisoryTally)
+    # MITRE releases loaded in this pass, such as 'ATT&CK v19.2'. Usually none.
+    mitre_loaded: list[str] = field(default_factory=list)
     severity_changed: int = 0
     rescored: int = 0
     errors: list[str] = field(default_factory=list)
@@ -115,7 +157,13 @@ class SyncSummary:
         """
         kev_moved = bool(self.kev and (self.kev.updated or self.kev.delisted))
         epss_moved = bool(self.epss and self.epss.recorded)
-        return bool(kev_moved or epss_moved or self.cvss.recorded or self.severity_changed)
+        return bool(
+            kev_moved
+            or epss_moved
+            or self.cvss.recorded
+            or self.advisories.recorded
+            or self.severity_changed
+        )
 
 
 async def sync_groundtruth(
@@ -123,6 +171,8 @@ async def sync_groundtruth(
     engine: Engine | None = None,
     now: datetime | None = None,
     cvss_batch: int = DEFAULT_CVSS_BATCH,
+    advisory_batch: int = DEFAULT_ADVISORY_BATCH,
+    mitre: bool = True,
     scoring_path: Path | None = None,
 ) -> SyncSummary:
     """Read every register once and write what changed.
@@ -135,6 +185,10 @@ async def sync_groundtruth(
     cvss_batch : int
         How many CVEs to resolve CVSS for. 0 skips the per-record register entirely, which is what a
         caller wants when it only needs the bulk registers refreshed.
+    advisory_batch : int
+        How many CVEs to read OSV advisories for. 0 skips OSV.
+    mitre : bool
+        Whether to check for a new ATT&CK or ATLAS release, and load it if there is one.
 
     Returns
     -------
@@ -161,9 +215,7 @@ async def sync_groundtruth(
             summary.errors.append(f"kev: {exc}")
         else:
             summary.kev = await asyncio.to_thread(_write_kev, engine, catalogue)
-            touched |= set(
-                await asyncio.to_thread(_events_for, engine, summary.kev.changed_cves)
-            )
+            touched |= set(await asyncio.to_thread(_events_for, engine, summary.kev.changed_cves))
 
         try:
             snapshot = await fetch_epss(client)
@@ -182,6 +234,19 @@ async def sync_groundtruth(
             if backed_off:
                 summary.errors.append("cvss: register asked us to back off; batch cut short")
 
+        if advisory_batch > 0:
+            due = await asyncio.to_thread(_due_for_advisories, engine, moment, advisory_batch)
+            logger.info("reading advisories for %d of up to %d due CVEs", len(due), advisory_batch)
+            found, backed_off = await _resolve_advisories(client, due)
+            summary.advisories = await asyncio.to_thread(_write_advisories, engine, found, moment)
+            summary.advisories.backed_off = backed_off
+            if backed_off:
+                summary.errors.append("advisories: OSV asked us to back off; batch cut short")
+
+        if mitre:
+            summary.mitre_loaded, errors = await _sync_mitre(client, engine)
+            summary.errors.extend(errors)
+
     changed_events = await asyncio.to_thread(_write_severity, engine)
     summary.severity_changed = len(changed_events)
     touched |= set(changed_events)
@@ -193,10 +258,13 @@ async def sync_groundtruth(
         summary.rescored = len(touched)
 
     logger.info(
-        "ground-truth sync: kev=%s epss=%s cvss=%s severity_changed=%d rescored=%d errors=%d",
+        "ground-truth sync: kev=%s epss=%s cvss=%s advisories=%s mitre_loaded=%s "
+        "severity_changed=%d rescored=%d errors=%d",
         summary.kev,
         summary.epss,
         summary.cvss,
+        summary.advisories,
+        summary.mitre_loaded,
         summary.severity_changed,
         summary.rescored,
         len(summary.errors),
@@ -204,47 +272,105 @@ async def sync_groundtruth(
     return summary
 
 
-async def _resolve_records(
-    client: httpx.AsyncClient, cve_ids: list[str]
-) -> tuple[list[tuple[str, RecordLookup]], bool]:
-    """Look every CVE up, a few at a time, stopping early if asked to back off.
+async def _drain(
+    ids: list[str],
+    lookup: Callable[[str], Awaitable[T | None]],
+    on_raise: Callable[[Exception], T],
+    register: str,
+) -> tuple[list[tuple[str, T]], bool]:
+    """Look every id up, a few at a time, stopping early if asked to back off.
 
     A queue and a fixed pool rather than `asyncio.gather` over every id, because the backing-off has
     to be able to cancel work that has not started yet. With `gather` all several hundred requests
     are already in flight by the time the first 429 arrives, and the response to being rate-limited
     would be to finish rate-limiting ourselves.
 
-    A 429'd CVE is not recorded at all. `cve_cvss_checks` is a record of what the register said about
-    a CVE, and "we were throttled" is a fact about us.
+    `lookup` returns None for "throttled". A throttled id is not recorded at all: the check tables
+    record what the register said about a CVE, and "we were throttled" is a fact about us.
     """
     queue: asyncio.Queue[str] = asyncio.Queue()
-    for cve_id in cve_ids:
-        queue.put_nowait(cve_id)
+    for item in ids:
+        queue.put_nowait(item)
 
-    results: list[tuple[str, RecordLookup]] = []
+    results: list[tuple[str, T]] = []
     backoff = asyncio.Event()
 
     async def worker() -> None:
         while not backoff.is_set():
             try:
-                cve_id = queue.get_nowait()
+                item = queue.get_nowait()
             except asyncio.QueueEmpty:
                 return
             try:
-                lookup = await fetch_cve_record(client, cve_id)
+                result = await lookup(item)
             except Exception as exc:
-                # `fetch_cve_record` is written not to raise, so this is the belt to its braces:
+                # The lookups are written not to raise, so this is the belt to their braces:
                 # one malformed id must not take the rest of the batch with it.
-                logger.exception("CVE record lookup for %s failed", cve_id)
-                lookup = RecordLookup("error", detail=f"lookup raised: {exc!r}")
-            if lookup.retry_after:
-                logger.warning("CVE record register throttled us at %s; stopping the batch", cve_id)
+                logger.exception("%s lookup for %s failed", register, item)
+                result = on_raise(exc)
+            if result is None:
+                logger.warning(
+                    "the %s register throttled us at %s; stopping the batch", register, item
+                )
                 backoff.set()
                 return
-            results.append((cve_id, lookup))
+            results.append((item, result))
 
     await asyncio.gather(*(worker() for _ in range(MAX_CONCURRENT_RECORD_FETCHES)))
     return results, backoff.is_set()
+
+
+async def _resolve_records(
+    client: httpx.AsyncClient, cve_ids: list[str]
+) -> tuple[list[tuple[str, RecordLookup]], bool]:
+    """Look every CVE's record up for its CVSS."""
+
+    async def lookup(cve_id: str) -> RecordLookup | None:
+        found = await fetch_cve_record(client, cve_id)
+        return None if found.retry_after else found
+
+    return await _drain(
+        cve_ids,
+        lookup,
+        lambda exc: RecordLookup("error", detail=f"lookup raised: {exc!r}"),
+        "CVE record",
+    )
+
+
+async def _resolve_advisories(
+    client: httpx.AsyncClient, cve_ids: list[str]
+) -> tuple[list[tuple[str, AdvisoryLookup]], bool]:
+    return await _drain(
+        cve_ids,
+        lambda cve_id: fetch_advisories(client, cve_id),
+        lambda exc: AdvisoryLookup("error", detail=f"lookup raised: {exc!r}"),
+        "OSV",
+    )
+
+
+async def _sync_mitre(client: httpx.AsyncClient, engine: Engine) -> tuple[list[str], list[str]]:
+    """Load any ATT&CK or ATLAS release that is newer than what is loaded.
+
+    Returns the releases loaded and the errors met. A matrix that cannot be read keeps the
+    catalogue already loaded, which suggestions go on using.
+    """
+    loaded: list[str] = []
+    errors: list[str] = []
+    for matrix in MITRE_MATRICES:
+        try:
+            release = await fetch_mitre_release(client, matrix)
+            if release.version in await asyncio.to_thread(_loaded_mitre, engine, matrix):
+                continue
+            logger.info("MITRE %s: %s is new, downloading it", matrix, release.version)
+            catalogue = await fetch_mitre_catalogue(client, release)
+        except GroundTruthError as exc:
+            logger.error("MITRE %s unavailable, the loaded catalogue stands: %s", matrix, exc)
+            errors.append(f"mitre {matrix}: {exc}")
+            continue
+        count = await asyncio.to_thread(_load_mitre, engine, catalogue)
+        logger.info("MITRE %s: loaded %s with %d techniques", matrix, release.version, count)
+        loaded.append(release.version)
+    return loaded, errors
 
 
 def _write_kev(engine: Engine, catalogue: KevCatalogue) -> KevResult:
@@ -310,3 +436,40 @@ def _write_cvss(engine: Engine, lookups: list[tuple[str, RecordLookup]]) -> Cvss
 def _write_severity(engine: Engine) -> list[str]:
     with engine.begin() as conn:
         return set_event_severity(conn)
+
+
+def _due_for_advisories(engine: Engine, now: datetime, limit: int) -> list[str]:
+    with engine.connect() as conn:
+        return cves_due_for_advisories(conn, now=now, limit=limit)
+
+
+_ADVISORY_TALLY_FIELD = {"found": "found", "absent": "absent", "error": "errored"}
+
+
+def _write_advisories(
+    engine: Engine, lookups: list[tuple[str, AdvisoryLookup]], now: datetime
+) -> AdvisoryTally:
+    tally = AdvisoryTally()
+    for start in range(0, len(lookups), WRITE_CHUNK):
+        chunk = lookups[start : start + WRITE_CHUNK]
+        with engine.begin() as conn:
+            for cve_id, lookup in chunk:
+                if lookup.advisories or lookup.complete:
+                    change = record_advisories(
+                        conn, cve_id, lookup.advisories, now=now, complete=lookup.complete
+                    )
+                    tally.recorded += change.changed
+                record_advisory_check(conn, cve_id, lookup.outcome, lookup.detail, now=now)
+                name = _ADVISORY_TALLY_FIELD[lookup.outcome]
+                setattr(tally, name, getattr(tally, name) + 1)
+    return tally
+
+
+def _loaded_mitre(engine: Engine, matrix: str) -> set[str]:
+    with engine.connect() as conn:
+        return loaded_versions(conn, matrix)
+
+
+def _load_mitre(engine: Engine, catalogue: Catalogue) -> int:
+    with engine.begin() as conn:
+        return load_catalogue(conn, catalogue)
