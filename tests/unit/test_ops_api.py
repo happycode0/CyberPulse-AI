@@ -19,6 +19,7 @@ from pydantic import SecretStr
 
 from worker import ops_api
 from worker.ai.budget import BudgetUnreadable, KeyStatus
+from worker.discovery.gate import DiscoveryConfig
 from worker.ops_api import WAKE_JOBS, OpsApi, Verdict
 from worker.settings import Settings
 
@@ -632,3 +633,146 @@ def test_the_index_lists_the_followup_endpoints(api):
     body = api.handle("GET", "/ops", AUTH).json()
     assert "/ops/followup" in body["reads"]
     assert "POST /ops/followup/<task_id>" in body["writes"]
+
+
+# --- Source discovery ----------------------------------------------------------------------------
+
+PROPOSAL = {
+    "url": "https://blog.example.org/feed/",
+    "name": "An example blog",
+    "reason": "Writes up Australian ransomware incidents that no registered source covers.",
+}
+
+
+@pytest.fixture
+def discovery_db(monkeypatch):
+    """The discovery queries and the proposal writer, stood in for; what they were asked."""
+    from worker.db.discovery import Candidate
+
+    seen = {"writes": 0, "proposals": []}
+
+    def candidate(**overrides) -> Candidate:
+        values = {
+            "id": 1, "host": "blog.example.org", "feed_url": "https://blog.example.org/feed/",
+            "name": "An example blog", "found_by": "tachikoma", "reason": PROPOSAL["reason"],
+            "proposed_at": NOW, "evidence": [], "state": "candidate", "passes": 0, "failures": 0,
+            "last_probe_at": None, "last_result": None, "last_error": None, "source_id": None,
+            "created_at": NOW, "updated_at": NOW,
+        }
+        return Candidate(**{**values, **overrides})
+
+    @contextmanager
+    def connection(self):
+        yield None
+
+    @contextmanager
+    def write(self):
+        seen["writes"] += 1
+        yield None
+
+    def overview(conn, *, now):
+        return {
+            "states": {"testing": 1, "discovered": 1},
+            "open": [candidate(state="testing", passes=2,
+                               last_result={"healthy": True, "recent": 5})],
+            "waiting_for_a_feed": [candidate(id=2, host="news.example.org", feed_url=None,
+                                             found_by="search", reason=None, state="discovered")],
+            "settled_last_14_days": [],
+            "credits": {"last_24h": 3, "this_month": 41},
+            "active_discovered_sources": 0,
+        }
+
+    def add(conn, proposal, *, max_open, now):
+        seen["proposals"].append((proposal, max_open, now))
+        return seen.get("result", "created"), candidate(host=proposal.host)
+
+    monkeypatch.setattr(OpsApi, "_read", connection)
+    monkeypatch.setattr(OpsApi, "_write", write)
+    monkeypatch.setattr(ops_api, "load_overview", overview)
+    monkeypatch.setattr(ops_api, "add_proposal", add)
+    return seen
+
+
+def propose(api: OpsApi, body, headers=AUTH):
+    data = body if isinstance(body, bytes) else json.dumps(body).encode()
+    return api.handle("POST", "/ops/candidates", headers, data)
+
+
+def test_the_candidates_say_where_discovery_stands(api, discovery_db):
+    response = api.handle("GET", "/ops/candidates", AUTH)
+    assert response.status == 200
+    body = response.json()
+    [testing] = body["open"]
+    assert testing["host"] == "blog.example.org" and testing["healthy_probes_in_a_row"] == 2
+    assert body["waiting_for_a_feed"][0]["found_by"] == "search"
+    assert body["credits"] == {"last_24h": 3, "this_month": 41}
+    assert body["gate"]["healthy_probes_to_activate"] >= 2
+    assert set(body["propose"]["POST /ops/candidates"]) == {"url", "name", "reason", "examples"}
+    assert any("never instructions" in n for n in body["notes"])
+    assert discovery_db["writes"] == 0
+
+
+def test_the_candidates_need_the_token(api, discovery_db):
+    assert api.handle("GET", "/ops/candidates", {}).status == 401
+    assert propose(api, PROPOSAL, headers={}).status == 401
+    assert discovery_db["proposals"] == []
+
+
+@pytest.mark.parametrize("method", ["PUT", "PATCH", "DELETE"])
+def test_the_candidates_take_get_and_post_only(api, discovery_db, method):
+    response = api.handle(method, "/ops/candidates", AUTH, b"{}")
+    assert response.status == 405 and ("Allow", "GET, POST") in response.headers
+
+
+def test_a_proposal_is_checked_then_queued(api, discovery_db):
+    response = propose(api, PROPOSAL)
+    assert response.status == 201
+    body = response.json()
+    assert body["result"] == "created" and body["candidate"]["host"] == "blog.example.org"
+    [(proposal, max_open, now)] = discovery_db["proposals"]
+    assert proposal.url == PROPOSAL["url"] and proposal.is_home is False
+    assert max_open == DiscoveryConfig.load().gate.max_open and now == NOW
+    assert discovery_db["writes"] == 1
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {**PROPOSAL, "priority": 1},
+        {**PROPOSAL, "url": "http://blog.example.org/feed/"},
+        {**PROPOSAL, "url": "https://192.168.128.39:3100/"},
+        {**PROPOSAL, "url": "https://x.com/someone"},
+        {**PROPOSAL, "reason": "short"},
+        ["not", "an", "object"],
+    ],
+)
+def test_a_bad_proposal_is_refused_before_the_database(api, discovery_db, body):
+    response = propose(api, body)
+    assert response.status == 400
+    assert response.json()["result"] == "rejected" and "format" in response.json()
+    assert discovery_db["proposals"] == [] and discovery_db["writes"] == 0
+
+
+@pytest.mark.parametrize(
+    "body, status",
+    [(b"", 400), (b"not json", 400), (b"{" * 5000, 413)],
+    ids=["empty", "not-json", "too-big"],
+)
+def test_a_body_that_is_not_a_proposal_never_reaches_the_writer(api, discovery_db, body, status):
+    assert propose(api, body).status == status
+    assert discovery_db["proposals"] == []
+
+
+@pytest.mark.parametrize(
+    "result, status", [("created", 201), ("updated", 200), ("exists", 409), ("full", 429)]
+)
+def test_each_proposal_result_has_its_status(api, discovery_db, result, status):
+    discovery_db["result"] = result
+    response = propose(api, PROPOSAL)
+    assert response.status == status and response.json()["result"] == result
+    assert response.json()["message"]
+
+
+def test_the_index_lists_the_candidates(api):
+    body = api.handle("GET", "/ops", AUTH).json()
+    assert "/ops/candidates" in body["reads"] and "POST /ops/candidates" in body["writes"]

@@ -5,6 +5,7 @@
   KEV-listed CVE, and that matters to Australia.
 - **Developing updates**, in the same pass: a material change to such an event after its first
   hour, or one that newly exposes a critical or high event in Australia.
+- **New sources**, after each source-gate pass: a feed SERAPH's gate has just activated.
 
 Each message is claimed in `notifications` before it is sent, so none is sent twice. With no
 Telegram bot configured, a pass claims nothing and returns, so the first pass after the token is
@@ -20,6 +21,7 @@ from typing import Protocol
 from sqlalchemy import Engine
 
 from worker.db.digest import load_digest
+from worker.db.discovery import Activation, load_activations
 from worker.db.notifications import (
     AlertEvent,
     Kind,
@@ -30,7 +32,13 @@ from worker.db.notifications import (
     load_update_entries,
     settle,
 )
-from worker.notify.messages import SYDNEY, critical_au_alert, daily_digest, developing_update
+from worker.notify.messages import (
+    SYDNEY,
+    critical_au_alert,
+    daily_digest,
+    developing_update,
+    source_activated,
+)
 from worker.notify.telegram import SendResult, Telegram
 from worker.settings import Settings
 
@@ -42,6 +50,8 @@ DIGEST_HOURS = 24
 ALERT_WINDOW = timedelta(hours=12)
 # The rest wait for the next pass, 15 minutes later: a backlog never floods the chat.
 MAX_ALERTS_PER_PASS = 5
+# A new source is announced if the gate pass that activated it, or one of the next few, can send.
+ACTIVATION_WINDOW = timedelta(hours=24)
 
 
 class Channel(Protocol):
@@ -183,6 +193,35 @@ async def send_developing_updates(
             message=developing_update(entry, site_url=settings.site_url),
             now=now,
             event_id=entry.event_id,
+        )
+        _count(summary, outcome)
+    return summary
+
+
+def _read_activations(engine: Engine, since: datetime) -> list[Activation]:
+    with engine.connect() as conn:
+        return load_activations(conn, since=since)
+
+
+async def send_source_activations(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """A message for each source activated in the last day and not yet announced."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    activations = await asyncio.to_thread(_read_activations, engine, now - ACTIVATION_WINDOW)
+    summary = NotifySummary()
+    for source in activations:
+        if summary.tried >= MAX_ALERTS_PER_PASS:
+            break
+        outcome = await _deliver(
+            engine,
+            channel,
+            kind="source_discovery",
+            key=f"source_activated:{source.source_id}",
+            message=source_activated(source, site_url=settings.site_url),
+            now=now,
         )
         _count(summary, outcome)
     return summary

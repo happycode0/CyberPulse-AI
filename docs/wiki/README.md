@@ -23,7 +23,7 @@ layer on top of both.
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
 | 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
-| 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram and THE CREW built |
+| 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ⬜ |
 | 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ⬜ |
 
@@ -61,6 +61,8 @@ Stage 7  Hardening + operations ................... ⬜
    ([Stage 7](stage-7-hardening.md)).
 5. **A Telegram bot** for the daily digest and alerts ([Stage 5, Telegram](stage-5-full-crew.md#telegram)).
    Later, NetBird if you want the dashboard from outside the house.
+6. **A Tavily key** for the nightly source search, and TACHIKOMA's new instructions
+   ([Stage 5, Source discovery](stage-5-full-crew.md#source-discovery)).
 
 ## Where things live
 
