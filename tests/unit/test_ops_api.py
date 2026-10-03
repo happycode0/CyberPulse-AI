@@ -19,6 +19,7 @@ from pydantic import SecretStr
 
 from worker import ops_api
 from worker.ai.budget import BudgetUnreadable, KeyStatus
+from worker.cadence import FAST_INTERVAL
 from worker.db.jobs import JobRun
 from worker.discovery.gate import DiscoveryConfig
 from worker.ops_api import WAKE_JOBS, OpsApi, Verdict
@@ -241,9 +242,9 @@ def test_publish_is_ok_after_a_recent_publish(api, tmp_path):
 
 
 def test_publish_fails_when_the_last_publish_is_old(api, tmp_path):
-    write_status(tmp_path, "2026-10-03T07:00:00Z")
+    write_status(tmp_path, "2026-10-03T05:00:00Z")
     verdict = api.verdict("publish")
-    assert verdict.ok is False and "60 minutes ago" in verdict.summary["reason"]
+    assert verdict.ok is False and "180 minutes ago" in verdict.summary["reason"]
 
 
 @pytest.mark.parametrize("content", [None, "{not json", '{"generated_at": "yesterday"}',
@@ -485,7 +486,8 @@ def test_a_port_in_use_is_logged_and_survived(tmp_path, caplog):
 
 def test_wake_freshness_windows_fit_the_schedules():
     """One missed collection, and one missed ground-truth pass, before a wake fails."""
-    assert ops_api.COLLECTION_FRESH == timedelta(minutes=30)
+    assert ops_api.COLLECTION_FRESH == 2 * FAST_INTERVAL
+    assert FAST_INTERVAL < ops_api.COLLECTION_FRESH < FAST_INTERVAL * 3
     assert ops_api.GROUNDTRUTH_FRESH > timedelta(hours=6)
 
 

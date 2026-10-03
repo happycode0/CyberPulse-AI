@@ -15,7 +15,7 @@ from sqlalchemy.exc import DBAPIError
 from worker.ai.budget import KeyStatus
 from worker.db.jobs import JobRun, load_latest_completed_job, load_latest_job, record_job
 from worker.db.migrate import run_migrations
-from worker.ops_api import OpsApi
+from worker.ops_api import COLLECTION_FRESH, OpsApi
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
@@ -216,7 +216,7 @@ def test_source_verify_counts_the_enabled_sources_latest_checks(api, db):
 
 
 def test_source_verify_fails_when_no_check_is_recent(api, db):
-    add_health(db, "ops-fast", "ok", NOW - timedelta(minutes=31))
+    add_health(db, "ops-fast", "ok", NOW - COLLECTION_FRESH - timedelta(minutes=1))
     assert api.verdict("source-verify").ok is False
 
 

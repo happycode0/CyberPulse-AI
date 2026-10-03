@@ -15,7 +15,9 @@
 # is never touched, and it pushes a branch and opens a pull request that a human merges.
 # Run it where you push from, not on the VM. Once the revert is merged, `unpin`.
 #
-# A deploy restarts the worker. Keep clear of the fast runs at :00, :15, :30 and :45 UTC.
+# A deploy restarts the worker, and a restart across a job's minute loses that run. Run `pin`
+# and `unpin` between :10 and :45 past the hour: the fast run is at :00 UTC, its alerts and
+# enrichment follow at :03 and :05, and the source gate runs at :50.
 
 set -euo pipefail
 cd "$(dirname "$0")/.."

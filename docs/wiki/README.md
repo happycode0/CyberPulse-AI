@@ -16,7 +16,7 @@ layer on top of both.
 | # | Page | What it gives you | Status |
 |---|---|---|---|
 | 0 | [Prerequisites](stage-0-prerequisites.md) | Accounts, keys, the VM, `.env` | ✅ done |
-| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | ✅ done |
+| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every hour, the public site | ✅ done |
 | 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | ✅ done |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ✅ done |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
@@ -66,8 +66,8 @@ Stage 7  Hardening + operations ................... ✅ built and passed
    **Keep them paused** until the 8-agent crew change lands, and until the agents no longer
    inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)).
 3. ~~**Approve merging `stage-1-foundation` into `main`.**~~ ✅ Merged 2026-10-03 (PR #1).
-   **Then commit the Pages timer**, so the site redeploys every 15 minutes on its own
-   ([Stage 1, item 2](stage-1-foundation.md#whats-left)).
+   **Then make the Pages timer hourly**, so the site redeploys a few minutes after each hourly
+   publish: `- cron: "12 * * * *"` ([Stage 1, item 2](stage-1-foundation.md#whats-left)).
 4. **Provide an off-host backup target** (NAS, USB disk or PBS). The host has a single disk
    ([Stage 7](stage-7-hardening.md)).
 5. **A Telegram bot** for the daily digest and alerts ([Stage 5, Telegram](stage-5-full-crew.md#telegram)).
@@ -85,14 +85,14 @@ Stage 7  Hardening + operations ................... ✅ built and passed
 | The stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db`, `worker`, `server` |
 | Secrets | VM `~/CyberPulse-AI/.env` | git-ignored, never committed: the repo is public |
 | Paperclip dashboard | http://10.0.0.0:3100 | home network only, login required |
-| Public site | https://happycode0.github.io/CyberPulse-AI/ | real events; redeploys every 15 minutes |
+| Public site | https://happycode0.github.io/CyberPulse-AI/ | real events; a timer redeploys it, every 15 minutes until it goes hourly (item 3) |
 
 ## Everyday commands (on the VM)
 
 ```bash
 cd ~/CyberPulse-AI
 docker compose ps                         # db, worker, server: all "Up … (healthy)"
-docker compose logs -f worker             # collection: "done: ok=" every 15 min
+docker compose logs -f worker             # collection: "done: ok=" every hour at :00 UTC
 docker compose logs -f server             # Paperclip
 docker compose up -d                      # start whatever is stopped
 ```
