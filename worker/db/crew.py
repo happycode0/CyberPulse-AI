@@ -1,7 +1,9 @@
 """What the deterministic crew did, counted from the rows their jobs leave (data/crew.json).
 
-Only agents whose work the worker itself does are counted here. The AI agents work in the
-Paperclip control panel, which the worker never reads, so nothing is claimed for them.
+Only agents whose work the worker itself does are counted here: SERAPH, the Collector, whose
+wake answers for the collection, source checks, ground truth and publishing, and RIPPERDOC's
+cost ledger (ROGUE's, before the 8-agent crew). The AI agents work in the Paperclip control
+panel, which the worker never reads, so nothing is claimed for them.
 """
 
 from dataclasses import dataclass
@@ -32,45 +34,44 @@ def _one(conn: Connection, sql: str, since: datetime) -> dict:
 
 
 def load_crew_activity(conn: Connection, *, since: datetime) -> dict[str, Activity]:
-    """Activity per callsign (lower case) for LIBRARIAN, PROWL, SERAPH and ROGUE."""
-    librarian = _one(
-        conn,
-        "select (select count(*) from job_runs where job = 'groundtruth' and completed "
-        "        and started_at >= :since) as tasks, "
-        "       (select max(finished_at) from job_runs where job = 'groundtruth' and completed) "
-        "        as last_active, "
-        "       (select not completed from job_runs where job = 'groundtruth' "
-        "        order by finished_at desc, id desc limit 1) as failing",
-        since,
-    )
-    prowl = _one(
-        conn,
-        "select count(*) filter (where finished_at is not null) as tasks, "
-        "       coalesce(sum(items_fetched) filter (where finished_at is not null), 0) as items, "
-        "       (select max(finished_at) from runs) as last_active "
-        "from runs where started_at >= :since",
-        since,
-    )
+    """Activity per callsign (lower case) for SERAPH and RIPPERDOC.
+
+    SERAPH's tasks are the sources checked, the finished collection runs, and the completed
+    ground-truth and publish passes, added together; its items are what the runs fetched. It
+    is failing while the newest ground-truth pass did not complete. RIPPERDOC's tasks are the
+    ledger's rows: every AI call the worker priced.
+    """
     seraph = _one(
         conn,
-        "select count(*) as tasks, count(distinct source_id) as items, "
-        "       (select max(checked_at) from source_health) as last_active "
-        "from source_health where checked_at >= :since",
+        "select (select count(*) from source_health where checked_at >= :since) as checks, "
+        "       (select count(*) from runs where started_at >= :since "
+        "        and finished_at is not null) as runs, "
+        "       (select coalesce(sum(items_fetched), 0) from runs where started_at >= :since "
+        "        and finished_at is not null) as items, "
+        "       (select count(*) from job_runs where job in ('groundtruth', 'publish') "
+        "        and completed and started_at >= :since) as passes, "
+        "       (select not completed from job_runs where job = 'groundtruth' "
+        "        order by finished_at desc, id desc limit 1) as failing, "
+        "       greatest((select max(checked_at) from source_health), "
+        "                (select max(finished_at) from runs), "
+        "                (select max(finished_at) from job_runs "
+        "                 where job in ('groundtruth', 'publish') and completed)) as last_active",
         since,
     )
-    rogue = _one(
+    ripperdoc = _one(
         conn,
         "select count(*) as tasks, (select max(ts) from cost_ledger) as last_active "
         "from cost_ledger where ts >= :since",
         since,
     )
     return {
-        "librarian": Activity(
-            librarian["tasks"], None, librarian["last_active"], bool(librarian["failing"])
+        "seraph": Activity(
+            seraph["checks"] + seraph["runs"] + seraph["passes"],
+            int(seraph["items"]),
+            seraph["last_active"],
+            bool(seraph["failing"]),
         ),
-        "prowl": Activity(prowl["tasks"], int(prowl["items"]), prowl["last_active"]),
-        "seraph": Activity(seraph["tasks"], seraph["items"], seraph["last_active"]),
-        "rogue": Activity(rogue["tasks"], None, rogue["last_active"]),
+        "ripperdoc": Activity(ripperdoc["tasks"], None, ripperdoc["last_active"]),
     }
 
 

@@ -9,8 +9,8 @@ and raises what they show.
   Going down a chain that was signed off needs nobody's approval (§7.7).
 - **The gauntlet**, on Sundays: each enrichment tier's default and up to two challengers on
   the golden set (worker/ai/gauntlet.py), within `MONTHLY_CAP_USD`. A challenger that is
-  better by §7.6's rules becomes a proposal in `agent_proposals`; promoting it is MORPHEUS's and
-  ROGUE's decision, and a reviewed edit to config/models.yaml.
+  better by §7.6's rules becomes a proposal in `agent_proposals`; promoting it is MORPHEUS's
+  decision, on the worker's cost figures, and a reviewed edit to config/models.yaml.
 - **The golden set** is pinned the first time the gauntlet finds none, or by
   `--pin-golden-set` (worker/ai/golden.py).
 

@@ -3,7 +3,7 @@
 [← Stage 4 — overview](stage-4-paperclip.md) · [Wiki home](README.md) ·
 [4b — The crew →](stage-4b-the-crew.md)
 
-The production Paperclip on VM 200: one control panel for all 16 agents. Do the steps in order;
+The production Paperclip on VM 200: one control panel for all 8 agents. Do the steps in order;
 each one says who does it (🔴 you · 🟢 Claude).
 
 | Step | | State |
@@ -12,7 +12,7 @@ each one says who does it (🔴 you · 🟢 Claude).
 | 1 | Start Paperclip | ✅ done 2026-10-02, healthy |
 | 2–3 | Open it, claim it | ✅ done 2026-10-02 20:21 Sydney — your account is instance admin, sign-up is off |
 | 4–5 | Board approval toggle; company mission and budget | 🟡 board approval on, charter goal saved, MORPHEUS hired. Budget, Description and connection requests still to do |
-| 6–7 | 16 agents, routines | 🔴 **next** — one import does both ([step 6](#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go)) |
+| 6–7 | 8 agents, routines | ✅ the 16-agent crew imported 2026-10-02. 🔴 **next**: [move it to 8 agents](#moving-from-16-agents-to-8) |
 | 8 | First test ticket | 🔴 once Claude has wired OpenCode ([Stage 4](stage-4-paperclip.md#whats-left-in-order)) |
 
 You need [4b — the crew](stage-4b-the-crew.md) open at step 6.
@@ -228,7 +228,7 @@ AI-related developments, with an Australia-first perspective and global coverage
 update continuously, covering Australian and international cyber security news, threat
 intelligence, vulnerabilities, incidents, ransomware activity, data breaches, regulatory
 changes, emerging threats, AI security research, adversarial AI risks, model vulnerabilities,
-AI governance, AI safety, and significant AI industry developments that affect security.
+AI governance, AI safety, and significant AI industry developments.
 
 ACCURACY
 Accuracy always beats speed. Every claim must be traceable to a primary source. Every
@@ -293,19 +293,21 @@ GOLDEN RULES
 10. Every published insight must be explainable, traceable and defensible.
 ```
 
-That is: the first paragraph (from "Produce the most accurate…" to "…that affect security.") in
+That is: the first paragraph (from "Produce the most accurate…" to "…AI industry developments.") in
 **Description**, and all of it in the `CyberPulse charter` goal.
 
-## 6. 🔴 Create the 16 agents
+## 6. 🔴 Create the 8 agents
 
 ### The quick way: import the whole crew (and the routines) in one go
 
 `ops/build-paperclip-package.py` turns the [crew page](stage-4b-the-crew.md) and step 7's
 routines into a package for Paperclip's **Import** page. It holds:
-- all 16 agents, each with its title, role, manager, icon, model, budget and max daily runs;
+- all 8 agents, each with its title, role, manager, icon, model, budget and max daily runs;
 - every AI agent's instructions, with the house rules first;
-- the `http` agents' URL and job;
-- the 10 routines;
+- DECKARD's four beat skills (`cyberpulse-au-desk`, `cyberpulse-global-desk`,
+  `cyberpulse-ai-desk` and `cyberpulse-follow-up`);
+- the `http` agent's URL and job;
+- the 8 routines;
 - the board-approval setting;
 - the short mission. Importing into an existing company leaves the Description as it was
   (2026-10-02), so paste the mission by hand as in step 5.
@@ -324,11 +326,12 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
 3. Keep **Start imported agents and routines paused** ticked. **Preview**, then apply. Expect
    warnings that the `paperclipai/paperclip/*` skills are "not present in the package". The
    package leaves them out on purpose: replacing them would swap the built-in copies for ones
-   that track GitHub. The agents keep using the built-in skills.
+   that track GitHub. The agents keep using the built-in skills. DECKARD's four `cyberpulse-*`
+   skills are in the package, so they raise no warning.
 
    🔴 **On the finish screen, do not press "Activate selected".** Its list, *Activate imported
-   agents and routines*, arrives with all 26 items ticked. Pressing it resumes every agent and
-   switches on all 10 routines, including the seven that wait for later stages. If it was
+   agents and routines*, arrives with all 16 items ticked. Pressing it resumes every agent and
+   switches on all 8 routines, including the five that wait for later stages. If it was
    pressed, put everything back to paused with this, in the browser console (**F12 → Console**):
 
    ```js
@@ -343,20 +346,19 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
      if (a.status !== 'paused') console.log((await call(`/api/agents/${a.id}/pause`, 'POST')).name, 'paused');
    ```
 
-   It prints each routine and agent it pauses: 10 routines and 16 agents the first time.
-4. **Let the 10 new AI agents use your OpenRouter key.** The importer does not carry this.
+   It prints each routine and agent it pauses: 8 routines and 8 agents the first time.
+4. **Let the 6 other AI agents use your OpenRouter key.** The importer does not carry this.
    **Connectors → My OpenRouter API → Permissions → Which agents can use this connection? → Just
-   agents I pick**. Tick TELETRAAN, ZION, BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT,
-   RIPPERDOC, WHEELJACK and TRON next to MORPHEUS. Leave the five `http` agents out; they never
-   call a model.
+   agents I pick**. Tick TELETRAAN, DECKARD, VOIGHT, TACHIKOMA, RIPPERDOC and WHEELJACK next to
+   MORPHEUS. Leave SERAPH out; it is the `http` agent and never calls a model.
 5. **Make the budgets real.** The importer writes each agent's budget figure but not the
    hard-stop policy that enforces it, so the Budget tab shows a limit that does nothing. In the
    browser console (**F12 → Console**), run this. It replaces the company-budget snippet in
    step 5:
 
    ```js
-   const cents = { MORPHEUS: 200, TELETRAAN: 50, ZION: 100, BLASTER: 100, WINTERMUTE: 100,
-     TACHIKOMA: 100, DECKARD: 100, VOIGHT: 200, RIPPERDOC: 50, WHEELJACK: 100, TRON: 50 };
+   const cents = { MORPHEUS: 200, TELETRAAN: 100, DECKARD: 200, VOIGHT: 200, TACHIKOMA: 100,
+     RIPPERDOC: 50, WHEELJACK: 100 };
    const call = (url, body) => fetch(url, body && { method: 'PATCH',
      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
      .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
@@ -368,14 +370,14 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
    console.log(c.name, c.budgetMonthlyCents);
    ```
 
-   It prints 11 agents, then `CyberPulse 1200`. Saving a budget never resumes an agent the
-   import paused.
-6. Everything is now paused, MORPHEUS included. **Resume nothing** until the Stage 2 money pieces
-   (cost ledger and price guard) exist. After that, resume only the agents and the three routines
-   marked "now", following the crew page and step 7.
+   It prints 7 agents, then `CyberPulse 1200`. The 7 budgets add up to US$9.50, under the
+   company's US$12. Saving a budget never resumes an agent the import paused.
+6. Everything is now paused, MORPHEUS included. **Resume nothing until you choose to.** When you
+   do, resume only the agents marked "now" on the crew page, and the three routines marked "now"
+   in step 7.
 
 What the import cannot set:
-- **Nothing for the `http` agents.** Their wakes need no auth header
+- **Nothing for the `http` agent.** SERAPH's wake needs no auth header
   ([Stage 4](stage-4-paperclip.md#the-workers-ops-api)). Paperclip refuses to call a private
   address such as `http://worker:8700` unless the server's
   `PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST` lists it. `docker-compose.yml` sets that.
@@ -383,6 +385,99 @@ What the import cannot set:
 
 The import gives every AI agent **one run at a time** (`maxConcurrentRuns: 1`), so a burst of
 tickets queues up instead of spending in parallel.
+
+### Moving from 16 agents to 8
+
+The crew went from 16 agents to 8 in October 2026 ([4b](stage-4b-the-crew.md)). The callsigns
+stay, so nothing in the database changes. In Paperclip it is one import, eight terminations, the
+budgets and three short tests. Allow about an hour. **Every agent stays paused the whole time**,
+apart from the few minutes of each test in step 6.
+
+1. 🔴 **Update the worker**, so SERAPH's new wake is there:
+
+   ```bash
+   ssh cyberpulse-vm
+   cd ~/CyberPulse-AI
+   git pull
+   docker compose restart worker     # the code is mounted, so a restart loads it
+   ```
+
+   Then try the wake, as in [Stage 4](stage-4-paperclip.md#the-workers-ops-api), with
+   `seraph/wake` and `{"job":"pipeline"}`. It answers `"ok": true` with four checks under
+   `summary.checks`, or 503 with the failing ones named in `reason`. The old wakes, such as
+   `link/wake`, now answer 404.
+2. 🔴 **Build the package and import it**, exactly as in the quick way above: **Company Settings →
+   Import**, the existing CyberPulse, **Replace** on collisions, **Start imported agents and
+   routines paused** ticked, **Preview**, then apply. Do **not** press **Activate selected** on
+   the finish screen. If it was pressed, run the pause snippet in step 3 of the quick way.
+
+   Replace updates the 8 agents that stay in place: their instructions, models, budgets and
+   managers change, and their history is kept. The 8 retired agents are not in the package, so
+   the import does not touch them.
+3. 🔴 **Check what the import did.**
+   - DECKARD's page → **Skills** lists `cyberpulse-au-desk`, `cyberpulse-global-desk`,
+     `cyberpulse-ai-desk` and `cyberpulse-follow-up`, as well as `paperclip`.
+   - TELETRAAN's model is `openrouter/qwen/qwen3.8-flash`, and RIPPERDOC reports to MORPHEUS.
+   - SERAPH's payload template is `{"job": "pipeline"}`.
+   - **Routines** lists the 8 routines in step 7, all paused. **Monthly cost review** belongs to
+     RIPPERDOC, **Desk digest** to DECKARD at `0 6,14,22 * * *`, **Follow-up** runs at
+     `0 3-21/6 * * *`, and **Source discovery** at `30 3 * * *`, after the worker's 03:10
+     search. If one still shows its old value, change it on the routine's page. The
+     three old desk digests (AU, Global and AI) are still there too. Step 4 archives them.
+4. 🔴 **Terminate the 8 retired agents**: ZION, BLASTER, WINTERMUTE, TRON, ROGUE, PROWL,
+   LIBRARIAN and LINK. Terminating cannot be undone, but their runs, issues and costs stay in
+   the history. By hand, it is each agent's page → **Terminate**, after archiving the three old
+   desk digests on the **Routines** page. Or do it all at once in the browser console (**F12 →
+   Console**). This archives any routine still assigned to a retired agent, then terminates the
+   agents:
+
+   ```js
+   const retired = ['ZION', 'BLASTER', 'WINTERMUTE', 'TRON', 'ROGUE', 'PROWL', 'LIBRARIAN', 'LINK'];
+   const call = (url, method, body) => fetch(url, method && { method,
+     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) })
+     .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
+   const [co] = await call('/api/companies?scope=accessible');
+   const gone = (await call(`/api/companies/${co.id}/agents`))
+     .filter(a => retired.includes(a.name) && a.status !== 'terminated');
+   const ids = new Set(gone.map(a => a.id));
+   for (const r of await call(`/api/companies/${co.id}/routines`))
+     if (ids.has(r.assigneeAgentId) && r.status !== 'archived') {
+       await call(`/api/routines/${r.id}`, 'PATCH', { status: 'archived' });
+       console.log(r.title, 'archived');
+     }
+   for (const a of gone) {
+     await call(`/api/agents/${a.id}/terminate`, 'POST');
+     console.log(a.name, 'terminated');
+   }
+   ```
+
+   It prints the three old desk digests, then the 8 agents. A second run prints nothing. Then
+   **Connectors → My OpenRouter API → Permissions**: untick ZION, BLASTER, WINTERMUTE and TRON
+   if they are still listed. The six in step 4 of the quick way stay ticked, next to MORPHEUS.
+5. 🔴 **Set the 7 AI budgets.** Run the budget snippet in step 5 of the quick way. It prints
+   MORPHEUS 200, TELETRAAN 100, DECKARD 200, VOIGHT 200, TACHIKOMA 100, RIPPERDOC 50 and
+   WHEELJACK 100, then `CyberPulse 1200`. That is US$9.50 in all, under the company's US$12.
+   SERAPH needs no budget: it never calls a model. Check each agent's **Budget** tab shows its
+   figure.
+6. 🔴 **Smoke-test DECKARD, TELETRAAN and RIPPERDOC.** All three have new prompts, and TELETRAAN
+   has a new model. A paused agent never wakes, so each test is the one time an agent leaves
+   pause, and it goes back straight after. Do them one at a time, when you choose:
+   1. The agent's page → **Resume agent**.
+   2. **New issue**: `Test: introduce yourself`, body
+      `Reply in three lines: who you are, what you own, who you hand work to.`, **Assignee** the
+      agent.
+   3. Watch the run on its page. The reply should match its card on the
+      [crew page](stage-4b-the-crew.md), and the agent should mark its own ticket done.
+   4. Check the run's cost entry, not the agent's own claim. The model is the card's
+      (`xiaomi/mimo-v2.6-flash` for DECKARD and RIPPERDOC, `qwen/qwen3.8-flash` for TELETRAAN),
+      and the cost is well under one cent.
+   5. **Pause agent**, straight away.
+
+   If a test fails, leave that agent paused and tell Claude.
+7. **Leave everything paused.** All 8 agents and all 8 routines are paused now. **Resume nothing
+   until you choose to.** When you do, start with MORPHEUS, DECKARD and RIPPERDOC, and the three
+   routines marked "now" in step 7, after [Stage 4's last row](stage-4-paperclip.md#whats-left-in-order).
+   The retired agents never come back: a terminated agent cannot be resumed.
 
 ### The manual way
 
@@ -409,19 +504,17 @@ For each agent, copy from its card on the crew page:
 form does not offer a field, leave it — Claude sets those through the API in the Stage 4 build,
 along with the token values, so no secret is ever typed into a form.
 
-Then **Pause agent** on the nine marked ⏸ on the crew page. They stay on the **Org Chart** but
-never wake, so they cost nothing.
+Then **Pause agent** on every one. They stay on the **Org Chart** but never wake, so they cost
+nothing. Resume one only when you choose to.
 
 Check the **Org Chart** matches this:
 
 ```text
 MORPHEUS
-├── ZION · BLASTER · WINTERMUTE · TACHIKOMA · DECKARD · VOIGHT · SERAPH
-├── TELETRAAN
-│   ├── WHEELJACK · TRON
-│   └── LIBRARIAN · PROWL · LINK
-└── ROGUE
-    └── RIPPERDOC
+├── DECKARD · VOIGHT · TACHIKOMA · RIPPERDOC
+└── TELETRAAN
+    ├── WHEELJACK
+    └── SERAPH
 ```
 
 ## 7. 🔴 Create the routines
@@ -433,29 +526,31 @@ slow run never stacks up a queue and a reboot never fires a burst of missed jobs
 | Routine | Assigned to | Cron expression | Switch on |
 |---|---|---|---|
 | Daily editorial | MORPHEUS | `30 7 * * *` | now |
-| AU desk digest | ZION | `0 */4 * * *` | now |
+| Desk digest | DECKARD | `0 6,14,22 * * *` | now |
 | Daily QA sample | VOIGHT | `0 7 * * *` | Stage 5 |
-| Global desk digest | BLASTER | `10 */4 * * *` | Stage 5 |
-| AI desk digest | WINTERMUTE | `20 */4 * * *` | Stage 5 |
-| Follow-up | DECKARD | `45 */6 * * *` | Stage 5 |
-| Source discovery | TACHIKOMA | `0 3 * * *` | Stage 5 |
+| Follow-up | DECKARD | `0 3-21/6 * * *` | Stage 5 |
+| Source discovery | TACHIKOMA | `30 3 * * *` (after the worker's 03:10 search) | Stage 5 |
 | Model scan | RIPPERDOC | `0 4 * * *` | Stage 5 |
 | Model gauntlet | RIPPERDOC | `0 5 * * 0` (after the worker's 03:40 run) | Stage 5 |
-| Monthly cost review | ROGUE | `0 9 1 * *` | now |
+| Monthly cost review | RIPPERDOC | `0 9 1 * *` | now |
+
+The desk digest runs three times a day, at 06:00, 14:00 and 22:00 Sydney time. Each run reads
+the last 8 hours of the worker's digest, so together they cover the day. DECKARD takes the
+Australian events first, then global, then AI. The follow-up sweep runs at 03:00, 09:00, 15:00
+and 21:00, away from the digest hours, so DECKARD's one run at a time is never a queue.
 
 Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it creates:
 
 | Routine | Issue title | Issue body |
 |---|---|---|
 | Daily editorial | `[EDITORIAL] Daily — {{date}}` | `Run the daily editorial: overnight digest, follow-ups, gaps, VOIGHT verdicts, daily report.` |
-| AU desk digest | `[DIGEST] AU desk — {{date}}` | `Review the AU candidate events in the current desk digest.` |
-| Global / AI desk digest | `[DIGEST] Global desk` / `[DIGEST] AI desk` | `Review the candidate events for your beat in the current desk digest.` |
+| Desk digest | `[DIGEST] Desk — {{date}}` | `Review the candidate events in the current desk digest: Australia first, then global, then AI.` |
 | Daily QA sample | `[QA] Daily sample` | `QA a sample of yesterday's published events.` |
 | Follow-up | `[FOLLOW-UP] Sweep` | `Work the follow-up queue: report on each task due.` |
 | Source discovery | `[DISCOVERY] Nightly` | `Read the worker's discovery finds and propose sources, plus any open [GAP] topics.` |
 | Model scan | `[MODEL] Daily scan` | `Do the daily model scan: read /ops/models and report what changed.` |
 | Model gauntlet | `[MODEL] Weekly gauntlet` | `Do the weekly gauntlet: report the results and raise each new proposal.` |
-| Monthly cost review | `[COST] Monthly review` | `Reconcile the month and report to MORPHEUS.` |
+| Monthly cost review | `[COST] Monthly review` | `Reconcile last month from /ops/cost and /ops/jobs, and report to MORPHEUS.` |
 
 If the date placeholder is not accepted, drop it — Paperclip records when each issue was created.
 
@@ -484,7 +579,7 @@ tell Claude.
 | Approve a hire or proposal | **Approvals** |
 | Stop one agent | its page → **Pause agent** (and **Resume agent** to undo) |
 | Stop all AI spend at once | pause the company, which stops the agents. The worker's own enrichment is separate: set `AI_MONTHLY_BUDGET_USD=0` in `.env`, then `docker compose up -d --force-recreate worker`. It keeps collecting and publishing |
-| See spend | **Budgets**, plus ROGUE's monthly `[COST]` issue |
+| See spend | **Budgets**, plus RIPPERDOC's monthly `[COST]` issue |
 | Wake an agent by hand | assign it an issue, or @-mention it in a comment |
 
 ---

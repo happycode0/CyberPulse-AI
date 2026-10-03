@@ -563,7 +563,7 @@ def parse_brief(data: dict[str, Any], subject: Subject) -> Brief:
         raise Rejected(f"au.reasons has more than {MAX_REASONS} reasons")
     relevance = float(au["relevance"])
     if relevance >= AU_DESK_RELEVANCE and not reasons:
-        # PLAN.md §4 (ZION): AU relevance comes with reasons, not a number alone.
+        # PLAN.md §4 (DECKARD, Australian beat): AU relevance comes with reasons, not a number alone.
         raise Rejected("au.relevance puts the event on the Australian desk without a reason")
     return Brief(
         summary=check.prose("summary", data["summary"], max_chars=400, max_sentences=2),

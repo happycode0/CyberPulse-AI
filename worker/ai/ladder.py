@@ -108,8 +108,8 @@ class Ladder(BaseModel):
         # down stops working the day its last one goes, so the last link must be paid for.
         if self.tiers[Tier.FREE][-1].endswith(":free"):
             raise ValueError("tier0_free must end in a paid model")
-        # Two-person rule (§7.1): TRON never reviews WHEELJACK's code on the same vendor's model.
-        # Checked down both whole chains, because a fallback is a model that does get used.
+        # Two-person rule (§7.1): TELETRAAN never reviews WHEELJACK's code on the same vendor's
+        # model. Checked down both whole chains, because a fallback is a model that does get used.
         shared = {vendor(s) for s in self.tiers[Tier.CODE]} & {
             vendor(s) for s in self.tiers[Tier.AUDIT]
         }

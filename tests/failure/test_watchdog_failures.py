@@ -389,21 +389,31 @@ def test_a_verdict_holding_a_secret_is_refused():
 # ─── One agent fails ──────────────────────────────────────────────────────────────────────────────
 
 
-def test_one_agent_s_wake_failing_does_not_stop_the_others(monkeypatch):
+def test_one_check_failing_does_not_stop_the_others(monkeypatch):
+    """SERAPH's wake runs every check. One that raises fails alone, by name, and the others
+    still answer: a broken query never hides the state of the rest."""
     api = ops_api()
 
-    def verdict(job):
-        if job == "groundtruth":
-            raise RuntimeError("injected")
-        return Verdict(True, {"checked": job})
+    def boom():
+        raise RuntimeError("injected")
 
-    monkeypatch.setattr(api, "verdict", verdict)
-    answers = {
-        slug: api.handle("POST", f"/ops/agents/{slug}/wake", {}, json.dumps({"job": job}).encode())
-        for slug, job in WAKE_JOBS.items()
+    monkeypatch.setattr(api, "_groundtruth_verdict", boom)
+    monkeypatch.setattr(api, "_sources_verdict", lambda: Verdict(True, {"checked": "sources"}))
+    monkeypatch.setattr(api, "_correlation_verdict", lambda: Verdict(True, {"checked": "runs"}))
+    monkeypatch.setattr(api, "_publish_verdict", lambda: Verdict(True, {"checked": "data"}))
+    job = WAKE_JOBS["seraph"]
+    answer = api.handle("POST", "/ops/agents/seraph/wake", {}, json.dumps({"job": job}).encode())
+    assert answer.status == 503
+    summary = answer.json()["summary"]
+    assert summary["reason"] == "failing: groundtruth"
+    assert summary["checks"]["groundtruth"] == {
+        "ok": False, "reason": "the check could not run (RuntimeError)",
     }
-    assert answers.pop("librarian").status == 500
-    assert {slug: a.status for slug, a in answers.items()} == dict.fromkeys(answers, 200)
+    assert summary["checks"]["publish"] == {"ok": True, "checked": "data"}
+    assert [name for name, check in summary["checks"].items() if check["ok"]] == [
+        "source-verify", "correlation-report", "publish",
+    ]
+    assert b"injected" not in answer.data
 
 
 async def test_a_watchdog_pass_that_raises_is_recorded_and_the_schedule_goes_on(monkeypatch):

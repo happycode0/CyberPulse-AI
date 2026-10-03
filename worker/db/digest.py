@@ -17,7 +17,7 @@ from worker.publish.build import LIVE_MIN_PROMINENCE
 
 TOP_EVENTS = 10
 ESCALATION_LIMIT = 25
-# ZION's rule (docs/wiki/stage-4b-the-crew.md): FAST-lane events this relevant to Australia.
+# The AU desk's rule (docs/wiki/stage-4b-the-crew.md): FAST-lane events this relevant to Australia.
 ESCALATE_AU_RELEVANCE = 0.7
 ERROR_MAX_CHARS = 300
 

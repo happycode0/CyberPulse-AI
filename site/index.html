@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#121926">
+<meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>CyberPulse-AI | Australia-first cyber and AI intelligence</title>
 <meta name="description" content="Evidence-linked cybersecurity and AI intelligence with an Australian lens. A snapshot of the last completed collection, not a real-time feed.">
@@ -17,109 +17,106 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- The header holds everything that applies to every view: what this snapshot is, where to
+     look (the scope), which desk (the beat) and the tag filters. It is sticky on a wide screen
+     so those stay in reach while a long list scrolls; initViews() measures it for
+     scroll-margin-top. HISTORY is a header button so it is one click from every view. -->
 <header class="site-header">
   <div class="site-header__row">
+    <button type="button" id="sidebar-toggle" class="btn sidebar-toggle" aria-controls="sidebar" aria-expanded="false">MENU</button>
     <h1 class="brand"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></h1>
     <div class="status-strip" id="status-strip" role="status">
       <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
       <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
-      <span class="mono" id="strip-local"></span>
+      <span class="status-strip__local mono" id="strip-local"></span>
     </div>
     <div class="site-header__controls">
       <a class="btn" href="history.html">HISTORY</a>
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
     </div>
   </div>
-  <!-- Five tabs, and that is the whole strip. Thirteen pills read as a wall no matter how they
-       are grouped, so the three domain views a reader actually chooses between come first, then
-       OVERVIEW, which now carries every threat and context section inside it, then the one page
-       about the system. AUSTRALIA NOW leads because this is an Australia-first product and
-       initTabs() lands on the first tab when there is no #hash, so first here means first on
-       arrival.
 
-       The sections that stopped being tabs kept their ids. They had to: headline links,
-       revealEvent() and anyone's existing bookmark all still point at #sec-vulnerabilities and
-       friends. initTabs() resolves an id it has no tab for to the panel that contains it, so
-       those links open OVERVIEW and scroll to the section instead of silently falling back to
-       the first tab. HISTORY stays a header button rather than a tab, because this nav becomes
-       role="tablist" and a tablist may not own a non-tab link
-       (see test_history_page_is_reachable_from_the_dashboard). -->
-  <nav class="site-nav" aria-label="Sections">
-    <a href="#sec-australia-now">AUSTRALIA NOW</a>
-    <a href="#sec-global-cyber">GLOBAL CYBER</a>
-    <a href="#sec-ai-cyber">AI + CYBER</a>
-    <a href="#sec-overview">OVERVIEW</a>
-    <a href="#sec-the-crew">THE CREW</a>
-  </nav>
+  <div class="filterbar" role="group" aria-label="Scope and filters">
+    <!-- Radios, not buttons: exactly one scope is always chosen, and AUSTRALIA is the default
+         because this is an Australia-first product. GLOBAL is everything that is not
+         Australian; ALL is both. -->
+    <fieldset class="scope-row">
+      <legend class="scope-row__legend">SCOPE</legend>
+      <label class="seg"><input type="radio" name="scope" value="au" checked><span class="seg__label">AUSTRALIA</span></label>
+      <label class="seg"><input type="radio" name="scope" value="global"><span class="seg__label">GLOBAL</span></label>
+      <label class="seg"><input type="radio" name="scope" value="all"><span class="seg__label">ALL</span></label>
+    </fieldset>
+    <div class="beat-row" role="group" aria-labelledby="beat-label">
+      <span class="beat-row__label" id="beat-label">BEAT</span>
+      <button type="button" class="seg-btn" data-beat-toggle="cyber" aria-pressed="false">CYBER</button>
+      <button type="button" class="seg-btn" data-beat-toggle="ai" aria-pressed="false">AI</button>
+    </div>
+    <details class="filterbar__more" id="filter-more">
+      <summary>TAG FILTERS</summary>
+      <div id="filter-facets" class="facets"></div>
+    </details>
+    <div class="filterbar__actions">
+      <button type="button" class="btn btn--small" id="filter-clear">CLEAR FILTERS</button>
+      <span class="filterbar__count mono" id="filter-count" role="status"></span>
+    </div>
+  </div>
 </header>
 
 <noscript>
   <p class="notice">This dashboard reads published JSON files with a small script. Enable JavaScript to see the events.</p>
 </noscript>
 
-<main id="main" class="wrap">
-  <div class="load-error notice" id="load-error" hidden role="alert"></div>
+<div class="layout">
+  <!-- Every entry here is a state of the one page, written as a real link (?view=...&scope=...)
+       so a new tab or a copied link opens the same thing. The presets are shortcuts into the one
+       Events list: the geographic ones set the scope, the feeds keep the scope the reader chose.
+       initViews() rewrites each href from the current state, and renderSidebar() fills in the
+       counts and, when the scope hides some of a feed, a link to the same feed at ALL. -->
+  <nav class="sidebar" id="sidebar" aria-label="Views and feeds">
+    <ul class="side-list">
+      <li class="side-item"><a class="side-link" data-view-link="dashboard" href="?view=dashboard&amp;scope=au"><span class="side-link__label">DASHBOARD</span></a></li>
+      <li class="side-item"><a class="side-link" data-view-link="events" href="?view=events&amp;scope=au"><span class="side-link__label">EVENTS</span></a></li>
+      <li class="side-item"><a class="side-link" data-view-link="crew" href="?view=crew&amp;scope=au"><span class="side-link__label">THE CREW &amp; SYSTEM</span></a></li>
+    </ul>
 
-  <!-- The filter applies to every tab, so it stays outside the tab panels. -->
-  <div class="filterbar" aria-label="Filter events">
-    <div class="filterbar__actions">
-      <button type="button" class="btn btn--small" id="filter-clear">CLEAR ALL FILTERS</button>
-      <span class="filterbar__count mono" id="filter-count" role="status"></span>
-    </div>
-    <details class="filterbar__more">
-      <summary>TAG FILTERS</summary>
-      <div id="filter-facets" class="facets"></div>
-    </details>
-  </div>
+    <h2 class="side-head" id="side-scope">GEOGRAPHIC SCOPE</h2>
+    <ul class="side-list" aria-labelledby="side-scope">
+      <li class="side-item"><a class="side-link" data-preset="australia-now" href="?view=events&amp;scope=au"><span class="side-link__label">AUSTRALIA NOW</span><span class="side-link__count mono" data-preset-count="australia-now"></span></a></li>
+      <li class="side-item"><a class="side-link" data-preset="global-cyber" href="?view=events&amp;scope=global"><span class="side-link__label">GLOBAL CYBER</span><span class="side-link__count mono" data-preset-count="global-cyber"></span></a></li>
+    </ul>
 
-  <!-- Every tab panel is a direct child here, so switching a tab always swaps what sits
-       immediately under the tab strip. Nothing untabbed may go between them. -->
-  <div class="tab-panels">
-    <section class="hud-panel hud-panel--hero" id="sec-australia-now" aria-labelledby="h-australia-now">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head">
-          <h2 class="panel-title panel-title--hero" id="h-australia-now">AUSTRALIA NOW</h2>
-          <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="australia-now">AWAITING DATA</span></span>
-        </header>
-        <div class="hero__grid">
-          <div class="hero__events" data-section-body="australia-now"></div>
-          <aside class="hero__side" aria-label="Situation overview">
-            <div id="cp-index"></div>
-            <div id="radar-slot"></div>
-          </aside>
-        </div>
-      </div>
-    </section>
+    <h2 class="side-head" id="side-feeds">INTELLIGENCE FEEDS</h2>
+    <ul class="side-list" aria-labelledby="side-feeds">
+      <li class="side-item"><a class="side-link" data-preset="ai-cyber" href="?view=events&amp;scope=au&amp;beat=ai"><span class="side-link__label">AI + CYBER</span><span class="side-link__count mono" data-preset-count="ai-cyber"></span></a><a class="side-widen mono" data-preset-widen="ai-cyber" href="?view=events&amp;scope=all&amp;beat=ai" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="active-exploitation" href="?view=events&amp;scope=au&amp;feed=active-exploitation"><span class="side-link__label">ACTIVE EXPLOITATION</span><span class="side-link__count mono" data-preset-count="active-exploitation"></span></a><a class="side-widen mono" data-preset-widen="active-exploitation" href="?view=events&amp;scope=all&amp;feed=active-exploitation" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="vulnerabilities" href="?view=events&amp;scope=au&amp;feed=vulnerabilities"><span class="side-link__label">VULNERABILITIES</span><span class="side-link__count mono" data-preset-count="vulnerabilities"></span></a><a class="side-widen mono" data-preset-widen="vulnerabilities" href="?view=events&amp;scope=all&amp;feed=vulnerabilities" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="threat-actors" href="?view=events&amp;scope=au&amp;feed=threat-actors"><span class="side-link__label">THREAT ACTORS</span><span class="side-link__count mono" data-preset-count="threat-actors"></span></a><a class="side-widen mono" data-preset-widen="threat-actors" href="?view=events&amp;scope=all&amp;feed=threat-actors" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="policy-research" href="?view=events&amp;scope=au&amp;feed=research,policy-regulation"><span class="side-link__label">POLICY &amp; RESEARCH</span><span class="side-link__count mono" data-preset-count="policy-research"></span></a><a class="side-widen mono" data-preset-widen="policy-research" href="?view=events&amp;scope=all&amp;feed=research,policy-regulation" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="developing-events" href="?view=events&amp;scope=au&amp;feed=developing-events"><span class="side-link__label">DEVELOPING EVENTS</span><span class="side-link__count mono" data-preset-count="developing-events"></span></a><a class="side-widen mono" data-preset-widen="developing-events" href="?view=events&amp;scope=all&amp;feed=developing-events" hidden></a></li>
+      <li class="side-item"><a class="side-link" data-preset="emerging-threats" href="?view=events&amp;scope=au&amp;feed=emerging-threats"><span class="side-link__label">EMERGING THREATS</span><span class="side-link__count mono" data-preset-count="emerging-threats"></span></a><a class="side-widen mono" data-preset-widen="emerging-threats" href="?view=events&amp;scope=all&amp;feed=emerging-threats" hidden></a></li>
+    </ul>
+    <p class="side-note">Counts are events in this snapshot at the scope, beat and tags set above. An event is listed under every feed it matches.</p>
+  </nav>
 
-    <section class="hud-panel hud-panel--wide" id="sec-global-cyber" aria-labelledby="h-global-cyber">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-global-cyber">GLOBAL CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="global-cyber">AWAITING DATA</span></span></header>
-        <div class="panel-body" data-section-body="global-cyber"></div>
-      </div>
-    </section>
+  <main id="main" class="main">
+    <div class="load-error notice" id="load-error" hidden role="alert"></div>
 
-    <section class="hud-panel hud-panel--wide" id="sec-ai-cyber" aria-labelledby="h-ai-cyber">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-ai-cyber">AI + CYBER</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="ai-cyber">AWAITING DATA</span></span></header>
-        <div class="panel-body" data-section-body="ai-cyber"></div>
-      </div>
-    </section>
+    <!-- Three views, one showing at a time. Each is a direct child of <main>, so switching a view
+         always swaps what sits at the top of the content column. -->
+    <section class="view" id="view-dashboard" aria-labelledby="h-dashboard">
+      <header class="view__head">
+        <h2 class="view__title" id="h-dashboard">DASHBOARD</h2>
+        <span class="panel-count mono" id="dash-count">AWAITING DATA</span>
+      </header>
+      <p class="view__desc">The shape of the last completed collection at the scope, beat and tags chosen above. Choose a headline to open it in the Events view.</p>
 
-    <section class="hud-panel hud-panel--wide" id="sec-overview" aria-labelledby="h-overview">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head">
-          <h2 class="panel-title" id="h-overview">OVERVIEW</h2>
-          <span class="panel-status"><span class="led" data-state="idle" id="map-led"></span><span class="panel-count mono" id="map-count">AWAITING DATA</span></span>
-        </header>
-        <div class="panel-body">
-          <h3 class="subhead">TOP SIGNALS</h3>
-          <ul id="headline-list" class="headline-list"></ul>
-
-          <h3 class="subhead">SEVERITY DISTRIBUTION</h3>
-          <section class="gauges" id="gauges" aria-label="Severity distribution"></section>
-
-          <h3 class="subhead">WORLD MAP</h3>
-          <p class="hint">Countries in this snapshot are shaded by event count (Equal Earth projection centred on 150°E; basemap: Natural Earth via world-atlas, public domain). Choosing a country here filters every tab. The dropdown is the keyboard and screen-reader equivalent of the map.</p>
+      <div class="dash-grid">
+        <section class="panel panel--map" aria-labelledby="h-map">
+          <header class="panel__head">
+            <h3 class="panel__title" id="h-map">WORLD MAP</h3>
+            <span class="panel-status"><span class="led" data-state="idle" id="map-led"></span><span class="panel-count mono" id="map-count">AWAITING DATA</span></span>
+          </header>
+          <p class="hint">Countries are shaded by event count (Equal Earth projection centred on 150°E; basemap: Natural Earth via world-atlas, public domain). Choosing a country filters every view. The dropdown is the keyboard and screen-reader equivalent of the map.</p>
           <div id="world-map" class="map-host"></div>
           <div class="map-legend" aria-label="Map shading: events per country">
             <span class="map-legend__item"><span class="map-legend__sw" data-load="1" aria-hidden="true"></span>1 EVENT</span>
@@ -127,151 +124,115 @@
             <span class="map-legend__item"><span class="map-legend__sw" data-load="3" aria-hidden="true"></span>4–6 EVENTS</span>
             <span class="map-legend__item"><span class="map-legend__sw" data-load="4" aria-hidden="true"></span>7 OR MORE</span>
           </div>
-          <label class="field">
-            <span class="field__label">COUNTRY FILTER — KEYBOARD AND SCREEN-READER EQUIVALENT OF THE MAP</span>
-            <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
-          </label>
-          <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
+          <div class="map-controls">
+            <label class="field">
+              <span class="field__label">COUNTRY FILTER — KEYBOARD AND SCREEN-READER EQUIVALENT OF THE MAP</span>
+              <select id="map-country" class="input"><option value="">ALL COUNTRIES</option></select>
+            </label>
+            <button type="button" class="btn btn--small" id="map-clear">CLEAR COUNTRY FILTER</button>
+          </div>
+        </section>
 
-          <!-- The seven sections below used to be seven tabs. They are stacked here instead of
-               being nested tabs because nested tablists are their own usability problem — two
-               rows of pills, and no way to tell which row a keyboard arrow key will move. The
-               jump list is plain links: they land inside a panel that is already open, so the
-               browser's own anchor scroll does the work and there is no second widget to learn.
-               .subsection carries scroll-margin-top because .site-header is sticky and would
-               otherwise cover whatever a jump lands on. -->
-          <h3 class="subhead">SECTIONS</h3>
-          <p class="hint">TRENDS counts reports over time; the sections after it list events. An event appears under every section it matches, so the same event can be in more than one of these. Counts are events in this snapshot, after any filter set above.</p>
-          <nav class="subnav" aria-label="Overview sections">
-            <a href="#sec-trends">TRENDS</a>
-            <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
-            <a href="#sec-developing-events">DEVELOPING EVENTS</a>
-            <a href="#sec-emerging-threats">EMERGING THREATS</a>
-            <a href="#sec-threat-actors">THREAT ACTORS</a>
-            <a href="#sec-vulnerabilities">VULNERABILITIES</a>
-            <a href="#sec-research">RESEARCH</a>
-            <a href="#sec-policy-regulation">POLICY / REGULATION</a>
-          </nav>
+        <section class="panel panel--severity" aria-labelledby="h-severity">
+          <header class="panel__head"><h3 class="panel__title" id="h-severity">SEVERITY DISTRIBUTION</h3></header>
+          <div class="gauges" id="gauges"></div>
+        </section>
 
-          <!-- Not an event section: it reads trends.json, which is counted from stored reports
-               (worker/pipeline/trends.py), so it has its own host rather than a
-               data-section-body, and the tag filters above do not apply to it. -->
-          <section class="subsection" id="sec-trends" aria-labelledby="h-trends">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-trends">TRENDS</h3>
-              <span class="panel-status"><span class="led" data-state="idle" id="trends-led"></span><span class="panel-count mono" id="trends-count">AWAITING DATA</span></span>
-            </header>
-            <div id="trends"></div>
-          </section>
+        <section class="panel panel--pulse" aria-labelledby="h-pulse">
+          <header class="panel__head"><h3 class="panel__title" id="h-pulse">PULSE</h3></header>
+          <div class="pulse-grid">
+            <div id="cp-index"></div>
+            <div id="radar-slot"></div>
+          </div>
+        </section>
 
-          <section class="subsection" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-active-exploitation">ACTIVE EXPLOITATION</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="active-exploitation">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="active-exploitation"></div>
-          </section>
+        <section class="panel panel--signals" aria-labelledby="h-signals">
+          <header class="panel__head"><h3 class="panel__title" id="h-signals">TOP SIGNALS</h3></header>
+          <ul id="headline-list" class="headline-list"></ul>
+        </section>
 
-          <section class="subsection" id="sec-developing-events" aria-labelledby="h-developing-events">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-developing-events">DEVELOPING EVENTS</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="developing-events">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="developing-events"></div>
-          </section>
+        <section class="panel" aria-labelledby="h-dash-developing">
+          <header class="panel__head"><h3 class="panel__title" id="h-dash-developing">DEVELOPING EVENTS</h3></header>
+          <div id="dash-developing-events"></div>
+        </section>
 
-          <section class="subsection" id="sec-emerging-threats" aria-labelledby="h-emerging-threats">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-emerging-threats">EMERGING THREATS</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="emerging-threats">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="emerging-threats"></div>
-          </section>
-
-          <section class="subsection" id="sec-threat-actors" aria-labelledby="h-threat-actors">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-threat-actors">THREAT ACTORS</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="threat-actors">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="threat-actors"></div>
-          </section>
-
-          <section class="subsection" id="sec-vulnerabilities" aria-labelledby="h-vulnerabilities">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-vulnerabilities">VULNERABILITIES</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="vulnerabilities">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="vulnerabilities"></div>
-          </section>
-
-          <section class="subsection" id="sec-research" aria-labelledby="h-research">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-research">RESEARCH</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="research">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="research"></div>
-          </section>
-
-          <section class="subsection" id="sec-policy-regulation" aria-labelledby="h-policy-regulation">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-policy-regulation">POLICY / REGULATION</h3>
-              <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="policy-regulation">AWAITING DATA</span></span>
-            </header>
-            <div data-section-body="policy-regulation"></div>
-          </section>
-        </div>
+        <section class="panel" aria-labelledby="h-dash-emerging">
+          <header class="panel__head"><h3 class="panel__title" id="h-dash-emerging">EMERGING THREATS</h3></header>
+          <div id="dash-emerging-threats"></div>
+        </section>
       </div>
+
+      <!-- Not an event list: TRENDS reads trends.json, which is counted from stored reports
+           (worker/pipeline/trends.py) over days, so the scope and the tags do not narrow it. -->
+      <section class="subsection panel" id="sec-trends" aria-labelledby="h-trends">
+        <header class="panel__head subsection__head">
+          <h3 class="panel__title" id="h-trends">TRENDS</h3>
+          <span class="panel-status"><span class="led" data-state="idle" id="trends-led"></span><span class="panel-count mono" id="trends-count">AWAITING DATA</span></span>
+        </header>
+        <p class="hint">Reports per day and the topics that are moving, across every source and scope.</p>
+        <div id="trends"></div>
+      </section>
     </section>
 
-
-    <section class="hud-panel hud-panel--wide" id="sec-the-crew" aria-labelledby="h-the-crew">
-      <div class="hud-panel__inner">
-        <header class="hud-panel__head"><h2 class="panel-title" id="h-the-crew">THE CREW</h2><span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">16 AGENTS</span></span></header>
-        <div class="panel-body">
-          <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; an agent that has not reported yet says so rather than showing a zero.</p>
-          <div id="crew-summary"></div>
-          <ul id="crew-list" class="crew-grid"></ul>
-
-          <h3 class="subhead">THE CREW IN THE LAST RUN</h3>
-          <div id="crew-run"></div>
-
-          <!-- SYSTEM used to be its own tab. It belongs with the crew: both answer the same
-               question, which is who and what produced the page you are reading. It keeps its
-               id so #sec-system still resolves — initTabs() maps the id to this panel. Its own
-               headings are h4 because they now sit under the SYSTEM h3, which sits under the
-               panel's h2; .subhead styles the class, not the tag, so nothing shifts visually. -->
-          <section class="subsection" id="sec-system" aria-labelledby="h-system">
-            <header class="subsection__head">
-              <h3 class="subhead" id="h-system">SYSTEM</h3>
-              <span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span>
-            </header>
-            <h4 class="subhead">HOW THIS RUNS</h4>
-            <div class="explain">
-              <p>Nothing on this page was assembled to order. Sixteen agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
-              <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
-              <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
-              <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every 15 minutes for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at 03:00 AEST for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
-              <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
-              <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Ten of the sixteen agents are deterministic and spend nothing at all. One agent — RIPPERDOC — re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
-            </div>
-
-            <h4 class="subhead">COLLECTION REPLAY</h4>
-            <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
-            <div id="pipeline"></div>
-
-            <h4 class="subhead">SOURCES</h4>
-            <div id="source-health"></div>
-
-            <h4 class="subhead">VERSIONS</h4>
-            <dl class="kv mono" id="system-versions"></dl>
-          </section>
-        </div>
-      </div>
+    <!-- The one list of events. AUSTRALIA NOW, GLOBAL CYBER, AI + CYBER and the seven feeds that
+         used to be separate sections are all states of this view (see the sidebar). -->
+    <section class="view" id="view-events" aria-labelledby="h-events" hidden>
+      <header class="view__head">
+        <h2 class="view__title" id="h-events">EVENTS</h2>
+        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" data-count-for="events">AWAITING DATA</span></span>
+      </header>
+      <p class="view__desc mono" id="events-desc">SCOPE AUSTRALIA · BEAT ALL · EVERY FEED</p>
+      <p class="notice notice--widen" id="events-widen" hidden><span id="events-widen-text"></span> <button type="button" class="btn btn--small" id="events-widen-btn">WIDEN TO ALL</button></p>
+      <div class="events-body" data-section-body="events"></div>
     </section>
-  </div>
-</main>
 
-<footer class="site-footer wrap">
+    <section class="view" id="view-crew" aria-labelledby="h-crew" hidden>
+      <header class="view__head">
+        <h2 class="view__title" id="h-crew">THE CREW &amp; SYSTEM</h2>
+        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">8 AGENTS</span></span>
+      </header>
+      <p class="view__desc">Who and what produced the page you are reading.</p>
+
+      <section class="panel" aria-labelledby="h-the-crew">
+        <header class="panel__head"><h3 class="panel__title" id="h-the-crew">THE CREW</h3></header>
+        <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; an agent that has not reported yet says so rather than showing a zero.</p>
+        <div id="crew-summary"></div>
+        <ul id="crew-list" class="crew-grid"></ul>
+
+        <h4 class="subhead">THE CREW IN THE LAST RUN</h4>
+        <div id="crew-run"></div>
+      </section>
+
+      <section class="subsection panel" id="sec-system" aria-labelledby="h-system">
+        <header class="panel__head subsection__head">
+          <h3 class="panel__title" id="h-system">SYSTEM</h3>
+          <span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span>
+        </header>
+        <h4 class="subhead">HOW THIS RUNS</h4>
+        <div class="explain">
+          <p>Nothing on this page was assembled to order. Eight agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
+          <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
+          <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
+          <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every hour for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at about 03:00 Sydney time for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
+          <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
+          <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Two of the eight agents — SERAPH and RIPPERDOC — are deterministic and spend nothing; TELETRAAN calls a model only to triage an incident. RIPPERDOC re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
+        </div>
+
+        <h4 class="subhead">COLLECTION REPLAY</h4>
+        <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
+        <div id="pipeline"></div>
+
+        <h4 class="subhead">SOURCES</h4>
+        <div id="source-health"></div>
+
+        <h4 class="subhead">VERSIONS</h4>
+        <dl class="kv mono" id="system-versions"></dl>
+      </section>
+    </section>
+  </main>
+</div>
+
+<footer class="site-footer">
   <p>CyberPulse-AI publishes canonical, evidence-linked events from public sources. Each page is a snapshot of the last completed collection, not a continuous feed. Times are shown in Australia/Sydney and stored in UTC. The CyberPulse Index is our own composite measure, not an official scale.</p>
 </footer>
 </body>

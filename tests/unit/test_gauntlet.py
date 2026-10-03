@@ -323,7 +323,11 @@ def test_the_proposal_shows_both_models_and_what_was_not_checked():
     )
     assert "adoption veto" in body and "0 of 30 have been reviewed" in body
     assert "over 2 Australian and 28 non-Australian events, too few of one kind" in body
-    assert "MORPHEUS and ROGUE" in body and "config/models.yaml" in body
+    # RIPPERDOC raises the proposal, so the cost check is the worker's figures, and MORPHEUS
+    # approves: the proposer is never the approver.
+    assert "MORPHEUS's approval" in body and "config/models.yaml" in body
+    assert "price guard (nothing over $1.00 per million output tokens)" in body
+    assert "as the cost ledger records it" in body and "ROGUE" not in body
     payload = proposal_payload(d, gauntlet_run=7)
     assert (payload["tier"], payload["slug"], payload["replaces"], payload["gauntlet_run"]) == (
         "tier1_cheap",

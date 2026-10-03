@@ -337,7 +337,7 @@ def test_runs_truncate_their_errors(api, db):
 def test_cost_by_stage_model_and_agent(api, db):
     add_cost(db, NOW - timedelta(hours=1), Decimal("0.02"), stage="brief", model="m/cheap")
     add_cost(db, NOW - timedelta(hours=2), Decimal("0.01"), stage="triage", model=None,
-             requested="m/free", agent="librarian")
+             requested="m/free", agent="ripperdoc")
     add_cost(db, NOW - timedelta(hours=3), None, stage="triage", model="m/cheap",
              outcome="invalid_output")
     add_cost(db, datetime(2026, 9, 30, 23, 59, tzinfo=UTC), Decimal(5))
@@ -346,7 +346,7 @@ def test_cost_by_stage_model_and_agent(api, db):
     assert body["month"] == "2026-10"
     assert body["ledger"] == {"calls": 3, "cost_usd": 0.03, "unknown_cost_calls": 1}
     assert {r["key"]: r["cost_usd"] for r in body["by_model"]} == {"m/cheap": 0.02, "m/free": 0.01}
-    assert {r["key"]: r["calls"] for r in body["by_agent"]} == {"none": 2, "librarian": 1}
+    assert {r["key"]: r["calls"] for r in body["by_agent"]} == {"none": 2, "ripperdoc": 1}
     assert {r["key"]: r["calls"] for r in body["by_outcome"]} == {"ok": 2, "invalid_output": 1}
     assert body["key"]["outside_ledger_usd"] == pytest.approx(15.33)
 
@@ -368,7 +368,14 @@ def test_sources_and_jobs(api, db):
     record_job(db, JobRun("enrichment", NOW - timedelta(minutes=4), NOW - timedelta(minutes=1),
                           completed=True, errors=3, changed=True))
     jobs = get(api, "/ops/jobs")
-    assert set(jobs["wakes"]) == {"rogue", "librarian", "seraph", "prowl", "link"}
-    assert jobs["wakes"]["seraph"]["ok"] is True
-    assert jobs["wakes"]["link"]["ok"] is False  # nothing published in this test's data dir
+    assert set(jobs["wakes"]) == {"seraph"}
+    seraph = jobs["wakes"]["seraph"]
+    assert seraph["job"] == "pipeline"
+    checks = seraph["summary"]["checks"]
+    assert set(checks) == {"groundtruth", "source-verify", "correlation-report", "publish"}
+    assert checks["source-verify"]["ok"] is True
+    assert checks["publish"]["ok"] is False  # nothing published in this test's data dir
+    assert checks["groundtruth"]["ok"] is False  # no ground-truth pass recorded
+    assert seraph["ok"] is False and "publish" in seraph["summary"]["reason"]
+    assert set(jobs["cost_reconcile"]) == {"ok", "summary"}
     assert jobs["passes"]["enrichment"]["errors"] == 3 and jobs["passes"]["groundtruth"] is None

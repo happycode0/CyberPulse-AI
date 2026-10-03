@@ -7,8 +7,6 @@ import { renderMap, syncMapSelection } from './map.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const DATA_BASES = ['data/', '../data/'];
 const FX_KEY = 'cp-fx';
-const INITIAL_CARDS = 6;
-const HERO_CARDS = 8;
 
 export const SEVERITY = {
   critical: { glyph: '◆', shape: 'diamond', label: 'CRITICAL', bars: 4 },
@@ -29,28 +27,21 @@ const HEALTH = {
 
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
 // ship with the site. Workload per agent comes from data/crew.json and is looked up by
-// callsign at render time. It lists only the agents the worker runs itself; the AI agents
-// work in the private control panel and publish nothing here.
+// callsign at render time; an agent crew.json does not list shows NOT PUBLISHED.
 // Each agent carries a `face`: the key of the one accessory that distinguishes its drawn
 // portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
-// and the names PLAN.md assigns permissions and budgets to.
+// and the names PLAN.md assigns permissions and budgets to. Eight agents since October 2026:
+// the eight retired callsigns' work was folded into these, so each keeps its own portrait and
+// `title` is its Paperclip role. `desk` only picks the portrait's accent colour.
 export const CREW = [
-  { callsign: 'MORPHEUS', face: 'crown', desk: 'INTELLIGENCE', beat: 'Intelligence Director / Chief Editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
-  { callsign: 'ZION', face: 'brim', desk: 'INTELLIGENCE', beat: 'Australian desk', runtime: 'LLM · fast', quote: 'Home ground. Our watch.' },
-  { callsign: 'BLASTER', face: 'ring', desk: 'INTELLIGENCE', beat: 'Global cyber desk', runtime: 'LLM · fast', quote: "I'm picking up chatter on every band." },
-  { callsign: 'WINTERMUTE', face: 'twin', desk: 'INTELLIGENCE', beat: 'AI + cyber↔AI convergence', runtime: 'LLM · fast', quote: 'The model is the attack surface.' },
-  { callsign: 'TACHIKOMA', face: 'tilt', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
-  { callsign: 'DECKARD', face: 'lens', desk: 'INTELLIGENCE', beat: 'Follow-up, developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
-  { callsign: 'VOIGHT', face: 'scan', desk: 'INTELLIGENCE', beat: 'Editorial QA, publication veto', runtime: 'LLM · strong · gated', quote: 'Says who?' },
-  { callsign: 'WHEELJACK', face: 'helmet', desk: 'ENGINEERING', beat: 'Source & platform engineer', runtime: 'CODE agent · wakes on request', quote: '' },
-  { callsign: 'TRON', face: 'ticks', desk: 'ENGINEERING', beat: 'Independent verification', runtime: 'AUDIT agent · different model family', quote: 'A security program that answers to the users, not to the system it audits.' },
-  { callsign: 'TELETRAAN', face: 'dish', desk: 'OPERATIONS', beat: 'Watchdog / SRE', runtime: 'Deterministic + LLM triage', quote: '' },
-  { callsign: 'ROGUE', face: 'tally', desk: 'OPERATIONS', beat: 'Cost / FinOps, degradation tiers', runtime: 'Deterministic', quote: 'Nothing in this city is free.' },
-  { callsign: 'RIPPERDOC', face: 'mirror', desk: 'OPERATIONS', beat: 'Model scout — assigns each agent its model', runtime: 'Deterministic scan · daily', quote: 'Better chrome just came in.' },
-  { callsign: 'LINK', face: 'uplink', desk: 'OPERATIONS', beat: 'Publishing + notifications', runtime: 'Deterministic', quote: "Transmission clean. Here's the diff." },
-  { callsign: 'SERAPH', face: 'shield', desk: 'OPERATIONS', beat: 'Source verification gate', runtime: 'Deterministic', quote: 'I had to be sure.' },
-  { callsign: 'LIBRARIAN', face: 'books', desk: 'OPERATIONS', beat: 'KEV / CVE / EPSS / OSV / ATT&CK', runtime: 'Deterministic', quote: "Cite it or it didn't happen." },
-  { callsign: 'PROWL', face: 'threads', desk: 'OPERATIONS', beat: 'Event correlation, material change', runtime: 'Deterministic + Strands', quote: 'One event. Many threads.' },
+  { callsign: 'MORPHEUS', face: 'crown', title: 'CEO', desk: 'INTELLIGENCE', beat: 'Chief executive and chief editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
+  { callsign: 'DECKARD', face: 'lens', title: 'RESEARCHER', desk: 'INTELLIGENCE', beat: 'Research, context and developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
+  { callsign: 'VOIGHT', face: 'scan', title: 'PUBLISHER', desk: 'INTELLIGENCE', beat: 'Editorial check and publication', runtime: 'LLM · strong · gated', quote: 'Says who?' },
+  { callsign: 'TACHIKOMA', face: 'tilt', title: 'FINDER', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
+  { callsign: 'WHEELJACK', face: 'helmet', title: 'CODER', desk: 'ENGINEERING', beat: 'Collectors, parsers and the platform', runtime: 'CODE agent · wakes on request', quote: '' },
+  { callsign: 'TELETRAAN', face: 'dish', title: 'OPERATION', desk: 'OPERATIONS', beat: 'Watchdog, SRE and code checks', runtime: 'Deterministic + LLM triage', quote: '' },
+  { callsign: 'RIPPERDOC', face: 'mirror', title: 'CHEAP', desk: 'OPERATIONS', beat: 'Cost ceiling and model scout', runtime: 'Deterministic scan · daily', quote: 'Better chrome just came in.' },
+  { callsign: 'SERAPH', face: 'shield', title: 'COLLECTOR', desk: 'OPERATIONS', beat: 'Collection, the source gate and ground truth', runtime: 'Deterministic', quote: 'I had to be sure.' },
 ];
 
 const SYDNEY = new Intl.DateTimeFormat('en-AU', {
@@ -114,6 +105,27 @@ export function formatUtc(iso) {
   const d = iso ? new Date(iso) : null;
   if (!d || Number.isNaN(d.getTime())) return '—';
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+}
+
+// The card's timestamp: "2026-10-03 14:30 AEST". Numeric and fixed-width so a column of them
+// reads in order, and still Sydney time with the zone written out, so AEST and AEDT are never
+// confused.
+const SYDNEY_PARTS = new Intl.DateTimeFormat('en-AU', {
+  timeZone: 'Australia/Sydney',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+  timeZoneName: 'short',
+});
+
+export function formatSydneyStamp(iso) {
+  const d = iso ? new Date(iso) : null;
+  if (!d || Number.isNaN(d.getTime())) return '—';
+  const p = Object.fromEntries(SYDNEY_PARTS.formatToParts(d).map((part) => [part.type, part.value]));
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute} ${p.timeZoneName}`;
 }
 
 function timeEl(iso) {
@@ -251,20 +263,59 @@ export async function findEvent(eventId, { bases = DATA_BASES, fetchImpl = globa
   return null;
 }
 
-// --------------------------------------------------------------- sections
+// ------------------------------------------------------ scope, beat and feeds
 
 const has = (list, ...wanted) => (list || []).some((x) => wanted.includes(String(x).toLowerCase()));
 const isAu = (e) => Boolean(e.au?.directly_reported_in_au) || (e.au?.relevance ?? 0) >= 0.5;
-const isAi = (e) => Boolean(e.ai_subdomain) || has(e.domains, 'ai') || has(e.categories, 'ai_security', 'ai-security', 'ai');
 // Events under a new or rising topic in trends.json. renderTrends fills it and EMERGING
 // THREATS reads it, so a story the counts say is taking off is listed there even before a
 // model has tagged it.
 const trending = new Set();
 
+// The scope row in the header. AUSTRALIA is preselected because this is an Australia-first
+// product. GLOBAL is everything isAu() does not claim, so AUSTRALIA and GLOBAL always add up
+// to ALL and no event can fall between them.
+export const SCOPES = { au: 'AUSTRALIA', global: 'GLOBAL', all: 'ALL' };
+
+export function inScope(event, scope) {
+  if (scope === 'au') return isAu(event);
+  if (scope === 'global') return !isAu(event);
+  return true;
+}
+
+// The beat: which desk a story belongs to. The worker publishes `beat` once the AI beat ships
+// (worker/models.py beat_of: from `domains`, never stored). A snapshot from before then has no
+// such field, so it is derived here the same way, from `domains`. An event with no domains at
+// all predates domain tagging; a source with no beat seeds `cybersecurity`, so it reads as cyber.
+export const BEATS = { cyber: 'CYBER', ai: 'AI' };
+const BEAT_LABEL = { cyber: 'CYBER', ai: 'AI', both: 'CYBER + AI', other: 'OTHER' };
+const AI_INDUSTRY = 'AI_INDUSTRY';
+
+export function beatOf(event) {
+  if (event && Object.hasOwn(BEAT_LABEL, event.beat)) return event.beat;
+  const domains = (event?.domains || []).map((d) => String(d).toLowerCase());
+  if (!domains.length) {
+    if (!event?.ai_subdomain) return 'cyber';
+    return String(event.ai_subdomain).toUpperCase() === AI_INDUSTRY ? 'ai' : 'both';
+  }
+  const cyber = domains.includes('cybersecurity');
+  const ai = domains.includes('ai');
+  if (cyber && ai) return 'both';
+  if (ai) return 'ai';
+  return cyber ? 'cyber' : 'other';
+}
+
+// A story on both desks answers to either beat; OTHER answers to neither.
+function inBeat(event, beats) {
+  if (!beats?.length) return true;
+  const beat = beatOf(event);
+  return beats.some((want) => beat === want || beat === 'both');
+}
+
+// The intelligence feeds. These were seven of the old dashboard sections; the three domain
+// sections (AUSTRALIA NOW, GLOBAL CYBER, AI + CYBER) became the scope and the beat, so every
+// feed reads through the same scope row as everything else.
 export const SECTIONS = [
-  { id: 'australia-now', match: isAu },
-  { id: 'global-cyber', match: (e) => !isAu(e) && (!e.domains?.length || has(e.domains, 'cybersecurity')) },
-  { id: 'ai-cyber', match: isAi },
   {
     id: 'active-exploitation',
     match: (e) =>
@@ -282,40 +333,246 @@ export const SECTIONS = [
   },
   { id: 'threat-actors', match: (e) => (e.entities?.actors || []).length > 0 },
   { id: 'vulnerabilities', match: (e) => (e.cves || []).length > 0 || has(e.categories, 'vulnerability') },
-  { id: 'research', match: (e) => has(e.categories, 'research') },
-  { id: 'policy-regulation', match: (e) => has(e.categories, 'policy', 'regulation', 'policy-regulation', 'policy_regulation') },
+  // `research` is security research only since the AI desk got `ai-research`, and AI law and
+  // policy is `ai-governance`. Each feed takes its AI counterpart too, so RESEARCH and
+  // POLICY / REGULATION (and the old #sec-research and #sec-policy-regulation links) still show
+  // what they always did: the old `research` slug covered security and AI research alike.
+  { id: 'research', match: (e) => has(e.categories, 'research', 'ai-research') },
+  {
+    id: 'policy-regulation',
+    match: (e) => has(e.categories, 'policy', 'regulation', 'policy-regulation', 'policy_regulation', 'ai-governance'),
+  },
 ];
+
+// What a category is called in the tag filters. Cards keep the raw `#slug`, which is what a
+// reader types and what the URL carries; a slug missing here is shown as it is.
+const CATEGORY_LABEL = {
+  vulnerability: 'VULNERABILITY',
+  'zero-day': 'ZERO-DAY',
+  malware: 'MALWARE',
+  ransomware: 'RANSOMWARE',
+  'data-breach': 'DATA BREACH',
+  phishing: 'PHISHING',
+  'supply-chain': 'SUPPLY CHAIN',
+  ddos: 'DDOS',
+  espionage: 'ESPIONAGE',
+  fraud: 'FRAUD',
+  'emerging-threat': 'EMERGING THREAT',
+  research: 'SECURITY RESEARCH',
+  policy: 'POLICY',
+  regulation: 'REGULATION',
+  'ai-security': 'AI SECURITY',
+  'ai-industry': 'AI INDUSTRY',
+  'model-release': 'MODEL RELEASE',
+  'ai-governance': 'AI GOVERNANCE',
+  'ai-incident': 'AI INCIDENT',
+  'ai-research': 'AI RESEARCH',
+};
+
+const FEED_LABEL = {
+  'active-exploitation': 'ACTIVE EXPLOITATION',
+  'developing-events': 'DEVELOPING EVENTS',
+  'emerging-threats': 'EMERGING THREATS',
+  'threat-actors': 'THREAT ACTORS',
+  vulnerabilities: 'VULNERABILITIES',
+  research: 'RESEARCH',
+  'policy-regulation': 'POLICY / REGULATION',
+};
+
+function inFeed(event, feeds) {
+  if (!feeds?.length) return true;
+  return SECTIONS.some((section) => feeds.includes(section.id) && section.match(event));
+}
+
+// ------------------------------------------------------------ view state and URL
+
+// Everything a reader can choose is in the URL, so a link or a bookmark reopens the same view:
+// ?view=events&scope=global&beat=ai&feed=vulnerabilities&tag=severity:critical&event=<id>.
+// `anchor` is the one place a fragment is still used: a block inside a view (#sec-trends,
+// #sec-system) that a link can jump to.
+export const VIEWS = ['dashboard', 'events', 'crew'];
+const VIEW_ANCHORS = { dashboard: ['sec-trends'], events: [], crew: ['sec-system'] };
+const EVENT_CARDS = 20;
+
+export function freshState(over = {}) {
+  return { view: 'dashboard', scope: 'au', beat: [], feed: [], tags: {}, event: null, anchor: null, ...over };
+}
+
+// Every #sec-* anchor the site has ever published, and what it opens now. The page used to be
+// one long run of sections and then five tabs, and links to all of them are in bookmarks, in
+// event.html and history.html, and in other people's pages. Each opens the view that now holds
+// what it used to show, at the scope that reproduces it: the old sections other than
+// AUSTRALIA NOW were not limited to Australia, so they open at ALL.
+export const LEGACY_ANCHORS = {
+  'sec-australia-now': { view: 'events', scope: 'au' },
+  'sec-global-cyber': { view: 'events', scope: 'global' },
+  'sec-ai-cyber': { view: 'events', scope: 'all', beat: ['ai'] },
+  'sec-overview': { view: 'dashboard', scope: 'all' },
+  'sec-trends': { view: 'dashboard', scope: 'all', anchor: 'sec-trends' },
+  'sec-active-exploitation': { view: 'events', scope: 'all', feed: ['active-exploitation'] },
+  'sec-developing-events': { view: 'events', scope: 'all', feed: ['developing-events'] },
+  'sec-emerging-threats': { view: 'events', scope: 'all', feed: ['emerging-threats'] },
+  'sec-threat-actors': { view: 'events', scope: 'all', feed: ['threat-actors'] },
+  'sec-vulnerabilities': { view: 'events', scope: 'all', feed: ['vulnerabilities'] },
+  'sec-research': { view: 'events', scope: 'all', feed: ['research'] },
+  'sec-policy-regulation': { view: 'events', scope: 'all', feed: ['policy-regulation'] },
+  'sec-the-crew': { view: 'crew' },
+  'sec-system': { view: 'crew', anchor: 'sec-system' },
+};
+
+// An old anchor only counts when the query has no `view`: a URL this version wrote says
+// exactly what it wants, and a fragment on it is an anchor inside that view.
+export function parseLocation(search = '', hash = '') {
+  const q = new URLSearchParams(search);
+  const anchor = String(hash || '').replace(/^#/, '');
+  if (!q.has('view') && Object.hasOwn(LEGACY_ANCHORS, anchor)) {
+    return { ...freshState(LEGACY_ANCHORS[anchor]), legacy: true };
+  }
+  const list = (key, allowed) => [
+    ...new Set(
+      q
+        .getAll(key)
+        .flatMap((v) => v.split(','))
+        .map((v) => v.trim().toLowerCase())
+        .filter((v) => allowed.includes(v)),
+    ),
+  ];
+  const view = VIEWS.includes(q.get('view')) ? q.get('view') : 'dashboard';
+  const dims = new Set(DIMENSIONS.map(([dim]) => dim));
+  const tags = {};
+  for (const raw of q.getAll('tag')) {
+    const i = raw.indexOf(':');
+    const dim = raw.slice(0, i);
+    const value = raw.slice(i + 1);
+    if (i < 1 || !value || !dims.has(dim)) continue;
+    tags[dim] ||= [];
+    if (!tags[dim].includes(value)) tags[dim].push(value);
+  }
+  return freshState({
+    view,
+    scope: Object.hasOwn(SCOPES, q.get('scope') ?? '') ? q.get('scope') : 'au',
+    beat: list('beat', Object.keys(BEATS)),
+    feed: list('feed', SECTIONS.map((section) => section.id)),
+    tags,
+    event: q.get('event') || null,
+    anchor: VIEW_ANCHORS[view].includes(anchor) ? anchor : null,
+  });
+}
+
+// The inverse. `view` and `scope` are always written, so the URL is never ambiguous about
+// either and an old fragment can never be mistaken for a choice.
+export function toSearch(state) {
+  const q = new URLSearchParams();
+  q.set('view', state.view);
+  q.set('scope', state.scope);
+  if (state.beat?.length) q.set('beat', state.beat.join(','));
+  if (state.feed?.length) q.set('feed', state.feed.join(','));
+  for (const [dim, values] of Object.entries(state.tags || {})) for (const v of values) q.append('tag', `${dim}:${v}`);
+  if (state.event) q.set('event', state.event);
+  const search = q.toString().replace(/%2C/g, ',').replace(/%3A/g, ':');
+  return `?${search}${state.anchor ? `#${state.anchor}` : ''}`;
+}
+
+// What a view lists. `skip` names the parts of the state to ignore: the dashboard ignores the
+// feed, and the map ignores the country it is itself choosing.
+export function filterEvents(events, state, { skip = [] } = {}) {
+  const tags = skip.includes('tags') ? {} : { ...(state.tags || {}) };
+  if (skip.includes('country')) delete tags.country;
+  const pool = (events || []).filter(
+    (e) =>
+      (skip.includes('scope') || inScope(e, state.scope)) &&
+      (skip.includes('beat') || inBeat(e, state.beat)) &&
+      (skip.includes('feed') || inFeed(e, state.feed)),
+  );
+  return applyFilters({ events: pool, selected: tags });
+}
+
+// The sidebar presets. Each is a change to the state, not a place: a geographic preset sets the
+// scope, and a feed keeps the scope the reader chose. Tags always carry over.
+const feedPreset = (id, label, feed) => ({
+  id,
+  label,
+  group: 'feeds',
+  apply: (st) => ({ ...st, view: 'events', beat: [], feed, event: null, anchor: null }),
+});
+
+export const PRESETS = [
+  { id: 'australia-now', label: 'AUSTRALIA NOW', group: 'scope', apply: (st) => ({ ...st, view: 'events', scope: 'au', beat: [], feed: [], event: null, anchor: null }) },
+  { id: 'global-cyber', label: 'GLOBAL CYBER', group: 'scope', apply: (st) => ({ ...st, view: 'events', scope: 'global', beat: [], feed: [], event: null, anchor: null }) },
+  { id: 'ai-cyber', label: 'AI + CYBER', group: 'feeds', apply: (st) => ({ ...st, view: 'events', beat: ['ai'], feed: [], event: null, anchor: null }) },
+  feedPreset('active-exploitation', 'ACTIVE EXPLOITATION', ['active-exploitation']),
+  feedPreset('vulnerabilities', 'VULNERABILITIES', ['vulnerabilities']),
+  feedPreset('threat-actors', 'THREAT ACTORS', ['threat-actors']),
+  feedPreset('policy-research', 'POLICY & RESEARCH', ['research', 'policy-regulation']),
+  feedPreset('developing-events', 'DEVELOPING EVENTS', ['developing-events']),
+  feedPreset('emerging-threats', 'EMERGING THREATS', ['emerging-threats']),
+];
+
+const sameSet = (a = [], b = []) => a.length === b.length && a.every((x) => b.includes(x));
+
+// The preset the state is showing, if it is exactly one of them. No two presets can describe
+// the same state, so there is no precedence to settle.
+export function currentPreset(state) {
+  if (state.view !== 'events') return null;
+  const hit = PRESETS.find((p) => {
+    const next = p.apply(state);
+    return next.scope === state.scope && sameSet(next.beat, state.beat) && sameSet(next.feed, state.feed);
+  });
+  return hit ? hit.id : null;
+}
+
+// How many events each preset would list from here, and how many more it would list at ALL:
+// the sidebar's counts and its one-click widen.
+export function presetCounts(events, state) {
+  const out = {};
+  for (const preset of PRESETS) {
+    const next = preset.apply(state);
+    const count = filterEvents(events, next).length;
+    const all = next.scope === 'all' ? count : filterEvents(events, { ...next, scope: 'all' }).length;
+    out[preset.id] = { count, hidden: all - count, state: next };
+  }
+  return out;
+}
+
+// The state that shows `event` in the Events view, widened only as far as it has to be. A
+// headline, a related-event link or a bookmark can name a story the current scope, beat, feed
+// or a tag hides; each of those is lifted only if it is the one in the way, so a reader who
+// chose AUSTRALIA and clicks a global story lands on ALL with their tags intact.
+export function sectionFor(event, state = freshState()) {
+  if (!event) return null;
+  const next = { ...state, tags: { ...(state.tags || {}) }, view: 'events', event: event.event_id, anchor: null };
+  if (!inScope(event, next.scope)) next.scope = 'all';
+  if (!inBeat(event, next.beat)) next.beat = [];
+  if (!inFeed(event, next.feed)) next.feed = [];
+  for (const dim of Object.keys(next.tags)) {
+    if (!applyFilters({ events: [event], selected: { [dim]: next.tags[dim] } }).length) delete next.tags[dim];
+  }
+  return next;
+}
 
 const expanded = new Set();
 let filtersActive = false;
-// An event can sit in several sections, so cards carry data-event-id, never a DOM id.
+// An event can be listed in more than one place, so cards carry data-event-id, never a DOM id.
 // main() fills these in so revealEvent can widen the view when a card is capped or filtered out.
-const view = { events: [], refresh: () => {}, clearFilters: () => {} };
-// Set by initTabs() when the nav works as tabs, so revealEvent can switch tabs before
-// searching for a card that lives in a currently-hidden panel.
-let activateTab = null;
+const view = { events: [], state: freshState(), navigate: () => {} };
 
-export function sectionFor(event) {
-  return SECTIONS.find((section) => section.match(event)) || null;
+function findCard(eventId) {
+  const host = document.querySelector('[data-section-body="events"]');
+  return host ? [...host.querySelectorAll('[data-event-id]')].find((el) => el.dataset.eventId === eventId) || null : null;
 }
 
-// Scrolls to and focuses a rendered card for the event, first showing it if a section
-// cap, an active filter, or an inactive tab is hiding it. Returns the card, or null if
-// it cannot be shown.
-export function revealEvent(eventId) {
-  const find = () => [...document.querySelectorAll('[data-event-id]')].find((el) => el.dataset.eventId === eventId) || null;
-  let card = find();
+// Scrolls to and focuses the card for the event in the Events view, first widening the scope,
+// beat, feed or tags that hide it (sectionFor) and lifting the card cap. Returns the card, or
+// null when the event is not in this snapshot.
+export function revealEvent(eventId, { replace = false } = {}) {
   const event = view.events.find((e) => e.event_id === eventId);
-  const section = event ? sectionFor(event) : null;
-  if (section) activateTab?.(`sec-${section.id}`);
-  if (!card && section) {
-    expanded.add(section.id);
-    view.refresh();
-    card = find();
-  }
-  if (!card && section) {
-    view.clearFilters();
-    card = find();
+  if (!event) return null;
+  view.navigate(sectionFor(event, view.state), { replace });
+  let card = findCard(eventId);
+  if (!card) {
+    expanded.add('events');
+    view.navigate(view.state, { replace: true });
+    card = findCard(eventId);
   }
   if (card) {
     // Focus first: it forces content-visibility to lay the card out, so the scroll lands on real sizes.
@@ -327,28 +584,23 @@ export function revealEvent(eventId) {
 }
 
 // `unread` is the third state, and it is not the same as zero. An empty event list can mean the
-// snapshot holds nothing for this section, or that no snapshot could be read at all — and the
+// snapshot holds nothing for this view, or that no snapshot could be read at all — and the
 // difference is the whole honest-data rule (PLAN.md §2). Told to render nothing, this used to put
-// "0 SIGNALS" and "NO SIGNALS IN THIS SNAPSHOT." under all ten sections of a page whose data had
-// 404'd: ten confident claims about a snapshot nobody had. history.html and the map count already
-// said AWAITING DATA for exactly this reason; the dashboard's sections were the odd ones out.
+// "0 SIGNALS" and "NO SIGNALS IN THIS SNAPSHOT." under every section of a page whose data had
+// 404'd: confident claims about a snapshot nobody had. history.html and the map count already
+// said AWAITING DATA for exactly this reason. The Events view is one list now, but the rule holds.
 export function renderSections(data) {
   const unread = Boolean(data.unread);
-  const events = [...(data.events || [])].sort(byProminence);
-  const result = {};
-  for (const section of SECTIONS) {
-    const matches = events.filter(section.match);
-    result[section.id] = matches;
-    const body = document.querySelector(`[data-section-body="${section.id}"]`);
-    if (body) renderSectionBody(body, section.id, matches, unread);
-    const count = document.querySelector(`[data-count-for="${section.id}"]`);
-    if (count) {
-      count.textContent = unread ? 'AWAITING DATA' : `${matches.length} ${matches.length === 1 ? 'SIGNAL' : 'SIGNALS'}`;
-      const led = count.parentElement.querySelector('.led');
-      if (led) led.dataset.state = !unread && matches.length ? 'ok' : 'idle';
-    }
+  const matches = [...(data.events || [])].sort(byProminence);
+  const body = document.querySelector('[data-section-body="events"]');
+  if (body) renderSectionBody(body, 'events', matches, unread);
+  const count = document.querySelector('[data-count-for="events"]');
+  if (count) {
+    count.textContent = unread ? 'AWAITING DATA' : `${matches.length} ${matches.length === 1 ? 'SIGNAL' : 'SIGNALS'}`;
+    const led = count.parentElement.querySelector('.led');
+    if (led) led.dataset.state = !unread && matches.length ? 'ok' : 'idle';
   }
-  return result;
+  return { events: matches };
 }
 
 function renderSectionBody(body, id, matches, unread = false) {
@@ -357,10 +609,8 @@ function renderSectionBody(body, id, matches, unread = false) {
     body.append(
       h('p', {
         class: 'empty',
-        // Short on purpose. This prints under all ten sections at once, and the full explanation
-        // is already in the notice at the top of the page; spelling it out ten times is the same
-        // mistake as the five rows of "—" a crew card used to print (hud.css, .crew-card__idle).
-        // It only has to not claim the section is empty, which "UNKNOWN" does in one word.
+        // Short on purpose: the full explanation is already in the notice at the top of the
+        // page. It only has to not claim the view is empty, which "UNKNOWN" does in one word.
         text: unread
           ? 'UNKNOWN — NO SNAPSHOT WAS READ.'
           : filtersActive
@@ -370,10 +620,9 @@ function renderSectionBody(body, id, matches, unread = false) {
     );
     return;
   }
-  const cap = id === 'australia-now' ? HERO_CARDS : INITIAL_CARDS;
-  const shown = expanded.has(id) ? matches : matches.slice(0, cap);
+  const shown = expanded.has(id) ? matches : matches.slice(0, EVENT_CARDS);
   body.append(renderEventCards(shown));
-  if (matches.length > cap) {
+  if (matches.length > EVENT_CARDS) {
     const btn = h('button', {
       type: 'button',
       class: 'btn btn--small show-more',
@@ -390,14 +639,16 @@ function renderSectionBody(body, id, matches, unread = false) {
   }
 }
 
-// Severity is never colour alone: label + shape glyph (data-severity-shape) + bar count.
-function severityBadge(key) {
+// Severity is never colour alone: label + shape glyph (data-severity-shape) + bar count. The
+// label carries the highest CVSS base score the event has, when it has one, because a reader
+// triaging a list wants the number next to the word.
+function severityBadge(key, cvss = null) {
   const sev = SEVERITY[key] || SEVERITY.unknown;
   return h(
     'span',
     { class: 'sev-badge', 'data-severity': key },
     h('span', { class: 'sev-shape', 'data-severity-shape': sev.shape, 'aria-hidden': 'true', text: sev.glyph }),
-    h('span', { text: sev.label }),
+    h('span', { class: 'sev-badge__label', text: hasNum(cvss) ? `${sev.label} (CVSS: ${Number(cvss).toFixed(1)})` : sev.label }),
     severityBars(key, sev),
   );
 }
@@ -413,52 +664,100 @@ function severityBars(key, sev = SEVERITY[key] || SEVERITY.unknown) {
   return bars;
 }
 
-function regionBadge(event) {
-  const code = event.au?.directly_reported_in_au ? 'AU' : (event.entities?.countries?.[0] || 'GL').slice(0, 2).toUpperCase();
-  return h('span', { class: 'hex-badge', title: `Region ${code}` }, h('span', { text: code }));
+// The AI desk's own scale. An AI-only story has no cyber severity — it is "unknown" by
+// construction, not by omission — so its card shows how much the story matters on the AI
+// beat instead. Same three signals as severity: a word, a glyph and a bar count, and a
+// different hue so the two scales are never read as one.
+const SIGNIFICANCE = {
+  major: { glyph: '◆', label: 'MAJOR', bars: 3 },
+  notable: { glyph: '▲', label: 'NOTABLE', bars: 2 },
+  minor: { glyph: '●', label: 'MINOR', bars: 1 },
+  unrated: { glyph: '◇', label: 'UNRATED', bars: 0 },
+};
+
+function significanceKey(event) {
+  return Object.hasOwn(SIGNIFICANCE, event.ai_significance ?? '') ? event.ai_significance : 'unrated';
 }
 
-// A sorted list of event cards. Used by the dashboard sections and by the history page.
+function significanceBadge(key) {
+  const sig = SIGNIFICANCE[key] || SIGNIFICANCE.unrated;
+  const bars = h('span', { class: 'sev-bars sev-bars--three', role: 'img', 'aria-label': `AI significance ${sig.bars} of 3` });
+  for (let i = 1; i <= 3; i += 1) bars.append(h('i', { class: i <= sig.bars ? 'on' : undefined }));
+  return h(
+    'span',
+    { class: 'sev-badge sig-badge', 'data-significance': key },
+    h('span', { class: 'sev-shape', 'aria-hidden': 'true', text: sig.glyph }),
+    h('span', { class: 'sev-badge__label', text: `AI · ${sig.label}` }),
+    bars,
+  );
+}
+
+// The badge a row shows: AI significance for an AI-only story, severity for everything else.
+function rankBadge(event) {
+  if (beatOf(event) === 'ai') return significanceBadge(significanceKey(event));
+  const scores = (event.cves || []).map((c) => c.cvss?.score).filter(hasNum);
+  return severityBadge(sevKey(event), scores.length ? Math.max(...scores) : null);
+}
+
+// A sorted list of event cards. Used by the Events view and by the history page.
 export function renderEventCards(events) {
   const list = [...(events || [])].sort(byProminence);
   if (!list.length) return h('p', { class: 'empty', text: 'NO EVENTS IN THIS SNAPSHOT.' });
   return h('ul', { class: 'event-list' }, list.map((e) => h('li', {}, eventCard(e))));
 }
 
+const CARD_CATEGORIES = 3;
+const CARD_CVES = 3;
+
+// header: when, and how bad (or how much it matters, on the AI beat). body: what happened.
+// footer: the tags a reader filters by, in the order they are most often wanted.
 function eventCard(event) {
   const key = sevKey(event);
-  const chips = [];
-  if (event.au?.directly_reported_in_au) chips.push(h('span', { class: 'chip chip--au', text: 'AU' }));
-  if (event.severity_source === 'ai_estimate') chips.push(h('span', { class: 'chip chip--ai', text: 'AI-SUGGESTED' }));
-  for (const cve of (event.cves || []).slice(0, 4)) {
-    chips.push(h('span', { class: cve.kev?.listed ? 'chip chip--kev' : 'chip', text: cve.kev?.listed ? `${cve.id} KEV` : cve.id }));
+  const beat = beatOf(event);
+  const stamp = event.last_material_update || event.first_seen;
+  const chips = [h('span', { class: 'chip chip--beat', 'data-beat': beat, text: BEAT_LABEL[beat] })];
+  if (isAu(event)) chips.push(h('span', { class: 'chip chip--au', text: event.au?.directly_reported_in_au ? 'AU' : 'AU RELEVANT' }));
+  const categories = event.categories || [];
+  for (const c of categories.slice(0, CARD_CATEGORIES)) chips.push(h('span', { class: 'chip chip--cat', text: `#${c}` }));
+  if (categories.length > CARD_CATEGORIES) {
+    chips.push(h('span', { class: 'chip chip--more', text: `+${categories.length - CARD_CATEGORIES}` }));
   }
+  const cves = event.cves || [];
+  for (const cve of cves.slice(0, CARD_CVES)) {
+    chips.push(h('span', { class: cve.kev?.listed ? 'chip chip--cve chip--kev' : 'chip chip--cve', text: cve.kev?.listed ? `${cve.id} KEV` : cve.id }));
+  }
+  if (cves.length > CARD_CVES) chips.push(h('span', { class: 'chip chip--more', text: `+${cves.length - CARD_CVES} CVE` }));
+  if (event.severity_source === 'ai_estimate') chips.push(h('span', { class: 'chip chip--ai', text: 'AI-SUGGESTED' }));
   const firstSource = (event.sources || [])[0];
+  if (firstSource) chips.push(h('span', { class: 'chip chip--src', text: `${firstSource.evidence_class} · ${firstSource.source_id}` }));
+  const badges = [rankBadge(event)];
+  if (beat === 'both' && event.ai_significance) badges.push(significanceBadge(significanceKey(event)));
   return h(
     'article',
-    { class: 'event-card', 'data-event-id': event.event_id, tabindex: '-1', 'data-severity': key },
+    { class: 'event-card', 'data-event-id': event.event_id, tabindex: '-1', 'data-severity': key, 'data-beat': beat },
+    h(
+      'header',
+      { class: 'event-card__head' },
+      h('time', { class: 'event-card__time', datetime: stamp || undefined, text: formatSydneyStamp(stamp) }),
+      h('span', { class: 'event-card__badges' }, badges),
+    ),
     h(
       'div',
-      { class: 'event-card__meta' },
-      severityBadge(key),
-      regionBadge(event),
-      timeEl(event.last_material_update || event.first_seen),
-      h('span', { class: 'mono', text: event.event_id }),
-      firstSource ? h('span', { class: 'chip', text: `${firstSource.evidence_class} · ${firstSource.source_id}` }) : null,
+      { class: 'event-card__body' },
+      h(
+        'h3',
+        { class: 'event-card__title' },
+        h('a', { class: 'event-card__link', href: `event.html?id=${encodeURIComponent(event.event_id)}`, text: event.title }),
+      ),
+      event.summary ? h('p', { class: 'event-card__summary', text: event.summary }) : null,
     ),
-    h(
-      'h3',
-      { class: 'event-card__title' },
-      h('a', { class: 'event-card__link', href: `event.html?id=${event.event_id}`, text: event.title }),
-    ),
-    event.summary ? h('p', { class: 'event-card__summary', text: event.summary }) : null,
-    chips.length ? h('div', { class: 'event-card__tags' }, chips) : null,
+    h('footer', { class: 'event-card__tags' }, chips),
     eventDetail(event),
   );
 }
 
 function eventDetail(event) {
-  const body = h('div', { class: 'event-more__body' });
+  const body = h('div', { class: 'event-more__body' }, h('p', { class: 'mono event-more__id', text: `EVENT ${event.event_id}` }));
   if (event.why_it_matters) body.append(h('h4', { text: 'WHY IT MATTERS' }), h('p', { text: event.why_it_matters }));
   if (event.resolution) body.append(h('h4', { text: 'RESOLUTION' }), h('p', { text: event.resolution }));
   if (event.au?.reasons?.length) {
@@ -515,7 +814,6 @@ function eventDetail(event) {
       h('ul', {}, event.timeline.map((t) => h('li', {}, timeEl(t.timestamp), ` ${String(t.type).replaceAll('_', ' ')}: ${t.summary}`))),
     );
   }
-  if (!body.childNodes.length) return null;
   return h('details', { class: 'event-more' }, h('summary', { text: 'DETAIL' }), body);
 }
 
@@ -775,6 +1073,7 @@ export function renderTimeline(event) {
 // from the AI inference column: two panels, different accents, different headings.
 export function renderEventDetail(event, related = []) {
   const key = sevKey(event);
+  const beat = beatOf(event);
   const au = event.au || {};
   const entities = event.entities || {};
   const severitySource = String(event.severity_source || 'unknown').toUpperCase().replace(/_/g, ' ');
@@ -787,10 +1086,12 @@ export function renderEventDetail(event, related = []) {
     h(
       'div',
       { class: 'detail__meta' },
-      severityBadge(key),
-      h('span', { class: 'chip', text: `SEVERITY VIA ${severitySource}` }),
+      rankBadge(event),
+      beat === 'both' && event.ai_significance ? significanceBadge(significanceKey(event)) : null,
+      // An AI-only story is ranked by significance and has no severity to source.
+      beat === 'ai' ? null : h('span', { class: 'chip', text: `SEVERITY VIA ${severitySource}` }),
       h('span', { class: 'chip', text: String(event.status || 'unknown').toUpperCase() }),
-      regionBadge(event),
+      h('span', { class: 'chip chip--beat', 'data-beat': beat, text: BEAT_LABEL[beat] }),
       au.directly_reported_in_au ? h('span', { class: 'chip chip--au', text: 'REPORTED IN AU' }) : null,
       h('span', { class: 'mono detail__id', text: event.event_id }),
     ),
@@ -998,11 +1299,15 @@ export function renderEventDetail(event, related = []) {
 
 // ---------------------------------------------------------------- filters
 
+// The tag filters. The scope (AUSTRALIA / GLOBAL / ALL) and the beat (CYBER / AI) are not in
+// here: they have their own rows in the header, because every view reads through them. The AI
+// beat's own facets are AI SIGNIFICANCE and AI SUBDOMAIN, which only AI stories carry.
 const DIMENSIONS = [
   ['severity', 'SEVERITY'],
+  ['significance', 'AI SIGNIFICANCE'],
   ['au', 'AUSTRALIA'],
-  ['ai', 'AI'],
   ['category', 'CATEGORY'],
+  ['aidomain', 'AI SUBDOMAIN'],
   ['source', 'SOURCE'],
   ['cve', 'CVE'],
   ['country', 'COUNTRY'],
@@ -1015,10 +1320,11 @@ const DIMENSIONS = [
 
 export function facetTokens(event) {
   const out = [['severity', sevKey(event)]];
+  if (Object.hasOwn(SIGNIFICANCE, event.ai_significance ?? '')) out.push(['significance', event.ai_significance]);
   if (event.au?.directly_reported_in_au) out.push(['au', 'REPORTED IN AU']);
   if ((event.au?.relevance ?? 0) >= 0.5) out.push(['au', 'AU RELEVANT']);
-  if (isAi(event)) out.push(['ai', 'AI']);
   for (const c of event.categories || []) out.push(['category', c]);
+  if (event.ai_subdomain) out.push(['aidomain', String(event.ai_subdomain).toUpperCase()]);
   for (const src of event.sources || []) out.push(['source', src.source_id]);
   for (const c of event.cves || []) out.push(['cve', c.id]);
   for (const c of event.entities?.countries || []) out.push(['country', c]);
@@ -1028,6 +1334,15 @@ export function facetTokens(event) {
   for (const a of event.entities?.actors || []) out.push(['actor', a]);
   for (const m of event.mitre_techniques || []) out.push(['mitre', m.id]);
   return out;
+}
+
+// What a chip says. The value in the URL stays the raw token, so a link keeps working when a
+// label is reworded.
+function facetLabel(dim, value) {
+  if (dim === 'aidomain') return String(value).replaceAll('_', ' ');
+  if (dim === 'significance') return SIGNIFICANCE[value]?.label || String(value).toUpperCase();
+  if (dim === 'category' && Object.hasOwn(CATEGORY_LABEL, value)) return CATEGORY_LABEL[value];
+  return String(value);
 }
 
 export function buildFacets(events) {
@@ -1062,25 +1377,58 @@ export function applyFilters(state) {
   });
 }
 
-function renderFacetUi(facets, state, onChange) {
-  const host = clear(document.getElementById('filter-facets'));
+const FACET_CHIPS = 40;
+// Which dimensions the reader has open. The chips are rebuilt on every change of scope, beat or
+// tag (their counts follow the scope), and a rebuild must not fold away what the reader opened.
+const openFacets = new Set(['severity']);
+
+// `tags` is the state's { dim: [values] }; onToggle(dim, value) changes it. The counts are for
+// the events the current scope and beat leave, so a chip never promises more than it gives.
+function renderFacetUi(facets, tags, onToggle) {
+  const host = document.getElementById('filter-facets');
+  if (!host) return;
+  const focused = document.activeElement?.closest?.('#filter-facets button[data-dim]');
+  const refocus = focused ? { dim: focused.dataset.dim, value: focused.dataset.value } : null;
+  clear(host);
   for (const [dim, label] of DIMENSIONS) {
-    const bucket = facets.get(dim);
-    if (!bucket || !bucket.size) continue;
-    const entries = [...bucket.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).slice(0, 40);
+    const bucket = new Map(facets.get(dim) || []);
+    const chosen = tags[dim] || [];
+    // A chosen value stays listed when the scope leaves none of it, at its honest count of
+    // zero; otherwise the only way to undo it would be CLEAR FILTERS.
+    for (const value of chosen) if (!bucket.has(value)) bucket.set(value, 0);
+    if (!bucket.size) continue;
+    const entries = [...bucket.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+    const shown = entries.slice(0, FACET_CHIPS);
+    for (const entry of entries.slice(FACET_CHIPS)) if (chosen.includes(entry[0])) shown.push(entry);
     const chips = h('div', { class: 'facet__chips' });
-    for (const [value, count] of entries) {
-      const btn = h('button', { type: 'button', class: 'chip', 'aria-pressed': 'false', text: `${value} (${count})` });
-      btn.addEventListener('click', () => {
-        const set = (state.selected[dim] ||= new Set());
-        if (set.has(value)) set.delete(value);
-        else set.add(value);
-        btn.setAttribute('aria-pressed', set.has(value) ? 'true' : 'false');
-        onChange();
+    for (const [value, count] of shown) {
+      const btn = h('button', {
+        type: 'button',
+        class: 'chip facet-chip',
+        'data-dim': dim,
+        'data-value': value,
+        'aria-pressed': chosen.includes(value) ? 'true' : 'false',
+        text: `${facetLabel(dim, value)} (${count})`,
       });
+      btn.addEventListener('click', () => onToggle(dim, value));
       chips.append(btn);
     }
-    host.append(h('details', { class: 'facet', open: dim === 'severity' }, h('summary', { text: `${label} · ${bucket.size}` }), chips));
+    const facet = h(
+      'details',
+      { class: 'facet', 'data-facet': dim, open: openFacets.has(dim) || chosen.length > 0 },
+      h('summary', { text: `${label} · ${bucket.size}${chosen.length ? ` · ${chosen.length} ON` : ''}` }),
+      chips,
+    );
+    facet.addEventListener('toggle', () => {
+      if (facet.open) openFacets.add(dim);
+      else openFacets.delete(dim);
+    });
+    host.append(facet);
+  }
+  if (refocus) {
+    [...host.querySelectorAll('button[data-dim]')]
+      .find((b) => b.dataset.dim === refocus.dim && b.dataset.value === refocus.value)
+      ?.focus();
   }
 }
 
@@ -1270,7 +1618,9 @@ export const TREND_STATE = {
   falling: { glyph: '▼', label: 'FALLING' },
   warming_up: { glyph: '◌', label: 'WARMING UP' },
 };
-const TOPIC_KIND = { vendor: 'VENDOR', actor: 'ACTOR', malware: 'MALWARE', threat: 'THREAT' };
+// `ai` is the AI beat's topic kind. A trends.json published before the AI beat simply has no
+// topic of that kind, so nothing here depends on it being present.
+const TOPIC_KIND = { vendor: 'VENDOR', actor: 'ACTOR', malware: 'MALWARE', threat: 'THREAT', ai: 'AI' };
 const DAY_COVERAGE = { full: 'WHOLE DAY', partial: 'PART OF THE DAY', none: 'NOT COLLECTED' };
 const TREND_ROWS = 10;
 const expandedTrends = new Set();
@@ -1380,10 +1730,14 @@ function activityChart(days) {
   return svg;
 }
 
+// AI STORIES appears only when the snapshot counts them. A trends.json from before the AI beat
+// has no `ai_stories`, and a column of dashes would claim days nobody counted; a day that has
+// the field elsewhere but not on this row still shows — rather than an invented zero.
 function activityTable(days) {
+  const ai = days.some((d) => d.ai_stories !== undefined);
   return trendTable(
     'Day by day, newest first. A day before collection began shows — rather than a zero; KEV additions are CISA’s own dates, so they are complete on every day.',
-    ['DAY (UTC)', 'COLLECTED', 'NEW STORIES', 'REPORTS', 'CRITICAL / HIGH', 'AUSTRALIAN', 'ADDED TO KEV'],
+    ['DAY (UTC)', 'COLLECTED', 'NEW STORIES', 'REPORTS', 'CRITICAL / HIGH', 'AUSTRALIAN', ai ? 'AI STORIES' : null, 'ADDED TO KEV'].filter(Boolean),
     [...days].reverse().map((d) => {
       const n = (v) => (d.coverage === 'none' ? '—' : String(v));
       return [
@@ -1393,6 +1747,7 @@ function activityTable(days) {
         h('td', { class: 'mono', text: n(d.reports) }),
         h('td', { class: 'mono', text: n(d.critical_high) }),
         h('td', { class: 'mono', text: n(d.au_stories) }),
+        ai ? h('td', { class: 'mono', text: d.ai_stories === undefined || d.ai_stories === null ? '—' : n(d.ai_stories) }) : null,
         h('td', { class: 'mono', text: String(d.kev_added) }),
       ];
     }),
@@ -1615,55 +1970,42 @@ function renderSystem(status, feed, health) {
 
 const CREW_JOBS = {
   MORPHEUS: { owns: 'Editorial direction: what leads, what is held, and the daily brief', run: () => null },
-  ZION: { owns: 'The Australian desk — AU relevance, local impact, ACSC and OAIC material', run: () => null },
-  BLASTER: { owns: 'The global cyber desk — incidents, actors and campaigns outside AU', run: () => null },
-  WINTERMUTE: { owns: 'The AI desk — attacks on models, and models used to attack', run: () => null },
-  TACHIKOMA: { owns: 'Finding sources we do not have yet, and proposing them for review', run: () => null },
-  DECKARD: { owns: 'Developing events: keeping one open until it is patched or closed', run: () => null },
-  VOIGHT: { owns: 'The publication veto — every critical and high claim is checked or held', run: () => null },
-  WHEELJACK: { owns: 'Writing and repairing the collectors and parsers this pipeline runs on', run: () => null },
-  TRON: { owns: 'Reviewing WHEELJACK\u2019s work on a different model family (two-person rule)', run: () => null },
-  TELETRAAN: {
-    owns: 'Watching the estate and opening an incident before a reader notices',
-    run: (run) => (run ? (run.error_count ? `${plural(run.error_count, 'error')} recorded during the run` : 'No errors recorded during the run') : null),
-  },
-  ROGUE: { owns: 'The US$20/month ceiling, the spend ledger and the degradation tiers', run: () => null },
-  RIPPERDOC: {
-    owns: 'Assigning every agent its model: cheapest capable, free where possible, never above US$1/M output — re-checked daily, and swapped immediately if a model starts failing an agent',
-    run: () => null,
-  },
-  LINK: {
-    owns: 'Publishing the snapshot this page is reading, and notifying on change',
+  DECKARD: { owns: 'Research and follow-up: the context behind an event, and keeping a developing one open until it is patched or closed', run: () => null },
+  VOIGHT: {
+    owns: 'The publication veto and the publish: every critical and high claim is checked or held, then the snapshot this page reads goes out',
     run: (run, feed) => (feed?.counts?.events === undefined ? null : `${plural(feed.counts.events, 'event')} published in this snapshot`),
   },
-  SERAPH: {
-    owns: 'The source gate — nothing enters the pipeline from a source that failed its check',
-    run: (run) => {
-      if (!run) return null;
-      const bad = run.sources_failed + run.sources_stale;
-      return `${plural(run.sources_ok, 'source')} passed the check` + (bad ? `, ${bad} did not` : '');
-    },
+  TACHIKOMA: { owns: 'Finding sources we do not have yet, and proposing them for review', run: () => null },
+  WHEELJACK: { owns: 'Writing and repairing the collectors and parsers this pipeline runs on', run: () => null },
+  TELETRAAN: {
+    owns: 'Watching the estate, checking every code change, and opening an incident before a reader notices',
+    run: (run) => (run ? (run.error_count ? `${plural(run.error_count, 'error')} recorded during the run` : 'No errors recorded during the run') : null),
   },
-  LIBRARIAN: {
-    owns: 'Ground truth for vulnerabilities: KEV, CVE, EPSS, OSV and ATT&CK, looked up and never generated',
+  RIPPERDOC: {
+    owns: 'The US$20/month ceiling and the spend ledger, and assigning every agent its model: cheapest capable, free where possible, never above US$1/M output — re-checked daily, and swapped immediately if a model starts failing an agent',
+    run: () => null,
+  },
+  SERAPH: {
+    owns: 'Collection: the source gate, fetching every source, matching items to events, and the KEV, CVE, EPSS, OSV and ATT&CK ground truth, looked up and never generated',
     run: (run, feed) => {
       const pending = feed?.counts?.pending_enrichment;
-      if (pending === undefined) return null;
-      return pending ? `${plural(pending, 'event')} queued for enrichment` : 'Nothing queued for enrichment';
+      const queue = pending === undefined ? null : pending ? `${plural(pending, 'event')} queued for enrichment` : 'nothing queued for enrichment';
+      if (!run) return queue ? `${queue[0].toUpperCase()}${queue.slice(1)}` : null;
+      const bad = run.sources_failed + run.sources_stale;
+      return [
+        `${plural(run.sources_ok, 'source')} passed the check${bad ? `, ${bad} did not` : ''}`,
+        run.items_fetched === undefined || run.items_fetched === null ? null : `${plural(run.items_fetched, 'item')} fetched`,
+        `${run.new_events} new and ${plural(run.updated_events, 'updated event')}, ${run.duplicates} merged as ${run.duplicates === 1 ? 'a duplicate' : 'duplicates'}`,
+        queue,
+      ]
+        .filter(Boolean)
+        .join('; ');
     },
-  },
-  PROWL: {
-    owns: 'Deciding whether an item is a new event, an update to one, or a duplicate',
-    run: (run) =>
-      run
-        ? `${run.new_events} new and ${plural(run.updated_events, 'updated event')}, ` +
-          `${run.duplicates} merged as ${run.duplicates === 1 ? 'a duplicate' : 'duplicates'}`
-        : null,
   },
 };
 
 // THE CREW IN THE LAST RUN. A table, not cards: the question this answers is "who did what",
-// which is a comparison down a column, and sixteen cards is the wrong shape for that.
+// which is a comparison down a column, and eight cards is the wrong shape for that.
 export function renderCrewRun(status, feed) {
   const host = document.getElementById('crew-run');
   if (!host) return;
@@ -1701,7 +2043,7 @@ export function renderCrewRun(status, feed) {
                   'span',
                   { class: 'run-table__id' },
                   h('span', { class: 'run-table__callsign', text: agent.callsign }),
-                  h('span', { class: 'run-table__desk mono', text: agent.desk }),
+                  h('span', { class: 'run-table__desk mono', text: agent.title }),
                 ),
               ),
             ),
@@ -1715,9 +2057,9 @@ export function renderCrewRun(status, feed) {
 }
 
 // One accessory per agent, keyed by CREW[].face. `back` is drawn behind the head, so
-// antennae, brims and orbit rings sit around the silhouette; `front` is drawn over it, for
-// the two accessories that belong on the face itself. Nothing here is decorative-only: the
-// accessory is how you tell the sixteen portraits apart at 46px.
+// antennae, crowns and dishes sit around the silhouette; `front` is drawn over it, for the
+// accessories that belong on the face itself. Nothing here is decorative-only: the accessory
+// is how you tell the eight portraits apart at 46px.
 const BOT_PARTS = {
   // Director: a low coronet, lit at the centre and tipped at both ends.
   crown: () => ({
@@ -1727,39 +2069,6 @@ const BOT_PARTS = {
       s('circle', { class: 'bot-eye', cx: 24, cy: 5, r: 1.9 }),
       s('circle', { class: 'bot-eye', cx: 14.2, cy: 11.6, r: 1.1 }),
       s('circle', { class: 'bot-eye', cx: 33.8, cy: 11.6, r: 1.1 }),
-    ],
-  }),
-  // Australian desk: an akubra — dented dome, hatband, curved brim, chin cord.
-  brim: () => ({
-    back: [
-      s('path', { class: 'bot-dim', d: 'M15 13 Q24 5 33 13' }),
-      s('path', { class: 'bot-dim', d: 'M20.6 7.6 Q24 9.8 27.4 7.6' }),
-    ],
-    front: [
-      s('path', { class: 'bot-line', d: 'M6 14 Q24 18 42 14' }),
-      s('path', { class: 'bot-line', d: 'M15.4 13.1 Q24 15.7 32.6 13.1' }),
-      s('path', { class: 'bot-dim', d: 'M12.8 15.8 Q11.4 20.8 14.2 23.4' }),
-    ],
-  }),
-  // Global desk: two orbits at a cant, each carrying a body.
-  ring: () => ({
-    back: [
-      s('ellipse', { class: 'bot-dim', cx: 24, cy: 26, rx: 21, ry: 8 }),
-      s('ellipse', { class: 'bot-dim', cx: 24, cy: 26, rx: 21, ry: 8, transform: 'rotate(-17 24 26)' }),
-      s('circle', { class: 'bot-eye', cx: 3.4, cy: 26, r: 1.5 }),
-      s('circle', { class: 'bot-eye', cx: 44.6, cy: 26, r: 1.5 }),
-    ],
-  }),
-  // AI desk: paired antennae, tied together, one per hemisphere.
-  twin: () => ({
-    back: [
-      s('path', { class: 'bot-line', d: 'M16 14 L12 5' }),
-      s('path', { class: 'bot-line', d: 'M32 14 L36 5' }),
-      s('path', { class: 'bot-dim', d: 'M13.6 7.6 Q24 13.2 34.4 7.6' }),
-      s('path', { class: 'bot-dim', d: 'M12.5 10.2 L15.5 8.8' }),
-      s('path', { class: 'bot-dim', d: 'M35.5 10.2 L32.5 8.8' }),
-      s('circle', { class: 'bot-eye', cx: 11.5, cy: 4, r: 1.7 }),
-      s('circle', { class: 'bot-eye', cx: 36.5, cy: 4, r: 1.7 }),
     ],
   }),
   // Discovery: one antenna cocked to the side, already picking something up.
@@ -1803,15 +2112,6 @@ const BOT_PARTS = {
       s('path', { class: 'bot-line', d: 'M7 15.4 H41' }),
     ],
   }),
-  // Independent QA: a clipboard with two ticks, and never its own work on it.
-  ticks: () => ({
-    back: [
-      s('rect', { class: 'bot-dim', x: 34.8, y: 4.2, width: 11.4, height: 17, rx: 1.8 }),
-      s('path', { class: 'bot-dim', d: 'M38.2 4.2 V2.8 H42.8 V4.2' }),
-      s('path', { class: 'bot-line', d: 'M36.8 10 l2.6 2.6 l4.4 -5.6' }),
-      s('path', { class: 'bot-line', d: 'M36.8 16.6 l2.6 2.6 l4.4 -5.6' }),
-    ],
-  }),
   // Watchdog: a dish on a mast with its feed horn, listening to the whole estate.
   dish: () => ({
     back: [
@@ -1823,26 +2123,6 @@ const BOT_PARTS = {
       s('circle', { class: 'bot-eye', cx: 24, cy: 4.2, r: 1.3 }),
     ],
   }),
-  // Cost: a tally, closed with the fifth stroke.
-  tally: () => ({
-    back: [
-      s('path', { class: 'bot-dim', d: 'M37 6 V14' }),
-      s('path', { class: 'bot-dim', d: 'M40 6 V14' }),
-      s('path', { class: 'bot-dim', d: 'M43 6 V14' }),
-      s('path', { class: 'bot-dim', d: 'M46 6 V14' }),
-      s('path', { class: 'bot-line', d: 'M35.6 14.8 L47.4 5.2' }),
-    ],
-  }),
-  // Publishing: stacked broadcast arcs off a short mast.
-  uplink: () => ({
-    back: [
-      s('path', { class: 'bot-line', d: 'M24 13 V9' }),
-      s('circle', { class: 'bot-eye', cx: 24, cy: 9.6, r: 1.4 }),
-      s('path', { class: 'bot-line', d: 'M19.5 9 Q24 4 28.5 9' }),
-      s('path', { class: 'bot-dim', d: 'M16 7 Q24 1 32 7' }),
-      s('path', { class: 'bot-dim', d: 'M12.6 5.4 Q24 0 35.4 5.4' }),
-    ],
-  }),
   // Verification gate: a shield, chevroned.
   shield: () => ({
     back: [
@@ -1850,18 +2130,6 @@ const BOT_PARTS = {
       s('path', { class: 'bot-dim', d: 'M37.6 8.4 H45.9' }),
       s('path', { class: 'bot-dim', d: 'M39.4 10.6 l2.35 2.1 l2.35 -2.1' }),
       s('path', { class: 'bot-dim', d: 'M39.4 13.8 l2.35 2.1 l2.35 -2.1' }),
-    ],
-  }),
-  // Reference data: a shelf of banded volumes.
-  books: () => ({
-    back: [
-      s('rect', { class: 'bot-dim', x: 35, y: 6, width: 3.4, height: 9, rx: 1 }),
-      s('rect', { class: 'bot-dim', x: 39.4, y: 6, width: 3.4, height: 9, rx: 1 }),
-      s('rect', { class: 'bot-dim', x: 43.8, y: 6, width: 3.4, height: 9, rx: 1 }),
-      s('path', { class: 'bot-line', d: 'M35 9.4 H38.4' }),
-      s('path', { class: 'bot-line', d: 'M39.4 9.4 H42.8' }),
-      s('path', { class: 'bot-line', d: 'M43.8 9.4 H47.2' }),
-      s('path', { class: 'bot-dim', d: 'M34.2 16 H47.6' }),
     ],
   }),
   // Model scout: a surgeon's head mirror on a band — worn, not held, which is what keeps it
@@ -1873,18 +2141,6 @@ const BOT_PARTS = {
       s('circle', { class: 'bot-line', cx: 24, cy: 11.4, r: 4.2 }),
       s('path', { class: 'bot-glint', d: 'M21.2 9 Q20.3 11 21 13' }),
       s('circle', { class: 'bot-eye', cx: 24, cy: 11.4, r: 1.5 }),
-    ],
-  }),
-  // Correlation: crossed threads, pinned at every end.
-  threads: () => ({
-    back: [
-      s('path', { class: 'bot-line', d: 'M36.4 5.4 L46.6 15.6' }),
-      s('path', { class: 'bot-line', d: 'M46.6 5.4 L36.4 15.6' }),
-      s('path', { class: 'bot-dim', d: 'M36.4 10.5 H46.6' }),
-      s('circle', { class: 'bot-eye', cx: 36.4, cy: 5.4, r: 1.3 }),
-      s('circle', { class: 'bot-eye', cx: 46.6, cy: 5.4, r: 1.3 }),
-      s('circle', { class: 'bot-eye', cx: 36.4, cy: 15.6, r: 1.3 }),
-      s('circle', { class: 'bot-eye', cx: 46.6, cy: 15.6, r: 1.3 }),
     ],
   }),
 };
@@ -1932,7 +2188,7 @@ function crewCard(agent, stat) {
         'div',
         { class: 'crew-card__id' },
         h('span', { class: 'crew-card__callsign', text: agent.callsign }),
-        h('span', { class: 'crew-card__desk mono', text: agent.desk }),
+        h('span', { class: 'crew-card__desk mono', text: agent.title }),
       ),
       // Status reads once, here, next to the face — it used to repeat as a stats row too.
       h('span', { class: 'crew-card__status' }, h('span', { class: 'led', 'data-state': led }), h('span', { text: label })),
@@ -1951,20 +2207,26 @@ function crewCard(agent, stat) {
         h('dt', { text: 'COST THIS MONTH' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
         h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat.last_active_at, formatSydney) }),
       )
-      : h('p', { class: 'crew-card__idle', text: 'Works in the private control panel. Its workload is not published here.' }),
+      : h('p', { class: 'crew-card__idle', text: 'No workload published for this agent this month.' }),
     h('span', { class: 'chip crew-card__runtime', text: agent.runtime }),
   );
 }
 
-// Renders the full sixteen-agent roster every time: personas ship with the site regardless
+// Renders the full eight-agent roster every time: personas ship with the site regardless
 // of data, and a card falls back to NOT PUBLISHED when data/crew.json has nothing for that
-// callsign. That is the honest state for an AI agent: the worker never reads the control
-// panel, so it has nothing true to say about one.
+// callsign. SERAPH and RIPPERDOC are counted from the worker's own rows; the others appear
+// only when the control panel reported them, and nothing is inferred for one that did not.
 export function renderCrew(crew) {
   const host = document.getElementById('crew-list');
   if (!host) return;
   clear(host);
-  const byCallsign = new Map((crew?.agents || []).map((a) => [a.callsign, a]));
+  // Only callsigns on the roster count. A feed published before the crew went to eight still
+  // names retired agents, and counting them read "5 of 8 agents publish" above eight cards
+  // that mostly said NOT PUBLISHED.
+  const rostered = new Set(CREW.map((a) => a.callsign));
+  const byCallsign = new Map(
+    (crew?.agents || []).filter((a) => rostered.has(a.callsign)).map((a) => [a.callsign, a]),
+  );
   const summary = document.getElementById('crew-summary');
   if (summary) {
     const reporting = byCallsign.size;
@@ -1987,106 +2249,155 @@ export function renderCrew(crew) {
 
 // ------------------------------------------------------------- top signals
 
-// The strongest headlines in the snapshot, as a plain static list. Deliberately not a
-// scrolling banner: perpetual motion at the top of the page competes with the content
-// for attention and cannot be read at a glance. Capped at 8 — past that the list stops
-// being a summary and becomes a second copy of the sections.
-export function renderHeadlines(events) {
-  const host = document.getElementById('headline-list');
-  if (!host) return;
-  clear(host);
-  // Only events that land in a section are listed, so every link has a card to reveal.
-  const top = [...(events || [])].filter(sectionFor).sort(byProminence).slice(0, 8);
-  if (!top.length) {
-    host.append(h('li', { class: 'empty', text: 'NO HEADLINES IN THIS SNAPSHOT.' }));
-    return;
-  }
-  // data-severity on the row, not just the badge, so the row's left stripe picks up
-  // --sev-color from the one shared severity mapping in the CSS.
-  host.append(...top.map((e) => h('li', { class: 'headline', 'data-severity': sevKey(e) }, severityBadge(sevKey(e)), headlineLink(e))));
-}
-
-function headlineLink(event) {
-  const link = h('a', { class: 'headline__link', href: `#sec-${sectionFor(event).id}`, text: event.title });
+// A link that opens one event in the Events view. The href is the state that shows it
+// (sectionFor), so a new tab, a copied link or a bookmark lands on the card; a plain click does
+// the same in place and moves focus to the card.
+function eventLink(event, className) {
+  const link = h('a', { class: className, href: toSearch(sectionFor(event, view.state)), text: event.title });
   link.addEventListener('click', (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     if (revealEvent(event.event_id)) e.preventDefault();
   });
   return link;
 }
 
-// ------------------------------------------------------------------- tabs
+// The strongest headlines in the scope, as a plain static list. Deliberately not a scrolling
+// banner: perpetual motion at the top of the page competes with the content for attention and
+// cannot be read at a glance. Capped at 8 — past that the list stops being a summary and
+// becomes a second copy of the Events view.
+export function renderHeadlines(events) {
+  const host = document.getElementById('headline-list');
+  if (!host) return;
+  clear(host);
+  const top = [...(events || [])].sort(byProminence).slice(0, 8);
+  if (!top.length) {
+    host.append(h('li', { class: 'empty', text: filtersActive ? 'NO HEADLINES MATCH THE CURRENT FILTERS.' : 'NO HEADLINES IN THIS SNAPSHOT.' }));
+    return;
+  }
+  // data-severity on the row, not just the badge, so the row's left stripe picks up
+  // --sev-color from the one shared severity mapping in the CSS.
+  host.append(...top.map((e) => h('li', { class: 'headline', 'data-severity': sevKey(e), 'data-beat': beatOf(e) }, rankBadge(e), eventLink(e, 'headline__link'))));
+}
 
-// Turns the section nav into a WAI-ARIA tabs widget: one panel visible at a time,
-// arrow/Home/End keyboard movement, and the active tab kept in the URL hash so it
-// survives reload and stays linkable. No-ops (leaves the plain anchor links working)
-// when the nav does not have same-page #sec-* links, e.g. event.html and history.html.
-export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
-  if (!nav) return null;
-  const tabs = [...nav.querySelectorAll('a[href^="#sec-"]')];
-  const panels = tabs.map((a) => document.getElementById(a.getAttribute('href').slice(1)));
-  if (!tabs.length || panels.some((p) => !p)) return null;
+const WATCH_ROWS = 5;
 
-  nav.setAttribute('role', 'tablist');
-  tabs.forEach((a, i) => {
-    const id = a.getAttribute('href').slice(1);
-    a.id = `tab-${id}`;
-    a.setAttribute('role', 'tab');
-    a.setAttribute('aria-selected', 'false');
-    a.tabIndex = -1;
-    panels[i].setAttribute('role', 'tabpanel');
-    panels[i].tabIndex = 0;
-  });
+// DEVELOPING EVENTS and EMERGING THREATS on the dashboard: the first few of each feed in the
+// current scope, and a link to the whole feed in the Events view.
+function renderWatch(id, events) {
+  const host = document.getElementById(`dash-${id}`);
+  if (!host) return;
+  const section = SECTIONS.find((x) => x.id === id);
+  const matches = (events || []).filter(section.match).sort(byProminence);
+  clear(host);
+  if (!matches.length) {
+    host.append(h('p', { class: 'empty', text: filtersActive ? 'NONE MATCH THE CURRENT FILTERS.' : 'NONE IN THIS SNAPSHOT.' }));
+    return;
+  }
+  host.append(
+    h(
+      'ul',
+      { class: 'watch-list' },
+      matches.slice(0, WATCH_ROWS).map((e) => h('li', { class: 'watch', 'data-severity': sevKey(e) }, rankBadge(e), eventLink(e, 'watch__link'))),
+    ),
+    h('a', {
+      class: 'btn btn--small watch__all',
+      href: toSearch(PRESETS.find((p) => p.id === id).apply(view.state)),
+      text: `VIEW ALL ${matches.length}`,
+    }),
+  );
+}
 
-  // The panels sit in one container directly under the tab strip. Switching a tab while
-  // scrolled further down would otherwise swap content the reader cannot see, which reads
-  // as a dead tab. Scrolling is one-way — up to the top of the panels, never downwards —
-  // so activating a tab from the top of the page leaves the view where it is. Instant, not
-  // smooth: this is a view change, not an animation.
-  const panelHost = panels[0].closest('.tab-panels');
-  const scrollToPanels = () => {
-    const host = panelHost || panels[0];
-    const header = document.querySelector('.site-header');
-    const top = window.scrollY + host.getBoundingClientRect().top - (header ? header.offsetHeight : 0) - 8;
-    if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
-  };
+// --------------------------------------------------------------- sidebar
 
-  // On narrow screens the strip is one scrollable row, so the selected tab can sit off its
-  // edge. Nudging nav.scrollLeft brings it back without touching the page scroll.
-  const keepTabVisible = () => {
-    const tab = tabs.find((a) => a.getAttribute('aria-selected') === 'true');
-    if (!tab) return;
-    const left = tab.offsetLeft - nav.offsetLeft;
-    if (left < nav.scrollLeft) nav.scrollLeft = Math.max(0, left - 8);
-    else if (left + tab.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = left + tab.offsetWidth - nav.clientWidth + 8;
-  };
+// Counts beside every preset, from the events the preset would list from here. When the scope
+// hides some of them a feed gets a second, one-click link to the same feed at ALL: the reader
+// sees that there is more, and how much, without having to guess which control to move. The two
+// geographic presets are the scope, so they have nothing to widen.
+function renderSidebar(events, state) {
+  const counts = presetCounts(events, state);
+  for (const out of document.querySelectorAll('[data-preset-count]')) {
+    const entry = counts[out.dataset.presetCount];
+    out.textContent = entry ? String(entry.count) : '';
+  }
+  for (const link of document.querySelectorAll('[data-preset-widen]')) {
+    const id = link.dataset.presetWiden;
+    const entry = counts[id];
+    const preset = PRESETS.find((p) => p.id === id);
+    const show = Boolean(entry && preset?.group === 'feeds' && entry.hidden > 0 && entry.state.scope !== 'all');
+    link.hidden = !show;
+    if (!show) continue;
+    link.href = toSearch({ ...entry.state, scope: 'all' });
+    link.textContent = `+${entry.hidden} IN ALL`;
+    link.setAttribute('aria-label', `${preset.label}: ${plural(entry.hidden, 'more event')} outside ${SCOPES[entry.state.scope]}. Show ALL.`);
+  }
+}
 
-  // .site-header is sticky, so anything jumped to in the page has to be pushed clear of it, and its
-  // height is not a number the stylesheet can hold: the row reflows as the viewport narrows,
-  // measured 93px at 1320 and 222px at 375 on 2026-10-01. So measure it and publish it for
-  // .subsection's scroll-margin-top to use.
-  //
-  // Observed rather than sampled, because sampling it is wrong twice over: the header is 198px when
-  // initTabs() runs and 222px once renderStrip() has put real timestamps in the status strip and
-  // the strip has wrapped — measured at 375px, where a 24px error is enough to hide the heading a
-  // jump just landed on. Resize and the font swap move it as well. One observer covers all three.
+// The Events view says what it is listing, in words, so the state in the URL is never only in
+// the URL.
+function renderEventsHead(events, listed, state) {
+  const preset = PRESETS.find((p) => p.id === currentPreset(state));
+  const title = document.getElementById('h-events');
+  if (title) title.textContent = preset ? preset.label : 'EVENTS';
+  const tagCount = Object.values(state.tags || {}).reduce((n, values) => n + values.length, 0);
+  const desc = document.getElementById('events-desc');
+  if (desc) {
+    desc.textContent = [
+      `SCOPE ${SCOPES[state.scope]}`,
+      `BEAT ${state.beat.length ? state.beat.map((b) => BEATS[b]).join(' + ') : 'ALL'}`,
+      state.feed.length ? state.feed.map((f) => FEED_LABEL[f]).join(' + ') : 'EVERY FEED',
+      tagCount ? `${tagCount} TAG ${tagCount === 1 ? 'FILTER' : 'FILTERS'}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+  const widen = document.getElementById('events-widen');
+  if (!widen) return;
+  const hidden = state.scope === 'all' ? 0 : filterEvents(events, { ...state, scope: 'all' }).length - listed.length;
+  widen.hidden = hidden <= 0;
+  const text = document.getElementById('events-widen-text');
+  if (text && hidden > 0) {
+    text.textContent = `${plural(hidden, 'more event')} ${hidden === 1 ? 'matches' : 'match'} outside ${SCOPES[state.scope]}.`;
+  }
+}
+
+// ------------------------------------------------------------------- views
+
+const isPlainClick = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+
+// The view a sidebar view link opens from `st`. The dashboard and the crew have no feed, so the
+// feed is dropped; the scope, the beat and the tags are the reader's and carry over.
+function viewState(st, name) {
+  return { ...st, view: name, feed: name === 'events' ? st.feed : [], event: null, anchor: null };
+}
+
+// Three views — DASHBOARD, EVENTS, THE CREW & SYSTEM — one visible at a time, with the whole
+// state (view, scope, beat, feed, tags, an event to open) kept in the query string so it survives
+// a reload and is linkable. The sidebar links are real hrefs to those states; a plain click is
+// handled in place and anything else (new tab, copy link) gets the browser's own behaviour. An
+// old #sec-* fragment opens the view and scope that now hold what it pointed at
+// (LEGACY_ANCHORS), and the address is rewritten to say so. Returns null on a page without views.
+export function initViews({ onChange = () => {} } = {}) {
+  const panels = VIEWS.map((name) => document.getElementById(`view-${name}`));
+  if (panels.some((p) => !p)) return null;
+  const main = document.getElementById('main');
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebar-toggle');
+  const more = document.getElementById('filter-more');
+
+  // .site-header is sticky on a wide screen, so anything jumped to has to be pushed clear of it,
+  // and its height is not a number the stylesheet can hold: the scope row and the status strip
+  // wrap as the viewport narrows, and the timestamps arrive after the first paint. So measure it
+  // and publish it for .subsection's scroll-margin-top to use. Observed rather than sampled: the
+  // header changes height when renderStrip() fills in the collection time, on resize, and when
+  // the font swaps in, and one observer covers all three. Under 720px it is not sticky, so there
+  // is nothing to clear and the margin is zero.
   const header = document.querySelector('.site-header');
   const syncHeaderHeight = () => {
-    if (header) document.documentElement.style.setProperty('--header-h', `${Math.round(header.offsetHeight)}px`);
+    if (!header) return;
+    const sticky = getComputedStyle(header).position === 'sticky';
+    document.documentElement.style.setProperty('--header-h', `${sticky ? Math.round(header.offsetHeight) : 0}px`);
   };
   if (header && window.ResizeObserver) new ResizeObserver(syncHeaderHeight).observe(header);
-
-  // Most section ids are no longer tabs: the overview panel owns the threat and context
-  // sections, and the crew panel owns the system block. Callers do not know that and should not
-  // have to — headline links, revealEvent() and anyone's old bookmark all still name a section
-  // directly. So an id with no tab of its own resolves to the panel that contains it, and the
-  // caller gets that panel opened. Without this they would all fail the findIndex below: the
-  // link would fall back to the first tab, which is a wrong destination rather than no
-  // destination, and revealEvent() would give up on a card it could have shown.
-  const panelIdFor = (id) => {
-    if (tabs.some((a) => a.getAttribute('href') === `#${id}`)) return id;
-    const owner = document.getElementById(id)?.closest('[role="tabpanel"]');
-    return owner?.id || null;
-  };
 
   // When the reader last did something that moves the page themselves. Used to stand down: both
   // the settling loop below and the deep-link scroll give up rather than fight them. A scroll
@@ -2096,18 +2407,17 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     window.addEventListener(type, () => { lastInputAt = Date.now(); }, { passive: true });
   }
 
-  // One scrollIntoView is not enough to land on a section inside a panel, and the reason is worth
+  // One scrollIntoView is not enough to land on a block inside a view, and the reason is worth
   // writing down. .event-list is content-visibility: auto with contain-intrinsic-size: auto 600px,
   // so every list the reader has not reached yet is a flat 600px guess. The first scroll is
   // computed through those guesses and lands correctly — and then, on the next frame, the lists
   // that the scroll brought near the viewport lay out at their real heights, the content above the
-  // target shrinks, and the target slides up under the sticky header. Traced at 1320px with nine
-  // events, jumping to VULNERABILITIES from the top of a cold overview panel: scroll 1 put the
-  // heading at 120px (correct), one frame later the four lists above it went 600 → 1106/176/362/
-  // 1097 and the heading was at 14px, and it took five rounds of correcting to settle back at 120.
-  // Forcing those subtrees to lay out first does not help: measured the same day, flipping them to
-  // content-visibility: visible and back makes every list report 600px again, so the guess cannot
-  // be pre-warmed. Hence a loop, re-scrolling for as long as the target is not where it belongs.
+  // target shrinks, and the target slides up under the sticky header. Traced at 1320px on
+  // 2026-10-01: scroll 1 put the heading at 120px (correct), one frame later the four lists above
+  // it went 600 → 1106/176/362/1097 and the heading was at 14px, and it took five rounds of
+  // correcting to settle back at 120. The guess cannot be pre-warmed either: flipping the lists to
+  // content-visibility: visible and back makes every one report 600px again. Hence a loop,
+  // re-scrolling for as long as the target is not where it belongs.
   //
   // Termination is on the target's own position, not on whether the scroll moved: scroll anchoring
   // also shifts window.scrollY between frames to absorb the same relayout, so "scrollY stopped
@@ -2127,10 +2437,10 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
       if (Math.abs(off) <= 2) good += 1;
       else {
         good = 0;
-        // Skip the scroll when the page has run out of it — the last section cannot come up to the
+        // Skip the scroll when the page has run out of it — the last block cannot come up to the
         // header, and asking repeatedly will not change that. Keep watching rather than giving up,
-        // though: the sections below are still rendering, and when they lengthen the page the
-        // target becomes reachable after all. Returning here left THREAT ACTORS 328px low at 375px.
+        // though: the views are still rendering, and when they lengthen the page the target
+        // becomes reachable after all.
         if (!(off > 0 && window.scrollY >= maxY - 1)) el.scrollIntoView({ block: 'start' });
       }
       if (good < 3) requestAnimationFrame(step);
@@ -2138,101 +2448,184 @@ export function initTabs({ nav = document.querySelector('.site-nav') } = {}) {
     step();
   };
 
-  const activate = (targetId, { focusPanel = false, scroll = false } = {}) => {
-    const panelId = panelIdFor(targetId);
-    if (!panelId) return false;
-    const index = tabs.findIndex((a) => a.getAttribute('href') === `#${panelId}`);
-    if (index === -1) return false;
-    tabs.forEach((a, i) => {
-      const active = i === index;
-      a.setAttribute('aria-selected', active ? 'true' : 'false');
-      a.tabIndex = active ? 0 : -1;
-      panels[i].hidden = !active;
-    });
-    keepTabVisible();
-    // A sub-section target gets scrolled to itself, not to the top of the panel that holds it,
-    // or following a link to VULNERABILITIES would open the overview at TOP SIGNALS and leave
-    // the reader to find it. scroll-margin-top in the CSS keeps it clear of the sticky header.
-    if (scroll && panelId !== targetId) {
-      const target = document.getElementById(targetId);
-      if (target) settleScroll(target);
-    } else if (scroll) scrollToPanels();
-    if (focusPanel) panels[index].focus({ preventScroll: true });
+  // Switching the view while scrolled down would swap content the reader cannot see, which reads
+  // as a dead link. Scrolling is one-way — up to the top of the view, never downwards — so a
+  // choice made at the top of the page leaves the page where it is. Instant, not smooth: this is
+  // a view change, not an animation.
+  const scrollToView = () => {
+    const host = main || panels[0];
+    const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+    const top = window.scrollY + host.getBoundingClientRect().top - offset - 8;
+    if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
+  };
+
+  const setSidebar = (open) => {
+    if (!sidebar || !toggle) return;
+    sidebar.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+
+  // Puts the state on the page: which view shows, which scope and beat are chosen, where every
+  // sidebar link now goes and which one is current. Then hands it to main() to render.
+  const apply = (st, { focus = false, scroll = false } = {}) => {
+    VIEWS.forEach((name, i) => { panels[i].hidden = name !== st.view; });
+    for (const radio of document.querySelectorAll('input[name="scope"]')) radio.checked = radio.value === st.scope;
+    for (const btn of document.querySelectorAll('[data-beat-toggle]')) {
+      btn.setAttribute('aria-pressed', st.beat.includes(btn.dataset.beatToggle) ? 'true' : 'false');
+    }
+    for (const link of document.querySelectorAll('[data-view-link]')) {
+      const name = link.dataset.viewLink;
+      link.setAttribute('href', toSearch(viewState(st, name)));
+      if (name === st.view) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    }
+    const current = currentPreset(st);
+    for (const link of document.querySelectorAll('[data-preset]')) {
+      const preset = PRESETS.find((p) => p.id === link.dataset.preset);
+      if (!preset) continue;
+      link.setAttribute('href', toSearch(preset.apply(st)));
+      if (preset.id === current) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    }
+    onChange(st);
+    if (scroll) scrollToView();
+    if (focus) panels[VIEWS.indexOf(st.view)].focus({ preventScroll: true });
+    if (st.anchor) {
+      const target = document.getElementById(st.anchor);
+      if (target && !target.closest('[hidden]')) settleScroll(target);
+    }
+  };
+
+  // The one way the state changes. A new view, scope, beat or feed is a step the Back button
+  // should undo, so it is pushed; a tag, a country or a correction to the address replaces.
+  const navigate = (next, { replace = false } = {}) => {
+    const prev = view.state;
+    const { legacy, ...rest } = { ...freshState(), ...next };
+    view.state = rest;
+    const url = toSearch(view.state);
+    if (url !== `${window.location.search}${window.location.hash}`) {
+      window.history[replace ? 'replaceState' : 'pushState'](null, '', url);
+    }
+    const moved = prev.view !== view.state.view;
+    apply(view.state, { focus: moved, scroll: moved });
+  };
+  view.navigate = navigate;
+
+  const activate = (name) => {
+    if (!VIEWS.includes(name)) return false;
+    navigate(viewState(view.state, name));
     return true;
   };
 
-  const activateFromHash = ({ scroll = true } = {}) => {
-    const id = window.location.hash.slice(1);
-    if (!id || !activate(id, { scroll })) activate(tabs[0].getAttribute('href').slice(1));
-  };
-
-  nav.addEventListener('click', (e) => {
-    const a = e.target.closest('a[role="tab"]');
-    if (!a) return;
+  // Every in-page link to a state (?view=...) is handled here, so the sidebar, the widen links
+  // and VIEW ALL behave the same. A link with its own handler (a headline, which also focuses
+  // the card) has already called preventDefault and is left alone.
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || !isPlainClick(e)) return;
+    const link = e.target.closest?.('a[href^="?view="]');
+    if (!link) return;
     e.preventDefault();
-    const id = a.getAttribute('href').slice(1);
-    activate(id, { focusPanel: true, scroll: true });
-    history.replaceState(null, '', `#${id}`);
+    const url = new URL(link.href);
+    navigate({ ...parseLocation(url.search, url.hash), event: null });
+    if (sidebar?.contains(link)) setSidebar(false);
   });
 
-  nav.addEventListener('keydown', (e) => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-    const current = tabs.findIndex((a) => a.getAttribute('aria-selected') === 'true');
-    let next = current;
-    if (e.key === 'ArrowRight') next = (current + 1) % tabs.length;
-    else if (e.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
-    else if (e.key === 'Home') next = 0;
-    else if (e.key === 'End') next = tabs.length - 1;
-    if (next === current) return;
-    e.preventDefault();
-    const id = tabs[next].getAttribute('href').slice(1);
-    activate(id, { scroll: true });
-    tabs[next].focus();
-    history.replaceState(null, '', `#${id}`);
+  for (const radio of document.querySelectorAll('input[name="scope"]')) {
+    radio.addEventListener('change', () => {
+      if (radio.checked) navigate({ ...view.state, scope: radio.value, event: null, anchor: null });
+    });
+  }
+  for (const btn of document.querySelectorAll('[data-beat-toggle]')) {
+    btn.addEventListener('click', () => {
+      const beat = btn.dataset.beatToggle;
+      const on = view.state.beat.includes(beat);
+      navigate({ ...view.state, beat: on ? view.state.beat.filter((b) => b !== beat) : [...view.state.beat, beat], event: null, anchor: null });
+    });
+  }
+  document.getElementById('events-widen-btn')?.addEventListener('click', () => {
+    navigate({ ...view.state, scope: 'all', event: null });
   });
 
-  // A deep link to a sub-section cannot be honoured on first paint: the panel is still empty, so
-  // the target sits a few hundred pixels down a short page and that position stops existing the
-  // moment the events render. Measured 2026-10-01 on a cold load of #sec-vulnerabilities: the
-  // scroll settled at 960 against a final heading position of 3926, which is the right tab open at
-  // the wrong place. So main() calls this once the first render is in. It declines if the reader
-  // has already started moving the page: landing somewhere you did not ask for is bad, being
-  // yanked out of where you went instead is worse.
+  // The narrow-screen menu. The sidebar is in the page flow under the header, so opening it
+  // pushes the view down rather than covering it, and Escape or a choice closes it again.
+  toggle?.addEventListener('click', () => setSidebar(toggle.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (more?.open) {
+      more.open = false;
+      more.querySelector('summary')?.focus();
+    } else if (sidebar?.classList.contains('is-open')) {
+      setSidebar(false);
+      toggle?.focus();
+    }
+  });
+  // TAG FILTERS opens over the page on a wide screen; a click anywhere else closes it. The path,
+  // not contains(): a facet chip's own click rebuilds the chips, so by the time the click reaches
+  // the document its target is detached and contains() would call it a click outside.
+  document.addEventListener('click', (e) => {
+    if (more?.open && !e.composedPath().includes(more)) more.open = false;
+  });
+
+  window.addEventListener('popstate', () => {
+    const { legacy, ...st } = parseLocation(window.location.search, window.location.hash);
+    view.state = st;
+    apply(view.state, { scroll: true });
+  });
+  // An old #sec-* link followed inside the page (or typed into the address bar) is a request for
+  // the view that now holds it. The reader's tags carry over; the rest is what the anchor means.
+  window.addEventListener('hashchange', () => {
+    const anchor = window.location.hash.slice(1);
+    if (Object.hasOwn(LEGACY_ANCHORS, anchor) && !VIEW_ANCHORS[view.state.view].includes(anchor)) {
+      navigate({ ...parseLocation('', window.location.hash), tags: view.state.tags }, { replace: true });
+    } else if (VIEW_ANCHORS[view.state.view].includes(anchor)) {
+      view.state = { ...view.state, anchor };
+      const target = document.getElementById(anchor);
+      if (target) settleScroll(target);
+    }
+  });
+
+  // A deep link to a block inside a view cannot be honoured on first paint: the views are still
+  // empty, so the target sits a few hundred pixels down a short page and that position stops
+  // existing the moment the events render. Measured 2026-10-01 on a cold load: the scroll settled
+  // at 960 against a final heading position of 3926. So main() calls this once the first render
+  // is in. It declines if the reader has already started moving the page: landing somewhere you
+  // did not ask for is bad, being yanked out of where you went instead is worse.
   const rescrollToHash = () => {
-    const id = window.location.hash.slice(1);
+    const id = view.state.anchor;
     if (!id || lastInputAt) return false;
     const target = document.getElementById(id);
-    // Only a sub-section needs this. A tab target is the top of the panels, which is where a
-    // first load already is, and scrollToPanels() never scrolls downwards on purpose.
-    if (!target || panelIdFor(id) === id) return false;
+    if (!target || target.closest('[hidden]')) return false;
     settleScroll(target);
     return true;
   };
 
-  window.addEventListener('hashchange', () => activateFromHash());
-  // The observer above covers the usual case; this is for a browser without ResizeObserver, where a
-  // stale --header-h is better than none.
+  // The observer above covers the usual case; this is for a browser without ResizeObserver, where
+  // a stale --header-h is better than none, and for the 720px line, where the header stops being
+  // sticky without changing size.
   syncHeaderHeight();
-  // First run only restores which tab is open; it must not move a reader who deep-linked.
-  activateFromHash({ scroll: false });
-  // Both of these widen the strip after that first activation — the display face swapping
-  // in over the fallback, and a rotation — which would leave the selected tab off-edge.
-  document.fonts?.ready.then(keepTabVisible);
-  window.addEventListener('resize', () => { syncHeaderHeight(); keepTabVisible(); });
-  activateTab = activate;
+  window.addEventListener('resize', syncHeaderHeight);
+
+  // First run: read the address, and if it was an old anchor, rewrite it to the state it means so
+  // the address bar, a reload and a copied link all agree. It must not move a reader who
+  // deep-linked; rescrollToHash() does that once there is something to land on.
+  const { legacy, ...initial } = parseLocation(window.location.search, window.location.hash);
+  view.state = initial;
+  if (legacy) window.history.replaceState(null, '', toSearch(view.state));
+  VIEWS.forEach((name, i) => {
+    panels[i].hidden = name !== view.state.view;
+    panels[i].tabIndex = -1;
+  });
+  apply({ ...view.state, anchor: null });
   return { activate, rescrollToHash };
 }
 
 // -------------------------------------------------------------------- fx
 
-// The pieces every page shares: the FX OFF toggle, the canvas particle field and the
-// section tabs (a no-op on pages whose nav has no same-page section links). Returns the tabs
-// API, or null on the pages that have no tabs, because main() has to finish a deep link to a
-// sub-section after the first render — see rescrollToHash().
+// The pieces every page shares: the FX OFF toggle and the canvas particle field. The views
+// belong to the dashboard alone, so main() starts them itself.
 function initCommon() {
   initFxToggle();
   initFxField();
-  return initTabs();
 }
 
 export function initFxToggle({ button = document.getElementById('fx-toggle'), root = document.documentElement, storage = safeStorage('localStorage') } = {}) {
@@ -2297,7 +2690,7 @@ export function initFxField({ root = document.documentElement, host = document.b
         vy: (Math.random() - 0.5) * 0.16,
         r: 0.6 + Math.random() * 1.5,
         a: 0.1 + Math.random() * 0.22,
-        c: i % 7 === 0 ? '#FF2A6D' : '#00E5FF',
+        c: i % 7 === 0 ? '#A78BFA' : '#06B6D4',
       });
     }
   }
@@ -2374,7 +2767,12 @@ function showError(message) {
 }
 
 export async function main() {
-  const tabs = initCommon();
+  initCommon();
+  // The views come up before the data, so the address is read (and an old anchor rewritten)
+  // straight away, and the right view is showing while the snapshot loads. `refresh` is filled
+  // in once there is something to render.
+  let refresh = () => {};
+  const views = initViews({ onChange: () => refresh() });
   let data = null;
   try {
     data = await loadData();
@@ -2387,8 +2785,8 @@ export async function main() {
   // The crew roster, the stage list and the per-agent ownership table are presentation: they
   // describe what the system is, not what the last run found, and they ship with the site. So
   // they render whether or not data/ could be read. Gating the roster behind a successful read
-  // was a defect, not a simplification — until the data branch exists, THE CREW served an empty
-  // grid underneath a count that still read 16 AGENTS. The roster's own fallbacks already say
+  // was a defect, not a simplification — until the data branch existed, THE CREW served an empty
+  // grid underneath a count that still read its full size. The roster's own fallbacks already say
   // NOT YET ACTIVE and "No workload published for this agent yet" per card, which is the honest
   // statement; reaching them was the problem.
   //
@@ -2402,53 +2800,99 @@ export async function main() {
   if (!data) {
     renderSections({ events: [], unread: true });
     renderTrends(null, [], { unread: true });
-    // A deep link is still a deep link on a page with no events. The sections have just been
-    // given their final (one-line) contents, so this is the same moment as the call at the end
-    // of the readable path: the layout will not move again.
-    tabs?.rescrollToHash();
+    // A deep link is still a deep link on a page with no events. The views have just been given
+    // their final (one-line) contents, so this is the same moment as the call at the end of the
+    // readable path: the layout will not move again.
+    views?.rescrollToHash();
     return;
   }
 
-  const state = { events: data.events, selected: {} };
-  renderIndex(data);
-  renderGauges(data);
-  renderRadar(data);
-  renderHeadlines(data.events);
   // Before the first refresh: EMERGING THREATS reads which events the trends say are rising.
+  // Trends count stored reports over days, so they are not narrowed by the scope or the tags.
   renderTrends(await getJson(`${data.base}trends.json`, globalThis.fetch), data.events);
 
+  const total = data.events.length;
   const count = document.getElementById('filter-count');
-  const refresh = () => {
-    const filtered = applyFilters(state);
-    filtersActive = Object.values(state.selected).some((v) => v.size);
-    renderSections({ events: filtered });
-    if (count) count.textContent = `${filtered.length} OF ${data.events.length} EVENTS`;
-  };
-  renderFacetUi(buildFacets(data.events), state, refresh);
+  const dashCount = document.getElementById('dash-count');
 
-  // The world map and the country dropdown filter in exactly the same way a
-  // country facet chip does, through state.selected.country. Both hand over a Set of
-  // every raw token for the chosen ISO id, so the filter matches the count the map
-  // and aria-label promise.
-  const onCountry = (token) => {
-    if (token) state.selected.country = new Set(typeof token === 'string' ? [token] : token);
-    else delete state.selected.country;
-    refresh();
+  const navigate = (next, opts) => view.navigate(next, opts);
+  const toggleTag = (dim, value) => {
+    const st = view.state;
+    const tags = { ...st.tags };
+    const values = (tags[dim] || []).includes(value) ? tags[dim].filter((v) => v !== value) : [...(tags[dim] || []), value];
+    if (values.length) tags[dim] = values;
+    else delete tags[dim];
+    navigate({ ...st, tags, event: null }, { replace: true });
   };
-  await renderMap(data.events, onCountry);
 
+  // The world map and the country dropdown filter in exactly the same way a country chip does,
+  // through the state's country tag. Both hand over every raw token for the chosen ISO id, so
+  // the filter matches the count the map and its aria-label promise. The map is redrawn only when
+  // the events it is drawn from change — the scope, the beat or another tag — never for the
+  // country it is itself choosing.
+  const onCountry = (tokens) => {
+    const tags = { ...view.state.tags };
+    if (tokens && [...tokens].length) tags.country = [...tokens].map(String);
+    else delete tags.country;
+    navigate({ ...view.state, tags, event: null }, { replace: true });
+  };
+  let mapKey = null;
+  let mapDraw = Promise.resolve();
+
+  refresh = () => {
+    const st = view.state;
+    const scoped = filterEvents(data.events, st, { skip: ['feed'] });
+    const listed = filterEvents(data.events, st);
+    filtersActive = st.scope !== 'all' || st.beat.length > 0 || st.feed.length > 0 || Object.keys(st.tags).length > 0;
+
+    renderSections({ events: listed });
+    renderEventsHead(data.events, listed, st);
+    renderIndex({ events: scoped, feed: data.feed });
+    renderGauges({ events: scoped });
+    renderRadar({ events: scoped });
+    renderHeadlines(scoped);
+    renderWatch('developing-events', scoped);
+    renderWatch('emerging-threats', scoped);
+    renderSidebar(data.events, st);
+    const facetSkip = st.view === 'events' ? ['tags'] : ['tags', 'feed'];
+    renderFacetUi(buildFacets(filterEvents(data.events, st, { skip: facetSkip })), st.tags, toggleTag);
+
+    const shown = st.view === 'events' ? listed.length : scoped.length;
+    if (count) count.textContent = `${shown} OF ${total} EVENTS`;
+    if (dashCount) dashCount.textContent = `${plural(scoped.length, 'signal').toUpperCase()} · ${SCOPES[st.scope]}`;
+
+    const pool = filterEvents(data.events, st, { skip: ['feed', 'country'] });
+    const key = pool.map((e) => e.event_id).join('|');
+    const selected = st.tags.country || null;
+    if (key !== mapKey) {
+      mapKey = key;
+      mapDraw = mapDraw.then(() => renderMap(pool, onCountry, { selected }));
+    } else {
+      mapDraw = mapDraw.then(() => syncMapSelection(selected));
+    }
+  };
+
+  // CLEAR FILTERS clears what narrows the list — the tags, the beat and the feed — and keeps the
+  // scope, which is a choice of where to look rather than a filter on what is there.
   const clearFilters = () => {
-    state.selected = {};
-    document.querySelectorAll('#filter-facets button[aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
     syncMapSelection('');
-    refresh();
+    navigate({ ...view.state, beat: [], feed: [], tags: {}, event: null });
+  };
+  const clearCountry = () => {
+    const tags = { ...view.state.tags };
+    delete tags.country;
+    syncMapSelection('');
+    navigate({ ...view.state, tags, event: null }, { replace: true });
   };
   document.getElementById('filter-clear')?.addEventListener('click', clearFilters);
-  document.getElementById('map-clear')?.addEventListener('click', clearFilters);
-  Object.assign(view, { events: data.events, refresh, clearFilters });
+  document.getElementById('map-clear')?.addEventListener('click', clearCountry);
+  Object.assign(view, { events: data.events });
   refresh();
-  // The sections now exist at their real size, so a deep link to one can finally be honoured.
-  tabs?.rescrollToHash();
+  await mapDraw;
+  // The views now exist at their real size, so a deep link into one can finally be honoured, and
+  // an ?event= link can open its card — widening the scope first if the scope hides it.
+  views?.rescrollToHash();
+  if (view.state.event) revealEvent(view.state.event, { replace: true });
 }
 
 // ---------------------------------------------------------------- event page

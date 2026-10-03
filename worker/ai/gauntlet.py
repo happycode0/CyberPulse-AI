@@ -21,8 +21,8 @@ A challenger is proposed only when it clears every gate and, against an incumben
 clears them, agrees about as well and is better on the order §7.6 sets: in tier 0, where both
 are free, it agrees clearly more; in tiers 1 and 2 it is clearly cheaper per event. Against an
 incumbent that fails a gate, the best challenger that clears them is proposed. A proposal is a
-row for RIPPERDOC to raise, and promoting it is MORPHEUS's and ROGUE's decision (§7.7): nothing
-here changes config/models.yaml.
+row for RIPPERDOC to raise, and promoting it is MORPHEUS's decision (§7.7), on the worker's own
+cost figures, which the proposal shows: nothing here changes config/models.yaml.
 
 The adoption veto in §7.6 needs OpenRouter's authenticated datasets, so it is not checked
 here; every proposal says so.
@@ -497,7 +497,14 @@ def proposal_body(
     lines += [
         "",
         (
-            "A promotion needs MORPHEUS and ROGUE (§7.7). Approving changes nothing by itself: "
+            "The cost figures are the worker's own, not RIPPERDOC's: every call went through "
+            f"the price guard (nothing over ${OUTPUT_CEILING_USD_PER_MTOK} per million output "
+            "tokens), and the cost per event is what OpenRouter billed, as the cost ledger "
+            "records it."
+        ),
+        "",
+        (
+            "A promotion needs MORPHEUS's approval (§7.7). Approving changes nothing by itself: "
             "the change is a reviewed edit to config/models.yaml."
         ),
     ]

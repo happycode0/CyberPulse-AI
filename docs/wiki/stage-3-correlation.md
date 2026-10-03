@@ -161,7 +161,7 @@ items.
 
 Every publish counts what the database already holds into `trends.json`
 (`worker/pipeline/trends.py`); nothing is stored and no model is asked. The site shows it as
-TRENDS, the first section under OVERVIEW.
+TRENDS, the last panel on the Dashboard view (`#sec-trends` still lands on it).
 
 - **What is counted.** Independent reports (one per lineage, as above), each on the day it was
   published. A report counts toward a topic when its own headline names it: a vendor, actor,

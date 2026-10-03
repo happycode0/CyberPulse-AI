@@ -134,7 +134,7 @@ else
     bad "cannot read ${GITHUB_REPOSITORY:-repo} — check the token scope"
   fi
   adv=$(curl -sS -m 20 "${GH[@]}" "https://api.github.com/advisories?per_page=1" | jqr 'length')
-  [[ "${adv:-0}" -ge 1 ]] && ok "Advisory Database reachable (LIBRARIAN ground truth)" || bad "/advisories failed"
+  [[ "${adv:-0}" -ge 1 ]] && ok "Advisory Database reachable (SERAPH's ground truth)" || bad "/advisories failed"
 fi
 
 # ─── NVD (optional) ──────────────────────────────────────────────────────────
@@ -158,7 +158,7 @@ else
     if [[ -n "${TELEGRAM_CHAT_ID:-}" ]]; then
       s=$(curl -sS -m 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-            --data-urlencode "text=CyberPulse-AI: credential check OK. LINK is wired up." | jqr '.ok // empty')
+            --data-urlencode "text=CyberPulse-AI: credential check OK. The publisher is wired up." | jqr '.ok // empty')
       [[ "$s" == "true" ]] && ok "test message delivered to chat ${TELEGRAM_CHAT_ID}" || bad "send failed — check TELEGRAM_CHAT_ID"
     else
       skip "TELEGRAM_CHAT_ID not set"

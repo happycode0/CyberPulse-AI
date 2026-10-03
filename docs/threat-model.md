@@ -49,7 +49,7 @@ and Telegram as services.
 |---|---|---|
 | The published intelligence | The `data` branch, served by GitHub Pages | People act on it. Wrong or planted content is the worst harm anyone outside sees |
 | The code | `main` on GitHub, and the VM's checkout at `~/CyberPulse-AI` | The worker runs whatever the checkout holds: it is mounted at `/app` (docker-compose.yml:26) |
-| `cyber_intel` | The `pgdata` volume | Events, ground truth, the cost ledger, incidents, TRON's verdicts and the circuit breaker |
+| `cyber_intel` | The `pgdata` volume | Events, ground truth, the cost ledger, incidents, TELETRAAN's verdicts and the circuit breaker |
 | The raw cache | The `rawcache` volume | The bytes each event came from. Most can be fetched again; old ones cannot |
 | Paperclip's state | The `paperclip` database, the `paperclip-data` volume and its secrets folder | Agents, issues, approvals, budgets, and the OpenRouter connection the agents use |
 | Money | The OpenRouter key, US$20 a month hard limit | Shared by the worker and every AI agent |
@@ -183,9 +183,9 @@ writing ground truth") and PLAN.md §2.2, which chose `opencode_local`, a local 
 
 | | Threat | Control (where) |
 |---|---|---|
-| E | An agent uses the server's environment | **None in this repo.** The agents that run models are paused, except those you have resumed (4b lists MORPHEUS, TELETRAAN and ZION as active when created) |
+| E | An agent uses the server's environment | **None in this repo.** The agents that run models are paused, except those you have resumed. Since the move to 8 agents, 4b keeps every agent paused until you choose to resume it |
 | S | Something other than an agent calls the ops API | Only the compose network can reach port 8700. No port is published (docker-compose.yml:28-29). The bearer token must be at least 32 characters and is compared in constant time (worker/ops_api.py:676-692) |
-| T | A hostile write through the ops API | Three writes, each checked as hostile: follow-up reports (ops_api.py:1283), source proposals (ops_api.py:1355) and TRON's verdicts (ops_api.py:1204). Reads run in read-only transactions with a 15-second statement timeout (ops_api.py:695). One token opens all three writes, so any agent can write as DECKARD, TACHIKOMA or TRON (ops_api.py:641-655). A false FAIL only trips the breaker, which stops the crew and waits for you. A false PASS changes nothing, because you merge. Follow-up entries reach the public timeline, labelled as the agent's, at most 8 per event |
+| T | A hostile write through the ops API | Three writes, each checked as hostile: follow-up reports (ops_api.py:1283), source proposals (ops_api.py:1355) and TELETRAAN's verdicts (ops_api.py:1204). Reads run in read-only transactions with a 15-second statement timeout (ops_api.py:695). One token opens all three writes, so any agent can write as DECKARD, TACHIKOMA or TELETRAAN (ops_api.py:641-655). A false FAIL only trips the breaker, which stops the crew and waits for you. A false PASS changes nothing, because you merge. Follow-up entries reach the public timeline, labelled as the agent's, at most 8 per event |
 | I | A response leaks a secret | Every response passes the secret scan, or is withheld (ops_api.py:594-607) |
 | D | The API is flooded | 4 requests at once, bodies up to 1 MiB, chunked bodies refused, 15-second socket and body deadlines (ops_api.py:127-133, 1431-1441) |
 | S | A wake is forged | Wakes need no token, but run nothing and change nothing: they report whether a job is healthy (ops_api.py:1-12) |
@@ -193,14 +193,15 @@ writing ground truth") and PLAN.md §2.2, which chose `opencode_local`, a local 
 
 One comment is out of date and understates the reach: docker-compose.yml:70-71 says "The token
 opens reads only; nothing there writes". There are three writes: follow-up reports, source
-proposals and TRON's verdicts (worker/ops_api.py, corrected 2026-10-03).
+proposals and TELETRAAN's verdicts (worker/ops_api.py, corrected 2026-10-03).
 
 **Residual risk: critical while any `opencode_local` agent runs.**
 
 **You, now:**
 
 1. **Keep the AI agents paused** unless you are watching them. In Paperclip, pause every
-   `opencode_local` agent. The five `http` agents run no model and can stay on.
+   `opencode_local` agent. SERAPH, the one `http` agent, runs no model, so this risk does not
+   need it paused.
 2. **Give Paperclip its own database role, with least privilege.** This is a database change, so
    take a backup first ([backup and restore](runbooks/backup-and-restore.md)) and try it on a
    restored copy before production. In outline: a new login role that is not a superuser and
@@ -219,25 +220,26 @@ as well.
 
 ### B6. WHEELJACK to GitHub (engineer token and branch protection)
 
-Not live yet: WHEELJACK and TRON are paused (stage-4b-the-crew.md:38-39), and the token is still
-to be made (stage-6-self-healing.md:31).
+Not live yet: WHEELJACK is paused, TELETRAAN's pull request checks wait for Stage 6
+(stage-4b-the-crew.md:40, 46), and the token is still to be made (stage-6-self-healing.md:31).
 
 | | Threat | Control (where) |
 |---|---|---|
 | E | The token pushes to `main` without review | Branch protection on `main`, still to be set (stage-6-self-healing.md:32). **A fine-grained token acts as your own account.** GitHub does not let a pull request's author approve it, and WHEELJACK's pull requests would be yours. So a required review either blocks every one of them, or you merge by bypassing the rule, and a rule you can bypass the token can bypass too |
 | T | The token rewrites `data` or other branches | Contents write covers every branch the rules do not protect, `data` included |
-| T | A fix that hides a backdoor | TRON reviews it on a different model vendor, and you merge. No CI runs the tests on a pull request (.github/workflows/ holds only pages.yml), so there is no status check to require. TRON runs the tests itself, inside the server container: a pull request's code runs there, with the environment in B5, before you have seen it |
+| T | A fix that hides a backdoor | TELETRAAN reviews it on a different model vendor, and you merge. No CI runs the tests on a pull request (.github/workflows/ holds only pages.yml), so there is no status check to require. TELETRAAN runs the tests itself, inside the server container: a pull request's code runs there, with the environment in B5, before you have seen it |
 | T | A dependency changes under a merged fix | requirements.txt sets lower bounds only, with no lock file or hashes. A rebuild takes whatever PyPI has that day |
 | I | The token leaks | Wherever it is stored, any agent in the server container can reach it (B5). Its scope is the real control |
 
-TRON has no repository token, and needs none: the repository is public.
+TELETRAAN has no repository token, and needs none: the repository is public.
 
-**Residual risk: high once WHEELJACK runs.** **You, before you resume WHEELJACK or TRON:** give
-WHEELJACK an identity of its own, a GitHub App or a machine account with the Write role, never
-Admin (README §0.5 already suggests a GitHub App for Stage 7). Then set a ruleset on `main` with no
-bypass for anyone: pull request required, one approval, no force push, no deletion. Fix B5 first,
-because TRON runs pull request code inside that container. **For the lead:** a CI workflow that
-runs the tests on pull requests with `permissions: contents: read`, and a hashed lock file.
+**Residual risk: high once WHEELJACK runs.** **You, before you resume WHEELJACK, or let TELETRAAN
+check a pull request:** give WHEELJACK an identity of its own, a GitHub App or a machine account
+with the Write role, never Admin (README §0.5 already suggests a GitHub App for Stage 7). Then
+set a ruleset on `main` with no bypass for anyone: pull request required, one approval, no force
+push, no deletion. Fix B5 first, because TELETRAAN runs pull request code inside that container.
+**For the lead:** a CI workflow that runs the tests on pull requests with
+`permissions: contents: read`, and a hashed lock file.
 
 ### B7. The LAN
 
@@ -297,7 +299,7 @@ first; rewriting history comes second, because a public push is copied within mi
 | 1 | Paperclip's AI agents run in the server container and inherit its environment: the superuser `DATABASE_URL`, the auth and signing secrets, the ops token, and the secrets folder in their home | **Critical** while any `opencode_local` agent runs | Keep the AI agents paused. Give Paperclip a least-privilege database role (backup first). Raise it upstream | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); docker-compose.yml:53, 56-58, 72-73 |
 | 2 | No off-host backup (a restore was rehearsed on 2026-10-03, from the VM's own disk). Nothing alerts on a failed backup | **High** | Off-host target, `vzdump`, scheduled `ops/backup.sh` behind a `mountpoint` check, a weekly look at its log, monthly rehearsal | [B8](#b8-backups-on-a-single-disk-host) |
 | 3 | GitHub tokens act as your account, so branch protection and "a human merges" do not bind them. The publish token could force-push any unprotected branch; since 2026-10-03 worker/publish/push.py refuses any but `data` and `data-<name>` | **High** once WHEELJACK runs; medium now | A separate identity for WHEELJACK; a no-bypass ruleset on `main` | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection), [B4](#b4-worker-to-the-github-data-branch-publish-token) |
-| 4 | TRON runs pull request code in the server container, and no CI runs the tests | **High** once Stage 6 runs | Fix #1 first; CI on pull requests (lead) | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
+| 4 | TELETRAAN runs pull request code in the server container, and no CI runs the tests | **High** once Stage 6 runs | Fix #1 first; CI on pull requests (lead) | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
 | 5 | The worker holds every secret and mounts the checkout read-write, a path to `oxygen` and so to root | **Medium** | Check `id -u`; read-only mount except `data/` (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); docker-compose.yml:21, 26 |
 | 6 | The whole `data` branch becomes the site | **Medium** | Check what `/data/` serves; copy only `*.json` (lead) | [B4](#b4-worker-to-the-github-data-branch-publish-token); pages.yml:63-67 |
 | 7 | One ops token opens all three writes, and every agent holds it | **Medium** | A token per role (lead) | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); ops_api.py:641-655 |

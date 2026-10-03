@@ -1,5 +1,5 @@
-"""Incidents (migrations 001 and 015): what the watchdog opened and resolved, and TRON's verdicts
-on the fixes for them.
+"""Incidents (migrations 001 and 015): what the watchdog opened and resolved, and TELETRAAN's
+verdicts on the fixes for them.
 
 The decisions are worker/watchdog/checks.py's and worker/watchdog/reconcile.py's; this module
 reads and writes. Every pass applies its plan in one transaction, under a lock, so two passes
