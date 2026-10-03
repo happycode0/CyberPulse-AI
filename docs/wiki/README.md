@@ -25,7 +25,7 @@ layer on top of both.
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
 | 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ▶ watchdog, incidents, breaker and rollback built; the crew's part waits for you |
-| 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ▶ built, restore rehearsed; the backup target and schedule are yours |
+| 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ✅ restore rehearsed, 53 failure tests pass; the backup target and schedule are yours |
 
 ## You are here
 
@@ -50,9 +50,9 @@ Stage 6  Self-healing ............................. ▶ built
            ├─ rollback (ops/rollback.sh) .......... ✅ built
            └─ engineer token, branch protection,
               Incident routine, un-pause ........... 🔴 you
-Stage 7  Hardening + operations ................... ▶ built
+Stage 7  Hardening + operations ................... ✅ built and passed
            ├─ backup.sh, restore rehearsed ........ ✅ 2026-10-03, every row count matched
-           ├─ failure tests, threat model, runbooks ✅ built
+           ├─ failure tests (53), threat model .... ✅ all pass; risks ranked
            └─ off-host target, schedule, vzdump ... 🔴 you
 ```
 
