@@ -65,6 +65,7 @@ def db(monkeypatch):
             ],
         },
         "lifecycle": {"old-feed": LifecycleState.RETIRED},
+        "merged": {},
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
@@ -75,6 +76,7 @@ def db(monkeypatch):
         build, "load_health_history", lambda conn, sid, limit=20: state["health"].get(sid, [])
     )
     monkeypatch.setattr(build, "load_lifecycle_states", lambda conn: state["lifecycle"])
+    monkeypatch.setattr(build, "merged_redirects", lambda conn, **kw: state["merged"])
     return state
 
 
@@ -151,7 +153,7 @@ def test_empty_database_still_publishes_valid_files(tmp_path, db):
     assert read(tmp_path, "live.json")["last_completed_collection"] is None
     assert read(tmp_path, "index.json") == {
         "generated_at": "2026-09-30T12:00:00Z", "pipeline_version": "1.0.0",
-        "latest": None, "days": [],
+        "latest": None, "days": [], "merged": {},
     }
     assert read(tmp_path, "system-status.json")["last_run"] is None
 
@@ -281,6 +283,19 @@ def test_build_is_atomic_on_schema_failure(tmp_path, db):
         build_all(None, tmp_path, now=NOW)
     assert json.loads((tmp_path / "live.json").read_text()) == {"previous": True}
     assert sorted(p.name for p in tmp_path.iterdir()) == ["live.json"]
+
+
+def test_the_index_maps_merged_events_to_the_event_they_joined(tmp_path, db):
+    db["merged"] = {"evt-2026-000007": "evt-2026-000001"}
+    build_all(None, tmp_path, now=NOW)
+    assert read(tmp_path, "index.json")["merged"] == {"evt-2026-000007": "evt-2026-000001"}
+
+
+def test_a_malformed_merged_entry_blocks_every_write(tmp_path, db):
+    db["merged"] = {"evt-2026-000007": "https://example.test/elsewhere"}
+    with pytest.raises(ValidationFailure, match="index"):
+        build_all(None, tmp_path, now=NOW)
+    assert list(tmp_path.iterdir()) == []
 
 
 def test_schema_failure_in_a_later_file_blocks_earlier_files(tmp_path, db):
