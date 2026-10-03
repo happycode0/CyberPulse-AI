@@ -32,6 +32,7 @@ from worker.models import (
     SourceConfig,
     SourceRef,
     TimelineEntry,
+    seed_domains,
 )
 from worker.pipeline.material import report_changes
 from worker.pipeline.resolve import EventCandidate, is_generic_title
@@ -106,6 +107,8 @@ def build_new_event(
         status=EventStatus.NEW,
         title=item.title,
         summary=clean_summary(item.summary, item.title),
+        # The source's beat until triage reads the story (docs/wiki/ai-news-beat.md).
+        domains=seed_domains(source.beat),
         categories=[source.category],
         au=AuRelevance(
             directly_reported_in_au=is_au,

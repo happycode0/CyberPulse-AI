@@ -124,6 +124,34 @@ def test_history_and_index_follow_first_seen_dates(tmp_path, conn):
     ]
 
 
+def test_a_stored_ai_story_is_published_on_its_beat_and_counted_on_the_ai_desk(tmp_path, conn):
+    conn.execute(
+        text(
+            "insert into runs (run_id, lane, started_at, finished_at) "
+            "values ('run-0', 'fast', :s, :s)"
+        ),
+        {"s": NOW - timedelta(days=10)},
+    )
+    insert_event(conn, "evt-2026-000001", severity="unknown", first_seen=NOW - timedelta(hours=1))
+    insert_event(conn, "evt-2026-000002", prominence=0.8, first_seen=NOW - timedelta(hours=1))
+    conn.execute(
+        text(
+            "update events set domains = '{ai}', ai_significance = 'major' "
+            "where event_id = 'evt-2026-000001'"
+        )
+    )
+    conn.execute(
+        text("update events set domains = '{cybersecurity}' where event_id = 'evt-2026-000002'")
+    )
+    build_all(conn, tmp_path, now=NOW)
+    events = read(tmp_path, "live.json")["events"]
+    assert [(e["event_id"], e["beat"], e["ai_significance"]) for e in events] == [
+        ("evt-2026-000001", "ai", "major"), ("evt-2026-000002", "cyber", None),
+    ]
+    today = read(tmp_path, "trends.json")["activity"][-1]
+    assert (today["stories"], today["ai_stories"]) == (2, 1)
+
+
 def test_no_raw_article_body_is_published(tmp_path, conn):
     insert_event(conn, "evt-2026-000001")
     build_all(conn, tmp_path, now=NOW)

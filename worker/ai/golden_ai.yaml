@@ -1,0 +1,100 @@
+# AI stories for the golden set, waiting for the owner's labels (worker/ai/golden.py).
+#
+# The rest of the golden set takes its labels from the registers. Nothing like that exists
+# for AI news, so a person has to label these. Until someone does, the gauntlet ignores them.
+# A blank label changes nothing.
+#
+# How to label (the owner):
+#
+# 1. Open each story's url and read it.
+# 2. Fill in its labels:
+#    - beat: cyber, ai, both or other. "both" is an AI story with a security angle.
+#      "other" is a story on neither desk.
+#    - ai_significance: major, notable or minor. Fill it in only for ai or both.
+#      docs/wiki/ai-news-beat.md says what each level means.
+#    - au_desk: true if it matters in Australia, false if it does not. Leave it blank if
+#      you are not sure: a blank one is not scored.
+# 3. Set reviewed to true on each story you labelled yourself. Leave the rest false.
+# 4. A story only counts once the worker has collected it, so check its url is in the
+#    Events feed. If a story never arrived (its feed moved on before the source was
+#    added), swap in another AI story from the Events feed. Put in its url, source_id,
+#    headline and published date, and leave its labels blank until you have read it.
+# 5. Commit, deploy, then pin the set again:
+#    docker compose exec -T worker python -m worker --pin-golden-set
+#    The gauntlet stops reusing earlier results, because the set has changed.
+#
+# Never fill in a label you have not checked against the story. A model's guess is not a label.
+#
+# Only the url, source and headline are kept here. The record a model sees comes from the
+# event in the database when the set is pinned.
+
+candidates:
+  - url: https://arstechnica.com/google/2026/09/google-announces-gemini-4-argon-ai-model-but-you-cant-use-it-yet/
+    source_id: ars_ai
+    headline: Google announces Gemini 4 Argon AI model, but you can't use it yet
+    published: 2026-09-30
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://arstechnica.com/ai/2026/09/heres-what-actually-happened-in-openais-australian-govt-server-hack/
+    source_id: ars_ai
+    headline: Here's what actually happened in OpenAI's Australian gov't server hack
+    published: 2026-09-29
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://arstechnica.com/security/2026/10/apple-changes-full-disk-access-permissions-to-curb-abuse-from-ai-agents/
+    source_id: ars_ai
+    headline: Apple changes full-disk access permissions to curb abuse from AI agents
+    published: 2026-10-02
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://www.technologyreview.com/2026/09/28/1145197/whos-liable-when-ai-agents-go-rogue/
+    source_id: mit_tr_ai
+    headline: Who's liable when AI agents go rogue?
+    published: 2026-09-28
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://www.technologyreview.com/2026/09/25/1145144/pentagon-ai-lie-detector/
+    source_id: mit_tr_ai
+    headline: The Pentagon wants $30 million to build an AI-powered lie detector
+    published: 2026-09-25
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://www.technologyreview.com/2026/09/29/1145186/making-ai-an-asset-not-an-expense/
+    source_id: mit_tr_ai
+    headline: Making AI an asset, not an expense
+    published: 2026-09-29
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://importai.substack.com/p/import-ai-474-platonic-mindspace
+    source_id: import_ai
+    headline: "Import AI 474: Platonic mindspace; TPUs in space; Zhipu starts an outer RSI loop"
+    published: 2026-09-28
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://newsletter.safe.ai/p/aisn-82-the-us-and-china-begin-a
+    source_id: cais_aisn
+    headline: "AISN #82: The US and China Begin a Dialogue on AI"
+    published: 2026-09-29
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august
+    source_id: eu_digital_strategy
+    headline: Commission starts enforcing AI Act rules and new transparency requirements on 2 August
+    published: 2026-07-31
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false
+
+  - url: https://digital-strategy.ec.europa.eu/en/events/data-union-conference
+    source_id: eu_digital_strategy
+    headline: Data Union Conference
+    published: 2026-09-18
+    labels: {beat: null, ai_significance: null, au_desk: null}
+    reviewed: false

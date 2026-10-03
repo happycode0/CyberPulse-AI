@@ -320,6 +320,51 @@ def test_a_merged_event_is_kept_out_of_resolution_and_the_site(conn):
     assert [r.event_id for r in load_story_records(conn, since=NOW - timedelta(days=30))] == [W]
 
 
+def set_beat(conn, event_id, domains, *, subdomain=None, significance=None, triaged=True,
+             severity=("unknown", "unknown")):
+    conn.execute(
+        text(
+            "update events set domains = cast(:d as text[]), ai_subdomain = :sub, "
+            "ai_significance = :sig, severity = :sev, severity_source = :src where event_id = :e"
+        ),
+        {"e": event_id, "d": list(domains), "sub": subdomain, "sig": significance,
+         "sev": severity[0], "src": severity[1]},
+    )
+    if triaged:
+        conn.execute(
+            text(
+                "insert into event_enrichment (event_id, task, version, status) "
+                "values (:e, 'triage', '1', 'done')"
+            ),
+            {"e": event_id},
+        )
+
+
+def test_a_merge_keeps_the_domains_of_every_story_it_joins(conn):
+    for e in (W, L1, L2):
+        insert_event(conn, e, "OpenAI model jailbroken")
+    set_beat(conn, W, ["cybersecurity"], severity=("high", "ai_estimate"))
+    set_beat(conn, L1, ["ai"], subdomain="AI_INDUSTRY", significance="notable")
+    set_beat(conn, L2, ["ai"], subdomain="AI_SECURITY", significance="major")
+    merge_events(conn, MergeGroup(W, (L1, L2), None, ("title_hash",)))
+    w = event(conn, W)
+    assert w["domains"] == ["cybersecurity", "ai"]
+    assert (w["ai_subdomain"], w["ai_significance"]) == ("AI_INDUSTRY", "major")
+    # Still on the cyber desk, so its severity estimate stands.
+    assert (w["severity"], w["severity_source"]) == ("high", "ai_estimate")
+
+
+def test_a_seed_gives_way_to_triage_and_an_ai_only_story_loses_its_cyber_rating(conn):
+    for e in (W, L1):
+        insert_event(conn, e, "Lab ships a new model")
+    set_beat(conn, W, ["cybersecurity"], triaged=False, severity=("medium", "ai_estimate"))
+    set_beat(conn, L1, ["ai"], subdomain="AI_INDUSTRY", significance="minor")
+    merge_events(conn, MergeGroup(W, (L1,), None, ("title_hash",)))
+    w = event(conn, W)
+    assert (w["domains"], w["ai_significance"]) == (["ai"], "minor")
+    assert (w["severity"], w["severity_source"]) == ("unknown", "unknown")
+
+
 def test_merged_into_must_be_archived_and_another_event(conn):
     insert_event(conn, W, "a")
     insert_event(conn, L1, "b")

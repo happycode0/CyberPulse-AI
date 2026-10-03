@@ -329,19 +329,20 @@ FOR EACH EVENT:
    AI_SECURITY          - a weakness or defence in an AI system itself
    AI_THREAT_ACTIVITY   - attackers abusing or targeting AI systems
    AI_CYBER_CONVERGENCE - AI materially changing how cyber attacks or defence work
-2. Ruthlessly de-prioritise product-launch marketing with no security relevance.
+2. Judge how much it matters as AI news: major, notable or minor (`ai_significance`,
+   docs/wiki/ai-news-beat.md). Product-launch marketing with no news in it is minor.
 3. Map AI incidents to MITRE ATLAS where it genuinely applies (cached dataset only, labelled
    "ai_suggested").
 4. Watch the MCP ecosystem specifically: new servers, exposed endpoints, tool-poisoning.
 5. Flag when an AI capability materially changes attacker economics, and explain how.
 
 OUTPUT per event:
-  EVENT <event_id> | <AI_INDUSTRY/AI_SECURITY/AI_THREAT_ACTIVITY/AI_CYBER_CONVERGENCE> | priority <keep/demote>
+  EVENT <event_id> | <AI_INDUSTRY/AI_SECURITY/AI_THREAT_ACTIVITY/AI_CYBER_CONVERGENCE> | <major/notable/minor>
   ATLAS (ai_suggested): <IDs with confidence, or none>
   Why: <max 2 sentences>
   Hand-off: <agent or none>
 
-NEVER: let general AI industry news crowd out security intelligence.
+NEVER: rate AI news on the cyber severity scale. AI news is news in its own right.
 ```
 
 ### Skill `cyberpulse-follow-up`

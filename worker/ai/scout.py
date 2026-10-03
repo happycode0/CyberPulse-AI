@@ -69,6 +69,7 @@ from worker.ai.gauntlet import (
     decide,
     estimate,
     failures,
+    judged_on,
     measure,
     proposal_body,
     proposal_payload,
@@ -76,11 +77,14 @@ from worker.ai.gauntlet import (
     score,
 )
 from worker.ai.golden import (
+    AiCandidate,
     GoldenEvent,
     au_label_counts,
     blinded,
     digest,
+    load_ai_candidates,
     pin,
+    pin_ai,
     stratify,
     subject_from_record,
 )
@@ -263,9 +267,31 @@ async def scan_models(
 # ─── The golden set ───────────────────────────────────────────────────────────────────────────────
 
 
+def _pin_ai(
+    conn: Connection, candidates: Sequence[AiCandidate], taken: set[str]
+) -> list[GoldenEvent]:
+    """The AI stories the owner has labelled (worker/ai/golden_ai.yaml), as the events the
+    worker collected them into. One already pinned from the registers is not pinned twice."""
+    labelled = [c for c in candidates if c.labelled]
+    if not labelled:
+        return []
+    found = db.events_for_urls(conn, [c.url for c in labelled])
+    for c in labelled:
+        if c.url not in found:
+            logger.warning("golden set: %s is labelled but was never collected", c.url)
+    chosen = {}
+    for c in labelled:
+        event_id = found.get(c.url)
+        if event_id and event_id not in taken and event_id not in chosen:
+            chosen[event_id] = c
+    subjects = {s.event.event_id: s for s in load_subjects(conn, list(chosen))}
+    return [pin_ai(subjects[e], c) for e, c in chosen.items() if e in subjects]
+
+
 def _pin(conn: Connection, now: datetime) -> list[GoldenEvent]:
     ids = stratify(db.golden_candidates(conn))
     golden = [pin(s) for s in load_subjects(conn, ids)]
+    golden += _pin_ai(conn, load_ai_candidates(), set(ids))
     db.replace_golden(conn, golden, now)
     return golden
 
@@ -381,8 +407,9 @@ class _Run:
     async def model(
         self, candidate: VerifiedCandidate, row: Listed | None, *, incumbent: bool
     ) -> Measured | None:
+        golden = [g for g in self.golden if judged_on(TIER_TASK[candidate.tier], g.labels)]
         if not candidate.slug.endswith(":free"):
-            expected = estimate(row, len(self.golden))
+            expected = estimate(row, len(golden))
             if expected > self.purse.left:
                 self.notes.append(
                     f"{candidate.tier.value}: {candidate.slug} not tried: it should cost about "
@@ -391,7 +418,7 @@ class _Run:
                 return None
         gate = asyncio.Semaphore(CONCURRENCY)
         attempts = await asyncio.gather(
-            *(_attempt(self.client, candidate, g, gate, self.purse) for g in self.golden)
+            *(_attempt(self.client, candidate, g, gate, self.purse) for g in golden)
         )
         m = measure(
             candidate.tier,

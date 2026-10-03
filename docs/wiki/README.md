@@ -27,6 +27,9 @@ layer on top of both.
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ▶ watchdog, incidents, breaker and rollback built; the crew's part waits for you |
 | 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ✅ restore rehearsed, 53 failure tests pass; the backup target and schedule are yours |
 
+**Reference:** [The AI news beat](ai-news-beat.md): how a story lands on the cyber or AI desk, how
+AI news is ranked, the Events filter, and the AI test stories for you to label.
+
 ## You are here
 
 ```text

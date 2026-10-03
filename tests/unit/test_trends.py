@@ -89,6 +89,26 @@ def test_every_committed_term_matches_its_own_topic():
 
 
 @pytest.mark.parametrize(
+    "headline,key",
+    [
+        ("Anthropic's Model Context Protocol gets a security review", "mcp"),
+        ("Rogue AI agents and who is liable", "ai-agents"),
+        ("Google ships Gemini 4", "gemini"),
+        ("Meta's Llama licence changes", "llama"),
+        ("Mistral raises again", "mistral"),
+        ("DeepSeek's new model tops the charts", "deepseek"),
+        ("Researchers show data poisoning of a code model", "model-poisoning"),
+        ("Commission starts enforcing AI Act rules", "eu-ai-act"),
+        ("Canberra weighs mandatory AI guardrails", "ai-regulation"),
+    ],
+)
+def test_the_ai_topics_are_counted(headline, key):
+    by_key = {t.key: t for t in CONFIG.topics}
+    assert by_key[key].kind == "ai"
+    assert key in Matcher(CONFIG.topics).topics(headline)
+
+
+@pytest.mark.parametrize(
     "topics,message",
     [
         (
@@ -275,7 +295,7 @@ def test_activity_marks_how_much_of_each_day_was_collected():
 def test_activity_counts_stories_reports_and_kev_additions_by_day():
     stories = [
         story(1, hours=14, critical_or_high=True, au=True),  # 2026-10-09 22:00
-        story(2, hours=16),  # 2026-10-09 20:00
+        story(2, hours=16, ai=True),  # 2026-10-09 20:00
         story(3, hours=200, critical_or_high=True),  # a backlog item, before collection
     ]
     reports = [report("a", 14, n=1), report("b", 13, n=1), report("c", 1, n=2)]
@@ -283,13 +303,13 @@ def test_activity_counts_stories_reports_and_kev_additions_by_day():
     days = {d["date"]: d for d in trends(reports, stories, kev, since=ago(80))["activity"]}
     assert days["2026-10-09"] == {
         "date": "2026-10-09", "coverage": "full", "stories": 2, "reports": 2,
-        "kev_added": 2, "critical_high": 1, "au_stories": 1,
+        "kev_added": 2, "critical_high": 1, "au_stories": 1, "ai_stories": 1,
     }
     assert days["2026-10-10"]["reports"] == 1
     # CISA's dates cover its whole catalogue, so a KEV addition counts on an uncovered day.
     assert days["2026-10-01"] | {"date": "-"} == {
         "date": "-", "coverage": "none", "stories": 0, "reports": 0,
-        "kev_added": 1, "critical_high": 0, "au_stories": 0,
+        "kev_added": 1, "critical_high": 0, "au_stories": 0, "ai_stories": 0,
     }
 
 
@@ -297,9 +317,16 @@ def test_activity_counts_stories_reports_and_kev_additions_by_day():
 
 
 def test_the_payload_matches_the_published_schema():
-    stories = [story(1, cves=("CVE-2026-1111",), kev_cves=frozenset({"CVE-2026-1111"}))]
+    stories = [
+        story(1, cves=("CVE-2026-1111",), kev_cves=frozenset({"CVE-2026-1111"})),
+        story(2, ai=True),
+    ]
     reports = _reports("Akira ransomware hits a Citrix shop", 4, 6)
+    reports += [report("Gemini 4 jailbroken in a day", 2, n=2)]
     for since in (LONG_AGO, ago(36), None):
         payload = trends(reports, stories, {NOW.date(): 3}, since=since)
+        if since is LONG_AGO:
+            assert topic(payload, "gemini")["kind"] == "ai"
+            assert payload["activity"][-1]["ai_stories"] == 1
         validate_payload({"generated_at": NOW.isoformat(), "pipeline_version": "1"} | payload,
                          "trends")

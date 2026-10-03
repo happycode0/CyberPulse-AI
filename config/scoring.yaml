@@ -1,7 +1,7 @@
 # Versioned scoring configuration (PLAN.md section 5, "Scoring").
 # `version` must equal worker.version.SCORING_VERSION; bump both together whenever
 # any number below changes, so stored scores can be traced to the rules that made them.
-version: "3"
+version: "4"
 
 # Base severity weight. Severity and prominence stay separate: this is severity only.
 severity_weights:
@@ -22,6 +22,23 @@ half_life_hours:
   medium: 24
   low: 24
   unknown: 24
+
+# The AI desk's scale (docs/wiki/ai-news-beat.md). An AI-only story is ranked on its
+# ai_significance in place of severity, so AI news is never scored as an unrated cyber threat.
+# `unknown` is one triage has not judged yet. A story on both desks takes the stronger weight
+# and the longer half-life of the two scales. Major matches critical, so a major AI story stays
+# live at least as long as a critical cyber one.
+ai_beat:
+  weights:
+    major: 4
+    notable: 3
+    minor: 1
+    unknown: 1.5
+  half_life_hours:
+    major: 168
+    notable: 72
+    minor: 24
+    unknown: 24
 
 # Confidence floor contributed by the best evidence class among an event's sources.
 evidence_class_weights:
@@ -137,6 +154,13 @@ au:
     OAIC: [government]
     ACMA: [government, telecommunications]
     ACSC: [government]
+    # The Australian bodies that regulate, fund or research AI (docs/wiki/ai-news-beat.md).
+    eSafety: [government]
+    DISR: [government]
+    "Department of Industry, Science and Resources": [government]
+    National AI Centre: [government]
+    CSIRO: [government]
+    Data61: [government]
     UNSW: [education]
     Monash University: [education]
     Deakin University: [education]
