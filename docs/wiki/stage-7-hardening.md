@@ -2,7 +2,7 @@
 
 [← Stage 6 — Self-healing](stage-6-self-healing.md) · [Wiki home](README.md)
 
-**Status: ▶ built; a restore was rehearsed on the VM on 2026-10-03.** What is left is yours:
+**Status: ✅ built and passed: a restore was rehearsed on the VM on 2026-10-03, and all 53 failure tests pass.** What is left is yours:
 somewhere off the host to keep the backups, and a schedule. Plan:
 [PLAN.md §9, Stage 7](../../PLAN.md#9-stages) · Build record: [runbook Part 7](../vm200-runbook.md)
 
@@ -121,6 +121,17 @@ yet handled, is in [tests/failure/README.md](../../tests/failure/README.md).
 python -m pytest -q tests/failure
 ```
 
+All 53 pass on the VM (2026-10-04), the database test included. They cover OpenRouter down or out
+of credit, Tavily down, a source failing, Paperclip down, Postgres down, a push failing, Pages
+going stale, an agent failing, the circuit breaker, bad model output, a duplicate storm, a secret
+in the output and schema-invalid output.
+
+What §11 plans but is not built is listed there under Gaps, rather than tested as if it were. The
+main ones: nothing rate-limits ingest during a duplicate storm (the watchdog flags it); a failed
+push has no backoff of its own (the next publish, 15 minutes later, is the retry); and with
+Paperclip down, Telegram's notices still say "The crew has been told" although the routine call
+may not have gone through.
+
 ## Threat model and runbooks
 
 - [The threat model](../threat-model.md): each trust boundary, the controls that are really in
@@ -145,7 +156,7 @@ python -m pytest -q tests/failure
 ## Done when
 
 - [x] A restore from backup has been rehearsed successfully (2026-10-03, the VM)
-- [ ] Every failure-injection test passes
+- [x] Every failure-injection test passes (53, the VM, 2026-10-04)
 
 ---
 
