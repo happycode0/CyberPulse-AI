@@ -1,4 +1,4 @@
-"""ROGUE's budget (worker/ai/budget.py): readings, modes, routing, and what failures do to them."""
+"""The AI budget (worker/ai/budget.py): readings, modes, routing, and what failures do to them."""
 
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal

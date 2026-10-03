@@ -3,7 +3,7 @@
 [← Stage 5 — Full crew](stage-5-full-crew.md) · [Wiki home](README.md) ·
 [Stage 7 — Hardening →](stage-7-hardening.md)
 
-**Status: ▶ built, waiting for you.** The watchdog, its incidents, TRON's verdicts, the circuit
+**Status: ▶ built, waiting for you.** The watchdog, its incidents, TELETRAAN's verdicts, the circuit
 breaker and rollback are built and running on the VM. The crew's part waits for your tokens,
 branch protection and the Incident routine. Plan: [PLAN.md §9, Stage 6](../../PLAN.md#9-stages) ·
 How the loop runs: [4c, the repair loop](stage-4c-how-the-crew-works.md#6-repair-loop--stage-6)
@@ -20,9 +20,11 @@ No code reaches production without you.
 
 | Agent | Does | Model |
 |---|---|---|
-| TELETRAAN | Reads each incident the watchdog opens, finds the cause, hands it to its owner | CHEAP tier |
+| TELETRAAN | Reads each incident the watchdog opens, finds the cause and hands it to its owner. Then checks WHEELJACK's fix on its own: PASS or FAIL, recorded against the incident | AUDIT tier, **a different vendor** from WHEELJACK's |
 | WHEELJACK | Writes the fix on a branch, with a regression test, and opens a PR | CODE tier |
-| TRON | Independently verifies it: PASS or FAIL, recorded against the incident | AUDIT tier, **a different vendor** from WHEELJACK's |
+
+TELETRAAN took over TRON's checks when the crew went from 16 agents to 8. The agent that writes
+a fix is still never the one that passes it, and you still merge.
 
 ## What's left
 
@@ -31,11 +33,11 @@ No code reaches production without you.
 | 🔴 | **A second fine-grained token**, `CYBERPULSE_ENGINEER_TOKEN`: this repo only, 90-day expiry, **Contents** and **Pull requests** read and write, nothing else. It is the only credential WHEELJACK ever gets |
 | 🔴 | **Branch protection on `main`:** require a pull request and your review before merging |
 | 🔴 | **The Incident routine and its webhook**: [the steps below](#the-incident-routine) |
-| 🔴 | **Paste the new instructions** for TELETRAAN, WHEELJACK and TRON from [4b](stage-4b-the-crew.md#2-teletraan--watchdog--sre): each agent's page → **Instructions** → replace the text below the house rules |
-| 🔴 | **Approve the un-pause** of TELETRAAN, WHEELJACK and TRON, as the board |
+| 🔴 | **Check the instructions** of TELETRAAN and WHEELJACK against [4b](stage-4b-the-crew.md#2-teletraan--operation): each agent's page → **Instructions**. The crew package puts them there ([4a](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8)) |
+| 🔴 | **Approve the un-pause** of TELETRAAN and WHEELJACK, as the board, when you choose |
 | ✅ | The watchdog: 14 signatures, checked every 5 minutes for nothing: [below](#the-watchdog) |
 | ✅ | Incidents that open, update, resolve and reopen on their own, told to Telegram and to the crew: [below](#incidents) |
-| ✅ | TRON's verdicts and the circuit breaker: 3 failed fixes stop the crew and wait for you: [below](#the-circuit-breaker) |
+| ✅ | TELETRAAN's verdicts and the circuit breaker: 3 failed fixes stop the crew and wait for you: [below](#the-circuit-breaker) |
 | ✅ | Rollback, `ops/rollback.sh`: [below](#rollback) |
 
 ## The watchdog
@@ -159,7 +161,7 @@ counts as up. Set it empty in `.env` to stop the probe.
 
 ## The circuit breaker
 
-TRON records each verdict against the incident: `POST /ops/incidents/<id>/verdict` with
+TELETRAAN records each verdict against the incident: `POST /ops/incidents/<id>/verdict` with
 `{"verdict": "pass" | "fail", "pr": <number>, "reasons": "<its own words>"}`. The reasons pass
 the same secret scan as a publish.
 
@@ -194,7 +196,7 @@ Each restart comes between collection runs: keep clear of :00, :15, :30 and :45 
       verified independently, and merged after your approval. On a test branch, change a
       feed's parser so it finds nothing. Within about 3 normal runs `parser-drift` opens,
       Telegram is told and TELETRAAN files an `[ENGINEERING] INC-<n>` issue. WHEELJACK opens
-      `fix/inc-<n>-…`, TRON records PASS, you merge, and the incident resolves 15 minutes
+      `fix/inc-<n>-…`, TELETRAAN records PASS, you merge, and the incident resolves 15 minutes
       after the next good check.
 - [ ] **The breaker.** Three FAIL verdicts on one incident trip the breaker: the third reply
       says `tripped`, a fourth is refused with 409, and the incident shows `needs_human`.

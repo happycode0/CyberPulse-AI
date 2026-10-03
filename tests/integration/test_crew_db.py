@@ -47,11 +47,9 @@ def test_an_empty_database_counts_nothing(db):
     with db.connect() as conn:
         activity = load_crew_activity(conn, since=MONTH)
         ai = load_pipeline_ai(conn, since=MONTH)
-    assert {k: (a.tasks, a.last_active, a.failing) for k, a in activity.items()} == {
-        "librarian": (0, None, False),
-        "prowl": (0, None, False),
-        "seraph": (0, None, False),
-        "rogue": (0, None, False),
+    assert {k: (a.tasks, a.items, a.last_active, a.failing) for k, a in activity.items()} == {
+        "seraph": (0, 0, None, False),
+        "ripperdoc": (0, None, None, False),
     }
     assert (ai.calls, ai.cost_usd) == (0, Decimal(0))
 
@@ -62,6 +60,11 @@ def test_each_agent_is_counted_from_its_own_rows(db):
     record_job(db, JobRun("groundtruth", NOW - timedelta(hours=7), NOW - timedelta(hours=6),
                           completed=True))
     record_job(db, JobRun("groundtruth", NOW - timedelta(hours=1), NOW, completed=False))
+    record_job(db, JobRun("publish", NOW - timedelta(minutes=10), NOW - timedelta(minutes=9),
+                          completed=True))
+    # A failed publish is neither a task nor SERAPH's last work.
+    record_job(db, JobRun("publish", NOW - timedelta(minutes=2), NOW - timedelta(minutes=1),
+                          completed=False))
     with db.begin() as conn:
         conn.execute(
             text(
@@ -96,18 +99,18 @@ def test_each_agent_is_counted_from_its_own_rows(db):
         activity = load_crew_activity(conn, since=MONTH)
         ai = load_pipeline_ai(conn, since=MONTH)
 
-    librarian = activity["librarian"]
-    assert (librarian.tasks, librarian.last_active, librarian.failing) == (
-        1, NOW - timedelta(hours=6), True
-    )
-    prowl = activity["prowl"]
-    assert (prowl.tasks, prowl.items, prowl.last_active) == (2, 100, NOW - timedelta(hours=1))
+    assert set(activity) == {"seraph", "ripperdoc"}
+    # SERAPH: 3 source checks this month + 2 finished runs + 1 completed ground-truth pass +
+    # 1 completed publish. Its items are what those runs fetched. The newest ground-truth pass
+    # did not complete, so it is failing.
     seraph = activity["seraph"]
-    assert (seraph.tasks, seraph.items, seraph.last_active) == (
-        3, 2, NOW - timedelta(minutes=5)
+    assert (seraph.tasks, seraph.items, seraph.last_active, seraph.failing) == (
+        7, 100, NOW - timedelta(minutes=5), True
     )
-    assert (activity["rogue"].tasks, activity["rogue"].last_active) == (
-        3, NOW - timedelta(hours=1)
+    # RIPPERDOC: every ledger row this month, whoever made the call.
+    ripperdoc = activity["ripperdoc"]
+    assert (ripperdoc.tasks, ripperdoc.items, ripperdoc.last_active, ripperdoc.failing) == (
+        3, None, NOW - timedelta(hours=1), False
     )
     # Only the worker's own calls: RIPPERDOC's gauntlet is not the pipeline's spend.
     assert (ai.calls, ai.cost_usd) == (2, Decimal("0.01"))

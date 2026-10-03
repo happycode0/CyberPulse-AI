@@ -3,7 +3,7 @@
 The pass is the AI layer's only caller in the worker. Before it spends anything:
 
 1. The ladder must have passed the price guard within the last day.
-2. A fresh budget reading must say what mode the month's money allows (ROGUE, §7.4).
+2. A fresh budget reading must say what mode the month's money allows (§7.4).
 
 Every call then asks the governor where it may go. Collection and publishing never wait on
 any of this: with no key, a failed guard or no money, the pass returns without calling, and
@@ -199,7 +199,7 @@ async def run_task(
 
 
 class AiLayer:
-    """The verified ladder and ROGUE's governor, kept from one pass to the next.
+    """The verified ladder and the budget governor, kept from one pass to the next.
 
     The governor has to outlive a pass: a 402 that stopped paid calls, or an account out of
     credits, must still hold on the next one.

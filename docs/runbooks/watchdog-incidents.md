@@ -27,7 +27,7 @@ Medium and low ones only wait in the list. Every entry below assumes the `q` and
 
 ```bash
 ops /ops/incidents                 # what is open, each with a guide to its kind
-ops /ops/incidents/42              # one incident: its evidence, and TRON's verdicts
+ops /ops/incidents/42              # one incident: its evidence, and TELETRAAN's verdicts
 docker compose logs worker --since 1h | grep -E "incident|watchdog"
 ```
 
@@ -156,7 +156,7 @@ docker compose exec -T worker sh -c 'f=$(ls -t /var/cache/cyberpulse/<source id>
 
 **Fix.** A pull request that fixes the parser, with a fixture of the new shape in
 `tests/fixtures/feeds/` and a test that fails on the old code. WHEELJACK does this when it runs;
-TRON checks it; you merge. Then [deploy](deploy-and-rollback.md#a-normal-deploy).
+TELETRAAN checks it; you merge. Then [deploy](deploy-and-rollback.md#a-normal-deploy).
 
 **Stop and decide yourself** if the page now needs a login, a cookie wall or JavaScript to show its
 items. Getting around that is a choice about the source, not a parser fix.
@@ -414,7 +414,7 @@ not told, since there is no crew to tell. The worker keeps collecting and publis
 
 ## The circuit breaker tripped
 
-**Symptom.** `CyberPulse-AI · incident · needs a human`: three fixes failed TRON's tests. The crew
+**Symptom.** `CyberPulse-AI · incident · needs a human`: three fixes failed TELETRAAN's tests. The crew
 has stopped work on that incident, and the ops API takes no more verdicts on it (409).
 
 **Check.**
@@ -423,7 +423,7 @@ has stopped work on that incident, and the ops API takes no more verdicts on it 
 ops /ops/incidents/42              # needs_human, fix_failures, and each verdict's reasons
 ```
 
-Read the three pull requests and TRON's reasons on GitHub.
+Read the three pull requests and TELETRAAN's reasons on GitHub.
 
 **Fix.** There is no reset, by design. The count survives a reopen. Either fix the fault yourself,
 by pull request, or close the `[ENGINEERING]` issue in Paperclip and live with the fault. The

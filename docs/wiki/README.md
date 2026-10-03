@@ -19,11 +19,11 @@ layer on top of both.
 | 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | ✅ done |
 | 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | ✅ done |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ✅ done |
-| 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
+| 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 8-agent crew | ▶ **you are here** |
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
-| 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
+| 4b | ↳ [The crew](stage-4b-the-crew.md) | All 8 agents: settings and the prompt to paste | reference |
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
-| 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
+| 5 | [Full crew + notifications](stage-5-full-crew.md) | VOIGHT, TACHIKOMA and the Stage 5 routines switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ▶ watchdog, incidents, breaker and rollback built; the crew's part waits for you |
 | 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ✅ restore rehearsed, 53 failure tests pass; the backup target and schedule are yours |
 
@@ -40,7 +40,8 @@ Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ board-approval toggle, company ...... ✅ mission and budgets set 2026-10-03
            ├─ 16 agents + routines ................ ✅ imported, smoke-tested; all paused
            ├─ OpenCode, ops API, http agents ...... ✅ 2026-10-03
-           └─ resume agents and routines .......... ⏸ after the 8-agent crew change
+           ├─ move to 8 agents .................... 🔴 you: import, terminate 8, budgets, 3 tests
+           └─ resume agents and routines .......... ⏸ when you choose, after the move
 Stage 5  Full crew + notifications ................ ▶ building
            ├─ Telegram digest + critical alerts ... ✅ built; 🔴 you: the bot token
            └─ THE CREW workload (crew.json) ....... ✅ built
@@ -60,8 +61,11 @@ Stage 7  Hardening + operations ................... ✅ built and passed
 
 1. ~~**Claim Paperclip.**~~ ✅ Done 2026-10-02; sign-up is now off.
 2. ~~**Set it up.**~~ ✅ Company, mission, budgets, 16 agents and their smoke tests, 2026-10-03.
-   **Keep them paused** until the 8-agent crew change lands, and until the agents no longer
-   inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)).
+   **Then move Paperclip to 8 agents** ([4a](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8)):
+   import the rebuilt package, terminate the 8 retired agents, set the 7 budgets and smoke-test
+   DECKARD, TELETRAAN and RIPPERDOC. **Keep every agent paused** until you choose to resume it,
+   and not before the agents stop inheriting the server's environment
+   ([threat model, risk 1](../threat-model.md#open-risks-ranked)).
 3. ~~**Approve merging `stage-1-foundation` into `main`.**~~ ✅ Merged 2026-10-03 (PR #1).
    **Then commit the Pages timer**, so the site redeploys every 15 minutes on its own
    ([Stage 1, item 2](stage-1-foundation.md#whats-left)).

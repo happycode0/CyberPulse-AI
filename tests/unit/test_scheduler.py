@@ -440,7 +440,7 @@ async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_j
 
 
 async def test_a_ground_truth_sync_that_raised_is_recorded_as_not_completed(lane_job, monkeypatch):
-    """LIBRARIAN's wake reads the newest completed pass, so a raising one must not count."""
+    """SERAPH's wake reads the newest completed pass, so a raising one must not count."""
     log, _ = lane_job
 
     async def fake_sync():

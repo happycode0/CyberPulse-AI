@@ -14,7 +14,7 @@
 ## What this is
 
 Not a news aggregator. A small, permanently-running intelligence organisation staffed by
-fifteen named agents who each own a beat.
+eight named agents who each own a job.
 
 Deterministic Python collects from ~60 live-validated sources on three cadences and
 resolves many reports into **one canonical event**. Ground truth comes from CISA KEV,
@@ -46,10 +46,8 @@ evidence-linked intelligence — and is honest that it is a snapshot, not a live
          ┌────────────────────────────────┼────────────────────────────────┐
          ▼                                ▼                                ▼
    INTELLIGENCE                     ENGINEERING                      OPERATIONS
-   MORPHEUS · ZION                  WHEELJACK · TRON                 TELETRAAN · ROGUE
-   BLASTER · WINTERMUTE                                              LINK · SERAPH
-   TACHIKOMA · DECKARD                                               LIBRARIAN · PROWL
-   VOIGHT                                                            RIPPERDOC
+   MORPHEUS · DECKARD               WHEELJACK                        TELETRAAN · RIPPERDOC
+   VOIGHT · TACHIKOMA                                                SERAPH
          └────────────────────────────────┼────────────────────────────────┘
                                           ▼
                               CYBER WORKER  (Python 3.13)
@@ -84,24 +82,20 @@ Personas are presentation, not authority — that comes from each agent's Paperc
 permissions and budget. **Deterministic agents cost zero tokens**, which is the whole point
 of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 
-| Callsign | Origin | Beat | Runtime |
-|---|---|---|---|
-| **MORPHEUS** · *"I can only show you the door."* | Matrix | Intelligence Director / Chief Editor | LLM, strong, 1×/day |
-| **ZION** · *"Home ground. Our watch."* | Matrix | Australian desk | LLM, fast |
-| **BLASTER** · *"I'm picking up chatter on every band."* | Transformers | Global cyber desk | LLM, fast |
-| **WINTERMUTE** · *"The model is the attack surface."* | Neuromancer | AI + cyber↔AI convergence | LLM, fast |
-| **TACHIKOMA** · *"Ooh — what's this one?"* | Ghost in the Shell | Source discovery | LLM + Tavily |
-| **SERAPH** · *"I had to be sure."* | Matrix | Source verification gate | Deterministic |
-| **PROWL** · *"One event. Many threads."* | Transformers | Event correlation, material change | Deterministic + Strands |
-| **LIBRARIAN** · *"Cite it or it didn't happen."* | Snow Crash | KEV / CVE / EPSS / OSV / ATT&CK | Deterministic |
-| **DECKARD** · *"The case stays open until it's patched."* | Blade Runner | Follow-up, developing events | LLM + Strands |
-| **VOIGHT** · *"Says who?"* | Blade Runner | Editorial QA, publication veto | LLM, strong, gated |
-| **LINK** · *"Transmission clean. Here's the diff."* | Matrix | Publishing + notifications | Deterministic |
-| **ROGUE** · *"Nothing in this city is free."* | Cyberpunk 2077 | Cost / FinOps, degradation tiers | Deterministic |
-| **RIPPERDOC** · *"Better chrome just came in."* | Cyberpunk 2077 | Model scout — cheaper/better models, free first | Deterministic + tier 1 |
-| **TELETRAAN** · *"Anomaly detected on the grid."* | Transformers | Watchdog / SRE, self-healing | Deterministic + LLM on incident |
-| **WHEELJACK** · *"She'll be right — after the tests pass."* | Transformers | Source & platform engineer | OpenCode, incident-driven |
-| **TRON** · *"I fight for the users."* | Tron | Independent code verification | LLM, different family |
+| Callsign | Job | Origin | Beat | Runtime |
+|---|---|---|---|---|
+| **MORPHEUS** · *"I can only show you the door."* | CEO | Matrix | Chief editor; approves model changes | LLM, strong, 1×/day |
+| **DECKARD** · *"The case stays open until it's patched."* | Researcher | Blade Runner | Australian, global cyber and AI beats (one skill each), follow-up on developing events | LLM, fast (strong on critical) + Strands |
+| **VOIGHT** · *"Says who?"* | Publisher | Blade Runner | Editorial QA, publication veto | LLM, strong, gated |
+| **TACHIKOMA** · *"Ooh — what's this one?"* | Finder | Ghost in the Shell | Source discovery | LLM + Tavily |
+| **WHEELJACK** · *"She'll be right — after the tests pass."* | Coder | Transformers | Source & platform engineer | OpenCode, incident-driven |
+| **TELETRAAN** · *"Anomaly detected on the grid."* | Operation | Transformers | Incidents, self-healing, and the independent check on every fix | Deterministic + LLM (AUDIT, a different vendor from WHEELJACK) |
+| **RIPPERDOC** · *"Better chrome just came in."* | Cheap | Cyberpunk 2077 | Model scout (free first) and the monthly cost review | Deterministic + tier 1 |
+| **SERAPH** · *"I had to be sure."* | Collector | Matrix | Ground truth, the source gate, correlation and publishing, in one health check | Deterministic, zero tokens |
+
+Until October 2026 the crew had sixteen agents. ZION, BLASTER and WINTERMUTE became DECKARD's
+skills, TRON's checks went to TELETRAAN, ROGUE's review went to RIPPERDOC, and LIBRARIAN, PROWL
+and LINK were always worker jobs, now reported by SERAPH.
 
 ---
 
@@ -151,7 +145,7 @@ instead (see `PLAN.md` §1, decision 4).
 
 > **Understand the trade:** GitHub's docs state *"GitHub Pages sites are publicly available
 > on the internet, even if the repository for the site is private."* The site is public
-> either way. Everything secret lives in `.env`, which is git-ignored, and LINK runs a
+> either way. Everything secret lives in `.env`, which is git-ignored, and the publisher runs a
 > secret scan before every publish.
 
 ### 0.2 OpenRouter — the AI budget 🔴
@@ -436,7 +430,7 @@ docker compose ps                                  # what's running
 docker compose logs -f worker                      # follow the pipeline
 docker compose run --rm worker python -m worker.main --lane fast --once
 docker compose run --rm worker python -m worker.ops.health
-docker compose run --rm worker python -m worker.ops.cost --month     # ROGUE's ledger
+docker compose run --rm worker python -m worker.ops.cost --month     # the cost ledger
 docker compose run --rm worker python -m worker.ops.sources --status # SERAPH's view
 docker compose run --rm worker pytest -q
 ```
@@ -444,7 +438,7 @@ docker compose run --rm worker pytest -q
 ### Cost control
 
 The hard stop is the **OpenRouter key limit**, set at the provider. The platform cannot
-exceed it regardless of any bug on our side. Inside that, ROGUE degrades progressively:
+exceed it regardless of any bug on our side. Inside that, the worker degrades progressively:
 
 | Budget remaining | Behaviour |
 |---|---|
@@ -462,7 +456,7 @@ Non-negotiable, and enforced in code:
 - Secrets never appear in Python, YAML, JSON, Dockerfiles, frontend JS, published data or README examples
 - Each agent gets only the credentials its job requires ([`PLAN.md` §4.4](PLAN.md))
 - WHEELJACK, the engineer agent, holds **exactly one** credential: a branch-scoped GitHub token
-- LINK secret-scans every payload before publishing and **fails closed**
+- The publisher secret-scans every payload before publishing and **fails closed**
 - Ingested article text is treated as untrusted input, given to models as data with no tools available, and never forwarded to the engineer agent
 
 ### Recovery

@@ -562,7 +562,7 @@ and large in production will not be caught by a test that only checks behaviour.
 ## Part 6 — Paperclip *(running and claimed; company setup is the owner's)*
 
 > The owner's step-by-step guide is the wiki's
-> [Stage 4 pages](wiki/stage-4-paperclip.md): opening and claiming it, the 16 agents with their
+> [Stage 4 pages](wiki/stage-4-paperclip.md): opening and claiming it, the 8 agents with their
 > prompts, the routines, and how the crew hands work between them.
 
 **2026-10-02, what was done:**
@@ -667,7 +667,7 @@ Stage 2 and Stage 4:
 
 ```
 docker compose run --rm worker python -m worker.ops.health
-docker compose run --rm worker python -m worker.ops.cost --month      # ROGUE's ledger
+docker compose run --rm worker python -m worker.ops.cost --month      # the cost ledger
 docker compose run --rm worker python -m worker.ops.sources --status  # SERAPH's view
 ```
 
