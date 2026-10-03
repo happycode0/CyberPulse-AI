@@ -104,6 +104,35 @@ def test_enrich_alone_exits_without_starting_the_scheduler(calls, monkeypatch):
     assert calls == [("enrich", main_mod.DEFAULT_BATCH, main_mod.DEFAULT_MITRE_BATCH)]
 
 
+def test_the_model_scout_runs_after_enrichment_and_before_publish(calls, monkeypatch):
+    # A fresh golden set, then a fresh list, then the gauntlet on both.
+    for name in ("_enrich", "_pin_golden_set", "_scan_models", "_gauntlet"):
+        monkeypatch.setattr(main_mod, name, lambda *a, name=name: calls.append((name,)) or 0)
+    argv = ["--publish", "--gauntlet", "--scan-models", "--pin-golden-set", "--enrich"]
+    assert main_mod.main(argv) == 0
+    assert [c[0] for c in calls] == [
+        "_enrich", "_pin_golden_set", "_scan_models", "_gauntlet", "publish"
+    ]
+
+
+@pytest.mark.parametrize("flag, name", [("--scan-models", "_scan_models"),
+                                        ("--gauntlet", "_gauntlet"),
+                                        ("--pin-golden-set", "_pin_golden_set")])
+def test_a_model_scout_step_alone_exits_without_starting_the_scheduler(
+    calls, monkeypatch, flag, name
+):
+    monkeypatch.setattr(main_mod, name, lambda: calls.append((name,)) or 0)
+    assert main_mod.main([flag]) == 0
+    assert calls == [(name,)]
+
+
+def test_a_scan_whose_ladder_failed_stops_the_rest(calls, monkeypatch):
+    monkeypatch.setattr(main_mod, "_scan_models", lambda: 1)
+    monkeypatch.setattr(main_mod, "_gauntlet", lambda: calls.append(("gauntlet",)) or 0)
+    assert main_mod.main(["--scan-models", "--gauntlet", "--publish"]) == 1
+    assert calls == []
+
+
 def test_failed_publish_returns_a_failure_code(calls, monkeypatch):
     monkeypatch.setattr(main_mod, "_publish", lambda: 1)
     assert main_mod.main(["--publish"]) == 1
@@ -165,6 +194,19 @@ def test_a_passing_ladder_is_logged(monkeypatch, caplog):
     caplog.set_level("INFO")
     assert main_mod._check_models(required=True) == 0
     assert "model ladder passed" in caplog.text
+
+
+def test_a_ladder_with_drops_passes_and_names_them(monkeypatch, caplog):
+    breach = Breach(Tier.CHEAP, "vendor/pricey", "over the ceiling")
+
+    async def fake_verify():
+        return VerifiedLadder(ladder=Ladder.load(), checked_at=None, dropped=(breach,))
+
+    monkeypatch.setattr(main_mod, "verify_ladder", fake_verify)
+    caplog.set_level("INFO")
+    assert main_mod._check_models(required=True) == 0
+    assert "vendor/pricey" in caplog.text and "dropped for now" in caplog.text
+    assert "1 dropped" in caplog.text
 
 
 def test_check_budget_runs_after_check_models_and_exits(calls):

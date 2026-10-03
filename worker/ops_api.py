@@ -74,6 +74,7 @@ from worker.db.followup import (
     submit_report,
 )
 from worker.db.jobs import JobRun, load_latest_completed_job, load_latest_job
+from worker.db.scout import models_report
 from worker.db.sources import load_lifecycle_states, load_registry_rows
 from worker.discovery.gate import DiscoveryConfig, ProposalRejected, check_proposal
 from worker.models import Event, EventStatus, LifecycleState, Severity
@@ -558,6 +559,7 @@ class OpsApi:
             "/ops/cost": self._cost,
             "/ops/jobs": self._jobs,
             "/ops/followup": self._followup_queue,
+            "/ops/models": self._models,
         }
         read = reads.get(path)
         if read is None:
@@ -820,6 +822,9 @@ class OpsApi:
                     "/ops/followup": "DECKARD's due follow-up tasks, with each event's record",
                     "/ops/candidates": "source discovery: what was found and where each find "
                     "stands at SERAPH's gate",
+                    "/ops/models": "RIPPERDOC's model scout: the last scan, the ladder as the "
+                    "guard left it, what changed in OpenRouter's list, the last gauntlet and "
+                    "open model proposals",
                 },
                 "writes": {
                     "POST /ops/followup/<task_id>": "DECKARD's report on one follow-up task",
@@ -986,9 +991,34 @@ class OpsApi:
         with self._read() as conn:
             passes = {
                 job: _job_row(load_latest_job(conn, job))
-                for job in ("groundtruth", "enrichment", "discovery", "source-gate")
+                for job in (
+                    "groundtruth",
+                    "enrichment",
+                    "discovery",
+                    "source-gate",
+                    "model-scan",
+                    "model-gauntlet",
+                )
             }
         return Reply(200, {"checked_at": self._clock(), "wakes": wakes, "passes": passes})
+
+    def _models(self, query: Mapping[str, list[str]]) -> Reply:
+        """What RIPPERDOC reads (worker/ai/scout.py). Figures and the scout's own words only:
+        the catalogue keeps no text from OpenRouter's list but a clipped model name."""
+        _only(query)
+        now = self._clock()
+        with self._read() as conn:
+            report = models_report(conn, now)
+            scan = load_latest_job(conn, "model-scan")
+            gauntlet = load_latest_job(conn, "model-gauntlet")
+        return Reply(
+            200,
+            {
+                "checked_at": now,
+                **report,
+                "passes": {"model-scan": _job_row(scan), "model-gauntlet": _job_row(gauntlet)},
+            },
+        )
 
     # --- Follow-up ---
 

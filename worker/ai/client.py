@@ -14,7 +14,8 @@ Every request carries the same discipline, so no caller can leave part of it out
 - a ledger row for every billed call, including one whose answer was unusable.
 
 It takes a `VerifiedLadder`, never a bare `Ladder`, so a ladder the guard has not passed cannot
-reach OpenRouter.
+reach OpenRouter. RIPPERDOC's gauntlet calls models outside the ladder through `trial`, which
+takes a `VerifiedCandidate` for the same reason.
 """
 
 import asyncio
@@ -33,7 +34,13 @@ import httpx
 import jsonschema
 from pydantic import SecretStr
 
-from worker.ai.ladder import OUTPUT_CEILING_USD_PER_MTOK, TIER2_QUANTIZATIONS, Tier, VerifiedLadder
+from worker.ai.ladder import (
+    OUTPUT_CEILING_USD_PER_MTOK,
+    TIER2_QUANTIZATIONS,
+    Tier,
+    VerifiedCandidate,
+    VerifiedLadder,
+)
 from worker.db.ledger import LedgerEntry
 from worker.publish.validate import scan_text_for_secrets
 from worker.settings import Settings, get_settings
@@ -73,6 +80,7 @@ class Completion:
     tokens_out: int
     cost_usd: Decimal | None
     generation_id: str | None
+    duration_ms: int | None = None
 
 
 class CallFailed(Exception):
@@ -114,15 +122,32 @@ class RateLimited(CallFailed):
 
 
 class InvalidOutput(CallFailed):
-    """OpenRouter answered and billed, but the answer is unusable. Its ledger row is written."""
+    """OpenRouter answered and billed, but the answer is unusable. Its ledger row is written.
 
-    def __init__(self, message: str, *, model: str | None):
+    `refused` is set when the model declined rather than failed: a refusal, or a content filter
+    cutting the answer off. The gauntlet counts those apart (§7.6).
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        model: str | None,
+        refused: bool = False,
+        cost_usd: Decimal | None = None,
+        duration_ms: int | None = None,
+    ):
         super().__init__(message, status=200)
         self.model = model
+        self.refused = refused
+        self.cost_usd = cost_usd
+        self.duration_ms = duration_ms
 
 
 class _Unusable(Exception):
-    pass
+    def __init__(self, reason: str, *, refused: bool = False):
+        super().__init__(reason)
+        self.refused = refused
 
 
 def _is_object(node: Mapping[str, Any]) -> bool:
@@ -251,8 +276,10 @@ def _answer(choice: Mapping[str, Any], validator: jsonschema.Draft202012Validato
     message = choice.get("message")
     message = message if isinstance(message, Mapping) else {}
     if message.get("refusal"):
-        raise _Unusable("the model refused")
+        raise _Unusable("the model refused", refused=True)
     finish = choice.get("finish_reason")
+    if finish == "content_filter":
+        raise _Unusable("finish_reason 'content_filter'", refused=True)
     if finish not in (None, "stop"):
         # "length" is the common one: the answer was cut off at max_tokens.
         raise _Unusable(f"finish_reason {finish!r}")
@@ -326,18 +353,66 @@ class OpenRouterClient:
         for one that was sent and gave nothing usable: `BudgetExhausted` (402), `RateLimited`
         (429), `InvalidOutput` (billed but unusable), or `CallFailed` itself for anything else.
         """
-        if not _SCHEMA_NAME.match(schema_name):
-            raise ValueError(f"schema name {schema_name!r} must match {_SCHEMA_NAME.pattern}")
-        if max_tokens <= 0:
-            raise ValueError("max_tokens must be positive")
-        check_strict_schema(schema)
-        validator = jsonschema.Draft202012Validator(schema)
         chain = self._verified.ladder.tiers[tier]
         if models is not None:
             narrowed = tuple(models)
             if not narrowed or narrowed != tuple(m for m in chain if m in narrowed):
                 raise ValueError(f"models must be a non-empty part of the {tier.value} chain")
             chain = narrowed
+        return await self._call(
+            tier,
+            chain,
+            schema_name=schema_name,
+            schema=schema,
+            messages=messages,
+            max_tokens=max_tokens,
+            attribution=attribution,
+        )
+
+    async def trial(
+        self,
+        candidate: VerifiedCandidate,
+        *,
+        schema_name: str,
+        schema: Mapping[str, Any],
+        messages: Sequence[Mapping[str, str]],
+        max_tokens: int,
+        attribution: Attribution,
+    ) -> Completion:
+        """One structured call to a single model, for RIPPERDOC's gauntlet (§7.6).
+
+        The model need not be in the ladder, but it must have passed the guard for this tier,
+        and the request carries the tier's whole discipline: the price cap, `require_parameters`
+        and, in tier 2, the pinned quantisations. No fallback chain, because the gauntlet is
+        measuring this model and no other. Raises as `complete` does.
+        """
+        return await self._call(
+            candidate.tier,
+            (candidate.slug,),
+            schema_name=schema_name,
+            schema=schema,
+            messages=messages,
+            max_tokens=max_tokens,
+            attribution=attribution,
+        )
+
+    async def _call(
+        self,
+        tier: Tier,
+        chain: Sequence[str],
+        *,
+        schema_name: str,
+        schema: Mapping[str, Any],
+        messages: Sequence[Mapping[str, str]],
+        max_tokens: int,
+        attribution: Attribution,
+    ) -> Completion:
+        if not _SCHEMA_NAME.match(schema_name):
+            raise ValueError(f"schema name {schema_name!r} must match {_SCHEMA_NAME.pattern}")
+        if max_tokens <= 0:
+            raise ValueError("max_tokens must be positive")
+        check_strict_schema(schema)
+        validator = jsonschema.Draft202012Validator(schema)
         body = request_body(
             tier,
             chain,
@@ -378,10 +453,11 @@ class OpenRouterClient:
         usage = payload.get("usage")
         usage = usage if isinstance(usage, Mapping) else {}
         model = _text(payload.get("model"))
+        refused = False
         try:
             data, outcome, reason = _answer(choices[0], validator), "ok", None
         except _Unusable as exc:
-            data, outcome, reason = None, "invalid_output", str(exc)
+            data, outcome, reason, refused = None, "invalid_output", str(exc), exc.refused
 
         entry = LedgerEntry(
             provider=PROVIDER,
@@ -412,7 +488,13 @@ class OpenRouterClient:
             entry.cost_usd if entry.cost_usd is not None else "unreported",
         )
         if reason is not None:
-            raise InvalidOutput(f"{model}: {reason}", model=model)
+            raise InvalidOutput(
+                f"{model}: {reason}",
+                model=model,
+                refused=refused,
+                cost_usd=entry.cost_usd,
+                duration_ms=duration_ms,
+            )
         return Completion(
             data=data,
             model=model,
@@ -421,4 +503,5 @@ class OpenRouterClient:
             tokens_out=entry.tokens_out,
             cost_usd=entry.cost_usd,
             generation_id=entry.generation_id,
+            duration_ms=duration_ms,
         )

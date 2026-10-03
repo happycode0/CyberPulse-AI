@@ -440,7 +440,7 @@ slow run never stacks up a queue and a reboot never fires a burst of missed jobs
 | Follow-up | DECKARD | `45 */6 * * *` | Stage 5 |
 | Source discovery | TACHIKOMA | `0 3 * * *` | Stage 5 |
 | Model scan | RIPPERDOC | `0 4 * * *` | Stage 5 |
-| Model gauntlet | RIPPERDOC | `0 4 * * 0` | Stage 5 |
+| Model gauntlet | RIPPERDOC | `0 5 * * 0` (after the worker's 03:40 run) | Stage 5 |
 | Monthly cost review | ROGUE | `0 9 1 * *` | now |
 
 Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it creates:
@@ -453,7 +453,8 @@ Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it
 | Daily QA sample | `[QA] Daily sample` | `QA a sample of yesterday's published events.` |
 | Follow-up | `[FOLLOW-UP] Sweep` | `Work the follow-up queue: report on each task due.` |
 | Source discovery | `[DISCOVERY] Nightly` | `Read the worker's discovery finds and propose sources, plus any open [GAP] topics.` |
-| Model scan / gauntlet | `[MODEL] Daily scan` / `[MODEL] Weekly gauntlet` | `Read the worker's results and report.` |
+| Model scan | `[MODEL] Daily scan` | `Do the daily model scan: read /ops/models and report what changed.` |
+| Model gauntlet | `[MODEL] Weekly gauntlet` | `Do the weekly gauntlet: report the results and raise each new proposal.` |
 | Monthly cost review | `[COST] Monthly review` | `Reconcile the month and report to MORPHEUS.` |
 
 If the date placeholder is not accepted, drop it — Paperclip records when each issue was created.

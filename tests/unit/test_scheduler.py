@@ -8,6 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from worker import scheduler
 from worker.ai.enrich import EnrichSummary
 from worker.ai.mitre import MitreSummary
+from worker.ai.scout import GauntletSummary, ScanSummary
 from worker.models import Lane
 from worker.publish.push import PushResult
 from worker.scheduler import (
@@ -16,7 +17,9 @@ from worker.scheduler import (
     DISCOVERY_JOB_ID,
     ENRICH_JOB_ID,
     GATE_JOB_ID,
+    GAUNTLET_JOB_ID,
     GROUNDTRUTH_JOB_ID,
+    MODEL_SCAN_JOB_ID,
     build_scheduler,
     job_id,
 )
@@ -30,7 +33,7 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     jobs = {j.id for j in build_scheduler().get_jobs()}
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
-        ALERT_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID,
+        ALERT_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID, GAUNTLET_JOB_ID,
     }
 
 
@@ -157,6 +160,111 @@ async def test_a_notification_pass_that_raises_does_not_stop_the_schedule(
     monkeypatch.setattr(scheduler, "get_settings", lambda: None)
     await getattr(scheduler, name)()  # must not raise
     assert "failed" in caplog.text
+
+
+def test_the_model_scan_runs_daily_after_the_discovery_search():
+    jobs = {j.id: j for j in build_scheduler().get_jobs()}
+    scan = jobs[MODEL_SCAN_JOB_ID].trigger
+    assert (fields(scan)["minute"], fields(scan)["hour"]) == ("20", "3")
+    assert str(scan.timezone) == "Australia/Sydney"
+    after = datetime(2026, 10, 3, 0, 0, tzinfo=UTC)
+    search = jobs[DISCOVERY_JOB_ID].trigger.get_next_fire_time(None, after)
+    assert scan.get_next_fire_time(None, after) - search == timedelta(minutes=20)
+
+
+def test_the_gauntlet_runs_on_sunday_after_the_scan():
+    jobs = {j.id: j for j in build_scheduler().get_jobs()}
+    gauntlet = jobs[GAUNTLET_JOB_ID].trigger
+    after = datetime(2026, 10, 3, 0, 0, tzinfo=UTC)  # a Saturday
+    at = gauntlet.get_next_fire_time(None, after)
+    # Sunday in Sydney, not Monday: APScheduler counts the days of the week from Monday.
+    assert at.strftime("%A %H:%M") == "Sunday 03:40"
+    assert at - jobs[MODEL_SCAN_JOB_ID].trigger.get_next_fire_time(None, after) == timedelta(
+        minutes=20
+    )
+    assert gauntlet.get_next_fire_time(None, at + timedelta(minutes=1)) - at == timedelta(days=7)
+
+
+def test_asking_for_one_lane_does_not_bring_the_model_scout_along():
+    jobs = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+    assert MODEL_SCAN_JOB_ID not in jobs and GAUNTLET_JOB_ID not in jobs
+
+
+@pytest.fixture
+def scout_jobs(monkeypatch):
+    """The scan and gauntlet jobs with the passes stubbed and a fake AI layer."""
+    state = {"scan": ScanSummary(), "gauntlet": GauntletSummary(), "raises": False}
+    recorded, adopted = [], []
+
+    class Layer:
+        def adopt(self, verified):
+            adopted.append(verified)
+
+    async def fake_scan():
+        if state["raises"]:
+            raise RuntimeError("database unreachable")
+        return state["scan"]
+
+    async def fake_gauntlet():
+        if state["raises"]:
+            raise RuntimeError("database unreachable")
+        return state["gauntlet"]
+
+    async def record(run):
+        recorded.append(run)
+
+    monkeypatch.setattr(scheduler, "scan_models", fake_scan)
+    monkeypatch.setattr(scheduler, "run_gauntlet", fake_gauntlet)
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "AiLayer", Layer)
+    monkeypatch.setattr(scheduler, "_ai_layer", None)
+    return state, recorded, adopted
+
+
+async def test_a_ladder_the_scan_checked_goes_to_the_ai_layer(scout_jobs):
+    state, recorded, adopted = scout_jobs
+    state["scan"].verified = "the pruned ladder"
+    state["scan"].changes["price"] = 1
+    await scheduler._model_scan_job()
+    assert adopted == ["the pruned ladder"]
+    [run] = recorded
+    assert (run.job, run.completed, run.changed) == ("model-scan", True, True)
+
+
+async def test_a_ladder_that_failed_the_scan_makes_enrichment_check_again(scout_jobs):
+    state, _, adopted = scout_jobs
+    state["scan"].ladder_failed = True
+    state["scan"].errors.append("the ladder did not pass")
+    await scheduler._model_scan_job()
+    assert adopted == [None]
+
+
+async def test_a_ladder_the_scan_could_not_check_changes_nothing(scout_jobs):
+    # OpenRouter's list was down: the ladder enrichment has stands.
+    state, recorded, adopted = scout_jobs
+    state["scan"].errors.append("model list: HTTP 503")
+    await scheduler._model_scan_job()
+    assert adopted == [] and recorded[0].errors == 1
+
+
+@pytest.mark.parametrize("name, job", [("_model_scan_job", "model-scan"),
+                                       ("_gauntlet_job", "model-gauntlet")])
+async def test_a_model_scout_pass_that_raises_is_recorded_and_not_fatal(
+    scout_jobs, caplog, name, job
+):
+    state, recorded, adopted = scout_jobs
+    state["raises"] = True
+    await getattr(scheduler, name)()  # must not raise
+    assert "failed" in caplog.text
+    assert [(r.job, r.completed) for r in recorded] == [(job, False)] and adopted == []
+
+
+async def test_a_gauntlet_is_recorded_with_the_proposals_it_made(scout_jobs):
+    state, recorded, _ = scout_jobs
+    state["gauntlet"].proposals.append("[MODEL] Proposal: tier0_free -> a/b:free")
+    await scheduler._gauntlet_job()
+    [run] = recorded
+    assert (run.job, run.completed, run.changed) == ("model-gauntlet", True, True)
 
 
 def test_cadences():
