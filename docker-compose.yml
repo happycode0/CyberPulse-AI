@@ -25,6 +25,14 @@ services:
     volumes:
       - .:/app
       - rawcache:/var/cache/cyberpulse
+    # The ops API listens on 8700 for the Paperclip server (worker/ops_api.py). No `ports:`,
+    # ever: only the compose network may reach it, and a published port bypasses the firewall.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8700/ops/health', timeout=5)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
 
   # Paperclip — the agents' control plane (Stage 4). Optional by design: if it is
@@ -56,6 +64,13 @@ services:
       PAPERCLIP_TELEMETRY_DISABLED: ${PAPERCLIP_TELEMETRY_DISABLED:-1}
       PAPERCLIP_ANNOUNCEMENTS_ENABLED: ${PAPERCLIP_ANNOUNCEMENTS_ENABLED:-false}
       PAPERCLIP_SECRETS_STRICT_MODE: ${PAPERCLIP_SECRETS_STRICT_MODE:-true}
+      # The five http agents wake the worker's ops API, a private address Paperclip refuses
+      # unless it is listed here.
+      PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST: http://worker:8700
+      # For the AI agents, which inherit this environment: the ops API's read endpoints
+      # (GET $CYBERPULSE_OPS_URL/ops). The token opens reads only; nothing there writes.
+      CYBERPULSE_OPS_URL: http://worker:8700
+      CYBERPULSE_OPS_TOKEN: ${CYBERPULSE_OPS_TOKEN:-}
     volumes:
       - paperclip-data:/paperclip
     depends_on:

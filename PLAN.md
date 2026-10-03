@@ -1374,7 +1374,7 @@ CyberPulse-AI/                      # public
 | 3 | Quantify what the US$1 output ceiling costs in severity-judgment accuracy, using the golden set. If the gap is material on critical/KEV events, decide whether a narrow exception is worth ~US$2.40/month | Stage 5 |
 | 2 | Whether embeddings/pgvector are needed at all, from measured duplicate rate | Stage 3 |
 | 3 | SecurityWeek access (Cloudflare 403) — accept the gap or find a lawful route | Stage 3 |
-| 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop (unverified) | Stage 4 |
+| 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop. The worker never writes to Paperclip: a wake's answer is the run's status and JSON body, and the Paperclip token in the wake's body is discarded. Comments on issues come from the AI agents. What the backstop does with an `http` run on an issue is seen on the first real wake | Stage 4, first wake |
 | 5 | Custom domain for the public site | Stage 7 |
 | 6 | Additional notification channels beyond Telegram | Stage 7 |
 | 7 | Whether ROGUE's monthly LLM review earns its cost | Stage 7 |
