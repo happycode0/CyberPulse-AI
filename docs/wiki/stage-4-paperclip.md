@@ -76,9 +76,9 @@ body says what was checked. A wake needs no token, so the agents' package carrie
 |---|---|---|
 | ROGUE | `cost-reconcile` | The key's budget can be read, and every ledger call this month has a billed cost. The summary also gives `outside_ledger_usd`: spend on the key that the ledger never saw, which is the Paperclip agents' own calls |
 | LIBRARIAN | `groundtruth` | A ground-truth pass completed in the last 7 hours (it runs every 6) |
-| SERAPH | `source-verify` | A source was checked in the last 30 minutes; the summary counts each enabled source's latest status and lifecycle state |
-| PROWL | `correlation-report` | A collection finished in the last 30 minutes; the summary gives its counts and the merges in the last 24 hours |
-| LINK | `publish` | `data/system-status.json` was written in the last 30 minutes |
+| SERAPH | `source-verify` | A source was checked in the last two hours (two FAST intervals); the summary counts each enabled source's latest status and lifecycle state |
+| PROWL | `correlation-report` | A collection finished in the last two hours (two FAST intervals); the summary gives its counts and the merges in the last 24 hours |
+| LINK | `publish` | `data/system-status.json` was written in the last two hours (two FAST intervals) |
 
 LIBRARIAN's wake answers 503 until the first ground-truth pass after the deploy has been
 recorded. Passes run at :25 past every sixth hour UTC.
