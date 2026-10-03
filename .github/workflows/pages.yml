@@ -12,6 +12,19 @@ on:
   push:
     branches: [main, data]
   workflow_dispatch:
+  # `push_data()` force-pushes an orphan commit to `data` that contains only the
+  # JSON files — no `.github/workflows/**` tree. GitHub resolves a `push` trigger
+  # using the workflow file as it exists on the ref that was pushed, so a push to
+  # `data` alone can never fire this workflow: it isn't there to find. The
+  # `branches: [data]` push trigger above only ever fires when a commit to
+  # `main` happens to touch this file. A schedule sidesteps that entirely —
+  # GitHub's own scheduler owns the trigger, not a push to either branch — and
+  # keeps this working even if the worker, Paperclip and LINK are all down.
+  # Cadence sits under the FAST lane's 15 min so a fresh collection is never
+  # more than one tick late; redeploying unchanged content is a no-op cost on
+  # a public repo (unlimited included Actions minutes), not a safety issue.
+  schedule:
+    - cron: "*/15 * * * *"
 
 # One deployment at a time; never cancel a deployment already in flight.
 concurrency:
