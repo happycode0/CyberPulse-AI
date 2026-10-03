@@ -2,7 +2,8 @@
 §9 Stage 3).
 
 An event's freshness decays from `last_material_update` (worker/pipeline/score.py), so only a
-material change brings a story back up; it also makes a new event a developing one. Another
+material change brings a story back up; it also makes a new or archived event a developing one
+(worker/db/archive.py). Another
 outlet repeating it is evidence (`NEW_EVIDENCE`), not news, and anything else is
 `NO_MATERIAL_CHANGE`, which is never written.
 What is found here, without a model:

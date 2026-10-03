@@ -36,6 +36,7 @@ from worker.collectors.http import (
     prune_cache,
 )
 from worker.collectors.json_api import parse_json_api
+from worker.db.archive import archive_faded
 from worker.db.au import load_au_facts, save_au
 from worker.db.events import find_candidates, load_events, next_event_id
 from worker.db.groundtruth import set_event_severity
@@ -82,7 +83,7 @@ from worker.pipeline.health import assess, next_lifecycle_state
 from worker.pipeline.lineage import Publishers
 from worker.pipeline.normalise import normalise
 from worker.pipeline.resolve import Decision, resolve
-from worker.pipeline.score import DEFAULT_SCORING_PATH, ScoringConfig, score_event
+from worker.pipeline.score import DEFAULT_SCORING_PATH, ArchiveRule, ScoringConfig, score_event
 from worker.sources.registry import load_publishers, load_registry, sources_for_lane
 
 logger = logging.getLogger(__name__)
@@ -417,6 +418,21 @@ def consolidate(engine: Engine, *, now: datetime, publishers: Publishers) -> Con
     return done
 
 
+def archive(engine: Engine, rule: ArchiveRule, *, now: datetime) -> tuple[list[str], list[str]]:
+    """Archive the events that have faded since they were scored (worker/db/archive.py).
+    Returns their ids and any error: like consolidation, a failure is reported, never raised."""
+    try:
+        with engine.begin() as conn:
+            lock_ingest(conn)
+            ids = archive_faded(conn, rule, now=now)
+    except Exception as exc:
+        logger.exception("archiving failed")
+        return [], [_short(f"archiving: {exc!r}")]
+    if ids:
+        logger.info("archived %d faded events", len(ids))
+    return ids, []
+
+
 def _prepare(
     engine: Engine, sources: Sequence[SourceConfig], run_id: str, lane: Lane, started: datetime
 ) -> tuple[dict[str, LifecycleState], dict[str, FetchState]]:
@@ -500,6 +516,10 @@ async def run_lane(
     errors.extend(merged.errors)
     touched |= merged.touched
     errors.extend(await asyncio.to_thread(rescore, engine, scoring, touched, now=started))
+    faded, archive_errors = await asyncio.to_thread(
+        archive, engine, scoring.archive, now=started
+    )
+    errors.extend(archive_errors)
 
     try:
         prune_cache()
@@ -518,13 +538,15 @@ async def run_lane(
         new_events=new,
         updated_events=updated,
         duplicates=duplicates,
-        archived_events=merged.archived,
+        archived_events=merged.archived + len(faded),
         errors=errors[:MAX_RUN_ERRORS],
     )
     with engine.begin() as conn:
         finish_run(conn, summary)
     logger.info(
-        "run %s done: ok=%d failed=%d stale=%d items=%d new=%d updated=%d dup=%d merged=%d",
+        "run %s done: ok=%d failed=%d stale=%d items=%d new=%d updated=%d dup=%d merged=%d "
+        "archived=%d",
         run_id, ok, failed, stale, items_fetched, new, updated, duplicates, merged.archived,
+        len(faded),
     )
     return summary

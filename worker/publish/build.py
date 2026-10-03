@@ -32,7 +32,7 @@ from worker.db.sources import (
     load_lifecycle_states,
     load_registry_rows,
 )
-from worker.models import Event, LifecycleState, SourceHealth
+from worker.models import Event, EventStatus, LifecycleState, SourceHealth
 from worker.publish.claims import with_fact_claims
 from worker.publish.validate import (
     ValidationFailure,
@@ -174,13 +174,16 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
     """
     generated_at = _iso(now)
 
-    # Prominence-descending, each with the claims its ground truth supports.
+    # Prominence-descending, each with the claims its ground truth supports. An archived event
+    # keeps its day page but is never live: its score is no longer kept up to date.
     all_events = [with_fact_claims(e) for e in _load_events(conn)]
     public = [e.model_dump_public() for e in all_events]
     live = [
         p
         for e, p in zip(all_events, public, strict=True)
-        if e.risk.prominence is not None and e.risk.prominence > LIVE_MIN_PROMINENCE
+        if e.risk.prominence is not None
+        and e.risk.prominence > LIVE_MIN_PROMINENCE
+        and e.status is not EventStatus.ARCHIVED
     ][:LIVE_LIMIT]
 
     by_day: dict[date, list[dict[str, Any]]] = defaultdict(list)
