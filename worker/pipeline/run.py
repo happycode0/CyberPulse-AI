@@ -3,7 +3,8 @@
 For each enabled source in the lane: fetch (conditional, concurrent, bounded) -> parse ->
 normalise -> resolve against stored events -> create/merge events -> record health. When every
 source is done, stored events that turn out to be one story are merged (consolidation,
-worker/pipeline/correlate.py), all live events are rescored and the run summary is persisted.
+worker/pipeline/correlate.py), the recent events' independent reports are settled by lineage
+(worker/pipeline/lineage.py), all live events are rescored and the run summary is persisted.
 
 Failure model (PLAN.md section 11): a source that errors, hangs, returns garbage or whose
 items cannot be stored is recorded as failed and the run carries on. Each source is stored in
@@ -48,6 +49,7 @@ from worker.db.ingest import (
     save_scores,
     touch_last_seen,
 )
+from worker.db.lineage import refresh_lineage
 from worker.db.merge import load_story_records, load_token_weights, merge_events
 from worker.db.runs import finish_run, start_run
 from worker.db.session import get_engine
@@ -77,10 +79,11 @@ from worker.pipeline.assemble import build_new_event, evidence_class_for, plan_u
 from worker.pipeline.au import assess_au
 from worker.pipeline.correlate import plan_merges
 from worker.pipeline.health import assess, next_lifecycle_state
+from worker.pipeline.lineage import Publishers
 from worker.pipeline.normalise import normalise
 from worker.pipeline.resolve import Decision, resolve
 from worker.pipeline.score import DEFAULT_SCORING_PATH, ScoringConfig, score_event
-from worker.sources.registry import load_registry, sources_for_lane
+from worker.sources.registry import load_publishers, load_registry, sources_for_lane
 
 logger = logging.getLogger(__name__)
 
@@ -377,17 +380,19 @@ class Consolidation:
     errors: list[str] = field(default_factory=list)
 
 
-def consolidate(engine: Engine, *, now: datetime) -> Consolidation:
-    """Merge the recent events that are one story (worker/pipeline/correlate.py).
+def consolidate(engine: Engine, *, now: datetime, publishers: Publishers) -> Consolidation:
+    """Merge the recent events that are one story (worker/pipeline/correlate.py), then settle
+    which of their reports are independent (worker/pipeline/lineage.py).
 
     One transaction under the ingest lock, so no source is being stored meanwhile. A failure
     rolls the whole pass back and is reported, never raised: the run's own work is already
     stored and must still be scored.
     """
+    since = now - CONSOLIDATE_LOOKBACK
     try:
         with engine.begin() as conn:
             lock_ingest(conn)
-            records = load_story_records(conn, since=now - CONSOLIDATE_LOOKBACK)
+            records = load_story_records(conn, since=since)
             weights = load_token_weights(conn, since=now - WORD_WEIGHT_LOOKBACK)
             groups = plan_merges(records, weights)
             for g in groups:
@@ -404,6 +409,8 @@ def consolidate(engine: Engine, *, now: datetime) -> Consolidation:
             if groups:
                 # A winner with a loser's CVEs may now band higher.
                 done.touched |= set(set_event_severity(conn))
+            # Every recent event, not only the winners: this run's ingest guessed per outlet.
+            done.touched |= refresh_lineage(conn, publishers, since=since)
     except Exception as exc:
         logger.exception("correlation failed")
         return Consolidation(errors=[_short(f"correlation: {exc!r}")])
@@ -438,6 +445,9 @@ async def run_lane(
     started = clock()
     engine = engine or get_engine()
     registry = load_registry(registry_path or DEFAULT_REGISTRY_PATH)
+    publishers = Publishers.from_registry(
+        registry, load_publishers(registry_path or DEFAULT_REGISTRY_PATH)
+    )
     scoring = ScoringConfig.load(scoring_path or DEFAULT_SCORING_PATH)
     sources = sources_for_lane(registry, lane)
     run_id = f"run-{lane.value}-{started:%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}"
@@ -486,7 +496,7 @@ async def run_lane(
             touched |= outcome.tally.touched
             errors.extend(outcome.errors)
 
-    merged = await asyncio.to_thread(consolidate, engine, now=started)
+    merged = await asyncio.to_thread(consolidate, engine, now=started, publishers=publishers)
     errors.extend(merged.errors)
     touched |= merged.touched
     errors.extend(await asyncio.to_thread(rescore, engine, scoring, touched, now=started))
