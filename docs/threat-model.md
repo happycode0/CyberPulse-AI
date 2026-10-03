@@ -75,10 +75,9 @@ and Telegram as services.
 The worker reads the whole `.env` (docker-compose.yml:21), so it holds every credential in this
 table, Paperclip's included. The server gets an explicit list (docker-compose.yml:51-73).
 
-The worker image holds a copy too. There is no `.dockerignore`, and Dockerfile.worker:16 is
-`COPY . .`, so each `docker compose build` copies `.env` (and `.git`) into an image layer as it
-was at build time. At run time the checkout mount hides it, but the copy stays in the image, and in
-every older image, after the file has changed.
+Since 2026-10-03 a `.dockerignore` leaves `.env`, `.env.*` and `.git` out of the worker image
+(`COPY . .`, Dockerfile.worker:16). Images built before that still hold a copy of `.env` as it was
+at their build: run `docker image prune` after the next build, and after any rotation.
 
 ---
 
@@ -178,10 +177,9 @@ So one agent run, whether prompt-injected or simply wrong, can:
 It cannot reach the publish token or the worker's other keys directly: the server's environment
 does not hold them. It can still change what the site says, by changing `cyber_intel`.
 
-This contradicts three pages: 4b says WHEELJACK has "**Only** `CYBERPULSE_ENGINEER_TOKEN` … No
-OpenRouter, Tavily, database or publish keys" (stage-4b-the-crew.md:646). 4c's "Who may do what"
-table says the ops token's scope stops "a desk writing ground truth" (stage-4c-how-the-crew-works.md:153).
-PLAN.md §2.2 resolves the risk by choosing `opencode_local`, which is a local adapter too.
+Three pages said otherwise until 2026-10-03, and now point here: 4b's WHEELJACK card ("**Only**
+`CYBERPULSE_ENGINEER_TOKEN`"), 4c's "Who may do what" table (the ops token's scope stops "a desk
+writing ground truth") and PLAN.md §2.2, which chose `opencode_local`, a local adapter too.
 
 | | Threat | Control (where) |
 |---|---|---|
@@ -193,9 +191,9 @@ PLAN.md §2.2 resolves the risk by choosing `opencode_local`, which is a local a
 | S | A wake is forged | Wakes need no token, but run nothing and change nothing: they report whether a job is healthy (ops_api.py:1-12) |
 | R | Who did what | Paperclip records each agent run. The ops API logs paths, never bodies or tokens (ops_api.py:23-25). Every agent shares one token, so the API cannot tell them apart |
 
-Two comments are out of date and understate the reach. docker-compose.yml:70-71 says "The token
-opens reads only; nothing there writes". worker/ops_api.py:16 says "**Two writes**". There are
-three: follow-up reports, source proposals and TRON's verdicts.
+One comment is out of date and understates the reach: docker-compose.yml:70-71 says "The token
+opens reads only; nothing there writes". There are three writes: follow-up reports, source
+proposals and TRON's verdicts (worker/ops_api.py, corrected 2026-10-03).
 
 **Residual risk: critical while any `opencode_local` agent runs.**
 
@@ -232,8 +230,7 @@ to be made (stage-6-self-healing.md:31).
 | T | A dependency changes under a merged fix | requirements.txt sets lower bounds only, with no lock file or hashes. A rebuild takes whatever PyPI has that day |
 | I | The token leaks | Wherever it is stored, any agent in the server container can reach it (B5). Its scope is the real control |
 
-PLAN.md:578 gives TRON a "Read-only repo token". None exists, and none is needed: the repository is
-public.
+TRON has no repository token, and needs none: the repository is public.
 
 **Residual risk: high once WHEELJACK runs.** **You, before you resume WHEELJACK or TRON:** give
 WHEELJACK an identity of its own, a GitHub App or a machine account with the Write role, never
@@ -251,8 +248,7 @@ runs the tests on pull requests with `permissions: contents: read`, and a hashed
 | E | A port is opened wider than meant | Published Docker ports bypass `ufw`, so the bind address is the only limit. The worker and db publish none (docker-compose.yml:28-29). If the VM's DHCP address changes, the bind fails and `server` stops: it fails closed, it does not widen |
 | E | SSH | Key-only as `oxygen`, who has passwordless sudo and the docker group (vm200-runbook.md:26). The key lives on the WSL box. The laptop's own `.env` on `/mnt/c` is world-readable, but it is not the VM's: the VM's credentials were made fresh (vm200-runbook.md:224-229) |
 
-PLAN.md:43 and :265 still say Paperclip binds to `127.0.0.1`. The NetBird plan changed; the bind
-in compose is the truth.
+The bind in compose is the truth: Paperclip listens on the VM's LAN address only.
 
 **Residual risk: medium,** for a home network with guests or smart devices on it. **You:** set
 **Connection requests → Human only** (company settings). Give the VM a DHCP reservation on the
@@ -267,17 +263,16 @@ outside, with nothing forwarded on the router. Check the bind now and then:
 | D | The disk fails and takes everything | **Nothing yet.** The Proxmox host has one 94 GB disk (vm200-runbook.md:636). Paperclip's hourly dumps sit in the `paperclip-data` volume on that disk (stage-7-hardening.md:40-42) |
 | I | A backup leaks | Each `ops/backup.sh` backup holds `env` and Paperclip's secrets folder, so it is every credential in one place. It is written with `umask 077`. `~/env-backup-20261002-signup` is another full copy of `.env`, still on the VM (vm200-runbook.md:592) |
 | T | A backup is damaged or partial | `SHA256SUMS` and a `COMPLETE` marker, written last. `ops/restore.sh` checks both before it restores anything |
-| D | A backup that has never been restored | `ops/restore.sh rehearse` restores into a throwaway container and compares row counts. Not yet run against a real backup (stage-7-hardening.md:62) |
+| D | A backup that has never been restored | `ops/restore.sh rehearse` restores into a throwaway container and compares row counts. Rehearsed on VM 200 on 2026-10-03: both databases, every row count matched (stage-7-hardening.md) |
 | D | A scheduled backup fails, or lands on the VM's own disk, and nobody notices | **Nothing automatic.** The watchdog does not watch backups. `ops/backup.sh` refuses a target that does not exist, but an unmounted mount point exists |
-| I | Secrets outlive a rotation in the worker image | **Nothing.** No `.dockerignore`, and `COPY . .` (Dockerfile.worker:16) puts `.env` into the image at each build. `vzdump` of the VM carries those layers. A `docker save` or a push to a registry would carry them off the host |
+| I | Secrets outlive a rotation in the worker image | `.dockerignore` (since 2026-10-03) keeps `.env` out of new builds. Images built before it hold `.env` as it was then. `vzdump` of the VM carries those layers. A `docker save` or a push to a registry would carry them off the host |
 
 **Residual risk: high** until there is an off-host target and one rehearsed restore. **You:** set
 up the off-host target and the `vzdump` job (stage-7-hardening.md:22-23). Schedule `ops/backup.sh`.
 Rehearse once a month. Keep the target private, and encrypted if you can: it holds every key.
 Delete `~/env-backup-20261002-signup` once a scheduled backup has run. Never `docker save` or push
 the worker image. After a rotation, remove old worker images with `docker image prune`.
-[Backup and restore](runbooks/backup-and-restore.md) has the steps. For the lead: a `.dockerignore`
-that leaves out `.env`, `.env.*`, `.git`, `data/` and `backup/`.
+[Backup and restore](runbooks/backup-and-restore.md) has the steps.
 
 ### B9. The public repository
 
@@ -300,8 +295,8 @@ first; rewriting history comes second, because a public push is copied within mi
 | # | Risk | Rating | What you do | Where |
 |---|---|---|---|---|
 | 1 | Paperclip's AI agents run in the server container and inherit its environment: the superuser `DATABASE_URL`, the auth and signing secrets, the ops token, and the secrets folder in their home | **Critical** while any `opencode_local` agent runs | Keep the AI agents paused. Give Paperclip a least-privilege database role (backup first). Raise it upstream | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); docker-compose.yml:53, 56-58, 72-73 |
-| 2 | No off-host backup, and no restore rehearsed. Nothing alerts on a failed backup | **High** | Off-host target, `vzdump`, scheduled `ops/backup.sh` behind a `mountpoint` check, a weekly look at its log, monthly rehearsal | [B8](#b8-backups-on-a-single-disk-host) |
-| 3 | GitHub tokens act as your account, so branch protection and "a human merges" do not bind them. The publish token can force-push any unprotected branch | **High** once WHEELJACK runs; medium now | A separate identity for WHEELJACK; a no-bypass ruleset on `main` | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection), [B4](#b4-worker-to-the-github-data-branch-publish-token) |
+| 2 | No off-host backup (a restore was rehearsed on 2026-10-03, from the VM's own disk). Nothing alerts on a failed backup | **High** | Off-host target, `vzdump`, scheduled `ops/backup.sh` behind a `mountpoint` check, a weekly look at its log, monthly rehearsal | [B8](#b8-backups-on-a-single-disk-host) |
+| 3 | GitHub tokens act as your account, so branch protection and "a human merges" do not bind them. The publish token could force-push any unprotected branch; since 2026-10-03 worker/publish/push.py refuses any but `data` and `data-<name>` | **High** once WHEELJACK runs; medium now | A separate identity for WHEELJACK; a no-bypass ruleset on `main` | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection), [B4](#b4-worker-to-the-github-data-branch-publish-token) |
 | 4 | TRON runs pull request code in the server container, and no CI runs the tests | **High** once Stage 6 runs | Fix #1 first; CI on pull requests (lead) | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
 | 5 | The worker holds every secret and mounts the checkout read-write, a path to `oxygen` and so to root | **Medium** | Check `id -u`; read-only mount except `data/` (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); docker-compose.yml:21, 26 |
 | 6 | The whole `data` branch becomes the site | **Medium** | Check what `/data/` serves; copy only `*.json` (lead) | [B4](#b4-worker-to-the-github-data-branch-publish-token); pages.yml:63-67 |
@@ -311,9 +306,9 @@ first; rewriting history comes second, because a public push is copied within mi
 | 10 | `db` has no restart policy (docker-compose.yml:2-15). Compose's default is `no`, so after a reboot `worker` and `server` come back and the database does not | **Medium** (availability) | After a reboot, check `docker compose ps`; add `restart: unless-stopped` to `db` (lead) | [Services](runbooks/services.md#database-down) |
 | 11 | `.env` committed to the public repository | **Low** likelihood, high impact | Secret scanning and push protection; never `git add -f` | [B9](#b9-the-public-repository) |
 | 12 | The publish token gains the Workflows permission | **Low** today | Never add it, or Administration | [B4](#b4-worker-to-the-github-data-branch-publish-token) |
-| 13 | The worker image holds a copy of `.env` from each build: no `.dockerignore`, and `COPY . .` | **Low** while the image never leaves the VM | Never `docker save` or push it; prune old images after a rotation; add a `.dockerignore` (lead) | [B8](#b8-backups-on-a-single-disk-host); Dockerfile.worker:16 |
+| 13 | Worker images built before 2026-10-03 hold a copy of `.env`; the `.dockerignore` keeps it out of new ones | **Low** while the image never leaves the VM | Never `docker save` or push it; `docker image prune` after the next build and after a rotation | [B8](#b8-backups-on-a-single-disk-host); Dockerfile.worker:16 |
 | 14 | Curated feeds are read whole before the size cap | **Low** | Stream with a cap, as the discovery guard does (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); collectors/http.py:126-146 |
-| 15 | Out-of-date wording: docker-compose.yml:70-71 ("reads only"), ops_api.py:16 ("Two writes"), 4b:646 and 4c:153-154 (agent environment), PLAN.md §2.2, PLAN.md:43 and :265 (bind), PLAN.md:578 (TRON's token), 4a §9 ("pause the company" stops agent spend only; the worker's enrichment goes on) | **Low** | Correct them (lead) | This page |
+| 15 | Out-of-date wording: docker-compose.yml:70-71 ("reads only"). The rest (ops_api.py, 4b, 4c, PLAN.md, 4a §9) was corrected on 2026-10-03 | **Low** | Correct the compose comment when you next edit the server service | This page |
 | 16 | Actions pinned by tag; Python dependencies unpinned | **Low** | Pin by SHA; a hashed lock file (lead) | [B9](#b9-the-public-repository), [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
 
 ---

@@ -643,7 +643,7 @@ approval exist. Until then a human fixes code.
 | Role · Reports to | Engineer · TELETRAAN |
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` |
 | Budget · Max daily runs | US$1.00 · 4 |
-| Environment | **Only** `CYBERPULSE_ENGINEER_TOKEN` (branch + PR scope), and the ops API token every agent inherits. No OpenRouter, Tavily, database or publish keys |
+| Environment | `CYBERPULSE_ENGINEER_TOKEN` (branch + PR scope) is the only key it is given. Like every `opencode_local` agent it also runs with the server container's environment, its database URL and auth secrets included: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
 | Wakes on | `[ENGINEERING]` issues from TELETRAAN, SERAPH or MORPHEUS. **Never on a timer** |
 
 ```text

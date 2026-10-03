@@ -483,7 +483,7 @@ tell Claude.
 | See what happened today | MORPHEUS's `[EDITORIAL]` comment |
 | Approve a hire or proposal | **Approvals** |
 | Stop one agent | its page → **Pause agent** (and **Resume agent** to undo) |
-| Stop all AI spend at once | pause the company — the worker keeps collecting and publishing |
+| Stop all AI spend at once | pause the company, which stops the agents. The worker's own enrichment is separate: set `AI_MONTHLY_BUDGET_USD=0` in `.env`, then `docker compose up -d --force-recreate worker`. It keeps collecting and publishing |
 | See spend | **Budgets**, plus ROGUE's monthly `[COST]` issue |
 | Wake an agent by hand | assign it an issue, or @-mention it in a comment |
 
@@ -514,9 +514,12 @@ cd ~/CyberPulse-AI
 docker compose exec -T db sh -c 'psql -q -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v pw="$POSTGRES_PASSWORD" -v u="$POSTGRES_USER"' <<'SQL'
 ALTER ROLE :"u" PASSWORD :'pw';
 SQL
-docker compose restart worker
+docker compose up -d --force-recreate worker server   # a restart keeps the old password
 docker compose logs -f worker      # the next run should log "done: ok=" and "published"
 ```
+
+Recreate both between collection runs (:00, :15, :30, :45 UTC): each reads the password only when
+its container is created, so `docker compose restart` would leave them on the old one.
 
 ### The old test install (from 2026-10-02)
 
