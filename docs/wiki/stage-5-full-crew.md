@@ -4,7 +4,7 @@
 [Stage 6 — Self-healing →](stage-6-self-healing.md)
 
 **Status: ▶ in progress.** Telegram notifications, THE CREW's published workload, event status,
-DECKARD's follow-up queue and source discovery are built. Plan:
+DECKARD's follow-up queue, source discovery and RIPPERDOC's model scout are built. Plan:
 [PLAN.md §9, Stage 5](../../PLAN.md#9-stages)
 
 ---
@@ -27,7 +27,7 @@ and their routines from [4a step 7](stage-4a-paperclip-setup.md#7--create-the-ro
 | TACHIKOMA | Finds new sources | `[DISCOVERY] Nightly`, 03:00 |
 | DECKARD | Follows developing events | `[FOLLOW-UP] Sweep`, every 6 h at :45 |
 | VOIGHT | Editorial QA | `[QA] Daily sample`, 07:00 |
-| RIPPERDOC | Model scout | `[MODEL] Daily scan` 04:00 · `[MODEL] Weekly gauntlet` Sunday 04:00 |
+| RIPPERDOC | Model scout | `[MODEL] Daily scan` 04:00 · `[MODEL] Weekly gauntlet` Sunday 05:00 |
 
 ## What's left
 
@@ -36,8 +36,9 @@ and their routines from [4a step 7](stage-4a-paperclip-setup.md#7--create-the-ro
 | 🔴 | **A Telegram bot**: [the steps below](#telegram) |
 | 🔴 | **Paste DECKARD's new instructions**: [the steps below](#follow-up-and-status) |
 | 🔴 | **A Tavily key, and TACHIKOMA's new instructions**: [the steps below](#source-discovery) |
+| 🔴 | **Paste RIPPERDOC's new instructions, and move its gauntlet routine to 05:00**: [the steps below](#model-scout) |
 | 🔴 | **Approve each un-pause**, as the board: agent page → **Resume agent**, then resume its routine |
-| 🟢 | RIPPERDOC's gauntlet and golden set (PLAN.md §7.6) |
+| ✅ | RIPPERDOC's daily model scan, weekly gauntlet and golden set: [below](#model-scout) |
 | ✅ | Source discovery with Tavily, behind SERAPH's gate (the finder can never activate): [below](#source-discovery) |
 | ✅ | Event status from the record, and DECKARD's follow-up queue: [below](#follow-up-and-status) |
 | ✅ | Telegram notifications: the daily digest, critical alerts and developing updates for Australia |
@@ -158,6 +159,57 @@ instructions. Each activation sends one Telegram message, if Telegram is on.
 After the next 03:00, `docker compose logs worker | grep discovery` shows the night's searches,
 and `grep "source gate"` shows each gate pass. Without a key the search is skipped and says so;
 the gate still tests TACHIKOMA's proposals.
+
+## Model scout
+
+The worker keeps the model ladder (`config/models.yaml`) honest and RIPPERDOC reports on it.
+The worker holds the OpenRouter key and makes every call; RIPPERDOC only reads `GET /ops/models`.
+
+| Step | When | What |
+|---|---|---|
+| **Scan** | 03:20 Sydney time, daily | The worker reads OpenRouter's model list (no key needed) and records what changed since yesterday: new models, withdrawn ones, price changes and withdrawal dates. New `:free` models are logged loudly. Then every ladder model goes through the price guard again. One that no longer passes leaves its chain from the next enrichment pass, so a price rise goes unnoticed for a day at most. If what is left is not a usable ladder, the AI layer stays off until it is |
+| **Gauntlet** | 03:40 Sydney time, Sundays | Each tier's default and up to two challengers answer the golden set. Tier 0 is judged on triage, tier 1 on the brief and tier 2 on the severity judgment, each through the price guard and the tier's own request rules. Per model: schema compliance, refusals, agreement with the golden labels, production's checks, p95 latency and the cost OpenRouter billed. A challenger is proposed only when it clears every gate and is free, agrees clearly more, or costs at least 20% less per event while agreeing as well |
+| **Proposal** | RIPPERDOC's Sunday 05:00 routine | Each proposal is an `agent_proposals` row with a side-by-side table. RIPPERDOC opens it as a `[MODEL] Proposal` issue for ROGUE and MORPHEUS. Approving changes nothing by itself: promoting a model is a reviewed edit to `config/models.yaml` |
+
+**The golden set** is 30 events, pinned the first time the gauntlet runs, spread across
+severities: 9 critical, 9 high, 9 medium and 3 low. Each has a severity from a register (the CNA,
+CISA's ADP, NVD or the vendor), names a CVE, and has enough of the feed's own text to work from.
+The record a model is shown is frozen when the event is pinned, and every result names the set's
+digest. To pin it again by hand, run `docker compose exec -T worker python -m worker --pin-golden-set`.
+
+**What it costs.** The gauntlet spends at most US$0.25 a month and US$0.08 a run, counted from
+the cost ledger. A model is tried only if its estimate fits what is left. The incumbent's result
+is reused for 28 days on the same set, so most Sundays only the challengers are paid for. Free
+models are tried only while at least 100 of the day's free requests would be left for
+enrichment. An HTTP 402 from OpenRouter stops the run. The scan costs nothing.
+
+**Not checked yet**, and every proposal says so:
+
+- **The adoption veto** (PLAN.md §7.6): a model whose use fell 40% or more week on week. It needs
+  OpenRouter's authenticated datasets, so check [the rankings](https://openrouter.ai/rankings)
+  before approving.
+- **The labels are not reviewed.** They come from the registers and the source registry, not
+  from a person. The set leans on CISA KEV entries and has few Australian events, so the AU
+  relevance score rests on a handful of them.
+- **The `code` and `audit` tiers** (WHEELJACK and TRON) do no enrichment, so the gauntlet has
+  nothing to judge them on. Their models are still checked by the daily scan.
+
+🔴 **To switch it on:**
+
+1. In Paperclip, open **RIPPERDOC** → **Instructions**. Replace everything with the house rules
+   and then RIPPERDOC's text, both from [4b §14](stage-4b-the-crew.md#14-ripperdoc--model-scout-paused-until-stage-5).
+2. Open the **Model scan** routine. Change the issue text to
+   `Do the daily model scan: read /ops/models and report what changed.`
+3. Open the **Model gauntlet** routine. Change the cron expression to `0 5 * * 0`, so it runs
+   after the worker's 03:40 gauntlet, and the issue text to
+   `Do the weekly gauntlet: report the results and raise each new proposal.`
+4. Resume RIPPERDOC, then both routines.
+
+After the next 03:20, `docker compose logs worker | grep "model scan"` shows the night's scan, and
+after a Sunday, `grep gauntlet` shows the run or why it was skipped. The gauntlet follows the
+worker's budget mode (PLAN.md §7.4): it tries tier 2 only in `full`, tier 1 down to `conserve`,
+and only free models below that. With the budget off, or the OpenRouter key's limit spent, it
+is skipped and says so; the scan runs anyway.
 
 ## THE CREW page
 

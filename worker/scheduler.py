@@ -1,6 +1,6 @@
-"""Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery and
-the Telegram notifications run in the worker; DEEP is a Paperclip routine, so it has no schedule
-here and is only reachable through `--lane deep --once`."""
+"""Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery, the
+model scan and gauntlet, and the Telegram notifications run in the worker; DEEP is a Paperclip
+routine, so it has no schedule here and is only reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -13,6 +13,7 @@ from apscheduler.triggers.cron import CronTrigger
 from worker import ops_api
 from worker.ai.enrich import AiLayer, enrich_pending
 from worker.ai.mitre import suggest_techniques
+from worker.ai.scout import run_gauntlet, scan_models
 from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
 from worker.discovery.run import run_gate, run_search
@@ -91,9 +92,29 @@ GATE_SCHEDULE = "50 3-23/4 * * *"
 GATE_JOB_ID = "source-gate"
 GATE_MISFIRE_GRACE_SECONDS = 1800
 
+# RIPPERDOC's model scan at 03:20 Sydney time, after the discovery search and clear of every
+# other job's minute. A model the guard now refuses leaves its chain from the next enrichment
+# pass, so a day is the longest a price rise goes unnoticed (worker/ai/scout.py).
+MODEL_SCAN_SCHEDULE = "20 3 * * *"
+MODEL_SCAN_JOB_ID = "model-scan"
+MODEL_SCAN_MISFIRE_GRACE_SECONDS = 3600
+
+# The gauntlet on Sunday at 03:40 Sydney time, after that day's scan. A day name, not 0:
+# APScheduler counts the days of the week from Monday.
+GAUNTLET_SCHEDULE = "40 3 * * sun"
+GAUNTLET_JOB_ID = "model-gauntlet"
+GAUNTLET_MISFIRE_GRACE_SECONDS = 3600
+
 # Kept for the life of the process: the governor in it must remember a 402 from one pass to the
-# next (worker/ai/enrich.py).
+# next (worker/ai/enrich.py), and the model scan hands it the ladder as it checked it.
 _ai_layer: AiLayer | None = None
+
+
+def _layer() -> AiLayer:
+    global _ai_layer
+    if _ai_layer is None:
+        _ai_layer = AiLayer()
+    return _ai_layer
 
 
 def job_id(lane: Lane) -> str:
@@ -207,20 +228,18 @@ async def _enrich_job() -> None:
     calls nothing and returns, and the events stay `pending_enrichment` on the site. The two
     passes fail apart: suggestions still run after an enrichment pass that raised.
     """
-    global _ai_layer
-    if _ai_layer is None:
-        _ai_layer = AiLayer()
+    layer = _layer()
     started = _now()
     changed, completed, errors = False, True, 0
     try:
-        enriched = await enrich_pending(layer=_ai_layer)
+        enriched = await enrich_pending(layer=layer)
         changed |= enriched.changed_anything
         errors += enriched.failed + len(enriched.errors)
     except Exception:
         logger.exception("scheduled enrichment failed")
         completed = False
     try:
-        suggested = await suggest_techniques(layer=_ai_layer)
+        suggested = await suggest_techniques(layer=layer)
         changed |= suggested.changed_anything
         errors += suggested.failed
     except Exception:
@@ -294,15 +313,65 @@ async def _gate_job() -> None:
         logger.exception("new-source notification pass failed")
 
 
+async def _model_scan_job() -> None:
+    """Never fatal to the schedule; tomorrow's scan reads the list again. The ladder it checked
+    goes to the AI layer: a pruned one is used as it is, and one that did not pass makes the next
+    enrichment pass check before it calls. One that could not be checked changes nothing."""
+    started = _now()
+    try:
+        summary = await scan_models()
+    except Exception:
+        logger.exception("scheduled model scan failed")
+        await _record(JobRun("model-scan", started, _now(), completed=False))
+        return
+    if summary.verified is not None:
+        _layer().adopt(summary.verified)
+    elif summary.ladder_failed:
+        _layer().adopt(None)
+    await _record(
+        JobRun(
+            "model-scan",
+            started,
+            _now(),
+            completed=True,
+            errors=len(summary.errors),
+            changed=summary.changed_anything,
+        )
+    )
+
+
+async def _gauntlet_job() -> None:
+    """Never fatal to the schedule; next Sunday runs again. Nothing is published: a proposal is
+    for RIPPERDOC to raise, and nothing changes until config/models.yaml does."""
+    started = _now()
+    try:
+        summary = await run_gauntlet()
+    except Exception:
+        logger.exception("scheduled model gauntlet failed")
+        await _record(JobRun("model-gauntlet", started, _now(), completed=False))
+        return
+    if summary.skipped:
+        logger.info("model gauntlet skipped: %s", summary.skipped)
+    await _record(
+        JobRun(
+            "model-gauntlet",
+            started,
+            _now(),
+            completed=True,
+            errors=sum(m.errors for m in summary.measured if not m.reused),
+            changed=summary.changed_anything,
+        )
+    )
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync, enrichment, discovery and notifications are added only for the default
-    schedule. `lanes` comes
-    from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
+    The ground-truth sync, enrichment, discovery, the model scan and gauntlet, and notifications
+    are added only for the default schedule. `lanes` comes from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
     model calls along with it would make the narrow form impossible to ask for.
     """
     scheduler = AsyncIOScheduler(timezone="UTC")
@@ -365,6 +434,26 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
             max_instances=1,
             coalesce=True,
             misfire_grace_time=GATE_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _model_scan_job,
+            CronTrigger.from_crontab(MODEL_SCAN_SCHEDULE, timezone=DIGEST_TIMEZONE),
+            id=MODEL_SCAN_JOB_ID,
+            name="model scan",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=MODEL_SCAN_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _gauntlet_job,
+            CronTrigger.from_crontab(GAUNTLET_SCHEDULE, timezone=DIGEST_TIMEZONE),
+            id=GAUNTLET_JOB_ID,
+            name="model gauntlet",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=GAUNTLET_MISFIRE_GRACE_SECONDS,
             replace_existing=True,
         )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):

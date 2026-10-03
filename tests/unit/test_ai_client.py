@@ -20,7 +20,7 @@ from worker.ai.client import (
     _retry_after,
     check_strict_schema,
 )
-from worker.ai.ladder import Ladder, Tier, VerifiedLadder
+from worker.ai.ladder import Ladder, Tier, VerifiedCandidate, VerifiedLadder
 from worker.settings import Settings
 
 # Not shaped like any real key, so neither the publisher's scan nor ops/check-keys.sh flags it.
@@ -223,6 +223,64 @@ async def test_an_unusable_answer_is_raised_and_still_billed(
     assert "SECRET-LOOKING-OUTPUT" not in str(exc.value)
     [entry] = ledger
     assert entry.outcome == "invalid_output" and entry.cost_usd == Decimal("0.0000273")
+
+
+@pytest.mark.parametrize(
+    "response, refused",
+    [
+        (answer("", message={"refusal": "no"}), True),
+        (answer('{"category": "bre', finish="content_filter"), True),
+        (answer('{"category": "bre', finish="length"), False),
+        (answer("not json"), False),
+    ],
+)
+async def test_a_refusal_is_told_apart_from_a_bad_answer(respx_mock, client, response, refused):
+    respx_mock.post(CHAT_URL).mock(return_value=response)
+    with pytest.raises(InvalidOutput) as exc:
+        await call(client)
+    assert exc.value.refused is refused
+    # What it cost and how long it took travel with it, for the gauntlet's figures.
+    assert exc.value.cost_usd == Decimal("0.0000273") and exc.value.duration_ms is not None
+
+
+# ─── A trial: one model outside the ladder, under the same discipline (§7.6) ──────────────────────
+
+
+def challenger(tier=Tier.CHEAP, slug="vendor-f/challenger"):
+    return VerifiedCandidate(tier=tier, slug=slug, checked_at=datetime.now(UTC))
+
+
+def trial(client, candidate, **overrides):
+    kwargs = {
+        "schema_name": "classification",
+        "schema": SCHEMA,
+        "messages": [{"role": "user", "content": "Classify this."}],
+        "max_tokens": 200,
+        "attribution": Attribution(agent="ripperdoc", stage="gauntlet"),
+    }
+    kwargs.update(overrides)
+    return client.trial(candidate, **kwargs)
+
+
+async def test_a_trial_calls_that_model_alone_with_the_tier_discipline(respx_mock, client, ledger):
+    route = respx_mock.post(CHAT_URL).mock(return_value=answer(model="vendor-f/challenger"))
+    done = await trial(client, challenger(Tier.STRONG))
+    body = sent(route)
+    assert body["models"] == ["vendor-f/challenger"]
+    assert body["provider"]["max_price"] == {"completion": "1.00"}
+    assert body["provider"]["require_parameters"] is True
+    assert body["provider"]["quantizations"] == ["bf16", "fp8", "unknown"]
+    assert done.data == GOOD and done.duration_ms is not None
+    [entry] = ledger
+    assert (entry.agent, entry.stage, entry.tier) == ("ripperdoc", "gauntlet", "tier2_strong")
+    assert entry.requested_model == "vendor-f/challenger"
+
+
+async def test_a_trial_checks_the_schema_before_sending(respx_mock, client):
+    route = respx_mock.post(CHAT_URL).mock(return_value=answer())
+    with pytest.raises(ValueError):
+        await trial(client, challenger(), schema={"type": "object"})
+    assert route.call_count == 0
 
 
 async def test_a_failed_ledger_write_is_not_swallowed(respx_mock, ledger):

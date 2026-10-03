@@ -1,10 +1,12 @@
 """Command line: `python -m worker [--check-models] [--check-budget] [--check-duplicates]
-[--check-lineage] [--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
+[--check-lineage] [--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich]
+[--pin-golden-set] [--scan-models] [--gauntlet] [--publish]`.
 
-With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync and AI enrichment until
-interrupted. Explicit actions run in a fixed order (check models, check budget, check duplicates,
-check lineage, migrate, collect, ground truth, enrich, publish) and then exit, unless `--lane` is
-given without `--once`, which schedules that one lane instead.
+With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync, AI enrichment and the
+rest of the schedule until interrupted. Explicit actions run in a fixed order (check models,
+check budget, check duplicates, check lineage, migrate, collect, ground truth, enrich, pin the
+golden set, scan models, gauntlet, publish) and then exit, unless `--lane` is given without
+`--once`, which schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -31,6 +33,7 @@ from worker.ai.ladder import (
     verify_ladder,
 )
 from worker.ai.mitre import DEFAULT_MITRE_BATCH, suggest_techniques
+from worker.ai.scout import pin_golden_set, run_gauntlet, scan_models
 from worker.db.lineage import load_reports
 from worker.db.merge import load_live_ids, load_story_records, load_token_weights
 from worker.db.migrate import run_migrations
@@ -68,7 +71,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--check-models",
         action="store_true",
-        help="check config/models.yaml against OpenRouter's live prices; non-zero if any model fails",
+        help=(
+            "check config/models.yaml against OpenRouter's live prices; failing models are "
+            "dropped, and it is non-zero if what is left is not a usable ladder"
+        ),
     )
     p.add_argument(
         "--check-budget",
@@ -139,6 +145,21 @@ def build_parser() -> argparse.ArgumentParser:
             f"(default {DEFAULT_MITRE_BATCH}; 0 skips them)"
         ),
     )
+    p.add_argument(
+        "--pin-golden-set",
+        action="store_true",
+        help="pin a new golden set for the model gauntlet from events with official severities",
+    )
+    p.add_argument(
+        "--scan-models",
+        action="store_true",
+        help="read OpenRouter's model list, record what changed and check the ladder; no key sent",
+    )
+    p.add_argument(
+        "--gauntlet",
+        action="store_true",
+        help="run the model gauntlet on the golden set now, within its monthly cap",
+    )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
     return p
 
@@ -158,10 +179,13 @@ def _check_models(*, required: bool) -> int:
             logger.error("model ladder: %s", problem)
         logger.error("the AI layer stays off until the model ladder passes")
         return EXIT_FAILED if required else EXIT_OK
+    for breach in verified.dropped:
+        logger.warning("model ladder: %s is dropped for now", breach)
     logger.info(
-        "model ladder passed: %d models, each with a capable route at or under $%s/M output",
+        "model ladder passed: %d models, each with a capable route at or under $%s/M output%s",
         len(verified.ladder.slugs()),
         OUTPUT_CEILING_USD_PER_MTOK,
+        f"; {len(verified.dropped)} dropped" if verified.dropped else "",
     )
     return EXIT_OK
 
@@ -362,6 +386,40 @@ def _enrich(batch: int, mitre_batch: int) -> int:
     return EXIT_OK
 
 
+def _pin_golden_set() -> int:
+    golden = pin_golden_set()
+    if not golden:
+        logger.error("golden set: no event has an official severity, a CVE and enough text yet")
+        return EXIT_FAILED
+    counts = defaultdict(int)
+    for g in golden:
+        counts[g.labels["severity"]] += 1
+    logger.info(
+        "golden set: pinned %d events (%s); earlier gauntlet results are not reused",
+        len(golden),
+        ", ".join(f"{n} {sev}" for sev, n in sorted(counts.items())),
+    )
+    return EXIT_OK
+
+
+def _scan_models() -> int:
+    """One scan. Non-zero only when the ladder did not pass: the list being down is a normal
+    outcome the scan records, and tomorrow's reads it again."""
+    summary = asyncio.run(scan_models())
+    for error in summary.errors:
+        logger.warning("model scan: %s", error)
+    return EXIT_FAILED if summary.ladder_failed else EXIT_OK
+
+
+def _gauntlet() -> int:
+    summary = asyncio.run(run_gauntlet())
+    if summary.skipped:
+        logger.warning("gauntlet skipped: %s", summary.skipped)
+    for title in summary.proposals:
+        logger.info("gauntlet: proposed %s", title)
+    return EXIT_OK
+
+
 def _publish() -> int:
     try:
         written = asyncio.run(publish_now())
@@ -423,10 +481,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         if code != EXIT_OK:
             return code
 
-    if args.publish:
-        code = _publish()
-        if code != EXIT_OK:
-            return code
+    for asked, step in (
+        (args.pin_golden_set, _pin_golden_set),
+        (args.scan_models, _scan_models),
+        (args.gauntlet, _gauntlet),
+        (args.publish, _publish),
+    ):
+        if asked:
+            code = step()
+            if code != EXIT_OK:
+                return code
 
     schedule = (lane is not None and not args.once) or not (
         args.check_models
@@ -437,6 +501,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.publish
         or args.groundtruth
         or args.enrich
+        or args.pin_golden_set
+        or args.scan_models
+        or args.gauntlet
         or lane
     )
     if schedule:
