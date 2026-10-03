@@ -16,6 +16,8 @@ publishers:
     name: Microsoft
   mysecuritymedia:
     name: MySecurity Media
+  abc:
+    name: ABC
 
 sources:
   # FAST Lane: Authoritative advisories & CVE feeds
@@ -226,6 +228,36 @@ sources:
     parser: rss
     expected_frequency: daily
     notes: null
+
+  - id: abc_cyber
+    name: ABC News Cyber Security
+    publisher: abc
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.abc.net.au/news/feed/104475720/rss.xml
+    parser: rss
+    expected_frequency: weekly
+    notes: "ABC topic feed. Checked 2026-10-04: 25 items over 64 days; robots.txt allows /news/feed/"
+
+  - id: abc_ai
+    name: ABC News Artificial Intelligence
+    publisher: abc
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.abc.net.au/news/feed/13876586/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: "ABC topic feed. Checked 2026-10-04: 25 items over 7 days; robots.txt allows /news/feed/"
 
   - id: triskele
     name: Triskele Labs
