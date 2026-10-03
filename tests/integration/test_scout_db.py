@@ -2,6 +2,7 @@
 its withdrawals, the scans, which events may be pinned, the gauntlet's spend and reuse, the
 proposal that is not raised twice, and what GET /ops/models reads."""
 
+import hashlib
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
@@ -174,6 +175,36 @@ def test_only_events_with_an_official_severity_a_cve_and_enough_text_may_be_pinn
     insert_event(conn, 6, summary="Too short.")
     insert_event(conn, 7, merged_into=good)
     assert sorted(db.golden_candidates(conn)) == [(good, "critical"), (nvd, "medium")]
+
+
+def carried_by_an_australian_advisory(conn, event_id):
+    conn.execute(
+        text(
+            "insert into source_registry (id, name, type, region, category, source_class, "
+            "priority, lane, enabled, url, parser, expected_frequency) values ('test-acsc', "
+            "'ACSC Alerts', 'rss', 'au', 'advisory', 'AUTHORITATIVE', 1, 'fast', true, "
+            "'https://example.test/feed', 'rss', 'hourly') on conflict do nothing"
+        )
+    )
+    conn.execute(
+        text(
+            "insert into event_sources (event_id, source_id, url, evidence_class, url_hash) "
+            "values (:e, 'test-acsc', :url, 'AUTHORITATIVE', :e)"
+        ),
+        {"e": event_id, "url": f"https://example.test/{event_id}"},
+    )
+
+
+def test_a_few_events_an_australian_advisory_carried_go_first(conn):
+    events = [insert_event(conn, n) for n in range(11, 17)]
+    au = set(events[:3])
+    for event_id in au:
+        carried_by_an_australian_advisory(conn, event_id)
+    got = [e for e, _ in db.golden_candidates(conn)]
+    assert sorted(got) == sorted(events)
+    # Two of the three (AU_PER_STRATUM), then everything else in the usual order.
+    assert set(got[:2]) <= au
+    assert got[2:] == sorted(got[2:], key=lambda e: hashlib.md5(e.encode()).hexdigest())
 
 
 def test_replacing_the_golden_set_keeps_the_records_as_they_were_pinned(conn):
