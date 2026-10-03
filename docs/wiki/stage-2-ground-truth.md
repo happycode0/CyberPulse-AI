@@ -3,9 +3,8 @@
 [← Stage 1 — Foundation](stage-1-foundation.md) · [Wiki home](README.md) ·
 [Stage 3 — Correlation →](stage-3-correlation.md)
 
-**Status: 🟡 most of it running.** Ground truth, the extra registers, the money controls, AI
-enrichment and MITRE suggestions all run on VM 200 (since 2026-10-03). The AU relevance and
-evidence engines (item 7) are left. Plan:
+**Status: ✅ done (2026-10-03).** Ground truth, the extra registers, the money controls, AI
+enrichment, MITRE suggestions, AU relevance and claims with evidence all run on VM 200. Plan:
 [PLAN.md §9, Stage 2](../../PLAN.md#9-stages) and §2.5 (the severity chain) · §7 (models and money)
 
 ---
@@ -34,7 +33,7 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
 "Deferred" at NVD with no score, but 297 had a score from the CNA or CISA's ADP container
 (`worker/groundtruth/cvss.py`).
 
-## What's left (🟢 all Claude)
+## How it was built (🟢 all Claude)
 
 **Money first, before any agent spends:**
 
@@ -164,7 +163,12 @@ makes it safe to switch the AI agents on.
      disagree with its CVE data, and nothing new is stored.
 
    Scoring version 2 makes the worker rescore every event once, which sets AU relevance on all
-   of them.
+   of them. The first rescore on VM 200 (2026-10-03 02:45 UTC) rated 268 of 2,271 events (35
+   before), 133 of them at 0.5 or more (1 before). That publish carried 192 claims across 69 of
+   its 227 events.
+
+   One known gap: a daily digest (CyberWire's) that mentions Australia in one of its stories
+   counts as naming Australia. That affected 4 events; telling a digest apart is Stage 3 work.
 
 ## How to check it
 

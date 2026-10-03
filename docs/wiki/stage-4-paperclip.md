@@ -48,8 +48,8 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | 1–2 | ✅ | Claim it; turn sign-up off | [4a steps 2–3](stage-4a-paperclip-setup.md#2--open-it) |
 | 3 | ✅ | Import the crew package, then the budgets and the mission | [4a steps 4–7](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6) |
 | 4 | ✅ | OpenCode in the container, using the one OpenRouter key through the connection | — |
-| 5 | 🟢 **next** | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#whats-left--all-claude) |
-| 6 | 🟢 | The worker's ops API and its token; the `http` agents' URL and auth | — |
+| 5 | ✅ | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#how-it-was-built--all-claude) |
+| 6 | 🟢 **next** | The worker's ops API and its token; the `http` agents' URL and auth | — |
 | 7 | ✅ | First test tickets, one per AI agent | [4a step 8](stage-4a-paperclip-setup.md#8--first-test--one-ticket-one-agent) |
 
 MORPHEUS and ZION do real work only after 5–6. Until then every routine stays paused; after
