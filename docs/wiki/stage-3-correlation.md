@@ -3,9 +3,9 @@
 [← Stage 2 — Ground truth](stage-2-ground-truth.md) · [Wiki home](README.md) ·
 [Stage 4 — Paperclip →](stage-4-paperclip.md)
 
-**Status: ▶ in progress.** Consolidation (one story = one event), source lineage, material change,
-archiving and trends are built. The new adapters come next. Nothing in it is yours to do.
-Plan:
+**Status: ✅ done (2026-10-03).** Consolidation (one story = one event), source lineage, material
+change, archiving, trends and readers for the sources with no feed all run on VM 200. Embeddings
+were measured as not needed. Nothing in it is yours to do. Plan:
 [PLAN.md §9, Stage 3](../../PLAN.md#9-stages)
 
 ---
@@ -30,6 +30,8 @@ impressions.
 | Material change: what a new report or a register adds to an event moves it up again (`worker/pipeline/material.py`) | ✅ |
 | Archiving: a faded event leaves the live set, keeps its day page, and comes back on news (`worker/db/archive.py`) | ✅ |
 | Trends: topic and CVE velocity counted from independent reports, published as `trends.json` and shown under TRENDS (`worker/pipeline/trends.py`) | ✅ |
+| Sources with no feed: ASD, OAIC and Anthropic read from their listing pages (`worker/collectors/web_page.py`), Microsoft's security releases from its API | ✅ |
+| Source health judged against each feed's measured rhythm: the four ACSC feeds no longer read STALE between alerts | ✅ |
 
 ### The duplicate rate (measured on VM 200, 2026-10-03)
 
@@ -187,11 +189,69 @@ TRENDS, the first section under OVERVIEW.
 Days before collection began show as a flat line and "—", never as zero. A missing or unreadable
 `trends.json` says so in the panel and the rest of the page still renders.
 
-## Still to build (🟢 all Claude)
+### Sources with no feed (measured on VM 200, 2026-10-03)
 
-1. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
-2. **pgvector embeddings, only if measurement shows they are needed.** The database image already
-   has pgvector; it stays unused unless deterministic matching measurably falls short.
+Four registered sources publish no feed. Each is now read another way, with the worker's own
+fetcher and no browser:
+
+| Source | Read from | Items | Newest |
+|---|---|---|---|
+| ASD (`asd`) | its news page, `asd_news` parser | 7 | 22 Jun 2026 |
+| OAIC (`oaic`) | its media centre, `oaic_media` parser | 10 | 30 Sep 2026 |
+| Anthropic (`anthropic_news`) | its newsroom, `anthropic_news` parser | 15 | 2 Oct 2026 |
+| Microsoft security releases (`msrc_cvrf`, new) | `api.msrc.microsoft.com/cvrf/v3.0/updates`, newest 12 releases | 12 | 2 Oct 2026 |
+
+- **One parser per site** (`worker/collectors/web_page.py`), named in `config/sources.yaml` as
+  JSON APIs are. A page is parsed with the standard library, and its scripts never run. A site
+  that changes its layout yields no items, so the source reads EMPTY in source health instead of
+  publishing guesses.
+- **A printed day** ("30 September 2026") is the start of that day where the publisher is:
+  Sydney for ASD and OAIC, San Francisco for Anthropic. A later guess could date a page read the
+  same morning in the future.
+- **Links are https or nothing.** OAIC's cards go through a click-tracking redirect, and only a
+  page on OAIC's own site is taken from it.
+- **The MSRC blog stays off.** It is rendered by script, so the page holds no posts, and its
+  feeds return 403. The security releases it announces now come from the API, and a release that
+  is revised, or loses "Early" from its title, stays one event.
+
+Not built, with the reason:
+
+- **YouTube.** A channel's feed (`youtube.com/feeds/videos.xml?channel_id=…`) is plain Atom, so
+  it needs a registry entry with `type: atom`, not an adapter. It returned 404 for every security
+  channel tried (Black Hat, DEF CON, CyberCX, AusCERT), from both WSL and VM 200. The Data API
+  needs a Google key, so no channel is registered.
+- **`sitemap`.** A sitemap has no headlines, and its dates (`lastmod`) record when a page last
+  changed, not when it was published. Every source without a feed has a listing page that gives
+  both, so nothing needs a sitemap.
+- **SecurityWeek** (PLAN.md open item 3) stays off. Its feed, and the FeedBurner address that
+  redirects to it, answer with a Cloudflare challenge. Getting past one is not a lawful route, so
+  the gap is accepted.
+
+The four ACSC feeds had raised four STALE errors on every run: they were held to daily and
+hourly rhythms they do not keep. Their thresholds now follow what was measured over the last
+year (alerts: median 8 days apart, longest 41, now `monthly`; news: median 5, longest 21, now
+`weekly`). ASD's own news page posts months apart (231 days in 2025), so it has a new
+`quarterly` threshold of 270 days.
+
+### Embeddings: not needed (measured on VM 200, 2026-10-03)
+
+PLAN.md open item 2 asked whether pgvector embeddings are needed at all. They are not, for now:
+
+| | Events on the site (last 30 days) | In a possible-duplicate pair |
+|---|---|---|
+| Today, with consolidation in every run | 190 | 26 (13.7%) |
+
+The 19 pairs the pass leaves apart are of two kinds:
+- **11 are the two old generic CISA notices** (`evt-2026-000068`, `-000069`) merged with
+  unrelated KEV entries before this stage. They age out.
+- **8 are the same story in different words**, such as KillSec's takedown told three ways, or
+  GitLab's AI Gateway flaw as "warns of" and "patches". That is 4% of the site.
+
+Embeddings would add a model call to every event in a pipeline that uses none (collection and
+matching are deterministic, and the site says so), and spend from a budget that is already in
+conserve mode. That is not worth it to fold eight pairs. pgvector stays installed and unused.
+Run `python -m worker --check-duplicates` again if the different-words pairs grow well past
+this.
 
 ## Done when
 
@@ -199,6 +259,7 @@ Days before collection began show as a flat line and "—", never as zero. A mis
 - [x] Syndication no longer inflates confidence (2,265 → 2,255 confirmations; NetScaler 7 → 5)
 - [x] Trends are computed from real data (independent reports since 2026-10-01; states once 48 h
   of baseline exist)
+- [x] Every registered source with no feed is read, or off with a measured reason
 
 ---
 

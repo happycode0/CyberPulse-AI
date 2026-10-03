@@ -113,8 +113,8 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 |---|---|---|---|
 | **0** | Prerequisites: accounts, keys, repo visibility, optional VM | 🔴 | ✅ done |
 | **1** | Foundation: schema, collectors, event resolution, scoring, publisher, **full site** | 🟢 | ✅ done, live on VM 200 |
-| **2** | Ground truth + AI enrichment + AU relevance + evidence + cost ledger | 🟢 | 🟡 most of it live |
-| **3** | Material change, source lineage, trends, decay, extra adapters | 🟢 | |
+| **2** | Ground truth + AI enrichment + AU relevance + evidence + cost ledger | 🟢 | ✅ done, live on VM 200 |
+| **3** | Material change, source lineage, trends, decay, extra adapters | 🟢 | ✅ done, live on VM 200 |
 | **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | ▶ in progress |
 | **5** | Full crew + follow-up + Telegram + public crew page | 🟢 | |
 | **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢 | |
