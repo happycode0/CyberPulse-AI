@@ -10,8 +10,10 @@ from pydantic import ValidationError
 from referencing import Registry, Resource
 
 from worker.models import (
+    AiSignificance,
     AiSubdomain,
     AuRelevance,
+    Beat,
     Claim,
     CveRef,
     CvssScore,
@@ -35,6 +37,8 @@ from worker.models import (
     SourceHealth,
     SourceRef,
     TimelineEntry,
+    beat_of,
+    seed_domains,
 )
 from worker.version import (
     PIPELINE_VERSION,
@@ -45,6 +49,8 @@ from worker.version import (
 
 NOW = datetime(2026, 9, 29, 12, 0, tzinfo=UTC)
 SCHEMAS = Path(__file__).resolve().parents[2] / "schemas"
+# Stored fields plus derived ones (`beat`), which the public shape also carries.
+PUBLIC_FIELDS = set(Event.model_fields) | set(Event.model_computed_fields)
 
 
 def _minimal(**overrides):
@@ -324,7 +330,7 @@ def test_public_dump_keeps_explicit_nulls():
 
 
 def test_public_dump_covers_every_model_field():
-    assert set(_minimal().model_dump_public()) == set(Event.model_fields)
+    assert set(_minimal().model_dump_public()) == PUBLIC_FIELDS
 
 
 def test_event_schema_rejects_extra_and_bad_enum():
@@ -356,8 +362,11 @@ def test_event_schema_enums_match_python_enums():
     }
     ai = [v for v in props["ai_subdomain"]["anyOf"] if "enum" in v][0]
     assert set(ai["enum"]) == {m.value for m in AiSubdomain}
+    sig = next(v for v in props["ai_significance"]["anyOf"] if "enum" in v)
+    assert set(sig["enum"]) == {m.value for m in AiSignificance}
+    assert set(props["beat"]["enum"]) == {m.value for m in Beat}
     assert schema["additionalProperties"] is False
-    assert set(schema["required"]) == set(Event.model_fields)
+    assert set(schema["required"]) == PUBLIC_FIELDS
 
 
 def test_live_schema_validates_document_with_events():
@@ -372,6 +381,72 @@ def test_live_schema_validates_document_with_events():
     validator.validate(doc)
     doc["last_completed_collection"] = None
     validator.validate(doc)
+
+
+@pytest.mark.parametrize(
+    ("domains", "beat"),
+    [
+        (["cybersecurity"], Beat.CYBER),
+        (["ai"], Beat.AI),
+        (["ai", "cybersecurity"], Beat.BOTH),
+        ([], Beat.OTHER),
+    ],
+)
+def test_beat_is_derived_from_domains(domains, beat):
+    assert beat_of(domains) is beat
+    assert _minimal(domains=domains).model_dump_public()["beat"] == beat.value
+
+
+def test_a_source_beat_seeds_domains_and_no_beat_means_cyber():
+    assert seed_domains(None) == ["cybersecurity"] == seed_domains(Beat.CYBER)
+    assert seed_domains(Beat.AI) == ["ai"]
+    assert beat_of(seed_domains(Beat.BOTH)) is Beat.BOTH
+
+
+def test_a_source_cannot_start_on_the_other_beat():
+    base = {
+        "id": "s", "name": "S", "type": "rss", "region": "global", "category": "news",
+        "priority": 4, "lane": "normal", "enabled": True, "url": "https://example.org/feed",
+        "parser": "rss", "expected_frequency": "daily", "source_class": "feed",
+    }
+    assert SourceConfig(**base).beat is None
+    assert SourceConfig(**base, beat="ai").beat is Beat.AI
+    with pytest.raises(ValidationError, match="beat 'other'"):
+        SourceConfig(**base, beat="other")
+
+
+def test_a_dumped_event_reads_back_with_its_derived_beat():
+    event = _minimal(domains=["ai"], ai_significance=AiSignificance.MAJOR)
+    again = Event.model_validate(event.model_dump(mode="json"))
+    assert again == event and again.beat is Beat.AI
+
+
+def test_ai_significance_is_dropped_off_the_ai_beat():
+    event = _minimal(domains=["cybersecurity"], ai_significance=AiSignificance.MAJOR)
+    assert event.ai_significance is None
+
+
+def test_live_schema_validates_ai_events_and_rejects_significance_on_cyber():
+    validator = _schema_validator("live.schema.json")
+    ai = _minimal(domains=["ai"], ai_significance=AiSignificance.MAJOR).model_dump_public()
+    both = _minimal(
+        event_id="evt-2026-000002", domains=["cybersecurity", "ai"],
+        ai_significance=AiSignificance.MINOR,
+    ).model_dump_public()
+    doc = {
+        "generated_at": "2026-09-29T12:00:00Z",
+        "last_completed_collection": None,
+        "pipeline_version": PIPELINE_VERSION,
+        "counts": {"total": 2},
+        "events": [ai, both],
+    }
+    validator.validate(doc)
+    assert [e["beat"] for e in doc["events"]] == ["ai", "both"]
+    cyber = {**_full_event().model_dump_public(), "ai_significance": "major"}
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate({**doc, "events": [cyber]})
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate({**doc, "events": [{**ai, "beat": "AI"}]})
 
 
 def test_live_schema_rejects_bad_event_and_extra_keys():

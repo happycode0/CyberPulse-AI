@@ -2,6 +2,7 @@
 faked: what is stored, what is tried, and what stops a run."""
 
 import asyncio
+import dataclasses
 import json
 import logging
 from collections import Counter
@@ -23,7 +24,7 @@ from worker.ai.gauntlet import (
     Listed,
     measure,
 )
-from worker.ai.golden import digest, pin
+from worker.ai.golden import AiCandidate, digest, load_ai_candidates, pin, pin_ai
 from worker.ai.ladder import (
     Breach,
     CatalogueUnavailable,
@@ -35,7 +36,7 @@ from worker.ai.ladder import (
     prune,
 )
 from worker.ai.tasks import SourceFacts, Subject, TaskName
-from worker.models import CveRef, Event, Severity, SeveritySource
+from worker.models import AiSignificance, Beat, CveRef, Event, Severity, SeveritySource
 from worker.settings import Settings
 
 NOW = datetime(2026, 10, 4, 3, 40, tzinfo=UTC)  # a Sunday
@@ -69,6 +70,7 @@ class FakeDb:
         self.spent = Decimal(0)
         self.previous = []
         self.open: set[str] = set()
+        self.urls: dict[str, str] = {}  # url -> event_id, for the AI stories' lookup
         self.calls: list[tuple[str, tuple, dict]] = []
 
     def called(self, name):
@@ -94,6 +96,10 @@ class FakeDb:
 
     def golden_candidates(self, conn):
         return self.candidates
+
+    def events_for_urls(self, conn, urls):
+        self._note("events_for_urls", list(urls))
+        return {u: self.urls[u] for u in urls if u in self.urls}
 
     def load_golden(self, conn):
         return self.golden
@@ -318,11 +324,69 @@ def subjects(monkeypatch):
     monkeypatch.setattr(scout, "load_subjects", lambda conn, ids: [SUBJECTS[i] for i in ids])
 
 
-def test_pinning_replaces_the_set_with_the_candidates_chosen(fake_db, subjects):
+def test_pinning_replaces_the_set_with_the_candidates_chosen(fake_db, subjects, monkeypatch):
+    monkeypatch.setattr(scout, "load_ai_candidates", list)  # no AI stories labelled
     fake_db.candidates = [(i, "critical") for i in SUBJECTS]
     golden = scout.pin_golden_set(engine=object(), now=NOW)
     assert golden == GOLDEN
     assert fake_db.called("replace_golden") == [((GOLDEN, NOW), {})]
+
+
+def test_ai_stories_left_blank_change_nothing(fake_db, subjects):
+    # The real worker/ai/golden_ai.yaml: a story waiting for the owner's labels is not looked up.
+    blank = {c.url for c in load_ai_candidates() if not c.labelled}
+    assert blank
+    fake_db.candidates = [(i, "critical") for i in SUBJECTS]
+    assert scout.pin_golden_set(engine=object(), now=NOW) == GOLDEN
+    looked_up = {u for (urls,), _ in fake_db.called("events_for_urls") for u in urls}
+    assert not looked_up & blank
+
+
+AI_STORY = Subject(
+    event=Event(
+        event_id="evt-2026-000100",
+        first_seen=datetime(2026, 9, 30, tzinfo=UTC),
+        last_seen=datetime(2026, 9, 30, tzinfo=UTC),
+        title="Acme releases its Model 9 language model",
+        summary="Acme has released Model 9, its largest language model yet, to paying customers.",
+    ),
+    source_text="Acme has released Model 9, its largest language model yet, to paying customers.",
+    sources=(SourceFacts("AI news", "global", "news"),),
+)
+LABELLED = AiCandidate(
+    "https://news.example/model-9", "ars_ai", "Model 9", Beat.AI, AiSignificance.NOTABLE,
+    None, True,
+)
+
+
+def test_pinning_adds_the_ai_stories_the_owner_labelled(fake_db, monkeypatch):
+    unreviewed = dataclasses.replace(LABELLED, url="https://news.example/b", reviewed=False)
+    missing = dataclasses.replace(LABELLED, url="https://news.example/never-collected")
+    monkeypatch.setattr(scout, "load_ai_candidates", lambda: [LABELLED, unreviewed, missing])
+    everything = {**SUBJECTS, AI_STORY.event.event_id: AI_STORY}
+    monkeypatch.setattr(scout, "load_subjects", lambda conn, ids: [everything[i] for i in ids])
+    fake_db.candidates = [(i, "critical") for i in SUBJECTS]
+    fake_db.urls = {LABELLED.url: AI_STORY.event.event_id, unreviewed.url: "evt-2026-000101"}
+
+    golden = scout.pin_golden_set(engine=object(), now=NOW)
+    assert golden == [*GOLDEN, pin_ai(AI_STORY, LABELLED)]
+    assert golden[-1].labels == {
+        "triage": {"beat": "ai", "ai_significance": "notable"},
+        "au_desk": None,
+        "from": "owner",
+    }
+    assert fake_db.called("events_for_urls") == [(([LABELLED.url, missing.url],), {})]
+
+
+async def test_the_severity_task_is_not_tried_on_an_ai_story(gauntlet, fake_db):
+    fake_db.golden = [*GOLDEN, pin_ai(AI_STORY, LABELLED)]
+    summary = await run_gauntlet()
+    strong = [m for m in summary.measured if m.tier == "tier2_strong"]
+    assert strong and all(m.complete and m.agreement == 1.0 for m in strong)
+    asked = Counter(task for _, task, _, _ in gauntlet.calls)
+    # Two models a tier: severity on each register event, triage and the brief on every event.
+    assert asked[TaskName.SEVERITY] == 2 * len(GOLDEN)
+    assert asked[TaskName.TRIAGE] == asked[TaskName.BRIEF] == 2 * (len(GOLDEN) + 1)
 
 
 # ─── The gauntlet ─────────────────────────────────────────────────────────────────────────────────
@@ -332,6 +396,7 @@ ANSWERS = {
         "domains": ["cybersecurity"],
         "categories": ["vulnerability"],
         "ai_subdomain": None,
+        "ai_significance": None,
         "entities": {
             "actors": [],
             "organisations": ["Acme"],

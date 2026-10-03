@@ -2,11 +2,12 @@
 
 Each event gets up to three calls, each with a strict schema:
 
-- triage, tier 0: domains, categories, AI subdomain, entities and tags. This is mechanical work
-  (sorting and extracting), so it may run on free models (§7.1, §8).
+- triage, tier 0: domains, categories, AI subdomain and significance, entities and tags. This
+  is mechanical work (sorting and extracting), so it may run on free models (§7.1, §8).
 - brief, tier 1: an original summary, why it matters, and a first reading of AU relevance.
 - severity, tier 2: a judged severity, but only where no official score exists. It is labelled
-  `ai_estimate`, and an official score always replaces it (§2.5).
+  `ai_estimate`, and an official score always replaces it (§2.5). An AI-only story gets none:
+  it is ranked on its AI significance (docs/wiki/ai-news-beat.md).
 
 MITRE technique suggestions are a fourth task, in worker/ai/mitre.py: it runs once an event is
 enriched, and its schema is built per event from the cached catalogue (§7.3).
@@ -35,7 +36,17 @@ from enum import StrEnum
 from typing import Any
 
 from worker.ai.ladder import Tier
-from worker.models import AiSubdomain, Event, Severity, SeveritySource
+from worker.models import (
+    AI_DOMAIN,
+    CYBER_DOMAIN,
+    AiSignificance,
+    AiSubdomain,
+    Beat,
+    Event,
+    Severity,
+    SeveritySource,
+    beat_of,
+)
 from worker.publish.validate import scan_text_for_secrets
 
 
@@ -65,10 +76,16 @@ CATEGORIES: dict[str, str] = {
     "espionage": "state-linked intrusion or spying",
     "fraud": "scams and financially motivated fraud",
     "emerging-threat": "a new attack technique, tool or threat actor",
-    "research": "security or AI research findings",
+    "research": "security research findings",
     "policy": "government strategy, guidance or national security policy",
     "regulation": "laws, regulators, enforcement and fines",
     "ai-security": "attacks on, or defences of, AI systems",
+    # The AI desk's own (docs/wiki/ai-news-beat.md).
+    "ai-industry": "AI companies, products, funding, deals or chips",
+    "model-release": "a new or updated AI model",
+    "ai-governance": "AI law, regulation, policy or safety standards",
+    "ai-incident": "harm from an AI system: a failure, misuse or accident",
+    "ai-research": "AI research findings",
 }
 
 SECTORS: tuple[str, ...] = (
@@ -94,7 +111,12 @@ SECTORS: tuple[str, ...] = (
     "non-profit",
 )
 
-DOMAINS = ("cybersecurity", "ai")
+DOMAINS = (CYBER_DOMAIN, AI_DOMAIN)
+
+# An AI story with a security angle is on the cyber desk as well.
+SECURITY_SUBDOMAINS = frozenset(
+    {AiSubdomain.AI_SECURITY, AiSubdomain.AI_THREAT_ACTIVITY, AiSubdomain.AI_CYBER_CONVERGENCE}
+)
 
 # A judged severity is published only when the model is at least this sure of it. Below that,
 # the event keeps `unknown`, which is the honest answer when the evidence is thin.
@@ -220,13 +242,20 @@ TRIAGE_PROMPT = f"""\
 Task: classify the record and list what it names.
 
 - domains: "cybersecurity" if it concerns attacks, vulnerabilities, defence or security policy; \
-"ai" if it concerns AI systems, AI companies or AI policy. Either or both.
+"ai" if it concerns AI systems, AI companies or AI policy. One, both, or neither when it is \
+about something else.
 - categories: each category below that the record clearly supports, the main one first.
 {_bullets(f"{slug}: {meaning}" for slug, meaning in CATEGORIES.items())}
 - ai_subdomain: null unless "ai" is in domains. Then one of: AI_INDUSTRY (AI business, products \
 or research with no security angle), AI_SECURITY (attacks on or defences of AI systems, such as \
 prompt injection, jailbreaks, model theft or poisoning), AI_THREAT_ACTIVITY (attackers using AI), \
 AI_CYBER_CONVERGENCE (AI used for defence, or policy spanning both).
+- ai_significance: null unless "ai" is in domains. Then how much the story matters to people \
+who follow AI, judged only from the record:
+  major: a new frontier model, an AI law or ruling taking effect, an AI incident that caused \
+real harm, or a deal or move that reshapes the industry.
+  notable: a significant product or model update, funding round, policy step or research result.
+  minor: a routine announcement, a small update, opinion, or a how-to.
 - entities, with names as the record writes them:
   actors: named threat actors or criminal groups.
   organisations: companies, agencies and other bodies involved, not the outlet that reported it.
@@ -243,7 +272,9 @@ Task: brief a reader who has not seen the record.
 Do not copy phrases from the record.
 - why_it_matters: at most three sentences on what this means for defenders, resting only on \
 facts in the record, such as a CVSS score, a KEV listing, exploitation in the wild, or the \
-scale of a breach. null if the record gives no such facts.
+scale of a breach. For AI news with no security angle, say instead what it means for people \
+who build, buy or regulate AI, such as a new capability, a price or licence change, a safety \
+finding, or a law and when it takes effect. null if the record gives no such facts.
 - au.relevance: 0 to 1, how directly this affects Australia. 0.5 or more only when the record \
 shows Australian organisations, people, government or infrastructure are affected or targeted, \
 or that an Australian authority is acting on it. An Australian outlet reporting a foreign story \
@@ -305,6 +336,10 @@ TRIAGE_SCHEMA = _object(
         "ai_subdomain": {
             "type": ["string", "null"],
             "enum": [*(s.value for s in AiSubdomain), None],
+        },
+        "ai_significance": {
+            "type": ["string", "null"],
+            "enum": [*(s.value for s in AiSignificance), None],
         },
         "entities": _object(
             {
@@ -454,7 +489,13 @@ class Triage:
     countries: tuple[str, ...]
     industries: tuple[str, ...]
     tags: tuple[str, ...]
+    ai_significance: AiSignificance | None = None
     dropped: int = 0  # entity names the record does not contain
+
+    @property
+    def ai_only(self) -> bool:
+        """On the AI desk and not the cyber one, where a cyber rating does not belong."""
+        return beat_of(self.domains) is Beat.AI
 
 
 @dataclass(frozen=True)
@@ -488,17 +529,23 @@ def parse_triage(data: dict[str, Any], subject: Subject) -> Triage:
     organisations, o = check.names(entities["organisations"])
     products, p = check.names(entities["products"])
     domains = _unique(data["domains"])
-    subdomain = data["ai_subdomain"]
+    ai = AI_DOMAIN in domains
+    subdomain = AiSubdomain(data["ai_subdomain"]) if ai and data["ai_subdomain"] else None
+    if subdomain in SECURITY_SUBDOMAINS and CYBER_DOMAIN not in domains:
+        domains = (CYBER_DOMAIN, *domains)
+    # A strict-schema model always sends it; one that predates the field may not.
+    significance = data.get("ai_significance")
     return Triage(
         domains=domains,
         categories=_unique(data["categories"]),
-        ai_subdomain=AiSubdomain(subdomain) if subdomain and "ai" in domains else None,
+        ai_subdomain=subdomain,
         actors=actors,
         organisations=organisations,
         products=products,
         countries=_countries(entities["countries"]),
         industries=_unique(entities["industries"]),
         tags=_tags(data["tags"]),
+        ai_significance=AiSignificance(significance) if ai and significance else None,
         dropped=a + o + p,
     )
 
@@ -569,8 +616,12 @@ class Task:
         return f"enrich_{self.name}"
 
     def applies(self, subject: Subject) -> bool:
-        """Severity is judged only where no official score exists. The others always apply."""
-        return self.name is not TaskName.SEVERITY or not subject.has_official_severity
+        """Severity is a cyber rating: it is judged only where no official score exists, and
+        never for an AI-only story, which is ranked on `ai_significance` instead. The others
+        always apply."""
+        if self.name is not TaskName.SEVERITY:
+            return True
+        return subject.event.beat is not Beat.AI and not subject.has_official_severity
 
 
 TRIAGE = Task(

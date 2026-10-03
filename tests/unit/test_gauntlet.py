@@ -14,6 +14,7 @@ from worker.ai.gauntlet import (
     decide,
     estimate,
     failures,
+    judged_on,
     measure,
     proposal_body,
     proposal_payload,
@@ -21,8 +22,8 @@ from worker.ai.gauntlet import (
     score,
 )
 from worker.ai.ladder import Tier
-from worker.ai.tasks import Brief, SeverityJudgment, Triage
-from worker.models import Severity
+from worker.ai.tasks import BRIEF, SEVERITY, TRIAGE, Brief, SeverityJudgment, Triage
+from worker.models import AiSignificance, Severity
 
 NOW = datetime(2026, 10, 4, 3, 40, tzinfo=UTC)
 LABELS = {
@@ -70,6 +71,33 @@ def test_severity_scores_exact_and_adjacent_levels():
 def test_a_severity_production_would_not_publish_scores_nothing():
     assert score(judgment(Severity.UNKNOWN), LABELS) == 0.0
     assert score(judgment(Severity.HIGH, confidence=0.1), LABELS) == 0.0
+
+
+# An AI story the owner labelled (worker/ai/golden_ai.yaml): no severity, and a beat to find.
+AI_LABELS = {
+    "triage": {"beat": "ai", "ai_significance": "major"},
+    "au_desk": None,
+    "from": "owner",
+}
+
+
+def test_an_ai_story_is_scored_on_its_beat_and_how_much_it_matters():
+    def ai(domains, significance):
+        return dataclasses.replace(triage(domains, ()), ai_significance=significance)
+
+    assert score(ai(("ai",), AiSignificance.MAJOR), AI_LABELS) == 1.0
+    assert score(ai(("ai",), AiSignificance.MINOR), AI_LABELS) == 0.5
+    assert score(ai(("cybersecurity", "ai"), AiSignificance.MAJOR), AI_LABELS) == 0.5
+    assert score(ai(("cybersecurity",), None), AI_LABELS) == 0.0
+    other = {**AI_LABELS, "triage": {"beat": "other"}}
+    assert score(ai((), None), other) == 1.0 and score(ai(("ai",), None), other) == 0.0
+
+
+def test_an_ai_story_is_not_judged_on_severity():
+    assert score(judgment(Severity.HIGH), AI_LABELS) is None
+    assert not judged_on(SEVERITY, AI_LABELS) and judged_on(SEVERITY, LABELS)
+    assert judged_on(TRIAGE, AI_LABELS) and judged_on(BRIEF, AI_LABELS)
+    assert score(brief(0.8), AI_LABELS) is None  # no AU desk label: not counted
 
 
 # ─── One model's figures ──────────────────────────────────────────────────────────────────────────

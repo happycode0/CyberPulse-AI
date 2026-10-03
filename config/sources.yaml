@@ -445,6 +445,7 @@ sources:
     type: rss
     region: global
     category: research
+    beat: ai
     class: feed
     priority: 4
     lane: normal
@@ -459,6 +460,7 @@ sources:
     type: rss
     region: global
     category: research
+    beat: both
     class: feed
     priority: 4
     lane: normal
@@ -473,6 +475,7 @@ sources:
     type: rss
     region: global
     category: ai_security
+    beat: ai
     class: feed
     priority: 4
     lane: normal
@@ -488,6 +491,7 @@ sources:
     type: rss
     region: global
     category: ai_security
+    beat: ai
     class: feed
     priority: 4
     lane: normal
@@ -518,6 +522,7 @@ sources:
     type: rss
     region: global
     category: ai_security
+    beat: both
     class: feed
     priority: 4
     lane: normal
@@ -532,6 +537,7 @@ sources:
     type: rss
     region: global
     category: ai_security
+    beat: both
     class: feed
     priority: 4
     lane: normal
@@ -546,6 +552,7 @@ sources:
     type: rss
     region: global
     category: ai_security
+    beat: ai
     class: feed
     priority: 4
     lane: normal
@@ -554,6 +561,113 @@ sources:
     parser: rss
     expected_frequency: weekly
     notes: "Median 0.8, longest 14 days between posts in the last year"
+
+  # NORMAL Lane: AI news, safety and policy (beat: ai; docs/wiki/ai-news-beat.md).
+  # Each feed and its robots.txt were checked with plain GETs on 2026-10-04.
+  - id: verge_ai
+    name: The Verge AI
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.theverge.com/rss/ai-artificial-intelligence/index.xml
+    parser: atom
+    expected_frequency: daily
+    notes: "Atom; several posts a day, 10 items in the feed"
+
+  - id: techcrunch_ai
+    name: TechCrunch AI
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://techcrunch.com/category/artificial-intelligence/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Several posts a day, 20 items in the feed. robots.txt allows all agents but blocks named AI crawlers"
+
+  - id: ars_ai
+    name: Ars Technica AI
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://arstechnica.com/ai/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Median 0.1 days between posts in the feed's 20 items"
+
+  - id: mit_tr_ai
+    name: MIT Technology Review AI
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.technologyreview.com/topic/artificial-intelligence/feed
+    parser: rss
+    expected_frequency: daily
+    notes: "Median 0.9, longest 3 days between posts in the feed's 10 items. robots.txt allows all agents but blocks named AI crawlers"
+
+  - id: import_ai
+    name: Import AI (Jack Clark)
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://importai.substack.com/feed
+    parser: rss
+    expected_frequency: weekly
+    notes: "Weekly AI research and policy newsletter. Median 7, longest 14 days between posts in the feed's 20 items"
+
+  - id: cais_aisn
+    name: CAIS AI Safety Newsletter
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://newsletter.safe.ai/feed
+    parser: rss
+    expected_frequency: monthly
+    notes: "Center for AI Safety. Median 15, longest 47 days between posts in the feed's 20 items"
+
+  - id: eu_digital_strategy
+    name: European Commission Digital Strategy
+    type: rss
+    region: global
+    category: advisory
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://digital-strategy.ec.europa.eu/en/rss.xml
+    parser: rss
+    expected_frequency: weekly
+    notes: "EU AI Act and wider digital policy; triage moves non-AI items off the AI beat. Median 7, longest 11 days between posts in the feed's 10 items"
 
   # DEEP Lane: long-form research. DEEP is a Paperclip routine with no worker schedule
   # (worker/scheduler.py), so a source here is read only when that routine runs.
@@ -694,6 +808,7 @@ sources:
     type: web_page
     region: global
     category: ai_security
+    beat: ai
     class: web_page
     priority: 4
     lane: normal

@@ -6,9 +6,9 @@ result as `trends.json`.
 
 - **A report** is one independent voice on an event (worker/pipeline/lineage.py), dated by its
   publication time, else when it was fetched. A copy of a wire story is not a second report.
-- **A topic** is a vendor, actor, malware family or kind of threat (config/trends.yaml). A
-  report counts towards it when its own headline names one of its terms. A CVE counts every
-  report on an event that names it.
+- **A topic** is a vendor, actor, malware family, kind of threat or AI subject
+  (config/trends.yaml). A report counts towards it when its own headline names one of its
+  terms. A CVE counts every report on an event that names it.
 - **Only reports from after collection began count.** A feed's first fetch lists its backlog,
   a sample of earlier days rather than all of them: counted, it would make everything look as
   if it were rising.
@@ -62,7 +62,7 @@ class Topic(BaseModel):
 
     key: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*$")
     label: str = Field(min_length=1)
-    kind: Literal["vendor", "actor", "malware", "threat"]
+    kind: Literal["vendor", "actor", "malware", "threat", "ai"]
     terms: tuple[str, ...] = Field(min_length=1)
 
     @field_validator("terms")
@@ -135,6 +135,7 @@ class Story:
     au: bool
     cves: tuple[str, ...] = ()
     kev_cves: frozenset[str] = frozenset()
+    ai: bool = False  # on the AI desk: its beat is `ai` or `both` (docs/wiki/ai-news-beat.md)
 
 
 @dataclass(frozen=True)
@@ -321,6 +322,7 @@ def compute_trends(
                 "kev_added": kev_added.get(day, 0),
                 "critical_high": sum(s.critical_or_high for s in on_day),
                 "au_stories": sum(s.au for s in on_day),
+                "ai_stories": sum(s.ai for s in on_day),
             }
         )
 

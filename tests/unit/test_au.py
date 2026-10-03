@@ -60,6 +60,27 @@ def test_a_named_organisation_brings_its_sectors():
     ]
 
 
+@pytest.mark.parametrize(
+    "text, named",
+    [
+        ("eSafety orders AI companion apps to verify ages", "eSafety"),
+        ("DISR consults on mandatory guardrails for high-risk AI", "DISR"),
+        (
+            "The Department of Industry, Science and Resources updates its AI standard",
+            "Department of Industry, Science and Resources",
+        ),
+        ("National AI Centre publishes guidance for small businesses", "National AI Centre"),
+        ("Data61 researchers show a new attack on code models", "Data61"),
+        ("CSIRO releases an open dataset for training", "CSIRO"),
+    ],
+)
+def test_the_australian_ai_bodies_put_a_story_on_the_desk(text, named):
+    au = assess(text)
+    assert au.reasons == [f"names an Australian organisation ({named})"]
+    assert au.relevance == CONFIG.floors.organisation >= AU_DESK_RELEVANCE
+    assert au.sectors == ["government"]
+
+
 def test_naming_australia_or_a_place_or_a_au_address_is_a_place_floor():
     assert assess("Authorities in Australia arrest two").reasons == ["names Australia"]
     assert assess("Sydney council hit by ransomware").reasons == [

@@ -49,7 +49,7 @@ from worker.ai.tasks import (
     Task,
     Triage,
 )
-from worker.models import Severity
+from worker.models import Severity, beat_of
 
 AGENT = "ripperdoc"
 STAGE = "gauntlet"
@@ -100,11 +100,23 @@ Outcome = Literal["ok", "rejected", "invalid", "refused", "error", "skipped"]
 _LEVELS = (Severity.LOW, Severity.MEDIUM, Severity.HIGH, Severity.CRITICAL)
 
 
+def judged_on(task: Task, labels: Mapping[str, Any]) -> bool:
+    """Whether an event is worth a call for this task. An AI story the owner labelled has no
+    severity label (worker/ai/golden.py), so the severity task is not tried on it."""
+    return task is not SEVERITY or "severity" in labels
+
+
 def score(result: Result, labels: Mapping[str, Any]) -> float | None:
     """How far one answer agrees with the golden labels, from 0 to 1. None when the event has no
     label for this task, so it is not counted."""
     if isinstance(result, Triage):
         want = labels["triage"]
+        if "beat" in want:  # an AI story the owner labelled: the beat, and how much it matters
+            points = [beat_of(result.domains).value == want["beat"]]
+            if "ai_significance" in want:
+                got = result.ai_significance
+                points.append(got is not None and got.value == want["ai_significance"])
+            return sum(points) / len(points)
         return (
             (want["domain"] in result.domains)
             + any(c in want["categories"] for c in result.categories)
@@ -115,6 +127,8 @@ def score(result: Result, labels: Mapping[str, Any]) -> float | None:
             return None
         return float((result.au_relevance >= AU_DESK_RELEVANCE) == desk)
     if isinstance(result, SeverityJudgment):
+        if "severity" not in labels:
+            return None
         expected = Severity(labels["severity"])
         # Production publishes only a usable judgment; anything else leaves the event unknown.
         if not result.usable or expected not in _LEVELS:
@@ -465,8 +479,8 @@ def proposal_body(
             "needs OpenRouter's authenticated datasets; see https://openrouter.ai/rankings."
         ),
         (
-            f"- The labels come from the registers and the source registry: {reviewed} of "
-            f"{golden_size} have been reviewed by a person."
+            f"- The labels come from the registers and the source registry, or for AI stories "
+            f"from the owner: {reviewed} of {golden_size} have been reviewed by a person."
         ),
     ]
     if d.tier is Tier.CHEAP:

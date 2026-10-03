@@ -12,11 +12,13 @@ Like every writer here it takes the caller's connection and never commits.
 
 from collections import defaultdict
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
 from sqlalchemy import Connection, text
 
+from worker.models import AI_DOMAIN, AiSignificance, Beat, beat_of
 from worker.pipeline.correlate import MergeGroup, StoryRecord
 from worker.pipeline.normalise import normalise_title
 from worker.pipeline.resolve import REGISTER_CLASSES, TokenWeights, story_keys
@@ -137,6 +139,7 @@ def merge_events(conn: Connection, group: MergeGroup) -> None:
             "update events set title = :t, normalised_title = :nt where event_id = :w",
             {"w": group.winner, "t": group.title, "nt": normalise_title(group.title)},
         )
+    _merge_beat(conn, group)
 
     # Sources: an article already on the winner (or on an earlier loser) is not added twice.
     run(
@@ -219,6 +222,76 @@ def merge_events(conn: Connection, group: MergeGroup) -> None:
     )
     # Anything merged into a loser earlier now points at the winner directly.
     run("update events set merged_into = :w where merged_into = any(cast(:l as text[]))")
+
+
+@dataclass(frozen=True)
+class BeatTags:
+    """What a member of a merge group says about its beat (docs/wiki/ai-news-beat.md)."""
+
+    domains: tuple[str, ...]
+    ai_subdomain: str | None = None
+    ai_significance: str | None = None
+    # Triage has read it. Seeded domains are only the source's guess.
+    triaged: bool = True
+
+
+_SIGNIFICANCE_RANK = {s.value: i for i, s in enumerate(reversed(AiSignificance))}
+
+
+def merged_tags(members: Sequence[BeatTags]) -> BeatTags:
+    """The merged story's beat, winner first in `members`.
+
+    Triaged members speak for the story when there are any; otherwise the seeds do. Their
+    domains are united, so a story the AI desk and the cyber desk both found is on both. The
+    first AI subdomain stands and the strongest AI significance wins. Neither survives once
+    the story is off the AI beat.
+    """
+    read = [m for m in members if m.triaged] or list(members)
+    domains = tuple(dict.fromkeys(d for m in read for d in m.domains))
+    if AI_DOMAIN not in domains:
+        return BeatTags(domains, triaged=any(m.triaged for m in members))
+    subdomain = next((m.ai_subdomain for m in read if m.ai_subdomain), None)
+    ranked = [m.ai_significance for m in read if m.ai_significance in _SIGNIFICANCE_RANK]
+    significance = max(ranked, key=_SIGNIFICANCE_RANK.__getitem__, default=None)
+    return BeatTags(domains, subdomain, significance, triaged=any(m.triaged for m in members))
+
+
+def _merge_beat(conn: Connection, group: MergeGroup) -> None:
+    ids = [group.winner, *group.losers]
+    found = {
+        r["event_id"]: BeatTags(
+            tuple(r["domains"]), r["ai_subdomain"], r["ai_significance"], r["triaged"]
+        )
+        for r in conn.execute(
+            text(
+                "select e.event_id, e.domains, e.ai_subdomain, e.ai_significance, exists ("
+                "  select 1 from event_enrichment x where x.event_id = e.event_id "
+                "  and x.task = 'triage' and x.status = 'done') triaged "
+                "from events e where e.event_id = any(cast(:ids as text[]))"
+            ),
+            {"ids": ids},
+        ).mappings()
+    }
+    merged = merged_tags([found[i] for i in ids if i in found])
+    # A model's severity estimate is a cyber rating: it goes if the story is AI-only.
+    conn.execute(
+        text(
+            "update events set domains = cast(:domains as text[]), ai_subdomain = :subdomain, "
+            "ai_significance = :significance, "
+            "severity = case when cast(:ai_only as boolean) and severity_source = 'ai_estimate' "
+            "  then 'unknown' else severity end, "
+            "severity_source = case when cast(:ai_only as boolean) "
+            "  and severity_source = 'ai_estimate' then 'unknown' else severity_source end "
+            "where event_id = :w"
+        ),
+        {
+            "w": group.winner,
+            "domains": list(merged.domains),
+            "subdomain": merged.ai_subdomain,
+            "significance": merged.ai_significance,
+            "ai_only": beat_of(merged.domains) is Beat.AI,
+        },
+    )
 
 
 def merged_redirects(conn: Connection, *, since: datetime) -> dict[str, str]:

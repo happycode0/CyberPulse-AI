@@ -20,6 +20,11 @@ The labels:
 
 They come from the registers and the source registry, not from a person, so `reviewed` stays
 false until someone has checked them, and every proposal says so.
+
+AI news has no register, so its stories wait in golden_ai.yaml, next to this file, for the
+owner to label (`beat`, `ai_significance`, `au_desk`). Only those labelled and marked reviewed
+join the set, the next time it is pinned. They carry no `severity` label, so the severity task
+is not tried on them. Left blank, they change nothing.
 """
 
 import hashlib
@@ -27,11 +32,16 @@ import json
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from worker.ai.tasks import SourceFacts, Subject, record
 from worker.models import (
+    AiSignificance,
     AuRelevance,
+    Beat,
     CveRef,
     CvssScore,
     EpssScore,
@@ -169,6 +179,68 @@ def blinded(subject: Subject) -> Subject:
         }
     )
     return Subject(event, subject.source_text, subject.headlines, subject.sources)
+
+
+# ─── AI stories the owner labels ──────────────────────────────────────────────────────────────────
+
+AI_CANDIDATES_PATH = Path(__file__).with_name("golden_ai.yaml")
+OWNER = "owner"  # `labels["from"]` of a story a person labelled
+
+
+@dataclass(frozen=True)
+class AiCandidate:
+    """One AI story in golden_ai.yaml. A label left blank is None."""
+
+    url: str
+    source_id: str
+    headline: str
+    beat: Beat | None = None
+    ai_significance: AiSignificance | None = None
+    au_desk: bool | None = None
+    reviewed: bool = False
+
+    def __post_init__(self) -> None:
+        if self.ai_significance is not None and self.beat not in (Beat.AI, Beat.BOTH):
+            raise ValueError(f"{self.url}: ai_significance is only for the ai or both beat")
+
+    @property
+    def labelled(self) -> bool:
+        """Checked by a person, with a beat, and a significance if the story is on the AI desk."""
+        if not self.reviewed or self.beat is None:
+            return False
+        return self.beat in (Beat.CYBER, Beat.OTHER) or self.ai_significance is not None
+
+    def labels(self) -> dict[str, Any]:
+        triage: dict[str, Any] = {"beat": self.beat.value if self.beat else None}
+        if self.ai_significance is not None:
+            triage["ai_significance"] = self.ai_significance.value
+        return {"triage": triage, "au_desk": self.au_desk, "from": OWNER}
+
+
+def load_ai_candidates(path: Path = AI_CANDIDATES_PATH) -> list[AiCandidate]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    out = []
+    for c in data.get("candidates") or []:
+        labels = c.get("labels") or {}
+        beat, significance, desk = (labels.get(k) for k in ("beat", "ai_significance", "au_desk"))
+        if desk not in (True, False, None):
+            raise ValueError(f"{c['url']}: au_desk is true, false or blank")
+        out.append(
+            AiCandidate(
+                url=c["url"],
+                source_id=c["source_id"],
+                headline=c["headline"],
+                beat=Beat(beat) if beat else None,
+                ai_significance=AiSignificance(significance) if significance else None,
+                au_desk=desk,
+                reviewed=c.get("reviewed") is True,
+            )
+        )
+    return out
+
+
+def pin_ai(subject: Subject, candidate: AiCandidate) -> GoldenEvent:
+    return GoldenEvent(subject.event.event_id, record(subject), candidate.labels())
 
 
 def digest(golden: Sequence[GoldenEvent]) -> str:
