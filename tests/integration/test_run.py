@@ -14,6 +14,7 @@ from worker.db.runs import load_run
 from worker.models import Lane
 from worker.pipeline.run import run_lane as _run_lane
 from worker.settings import get_settings
+from worker.version import SCORING_VERSION
 
 FEEDS = Path(__file__).parent.parent / "fixtures" / "feeds"
 CONFIG = Path(__file__).resolve().parents[2] / "config"
@@ -176,7 +177,7 @@ async def test_stored_event_is_dated_by_publication_and_scored(pg_engine, respx_
     assert row.last_material_update == row.first_seen
     assert row.last_seen >= row.first_seen
     assert None not in (row.prominence, row.urgency, row.confidence, row.novelty)
-    assert row.scoring_version == "1" and row.pending_enrichment is True
+    assert row.scoring_version == SCORING_VERSION and row.pending_enrichment is True
 
 
 async def test_every_stored_event_loads_as_a_valid_event(pg_engine, respx_mock, run_lane):
@@ -192,6 +193,9 @@ async def test_every_stored_event_loads_as_a_valid_event(pg_engine, respx_mock, 
     assert by_source["feed_b"].sources[0].evidence_class == "NEWS"
     assert by_source["feed_b"].au.directly_reported_in_au is True
     assert by_source["feed_a"].au.directly_reported_in_au is False
+    # The AU engine ran in the rescore: an Australian outlet's report has a floor and says why.
+    assert by_source["feed_b"].au.relevance >= 0.3
+    assert "reported by an Australian source" in by_source["feed_b"].au.reasons
     assert all(any(t.type == "NEW_FACT" for t in e.timeline) for e in events)
 
 

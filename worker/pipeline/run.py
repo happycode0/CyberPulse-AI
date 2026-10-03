@@ -34,6 +34,7 @@ from worker.collectors.http import (
     prune_cache,
 )
 from worker.collectors.json_api import parse_json_api
+from worker.db.au import load_au_facts, save_au
 from worker.db.events import find_candidates, load_events, next_event_id
 from worker.db.ingest import (
     add_relationship,
@@ -58,6 +59,7 @@ from worker.db.sources import (
     upsert_registry,
 )
 from worker.models import (
+    Event,
     HealthStatus,
     Lane,
     LifecycleState,
@@ -69,17 +71,17 @@ from worker.models import (
     SourceHealth,
 )
 from worker.pipeline.assemble import build_new_event, plan_update
+from worker.pipeline.au import assess_au
 from worker.pipeline.health import assess, next_lifecycle_state
 from worker.pipeline.normalise import normalise
 from worker.pipeline.resolve import Decision, resolve
-from worker.pipeline.score import ScoringConfig, score_event
+from worker.pipeline.score import DEFAULT_SCORING_PATH, ScoringConfig, score_event
 from worker.sources.registry import load_registry, sources_for_lane
 
 logger = logging.getLogger(__name__)
 
 CONFIG_DIR = Path(__file__).resolve().parents[2] / "config"
 DEFAULT_REGISTRY_PATH = CONFIG_DIR / "sources.yaml"
-DEFAULT_SCORING_PATH = CONFIG_DIR / "scoring.yaml"
 
 MAX_CONCURRENT_FETCHES = 10
 # Hard ceiling per source across all retries; `fetch` has its own per-attempt timeout.
@@ -321,10 +323,20 @@ def _store_source(engine: Engine, c: Collected, *, now: datetime) -> SourceOutco
     )
 
 
+def _assess_au(conn: Connection, events: Sequence[Event], config: ScoringConfig) -> list[Event]:
+    """Set each event's AU relevance from its facts (worker/pipeline/au.py) before it is scored,
+    since AU relevance is one of prominence's terms."""
+    facts = load_au_facts(conn, [e.event_id for e in events])
+    assessed = {e.event_id: assess_au(facts[e.event_id], config.au) for e in events}
+    save_au(conn, assessed)
+    return [e.model_copy(update={"au": assessed[e.event_id]}) for e in events]
+
+
 def rescore(
     engine: Engine, config: ScoringConfig, touched: Iterable[str], *, now: datetime
 ) -> list[str]:
-    """Rescore every event whose stored score may be stale. Returns error messages.
+    """Rescore every event whose stored score may be stale, AU relevance first. Returns error
+    messages.
 
     Public because the ground-truth sync needs it too: KEV listings and CVSS bands are two of the
     three inputs to `urgency`, so a sync that changed them has left stored scores wrong in exactly
@@ -341,9 +353,8 @@ def rescore(
             chunk = ids[i : i + RESCORE_BATCH]
             try:
                 with conn.begin_nested():
-                    save_scores(
-                        conn, (score_event(e, config, now=now) for e in load_events(conn, chunk))
-                    )
+                    events = _assess_au(conn, load_events(conn, chunk), config)
+                    save_scores(conn, (score_event(e, config, now=now) for e in events))
             except Exception as exc:
                 logger.exception("scoring batch failed")
                 errors.append(_short(f"scoring: {len(chunk)} events skipped: {exc!r}"))
