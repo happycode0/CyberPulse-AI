@@ -5,8 +5,9 @@ import pytest
 from apscheduler.triggers.cron import CronTrigger
 
 from worker import scheduler
-from worker.models import Lane
 from worker.ai.enrich import EnrichSummary
+from worker.ai.mitre import MitreSummary
+from worker.models import Lane
 from worker.publish.push import PushResult
 from worker.scheduler import ENRICH_JOB_ID, GROUNDTRUTH_JOB_ID, build_scheduler, job_id
 
@@ -186,13 +187,24 @@ async def test_a_failed_run_is_swallowed_so_the_next_tick_still_fires(lane_job):
 def enrich_job(monkeypatch):
     """The scheduled enrichment pass with the pass and the publisher stubbed."""
     log = []
-    state = {"summary": EnrichSummary(), "raises": False}
+    state = {
+        "summary": EnrichSummary(),
+        "raises": False,
+        "mitre": MitreSummary(),
+        "mitre_raises": False,
+    }
 
     async def fake_enrich_pending(*, layer):
         log.append(("enrich", layer))
         if state["raises"]:
             raise RuntimeError("ledger write failed")
         return state["summary"]
+
+    async def fake_suggest_techniques(*, layer):
+        log.append(("mitre", layer))
+        if state["mitre_raises"]:
+            raise RuntimeError("ledger write failed")
+        return state["mitre"]
 
     async def fake_publish_now():
         log.append(("publish",))
@@ -202,6 +214,7 @@ def enrich_job(monkeypatch):
         log.append(("push",))
 
     monkeypatch.setattr(scheduler, "enrich_pending", fake_enrich_pending)
+    monkeypatch.setattr(scheduler, "suggest_techniques", fake_suggest_techniques)
     monkeypatch.setattr(scheduler, "publish_now", fake_publish_now)
     monkeypatch.setattr(scheduler, "push_now", fake_push_now)
     monkeypatch.setattr(scheduler, "AiLayer", lambda: "the layer")
@@ -213,13 +226,36 @@ async def test_an_enrichment_that_changed_something_is_published_and_pushed(enri
     log, state = enrich_job
     state["summary"].done["brief"] = 1
     await scheduler._enrich_job()
-    assert log == [("enrich", "the layer"), ("publish",), ("push",)]
+    assert log == [("enrich", "the layer"), ("mitre", "the layer"), ("publish",), ("push",)]
 
 
 async def test_an_enrichment_that_changed_nothing_is_not_published(enrich_job):
     log, _ = enrich_job
     await scheduler._enrich_job()
-    assert log == [("enrich", "the layer")]
+    assert log == [("enrich", "the layer"), ("mitre", "the layer")]
+
+
+async def test_new_suggestions_alone_are_published(enrich_job):
+    log, state = enrich_job
+    state["mitre"].done = 1
+    await scheduler._enrich_job()
+    assert log[-2:] == [("publish",), ("push",)]
+
+
+async def test_suggestions_still_run_after_an_enrichment_that_raised(enrich_job):
+    log, state = enrich_job
+    state["raises"] = True
+    state["mitre"].done = 1
+    await scheduler._enrich_job()  # must not raise
+    assert log == [("enrich", "the layer"), ("mitre", "the layer"), ("publish",), ("push",)]
+
+
+async def test_suggestions_that_raise_do_not_stop_the_enrichment_publishing(enrich_job):
+    log, state = enrich_job
+    state["summary"].done["brief"] = 1
+    state["mitre_raises"] = True
+    await scheduler._enrich_job()  # must not raise
+    assert log[-2:] == [("publish",), ("push",)]
 
 
 async def test_the_ai_layer_is_kept_between_passes(enrich_job, monkeypatch):
@@ -229,11 +265,11 @@ async def test_the_ai_layer_is_kept_between_passes(enrich_job, monkeypatch):
     monkeypatch.setattr(scheduler, "AiLayer", lambda: made.append(1) or "the layer")
     await scheduler._enrich_job()
     await scheduler._enrich_job()
-    assert made == [1] and [entry[1] for entry in log] == ["the layer", "the layer"]
+    assert made == [1] and {entry[1] for entry in log} == {"the layer"} and len(log) == 4
 
 
 async def test_a_failed_enrichment_is_swallowed_and_not_published(enrich_job):
     log, state = enrich_job
     state["raises"] = True
     await scheduler._enrich_job()  # must not raise
-    assert log == [("enrich", "the layer")]
+    assert log == [("enrich", "the layer"), ("mitre", "the layer")]

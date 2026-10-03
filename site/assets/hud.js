@@ -627,18 +627,53 @@ function cveBlock(cves) {
           h('span', { class: 'chip', text: `EPSS ${f.epssScore}` }),
           h('span', { class: cve.kev?.listed ? 'chip chip--kev' : 'chip', text: f.kev }),
           h('span', { class: 'mono cve-row__vector', text: `VECTOR ${f.cvssVector} · SOURCE ${f.cvssSource}` }),
+          advisoryList(cve.advisories),
         );
       }),
     ),
   );
 }
 
+// OSV and GitHub advisories: which packages are affected and which versions fix them. GitHub's
+// rating is its own, shown beside the CVSS chain rather than in it.
+function advisoryList(advisories) {
+  if (!advisories || !advisories.length) return null;
+  return h(
+    'ul',
+    { class: 'advisory-list' },
+    advisories.map((a) => {
+      const href = safeUrl(a.url);
+      const label = String(a.id);
+      const rating = a.severity
+        ? `${a.source === 'ghsa' ? 'GITHUB' : 'OSV'} ${String(a.severity).toUpperCase()}${a.reviewed ? '' : ' · UNREVIEWED'}`
+        : null;
+      return h(
+        'li',
+        { class: 'advisory-row' },
+        href
+          ? h('a', { class: 'mono', href, rel: 'noopener noreferrer nofollow', target: '_blank', text: label })
+          : h('span', { class: 'mono', text: label }),
+        rating ? h('span', { class: 'chip', text: rating }) : null,
+        (a.packages || []).map((pkg) =>
+          h('span', {
+            class: 'mono advisory-row__pkg',
+            text: `${pkg.ecosystem} ${pkg.name} · ${pkg.fixed && pkg.fixed.length ? `FIXED IN ${pkg.fixed.join(', ')}` : 'NO FIX YET'}`,
+          }),
+        ),
+      );
+    }),
+  );
+}
+
 function mitreList(techniques) {
   if (!techniques.length) return null;
+  const atlas = techniques.some((m) => String(m.id).startsWith('AML.'));
+  const attack = techniques.some((m) => !String(m.id).startsWith('AML.'));
+  const matrices = [attack ? 'ATT&CK' : null, atlas ? 'ATLAS' : null].filter(Boolean).join(' / ');
   return h(
     'div',
     { class: 'detail-list' },
-    h('h3', { class: 'detail-label', text: 'MITRE ATT&CK TECHNIQUES' }),
+    h('h3', { class: 'detail-label', text: `MITRE ${matrices} TECHNIQUES` }),
     h(
       'ul',
       { class: 'mitre-list' },

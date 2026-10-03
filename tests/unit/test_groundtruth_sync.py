@@ -16,8 +16,16 @@ from worker.groundtruth import sync as sync_module
 from worker.groundtruth.epss import EpssSnapshot
 from worker.groundtruth.errors import GroundTruthError
 from worker.groundtruth.kev import KevCatalogue
-from worker.groundtruth.registers import RecordLookup
-from worker.groundtruth.sync import CvssTally, SyncSummary, classify_lookup, sync_groundtruth
+from worker.groundtruth.mitre import Catalogue, Release, Technique
+from worker.groundtruth.osv import Advisory
+from worker.groundtruth.registers import AdvisoryLookup, RecordLookup
+from worker.groundtruth.sync import (
+    AdvisoryTally,
+    CvssTally,
+    SyncSummary,
+    classify_lookup,
+    sync_groundtruth,
+)
 from worker.models import EpssScore, KevEntry
 
 NOW = datetime(2026, 10, 2, 2, 25, tzinfo=UTC)
@@ -63,6 +71,12 @@ def wiring(monkeypatch):
         calls=[],
         rescored=[],
         batch_limits=[],
+        advisory_due=[],
+        advisory_lookups={},
+        advisory_tally=AdvisoryTally(),
+        advisory_writes=[],
+        mitre_loaded=[],
+        mitre_errors=[],
     )
 
     async def fetch_kev(client):
@@ -108,6 +122,21 @@ def wiring(monkeypatch):
         state.rescored.append(sorted(touched))
         return []
 
+    def due_for_advisories(engine, now, limit):
+        return state.advisory_due[:limit]
+
+    async def fetch_advisories(client, cve_id):
+        state.calls.append(f"advisories:{cve_id}")
+        return state.advisory_lookups.get(cve_id, AdvisoryLookup("absent", detail="HTTP 404"))
+
+    def write_advisories(engine, lookups, now):
+        state.advisory_writes.append(lookups)
+        return state.advisory_tally
+
+    async def sync_mitre(client, engine):
+        state.calls.append("sync_mitre")
+        return list(state.mitre_loaded), list(state.mitre_errors)
+
     for name, impl in {
         "fetch_kev": fetch_kev,
         "fetch_epss": fetch_epss,
@@ -119,6 +148,10 @@ def wiring(monkeypatch):
         "_write_cvss": write_cvss,
         "_write_severity": write_severity,
         "rescore": rescore,
+        "_due_for_advisories": due_for_advisories,
+        "fetch_advisories": fetch_advisories,
+        "_write_advisories": write_advisories,
+        "_sync_mitre": sync_mitre,
     }.items():
         monkeypatch.setattr(sync_module, name, impl)
     monkeypatch.setattr(sync_module, "get_engine", lambda: SimpleNamespace())
@@ -126,7 +159,8 @@ def wiring(monkeypatch):
 
 
 async def run(**kwargs) -> SyncSummary:
-    return await sync_groundtruth(now=NOW, cvss_batch=0, **kwargs)
+    kwargs.setdefault("cvss_batch", 0)
+    return await sync_groundtruth(now=NOW, **kwargs)
 
 
 # --- the failure model: one register down must not silence the others -------------------------
@@ -217,6 +251,131 @@ async def test_a_lookup_that_raises_becomes_that_cves_error_and_not_the_pass(wir
     summary = await sync_groundtruth(now=NOW, cvss_batch=2)
     assert summary.cvss is wiring.cvss_tally  # the write still happened
     assert "write_cvss:2" in wiring.calls
+
+
+# --- the advisory batch -----------------------------------------------------------------------
+
+
+def advisory(advisory_id: str = "GHSA-2222-3333-4444") -> Advisory:
+    return Advisory(
+        id=advisory_id,
+        source="ghsa",
+        summary=None,
+        severity="high",
+        reviewed=True,
+        packages=(),
+        published=None,
+        modified=None,
+        aliases=("CVE-2024-3400",),
+    )
+
+
+async def test_advisories_are_read_for_the_due_cves_and_written(wiring):
+    wiring.advisory_due = ["CVE-2024-3400", "CVE-2024-3401"]
+    found = AdvisoryLookup("found", (advisory(),), complete=True)
+    wiring.advisory_lookups = {"CVE-2024-3400": found}
+    wiring.advisory_tally = AdvisoryTally(found=1, absent=1, recorded=1)
+    summary = await run(advisory_batch=5)
+    assert {"advisories:CVE-2024-3400", "advisories:CVE-2024-3401"} <= set(wiring.calls)
+    written = dict(wiring.advisory_writes[0])
+    assert written["CVE-2024-3400"] is found
+    assert written["CVE-2024-3401"].outcome == "absent"
+    assert summary.advisories.recorded == 1
+    assert summary.changed_anything is True  # a new fixed version is something to republish
+
+
+async def test_a_zero_advisory_batch_asks_osv_nothing(wiring):
+    wiring.advisory_due = ["CVE-2024-3400"]
+    await run(advisory_batch=0)
+    assert not any(c.startswith("advisories:") for c in wiring.calls)
+    assert wiring.advisory_writes == []
+
+
+async def test_osv_throttling_stops_the_advisory_batch(wiring, monkeypatch):
+    async def throttled(client, cve_id):
+        return None
+
+    monkeypatch.setattr(sync_module, "fetch_advisories", throttled)
+    wiring.advisory_due = [f"CVE-2024-{n:04d}" for n in range(10)]
+    summary = await run(advisory_batch=10)
+    assert summary.advisories.backed_off is True
+    assert any(e.startswith("advisories:") for e in summary.errors)
+    assert wiring.advisory_writes == [[]]
+
+
+async def test_an_advisory_lookup_that_raises_is_that_cves_error(wiring, monkeypatch):
+    async def explode(client, cve_id):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(sync_module, "fetch_advisories", explode)
+    wiring.advisory_due = ["CVE-2024-3400"]
+    await run(advisory_batch=1)
+    [(cve_id, lookup)] = wiring.advisory_writes[0]
+    assert (cve_id, lookup.outcome, lookup.complete) == ("CVE-2024-3400", "error", False)
+
+
+# --- the MITRE catalogues ----------------------------------------------------------------------
+
+
+async def test_mitre_is_checked_on_every_pass_unless_asked_not_to(wiring):
+    await run()
+    assert "sync_mitre" in wiring.calls
+    wiring.calls.clear()
+    await run(mitre=False)
+    assert "sync_mitre" not in wiring.calls
+
+
+async def test_a_mitre_failure_is_an_error_and_not_a_republish(wiring):
+    wiring.mitre_errors = ["mitre atlas: down"]
+    summary = await run()
+    assert summary.errors == ["mitre atlas: down"]
+    assert summary.changed_anything is False
+
+
+def _release(matrix: str, version: str) -> Release:
+    return Release(matrix, version, f"https://example.test/{matrix}", None)
+
+
+async def test_sync_mitre_downloads_only_a_release_not_loaded_yet(monkeypatch):
+    releases = {
+        "enterprise": _release("enterprise", "ATT&CK v19.2"),
+        "atlas": _release("atlas", "ATLAS 2026.09"),
+    }
+    downloaded, stored = [], []
+
+    async def fetch_release(client, matrix):
+        return releases[matrix]
+
+    async def fetch_catalogue(client, release):
+        downloaded.append(release.version)
+        return Catalogue(release, (Technique("AML.T0051", "LLM Prompt Injection", (), None),))
+
+    monkeypatch.setattr(sync_module, "fetch_mitre_release", fetch_release)
+    monkeypatch.setattr(sync_module, "fetch_mitre_catalogue", fetch_catalogue)
+    monkeypatch.setattr(
+        sync_module,
+        "_loaded_mitre",
+        lambda engine, matrix: {"ATT&CK v19.2"} if matrix == "enterprise" else set(),
+    )
+    monkeypatch.setattr(
+        sync_module, "_load_mitre", lambda engine, c: stored.append(c.release.version) or 1
+    )
+    loaded, errors = await sync_module._sync_mitre(None, None)
+    assert downloaded == stored == loaded == ["ATLAS 2026.09"]
+    assert errors == []
+
+
+async def test_sync_mitre_keeps_going_when_one_matrix_is_unreadable(monkeypatch):
+    async def fetch_release(client, matrix):
+        if matrix == "enterprise":
+            raise GroundTruthError("attack index unavailable: timeout")
+        return _release("atlas", "ATLAS 2026.09")
+
+    monkeypatch.setattr(sync_module, "fetch_mitre_release", fetch_release)
+    monkeypatch.setattr(sync_module, "_loaded_mitre", lambda engine, matrix: {"ATLAS 2026.09"})
+    loaded, errors = await sync_module._sync_mitre(None, None)
+    assert loaded == []
+    assert errors == ["mitre enterprise: attack index unavailable: timeout"]
 
 
 # --- what gets rescored ------------------------------------------------------------------------
