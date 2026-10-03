@@ -82,7 +82,7 @@ work=$(mktemp -d)
 finish() {
   local rc=$?
   if [[ -n $container ]]; then
-    docker rm -f "$container" </dev/null >/dev/null 2>&1 || true
+    docker rm -f -v "$container" </dev/null >/dev/null 2>&1 || true
     echo "removed the throwaway container $container"
   fi
   rm -rf "$work"

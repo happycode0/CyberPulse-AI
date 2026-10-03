@@ -193,9 +193,11 @@ def needs_stdin(call: dict) -> bool:
 def assert_safe_docker_use(calls: list[dict]) -> None:
     for call in calls:
         argv = call["argv"]
-        # Nothing that removes volumes: no `compose down` at all, no `rm -v`, no `volume`.
+        # Nothing that removes volumes: no `compose down` at all, no `volume`, and `rm -v` only
+        # for the rehearsal's own throwaway container, whose anonymous volume goes with it.
         assert "down" not in argv and argv[0] != "volume", call
-        assert not (argv[0] == "rm" and {"-v", "--volumes"} & set(argv)), call
+        if argv[0] == "rm" and {"-v", "--volumes"} & set(argv):
+            assert argv[-1].startswith("cyberpulse-restore-"), call
         if not needs_stdin(call):
             assert call["stdin"] == "null", f"no </dev/null: {joined(call)}"
 
@@ -410,7 +412,7 @@ def test_rehearse_passes_and_always_removes_its_container(stack):
 
     restores = [c for c in calls if c["argv"][0] == "exec" and "pg_restore" in c["argv"]]
     assert len(restores) == 2 and all(name in c["argv"] for c in restores)
-    assert calls[-1]["argv"] == ["rm", "-f", name]
+    assert calls[-1]["argv"] == ["rm", "-f", "-v", name]
 
 
 def test_rehearse_fails_when_row_counts_differ(stack):
