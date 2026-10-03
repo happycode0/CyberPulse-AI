@@ -1,6 +1,6 @@
 """The two discovery passes the scheduler runs (worker/scheduler.py).
 
-- **The nightly search**, at 03:00 Sydney time: Tavily searches on CyberPulse's beat, within the
+- **The nightly search**, at 03:10 Sydney time: Tavily searches on CyberPulse's beat, within the
   day's credits. Each result's host is recorded as found, with the result's title and link as
   evidence, unless it is registered already or a platform (`skip_hosts`). Nothing is fetched.
 - **SERAPH's gate**, every 4 hours: look for the feed of the hosts found, probe each candidate's

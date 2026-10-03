@@ -17,8 +17,8 @@ from worker.notify.telegram import SendResult
 from worker.settings import Settings
 
 SITE = "https://example.org/site/"
-# 07:00 in Sydney on Saturday 3 October 2026 (AEST, UTC+10).
-NOW = datetime(2026, 10, 2, 21, 0, tzinfo=UTC)
+# 07:10 in Sydney on Saturday 3 October 2026 (AEST, UTC+10): when the digest goes.
+NOW = datetime(2026, 10, 2, 21, 10, tzinfo=UTC)
 
 
 def event(event_id="evt-2026-000001", **overrides):
@@ -43,7 +43,7 @@ def digest(**overrides):
              "error": "HTTP 503"},
             {"source_id": "new-feed", "was": None, "now": "ok", "checked_at": NOW, "error": None},
         ],
-        "runs": {"fast": {"runs": 96, "unfinished": 1, "new_events": 12, "updated_events": 3,
+        "runs": {"fast": {"runs": 24, "unfinished": 1, "new_events": 12, "updated_events": 3,
                           "archived_events": 0, "errors": 2}},
         "cost_this_month": {"month": "2026-10", "calls": 437, "cost_usd": 0.0461,
                             "unknown_cost_calls": 0},
@@ -67,14 +67,14 @@ def test_the_digest_reads_as_a_morning_briefing():
     text = daily_digest(digest(), site_url=SITE)
     lines = text.split("\n")
     assert lines[0] == "CyberPulse-AI · daily digest · Sat 3 Oct 2026"
-    assert lines[1] == "The 24 hours to 07:00 Sydney time."
+    assert lines[1] == "The 24 hours to 07:10 Sydney time."
     assert "42 new, 7 updated, 3 merged; 812 standing." in text
     assert "30 of the new were a feed's back catalogue, archived on arrival." in text
     assert "1. HIGH · A title with breaks (AU 0.91, reported in Australia)" in text
     assert "   https://example.org/site/event.html?id=evt-2026-000001" in text
     assert "2. CRITICAL · A title with breaks\n" in text  # no AU reading, no brackets
     assert "- acsc-alerts: ok → error" in text and "- new-feed: new → ok" in text
-    assert "- fast: 96 runs, 12 new events, 2 errors, 1 unfinished" in text
+    assert "- fast: 24 runs, 12 new events, 2 errors, 1 unfinished" in text
     assert "437 calls, $0.05." in text
     assert lines[-1] == SITE
 
@@ -106,7 +106,7 @@ def test_an_alert_names_why_and_links_the_event():
         "",
         "CRITICAL · Exploited flaw in a gateway",
         "AU 0.80",
-        "First seen 06:55 Sydney time, Sat 3 Oct 2026 · new",
+        "First seen 07:05 Sydney time, Sat 3 Oct 2026 · new",
         "",
         "https://example.org/site/event.html?id=evt-2026-000009",
     ]
@@ -188,7 +188,7 @@ async def test_the_digest_goes_once_per_sydney_date(db):
     again = await jobs.send_daily_digest(None, SETTINGS, now=NOW + timedelta(hours=1),
                                          channel=channel)
     assert (first.sent, again.sent, len(channel.sent)) == (1, 0, 1)
-    # 07:00 Sydney is still 2 October in UTC; the key is the Sydney date.
+    # 07:10 Sydney is still 2 October in UTC; the key is the Sydney date.
     assert list(db["rows"]) == ["daily_digest:2026-10-03"]
 
 
@@ -250,7 +250,7 @@ def test_an_update_says_what_changed_and_links_the_event():
     assert text.splitlines()[0] == "CyberPulse-AI · update · Australia"
     assert "CRITICAL · Hospital records breach" in text
     assert "Patch out: The vendor released a fix for the flaw." in text
-    assert "Status developing · 07:00 Sydney time, Sat 3 Oct 2026" in text
+    assert "Status developing · 07:10 Sydney time, Sat 3 Oct 2026" in text
     assert text.endswith(event_url(SITE, "evt-2026-000042"))
     assert "Source:" not in text
 

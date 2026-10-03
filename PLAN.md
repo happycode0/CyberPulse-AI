@@ -113,16 +113,30 @@ container's own environment, its database URL included: see
 1. **It breaks the project's own failure rule** (§51: *"One component must not kill the
    whole platform"*). If Paperclip is down or mid-upgrade, collection stops.
 2. **Issue-log flooding.** Every routine firing creates a tracked issue. A 15-minute FAST
-   lane = ~96 issues/day = ~35,000/year of pure noise.
+   lane, as first planned, = ~96 issues/day = ~35,000/year of pure noise. Hourly is still
+   ~8,800/year.
 3. **Token cost.** Paperclip's docs are blunt: *"Each wakeup costs tokens."* Timer wakes
    fire even with no work to do.
 
 **Resolution — hybrid.** The worker container runs its own APScheduler for the
-deterministic FAST (15 min) and NORMAL (4 h) lanes and posts a run summary to Paperclip
+deterministic FAST (hourly) and NORMAL (4 h) lanes and posts a run summary to Paperclip
 for visibility. Paperclip routines (cron, `Australia/Sydney`) own the DEEP lane and all
 agent judgment work. LLM agents have `heartbeat.enabled = false` and wake on assignment,
 @-mention or routine only. Deterministic agents use the `http`/`process` adapters, which
 cost no tokens.
+
+*Decided 2026-10-04: the FAST lane runs every hour, at :00 UTC, not every 15 minutes.* The
+owner approved it, for stability. Four runs an hour left only short gaps to deploy or
+restart the worker in, and a restart across a run's minute loses that run, because the job
+store is in memory. An hourly run leaves :10 to :45 free. It also means a quarter of the
+fetches, publishes and pushes, so less load on the feeds, the VM and the data branch. The
+cost is latency: an item can take up to an hour to reach the site, and a critical alert
+for Australia up to an hour and 3 minutes. The NORMAL lane stays every 4 hours. Enrichment
+stays twice an hour (:05 and :35), so it keeps pace with what arrives.
+
+The interval is one constant, `FAST_INTERVAL_MINUTES` in `worker/cadence.py`. The FAST
+cron, the alert minutes and the watchdog's FAST thresholds all follow it, so going back to
+30 minutes is a one-line change.
 
 ### 2.4 The budget will not stretch as far as the prompts assume
 
@@ -686,7 +700,7 @@ days — archive, never delete. All of it lives in versioned `config/scoring.yam
 
 | Lane | Cadence | Scheduler | Sources | Purpose |
 |---|---|---|---|---|
-| **FAST** | 15 min | Worker | ACSC alerts/advisories, CISA advisories + KEV, CVE deltas, major CERTs, critical vendor advisories | Threat radar |
+| **FAST** | Hourly, at :00 UTC (§2.3) | Worker | ACSC alerts/advisories, CISA advisories + KEV, CVE deltas, major CERTs, critical vendor advisories | Threat radar |
 | **NORMAL** | 4 h | Worker | AU + global news, vendor blogs, AI sources, research, GitHub advisories, YouTube, community | Main feed |
 | **DEEP** | Daily 03:00 AEST | Paperclip routine | Tavily discovery, source-quality analysis, trends, long-form research, follow-up sweep | Improvement |
 
@@ -810,7 +824,7 @@ fitness are different questions.
 
 **`:batch` variants are also excluded** despite attractive pricing (e.g.
 `openai/gpt-6-luna:batch` at $0.05/$0.25). Batch processing is asynchronous, which cannot
-serve a 15-minute collection lane.
+serve an hourly collection lane.
 
 **Why tier 0 is viable.** OpenRouter's free limits are **20 requests/minute and 1,000
 requests/day** once an account has purchased ≥10 credits all-time — which our $20 top-up
@@ -825,7 +839,7 @@ per month), about **12% of the free daily cap**. `GET /api/v1/key` reports
 - `:free` variants appear and disappear. A `models: [...]` fallback chain ending in a **paid** tier-1 model is mandatory, so a withdrawn free model degrades instead of failing.
 - On 429, fall through to tier 1 rather than retrying — a daily cap does not clear with backoff.
 - Free routing generally requires enabling the *"providers that may train on prompts"* setting, which OpenRouter keeps **separate for free and paid models**. Our inputs are public news so exposure is low, but our enrichment prompts are our own work. Tier 0 is therefore restricted to mechanical tasks (classify, extract, tag) and never carries editorial reasoning.
-- Free endpoints are deprioritised, so latency is higher and failures more common. Acceptable for a 15-minute batch; never on a publish-blocking path.
+- Free endpoints are deprioritised, so latency is higher and failures more common. Acceptable for a half-hourly enrichment batch; never on a publish-blocking path.
 
 **Provider routing matters as much as model choice.** The `/models` list price is the
 default route; per-provider prices differ by up to **15×** for the same model. Verified
@@ -977,7 +991,7 @@ golden set of ~30 events with human-verified expected enrichment is what actuall
 | Schema compliance rate | Hard gate. A model that cannot reliably satisfy `json_schema` is unusable no matter how cheap |
 | Agreement with golden labels | Severity, entities, CVE extraction, AU relevance |
 | **Refusal rate on security content** | A model that declines to summarise exploit or malware detail is worthless to this platform. No generic benchmark measures this, and it is the failure mode most likely to disqualify an otherwise strong candidate |
-| p95 latency | Must fit inside the 15-minute lane |
+| p95 latency | A batch must finish well inside the half hour between enrichment passes |
 | Measured cost per event | From `usage.cost`, not estimated from a price table |
 
 **Caveat on the published datasets, stated plainly:** session cost and adoption are
