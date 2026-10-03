@@ -60,7 +60,7 @@ What keeps it from merging things that only look alike:
   A story naming both can still gather them, as with the NetScaler pair.
 - **One outlet's house style is not a story.** triskele's "Critical Fortinet FortiOS … Under
   Active Exploitation" and "Critical MikroTik RouterOS … under Active Exploitation" share only
-  the template. Weighted words never join two events that a single outlet alone reported.
+  the template. Weighted words never join two events that one outlet reported both of.
 - **Weights need a corpus.** Under 100 headlines every word looks rare, so the weighted question
   waits (a fresh install merges nothing on words alone).
 

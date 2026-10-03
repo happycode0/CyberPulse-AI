@@ -559,12 +559,15 @@ def test_same_story_adds_the_weighted_rung_within_72_hours():
     a3 = story_keys("KillSec claims Medibank", (), (), NOW, registers=("acsc",))
     b3 = story_keys("Medibank confirms KillSec breach", (), (), NOW, registers=("acsc",))
     assert same_story(a3, b3, weights) is None
-    # Nor do two pieces only one outlet wrote: that is its house style.
+    # Nor do two pieces one outlet wrote both of: that is its house style. Still so once
+    # one of them has gathered another outlet's report.
     a4 = story_keys("KillSec claims Medibank ransomware attack", (), (), NOW, outlets=("wire",))
     b4 = story_keys("Medibank confirms KillSec breach", (), (), NOW, outlets=("wire",))
     assert same_story(a4, b4, weights) is None
     b5 = story_keys("Medibank confirms KillSec breach", (), (), NOW, outlets=("wire", "itnews"))
-    assert same_story(a4, b5, weights)[0] == "weighted"
+    assert same_story(a4, b5, weights) is None
+    b6 = story_keys("Medibank confirms KillSec breach", (), (), NOW, outlets=("itnews",))
+    assert same_story(a4, b6, weights)[0] == "weighted"
 
 
 def test_stored_events_naming_only_different_cves_are_two_stories_on_every_rung():
