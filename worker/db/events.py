@@ -221,6 +221,7 @@ def _hydrate(conn: Connection, event_ids: Sequence[str], *, candidates: bool) ->
             title=r["title"],
             summary=r["summary"],
             why_it_matters=r["why_it_matters"],
+            resolution=r["resolution"],
             domains=r["domains"],
             categories=r["categories"],
             ai_subdomain=r["ai_subdomain"],

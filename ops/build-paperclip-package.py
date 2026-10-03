@@ -73,7 +73,7 @@ ROUTINE_TEXT = {
                            "Review the candidate events for your beat in the current desk digest."),
     "AI desk digest": ("[DIGEST] AI desk",
                        "Review the candidate events for your beat in the current desk digest."),
-    "Follow-up": ("[FOLLOW-UP] Sweep", "Check every developing and monitoring event for material change."),
+    "Follow-up": ("[FOLLOW-UP] Sweep", "Work the follow-up queue: report on each task due."),
     "Source discovery": ("[DISCOVERY] Nightly", "Run discovery searches, plus any open [GAP] topics."),
     "Model scan": ("[MODEL] Daily scan", "Read the worker's results and report."),
     "Model gauntlet": ("[MODEL] Weekly gauntlet", "Read the worker's results and report."),

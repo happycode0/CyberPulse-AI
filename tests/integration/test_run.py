@@ -216,6 +216,13 @@ async def test_second_source_reporting_same_story_merges_and_corroborates(
             "select count(*) from events where last_independent_confirmation is not null"
         )).scalar_one()
     assert n_sources == 7 and confirmed == 7
+    # Confirmed, so no longer new (worker/pipeline/status.py), and each status set without error.
+    assert not [e for e in s.errors if e.startswith("status")]
+    with pg_engine.connect() as conn:
+        statuses = set(conn.execute(text(
+            "select status from events where last_independent_confirmation is not null"
+        )).scalars())
+    assert statuses and statuses <= {"active", "monitoring", "archived"}
 
 
 async def test_source_health_is_recorded_with_stale_detection(pg_engine, respx_mock, registry):

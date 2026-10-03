@@ -9,7 +9,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from worker.db.digest import ESCALATE_AU_RELEVANCE
-from worker.db.notifications import AlertEvent
+from worker.db.notifications import AlertEvent, UpdateEntry
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 DIGEST_TOP = 5
@@ -146,5 +146,44 @@ def critical_au_alert(event: AlertEvent, *, site_url: str) -> str:
         f"First seen {seen:%H:%M} Sydney time, {_day(event.first_seen)} · {event.status}",
         "",
         event_url(site_url, event.event_id),
+    ]
+    return "\n".join(lines)
+
+
+CHANGE_WORDS = {
+    "NEW_FACT": "New",
+    "NEW_CVE": "New CVE",
+    "NEW_EXPLOIT": "Exploit published",
+    "EXPLOIT_CONFIRMED": "Exploitation confirmed",
+    "NEW_ACTOR": "Actor named",
+    "NEW_TARGET": "New targets",
+    "NEW_GEOGRAPHY": "New region",
+    "NEW_AU_EXPOSURE": "Australian exposure",
+    "NEW_IMPACT": "Impact",
+    "NEW_PATCH": "Patch out",
+    "NEW_MITIGATION": "Mitigation out",
+    "CORRECTION": "Correction",
+}
+
+
+def developing_update(entry: UpdateEntry, *, site_url: str) -> str:
+    """One change to an event that matters to Australia, as the worker records it."""
+    au = _au(entry.au_relevance, entry.au_directly_reported)
+    lines = [
+        "CyberPulse-AI · update · Australia",
+        "",
+        f"{entry.severity.upper()} · {_title(entry.title)}",
+    ]
+    if au:
+        lines.append(au)
+    what = CHANGE_WORDS.get(entry.type, entry.type.replace("_", " ").capitalize())
+    lines += ["", f"{what}: {_SPACE.sub(' ', entry.summary).strip()}"]
+    if entry.link:
+        lines.append(f"Source: {entry.link}")
+    at = _sydney(entry.created_at)
+    lines += [
+        f"Status {entry.status} · {at:%H:%M} Sydney time, {_day(entry.created_at)}",
+        "",
+        event_url(site_url, entry.event_id),
     ]
     return "\n".join(lines)
