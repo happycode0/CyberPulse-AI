@@ -6,6 +6,7 @@ from worker.collectors.web_page import WEB_PAGE_PARSERS
 from worker.pipeline.health import STALE_AFTER_DAYS
 from worker.pipeline.run import DEFAULT_REGISTRY_PATH, DEFAULT_SCORING_PATH, parse_body
 from worker.pipeline.score import ScoringConfig
+from worker.scheduler import SCHEDULE
 from worker.sources.registry import load_registry
 
 SOURCES = load_registry(DEFAULT_REGISTRY_PATH)
@@ -32,6 +33,15 @@ def test_every_enabled_committed_source_has_a_collector(source):
 def test_every_committed_frequency_has_a_staleness_threshold(source):
     """A misspelt frequency would silently get the daily threshold."""
     assert source.expected_frequency in STALE_AFTER_DAYS
+
+
+@pytest.mark.parametrize(
+    "source", [s for s in ENABLED if s.category == "ai_security"], ids=lambda s: s.id
+)
+def test_ai_sources_are_in_a_lane_the_worker_schedules(source):
+    """AI + CYBER is a core section (PLAN.md section 5 puts AI sources in NORMAL). DEEP has no
+    worker schedule, so an AI source left there is never read."""
+    assert source.lane in SCHEDULE
 
 
 def test_unsupported_type_raises_a_clear_error():
