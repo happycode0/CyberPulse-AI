@@ -1,0 +1,28 @@
+# Event status and DECKARD's follow-up queue (PLAN.md section 4, DECKARD; Stage 5).
+# worker/pipeline/status.py reads `status`; worker/db/followup.py reads `followup`.
+# None of this changes a score, so it is versioned with the code, not with scoring.yaml.
+
+# An event's status follows from what its record says (worker/pipeline/status.py):
+#   new         one report, nothing more yet
+#   active      an independent source has confirmed it
+#   developing  something material has changed since it was first reported
+#   monitoring  confirmed or changed, then quiet for `monitoring_after_days`
+#   contained   a patch or mitigation is out, and nothing material has happened since
+#   resolved    contained and quiet for `resolved_after_days`
+# A material change after the fix reopens it as developing. "Quiet" counts from the last
+# material update, which another outlet repeating the story never moves.
+status:
+  monitoring_after_days: 3
+  resolved_after_days: 14
+
+followup:
+  # Hours between DECKARD's checks on an event, by status and then severity. A severity not
+  # listed is not followed up in that status.
+  every_hours:
+    developing: {critical: 6, high: 12, medium: 24, unknown: 24}
+    monitoring: {critical: 24, high: 48, medium: 96, unknown: 96}
+  # The most one GET /ops/followup hands out, most important first. DECKARD sweeps four times a
+  # day, so this caps its work at twenty checks a day; the rest wait their turn.
+  batch: 5
+  # A resolved event at one of these severities gets a final-summary task.
+  final_summary: [critical, high]

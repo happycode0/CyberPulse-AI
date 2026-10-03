@@ -17,7 +17,7 @@ from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
-from worker.notify.jobs import send_critical_alerts, send_daily_digest
+from worker.notify.jobs import send_critical_alerts, send_daily_digest, send_developing_updates
 from worker.notify.telegram import Telegram
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
@@ -228,6 +228,10 @@ async def _alert_job() -> None:
         await send_critical_alerts(get_engine(), get_settings(), now=_now())
     except Exception:
         logger.exception("critical alert pass failed")
+    try:
+        await send_developing_updates(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("developing update pass failed")
 
 
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:

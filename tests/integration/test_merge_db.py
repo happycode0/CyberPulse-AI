@@ -219,10 +219,12 @@ def test_merging_moves_everything_and_keeps_one_of_each(conn):
     link(conn, L1, W)  # would point at itself: dropped
     link(conn, L2, OTHER)
     link(conn, OTHER, L1)
-    conn.execute(
-        text("insert into followup_tasks (event_id, kind, due_at) values (:e, 'recheck', :t)"),
-        {"e": L2, "t": NOW},
-    )
+    # The winner and a loser each have an open check; the winner keeps one open.
+    for e in (W, L2):
+        conn.execute(
+            text("insert into followup_tasks (event_id, kind, due_at) values (:e, 'check', :t)"),
+            {"e": e, "t": NOW},
+        )
     # An event merged into a loser earlier now points at the winner.
     insert_event(conn, "evt-2026-000004", "Older piece", at=NOW - timedelta(days=1))
     conn.execute(
@@ -279,7 +281,9 @@ def test_merging_moves_everything_and_keeps_one_of_each(conn):
     assert rows(
         conn, "select event_id, related_event_id from event_relationships order by 1, 2"
     ) == [(W, OTHER), (OTHER, W)]
-    assert rows(conn, "select event_id from followup_tasks") == [(W,)]
+    assert rows(conn, "select event_id, status from followup_tasks order by id") == [
+        (W, "pending"), (W, "cancelled")
+    ]
 
     for loser in (L1, L2, "evt-2026-000004"):
         row = event(conn, loser)

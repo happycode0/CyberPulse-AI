@@ -4,9 +4,14 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from worker.db.notifications import AlertEvent, Claim
+from worker.db.notifications import AlertEvent, Claim, UpdateEntry
 from worker.notify import jobs
-from worker.notify.messages import critical_au_alert, daily_digest, event_url
+from worker.notify.messages import (
+    critical_au_alert,
+    daily_digest,
+    developing_update,
+    event_url,
+)
 from worker.notify.telegram import SendResult
 from worker.settings import Settings
 
@@ -162,6 +167,7 @@ def db(monkeypatch):
     monkeypatch.setattr(jobs, "settle", settle)
     monkeypatch.setattr(jobs, "_read_digest", read_digest)
     monkeypatch.setattr(jobs, "_read_alerts", lambda engine, since: state["alerts"])
+    monkeypatch.setattr(jobs, "_read_updates", lambda engine, since: state.setdefault("updates", []))
     return state
 
 
@@ -223,3 +229,46 @@ async def test_the_alert_window_is_measured_back_from_now(db, monkeypatch):
     monkeypatch.setattr(jobs, "_read_alerts", lambda engine, since: seen.append(since) or [])
     await jobs.send_critical_alerts(None, SETTINGS, now=NOW, channel=Channel())
     assert seen == [NOW - jobs.ALERT_WINDOW]
+
+
+# --- Developing updates ---------------------------------------------------------------------------
+
+
+def update(entry_id=1, **overrides) -> UpdateEntry:
+    values = {
+        "entry_id": entry_id, "event_id": "evt-2026-000042", "title": "Hospital  records\nbreach",
+        "severity": "critical", "status": "developing", "au_relevance": 0.9,
+        "au_directly_reported": True, "type": "NEW_PATCH",
+        "summary": "The vendor released\n a fix for the flaw.", "created_at": NOW, "link": None,
+    }
+    return UpdateEntry(**{**values, **overrides})
+
+
+def test_an_update_says_what_changed_and_links_the_event():
+    text = developing_update(update(), site_url=SITE)
+    assert text.splitlines()[0] == "CyberPulse-AI · update · Australia"
+    assert "CRITICAL · Hospital records breach" in text
+    assert "Patch out: The vendor released a fix for the flaw." in text
+    assert "Status developing · 07:00 Sydney time, Sat 3 Oct 2026" in text
+    assert text.endswith(event_url(SITE, "evt-2026-000042"))
+    assert "Source:" not in text
+
+
+def test_an_update_from_deckard_names_its_source():
+    text = developing_update(update(type="NEW_FACT", link="https://example.org/a"), site_url=SITE)
+    assert "New: " in text and "Source: https://example.org/a" in text
+
+
+async def test_each_change_is_sent_once(db):
+    db["updates"] = [update(i) for i in range(7)]
+    channel = Channel()
+    first = await jobs.send_developing_updates(None, SETTINGS, now=NOW, channel=channel)
+    second = await jobs.send_developing_updates(None, SETTINGS, now=NOW, channel=channel)
+    third = await jobs.send_developing_updates(None, SETTINGS, now=NOW, channel=channel)
+    assert (first.sent, second.sent, third.sent) == (jobs.MAX_ALERTS_PER_PASS, 2, 0)
+    assert sorted(db["rows"]) == [f"developing_update:{i}" for i in range(7)]
+
+
+async def test_with_no_bot_no_update_is_read(db):
+    summary = await jobs.send_developing_updates(None, SETTINGS, now=NOW)
+    assert summary.skipped and db["rows"] == {} and "updates" not in db
