@@ -181,6 +181,9 @@ severities: 9 critical, 9 high, 9 medium and 3 low. Each has a severity from a r
 CISA's ADP, NVD or the vendor), names a CVE, and has enough of the feed's own text to work from.
 The record a model is shown is frozen when the event is pinned, and every result names the set's
 digest. To pin it again by hand, run `docker compose exec -T worker python -m worker --pin-golden-set`.
+About 10 AI stories join the set once you label them (`worker/ai/golden_ai.yaml`; the steps are
+in [the AI news beat](ai-news-beat.md#labelling-the-ai-test-stories)). They are judged on
+triage and the brief, never on severity. Until you label them they change nothing.
 
 **What it costs.** The gauntlet spends at most US$0.25 a month and US$0.08 a run, counted from
 the cost ledger. A model is tried only if its estimate fits what is left. The incumbent's result

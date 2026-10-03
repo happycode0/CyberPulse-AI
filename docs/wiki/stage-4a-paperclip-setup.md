@@ -228,7 +228,7 @@ AI-related developments, with an Australia-first perspective and global coverage
 update continuously, covering Australian and international cyber security news, threat
 intelligence, vulnerabilities, incidents, ransomware activity, data breaches, regulatory
 changes, emerging threats, AI security research, adversarial AI risks, model vulnerabilities,
-AI governance, AI safety, and significant AI industry developments that affect security.
+AI governance, AI safety, and significant AI industry developments.
 
 ACCURACY
 Accuracy always beats speed. Every claim must be traceable to a primary source. Every
@@ -293,7 +293,7 @@ GOLDEN RULES
 10. Every published insight must be explainable, traceable and defensible.
 ```
 
-That is: the first paragraph (from "Produce the most accurate…" to "…that affect security.") in
+That is: the first paragraph (from "Produce the most accurate…" to "…AI industry developments.") in
 **Description**, and all of it in the `CyberPulse charter` goal.
 
 ## 6. 🔴 Create the 8 agents

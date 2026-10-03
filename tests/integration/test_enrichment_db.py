@@ -25,7 +25,7 @@ from worker.db.enrichment import (
     task_states,
 )
 from worker.db.migrate import run_migrations
-from worker.models import AiSubdomain, Severity
+from worker.models import AiSignificance, AiSubdomain, Severity
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION, UNENRICHED
 
 NOW = datetime(2026, 10, 3, 1, 5, tzinfo=UTC)
@@ -77,14 +77,18 @@ def insert_event(
     source_summary=None,
     au_directly_reported=False,
     title="Acme VPN flaw exploited",
+    domains=(),
+    ai_significance=None,
 ):
     conn.execute(
         text(
             "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
             "enrichment_version, first_seen, last_seen, status, title, summary, source_summary, "
-            "severity, severity_source, prominence, pending_enrichment, au_directly_reported) "
+            "severity, severity_source, prominence, pending_enrichment, au_directly_reported, "
+            "domains, ai_significance) "
             "values (:id, :schema, :pipeline, :scoring, :enrichment, :now, :now, :status, "
-            ":title, :summary, :source_summary, :severity, :source, :prominence, :pending, :au)"
+            ":title, :summary, :source_summary, :severity, :source, :prominence, :pending, :au, "
+            "cast(:domains as text[]), :significance)"
         ),
         {
             "id": event_id,
@@ -102,6 +106,8 @@ def insert_event(
             "prominence": prominence,
             "pending": pending,
             "au": au_directly_reported,
+            "domains": list(domains),
+            "significance": ai_significance,
         },
     )
 
@@ -417,3 +423,73 @@ def test_the_evidence_detail_is_json(conn):
         text("select detail::text from evidence where event_id = :e"), {"e": EVENT}
     ).scalar_one()
     assert json.loads(raw)["model"] is None
+
+
+# ─── The AI beat (migration 016, docs/wiki/ai-news-beat.md) ───────────────────────────────────────
+
+
+def ai_triage(*domains, significance=AiSignificance.MAJOR, subdomain=AiSubdomain.AI_INDUSTRY):
+    return Triage(
+        domains=domains,
+        categories=("model-release",),
+        ai_subdomain=subdomain,
+        actors=(),
+        organisations=(),
+        products=(),
+        countries=(),
+        industries=(),
+        tags=(),
+        ai_significance=significance,
+    )
+
+
+def test_triage_puts_an_ai_story_on_the_ai_beat_and_takes_back_a_cyber_estimate(conn):
+    insert_event(conn, EVENT, domains=("ai",), severity="high", severity_source="ai_estimate")
+    apply_triage(conn, subject(conn, EVENT), ai_triage("ai"))
+    row = event_row(conn, EVENT)
+    assert row["domains"] == ["ai"] and row["ai_significance"] == "major"
+    assert (row["severity"], row["severity_source"]) == ("unknown", "unknown")
+
+
+def test_triage_leaves_an_official_score_and_a_story_on_both_desks_alone(conn):
+    insert_event(conn, EVENT, domains=("ai",), severity="low", severity_source="nvd")
+    insert_event(conn, EVENT_2, domains=("ai",), severity="high", severity_source="ai_estimate")
+    apply_triage(conn, subject(conn, EVENT), ai_triage("ai"))
+    apply_triage(
+        conn,
+        subject(conn, EVENT_2),
+        ai_triage("cybersecurity", "ai", subdomain=AiSubdomain.AI_SECURITY),
+    )
+    assert (event_row(conn, EVENT)["severity"], event_row(conn, EVENT)["severity_source"]) == (
+        "low",
+        "nvd",
+    )
+    row = event_row(conn, EVENT_2)
+    assert (row["severity"], row["severity_source"]) == ("high", "ai_estimate")
+    assert row["ai_significance"] == "major"
+
+
+def test_an_ai_only_story_gets_no_cyber_severity(conn):
+    insert_event(conn, EVENT, domains=("ai",))
+    assert apply_severity(conn, subject(conn, EVENT), FIRM, model="m", version=V1) is False
+    row = event_row(conn, EVENT)
+    assert (row["severity"], row["severity_source"]) == ("unknown", "unknown")
+    assert [d["applied"] for d in ai_evidence(conn, EVENT)] == [False]
+
+
+def test_an_ai_only_story_completes_without_a_severity_judgment(conn):
+    insert_event(conn, EVENT, domains=("ai",))
+    insert_event(conn, EVENT_2, domains=("cybersecurity", "ai"))
+    done(conn, EVENT, TaskName.TRIAGE, TaskName.BRIEF)
+    done(conn, EVENT_2, TaskName.TRIAGE, TaskName.BRIEF)
+    assert maybe_complete(conn, EVENT, version=V1) is True
+    assert maybe_complete(conn, EVENT_2, version=V1) is False  # on the cyber desk as well
+
+
+def test_the_table_keeps_ai_significance_to_the_ai_beat(conn):
+    with pytest.raises(Exception, match="events_ai_significance_needs_ai"), conn.begin_nested():
+        insert_event(conn, EVENT, domains=("cybersecurity",), ai_significance="major")
+    with pytest.raises(Exception, match="check"), conn.begin_nested():
+        insert_event(conn, EVENT_2, domains=("ai",), ai_significance="huge")
+    insert_event(conn, EVENT_3, domains=("ai",), ai_significance="notable")
+    assert event_row(conn, EVENT_3)["ai_significance"] == "notable"

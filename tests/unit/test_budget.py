@@ -181,6 +181,7 @@ CRITICAL = Work(Tier.STRONG, Severity.CRITICAL)
 KEV = Work(Tier.STRONG, Severity.MEDIUM, kev=True)
 HIGH = Work(Tier.STRONG, Severity.HIGH)
 DEVELOPING = Work(Tier.CHEAP, Severity.UNKNOWN, developing=True)
+AI_MAJOR = Work(Tier.CHEAP, Severity.UNKNOWN, ai_major=True)
 TAGGING = Work(Tier.FREE, Severity.LOW)
 
 
@@ -204,7 +205,7 @@ def test_conserve_keeps_tier_2_for_critical_and_kev_only():
 
 
 def test_minimal_is_tier_0_for_the_events_that_matter_most():
-    for work in (CRITICAL, KEV, HIGH, DEVELOPING):
+    for work in (CRITICAL, KEV, HIGH, DEVELOPING, AI_MAJOR):
         assert where(Mode.MINIMAL, work) is Tier.FREE
     assert where(Mode.MINIMAL, MEDIUM) is None
     assert where(Mode.MINIMAL, TAGGING) is None

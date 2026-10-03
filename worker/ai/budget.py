@@ -178,11 +178,19 @@ class Work:
     severity: Severity
     kev: bool = False
     developing: bool = False
+    # A major AI story: the AI desk's equivalent of critical (docs/wiki/ai-news-beat.md).
+    ai_major: bool = False
 
     @property
     def matters_most(self) -> bool:
-        """Critical, high, KEV-linked or developing: what MINIMAL still enriches (§7.4)."""
-        return self.severity in (Severity.CRITICAL, Severity.HIGH) or self.kev or self.developing
+        """Critical, high, KEV-linked, developing or a major AI story: what MINIMAL still
+        enriches (§7.4)."""
+        return (
+            self.severity in (Severity.CRITICAL, Severity.HIGH)
+            or self.kev
+            or self.developing
+            or self.ai_major
+        )
 
 
 @dataclass(frozen=True)

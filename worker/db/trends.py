@@ -43,7 +43,8 @@ def load_trend_inputs(conn: Connection, *, since: datetime) -> TrendInputs:
     stories_rows = conn.execute(
         text(
             "select event_id, first_seen, prominence, severity in ('critical', 'high'), "
-            "au_directly_reported or coalesce(au_relevance, 0) >= 0.5 from events "
+            "au_directly_reported or coalesce(au_relevance, 0) >= 0.5, "
+            "'ai' = any(domains) from events "
             "where merged_into is null "
             "and (first_seen >= :since or event_id = any(cast(:reported as text[]))) "
             "order by event_id"
@@ -70,6 +71,7 @@ def load_trend_inputs(conn: Connection, *, since: datetime) -> TrendInputs:
             au=bool(r[4]),
             cves=tuple(cves.get(r[0], ())),
             kev_cves=frozenset(kev.get(r[0], ())),
+            ai=bool(r[5]),
         )
         for r in stories_rows
     ]
