@@ -16,8 +16,8 @@ layer on top of both.
 | # | Page | What it gives you | Status |
 |---|---|---|---|
 | 0 | [Prerequisites](stage-0-prerequisites.md) | Accounts, keys, the VM, `.env` | ✅ done |
-| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | 🟡 live; last step: a timer that redeploys the site |
-| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS, then AI enrichment within budget | 🟡 enrichment live; registers and AU engine left |
+| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | ✅ done |
+| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | 🟡 registers and enrichment live; AU engine left |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ⬜ |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
@@ -68,7 +68,7 @@ Stage 7  Hardening + operations ................... ⬜
 | The stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db`, `worker`, `server` |
 | Secrets | VM `~/CyberPulse-AI/.env` | git-ignored, never committed: the repo is public |
 | Paperclip dashboard | http://10.0.0.0:3100 | home network only, login required |
-| Public site | https://happycode0.github.io/CyberPulse-AI/ | real events; redeploys on a push to `main` or a manual run until the timer is in |
+| Public site | https://happycode0.github.io/CyberPulse-AI/ | real events; redeploys every 15 minutes |
 
 ## Everyday commands (on the VM)
 

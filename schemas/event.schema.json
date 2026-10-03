@@ -126,15 +126,41 @@
         "due_date": { "type": ["string", "null"], "format": "date" }
       }
     },
+    "advisory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "severity", "reviewed", "packages", "url"],
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "enum": ["osv", "ghsa"] },
+        "severity": { "enum": ["critical", "high", "medium", "low", "unknown", null] },
+        "reviewed": { "type": "boolean" },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ecosystem", "name", "fixed"],
+            "properties": {
+              "ecosystem": { "type": "string" },
+              "name": { "type": "string" },
+              "fixed": { "$ref": "#/$defs/string_list" }
+            }
+          }
+        },
+        "url": { "type": "string", "pattern": "^https://" }
+      }
+    },
     "cve": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "cvss", "epss", "kev"],
+      "required": ["id", "cvss", "epss", "kev", "advisories"],
       "properties": {
         "id": { "type": "string", "pattern": "^CVE-\\d{4}-\\d{4,}$" },
         "cvss": { "anyOf": [{ "$ref": "#/$defs/cvss" }, { "type": "null" }] },
         "epss": { "$ref": "#/$defs/epss" },
-        "kev": { "$ref": "#/$defs/kev" }
+        "kev": { "$ref": "#/$defs/kev" },
+        "advisories": { "type": "array", "items": { "$ref": "#/$defs/advisory" } }
       }
     },
     "mitre_technique": {

@@ -8,8 +8,8 @@ Each event gets up to three calls, each with a strict schema:
 - severity, tier 2: a judged severity, but only where no official score exists. It is labelled
   `ai_estimate`, and an official score always replaces it (§2.5).
 
-MITRE is not here yet. §7.3 says the model must choose from the cached ATT&CK dataset only, and
-caching that dataset is Stage 2 item 5.
+MITRE technique suggestions are a fourth task, in worker/ai/mitre.py: it runs once an event is
+enriched, and its schema is built per event from the cached catalogue (§7.3).
 
 The record is untrusted (§2.10). It goes in the user message as JSON data, never into the
 system prompt, and no tools are offered. The client checks the answer against the schema. This
@@ -47,6 +47,7 @@ class TaskName(StrEnum):
     TRIAGE = "triage"
     BRIEF = "brief"
     SEVERITY = "severity"
+    MITRE = "mitre"
 
 
 # Category slugs, as the site's sections match them (site/assets/hud.js). "active-exploitation"

@@ -21,16 +21,17 @@ from collections.abc import Sequence
 import httpx
 
 from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status
-from worker.ai.enrich import DEFAULT_BATCH, enrich_pending
+from worker.ai.enrich import DEFAULT_BATCH, AiLayer, enrich_pending
 from worker.ai.ladder import (
     OUTPUT_CEILING_USD_PER_MTOK,
     LadderRejected,
     LadderUnusable,
     verify_ladder,
 )
+from worker.ai.mitre import DEFAULT_MITRE_BATCH, suggest_techniques
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
-from worker.groundtruth.sync import DEFAULT_CVSS_BATCH, sync_groundtruth
+from worker.groundtruth.sync import DEFAULT_ADVISORY_BATCH, DEFAULT_CVSS_BATCH, sync_groundtruth
 from worker.models import Lane
 from worker.pipeline.run import run_lane
 from worker.publish.run import publish_now
@@ -60,12 +61,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
     p.add_argument(
-        "--once", action="store_true", help="run --lane a single time and exit (default: schedule it)"
+        "--once",
+        action="store_true",
+        help="run --lane a single time and exit (default: schedule it)",
     )
     p.add_argument(
         "--groundtruth",
         action="store_true",
-        help="read the KEV, EPSS and CVSS registers once and record what they say",
+        help="read the KEV, EPSS, CVSS, OSV and MITRE registers once and record what they say",
     )
     p.add_argument(
         "--cvss-batch",
@@ -75,6 +78,16 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "how many CVEs --groundtruth resolves CVSS for in this pass "
             f"(default {DEFAULT_CVSS_BATCH}; 0 reads only the bulk registers)"
+        ),
+    )
+    p.add_argument(
+        "--advisory-batch",
+        type=int,
+        default=DEFAULT_ADVISORY_BATCH,
+        metavar="N",
+        help=(
+            "how many CVEs --groundtruth looks up in OSV in this pass "
+            f"(default {DEFAULT_ADVISORY_BATCH}; 0 skips the lookups)"
         ),
     )
     p.add_argument(
@@ -88,6 +101,16 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_BATCH,
         metavar="N",
         help=f"how many events --enrich takes in this pass (default {DEFAULT_BATCH})",
+    )
+    p.add_argument(
+        "--mitre-batch",
+        type=int,
+        default=DEFAULT_MITRE_BATCH,
+        metavar="N",
+        help=(
+            "how many enriched events --enrich suggests MITRE techniques for "
+            f"(default {DEFAULT_MITRE_BATCH}; 0 skips them)"
+        ),
     )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
     return p
@@ -157,31 +180,42 @@ def _check_budget() -> int:
     return EXIT_OK
 
 
-def _groundtruth(cvss_batch: int) -> int:
+def _groundtruth(cvss_batch: int, advisory_batch: int) -> int:
     """Run one sync. Only a failure the sync itself could not absorb is non-zero.
 
     Register errors land in `summary.errors` and are logged as warnings rather than failing the
     command, because "CISA was unreachable for ten minutes" is not a reason for a container to exit
     non-zero and be restarted into trying again immediately.
     """
-    summary = asyncio.run(sync_groundtruth(cvss_batch=cvss_batch))
+    summary = asyncio.run(sync_groundtruth(cvss_batch=cvss_batch, advisory_batch=advisory_batch))
     for error in summary.errors:
         logger.warning("ground truth: %s", error)
     logger.info(
-        "ground truth: kev=%s epss=%s cvss=%s severity_changed=%d rescored=%d",
+        "ground truth: kev=%s epss=%s cvss=%s advisories=%s mitre=%s severity_changed=%d "
+        "rescored=%d",
         summary.kev,
         summary.epss,
         summary.cvss,
+        summary.advisories,
+        ", ".join(summary.mitre_loaded) or "unchanged",
         summary.severity_changed,
         summary.rescored,
     )
     return EXIT_OK
 
 
-def _enrich(batch: int) -> int:
-    """Run one pass. Like the ground-truth sync, only a failure the pass could not absorb is
-    non-zero: a task that failed or waited for money is a normal outcome, not an error."""
-    summary = asyncio.run(enrich_pending(batch=batch))
+def _enrich(batch: int, mitre_batch: int) -> int:
+    """Run one pass, then one pass of MITRE suggestions on the same ladder and budget reading.
+    Like the ground-truth sync, only a failure a pass could not absorb is non-zero: a task that
+    failed or waited for money is a normal outcome, not an error."""
+
+    async def both():
+        layer = AiLayer()
+        summary = await enrich_pending(layer=layer, batch=batch)
+        await suggest_techniques(layer=layer, batch=mitre_batch)
+        return summary
+
+    summary = asyncio.run(both())
     for error in summary.errors:
         logger.warning("enrichment: %s", error)
     return EXIT_OK
@@ -229,12 +263,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         logger.info("run %s finished: %s", summary.run_id, summary.model_dump_json())
 
     if args.groundtruth:
-        code = _groundtruth(args.cvss_batch)
+        code = _groundtruth(args.cvss_batch, args.advisory_batch)
         if code != EXIT_OK:
             return code
 
     if args.enrich:
-        code = _enrich(args.enrich_batch)
+        code = _enrich(args.enrich_batch, args.mitre_batch)
         if code != EXIT_OK:
             return code
 

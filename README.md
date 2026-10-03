@@ -111,11 +111,11 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 
 | Stage | What | Who | Status |
 |---|---|---|---|
-| **0** | Prerequisites: accounts, keys, repo visibility, optional VM | 🔴 | ← **you are here** |
-| **1** | Foundation: schema, collectors, event resolution, scoring, publisher, **full site** | 🟢 | Ready to build |
-| **2** | Ground truth + AI enrichment + AU relevance + evidence + cost ledger | 🟢 | |
+| **0** | Prerequisites: accounts, keys, repo visibility, optional VM | 🔴 | ✅ done |
+| **1** | Foundation: schema, collectors, event resolution, scoring, publisher, **full site** | 🟢 | ✅ done, live on the VM |
+| **2** | Ground truth + AI enrichment + AU relevance + evidence + cost ledger | 🟢 | 🟡 most of it live |
 | **3** | Material change, source lineage, trends, decay, extra adapters | 🟢 | |
-| **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | |
+| **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | ▶ in progress |
 | **5** | Full crew + follow-up + Telegram + public crew page | 🟢 | |
 | **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢 | |
 | **7** | Hardening: backups, observability, failure injection, runbooks | 🟢🔴 | |

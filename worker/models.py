@@ -170,6 +170,25 @@ class KevEntry(_Model):
     due_date: date | None = None
 
 
+class AdvisoryPackage(_Model):
+    """`fixed` empty means no fixed version is published, not that the package is safe."""
+
+    ecosystem: str
+    name: str
+    fixed: list[str] = Field(default_factory=list)
+
+
+class AdvisoryRef(_Model):
+    """An OSV or GitHub advisory naming the CVE (worker/groundtruth/osv.py)."""
+
+    id: str
+    source: str
+    severity: Severity | None = None
+    reviewed: bool = False
+    packages: list[AdvisoryPackage] = Field(default_factory=list)
+    url: str
+
+
 class CveRef(_Model):
     """`cvss=None` means no score is known; it is never coerced to zero."""
 
@@ -177,6 +196,7 @@ class CveRef(_Model):
     cvss: CvssScore | None = None
     epss: EpssScore = Field(default_factory=EpssScore)
     kev: KevEntry = Field(default_factory=KevEntry)
+    advisories: list[AdvisoryRef] = Field(default_factory=list)
 
 
 class MitreTechnique(_Model):
