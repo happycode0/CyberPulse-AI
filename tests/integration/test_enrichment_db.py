@@ -125,9 +125,11 @@ def add_source(conn, event_id, source_id, title, *, published=NOW, n=0):
 
 
 def event_row(conn, event_id):
-    return conn.execute(
-        text("select * from events where event_id = :e"), {"e": event_id}
-    ).mappings().one()
+    return (
+        conn.execute(text("select * from events where event_id = :e"), {"e": event_id})
+        .mappings()
+        .one()
+    )
 
 
 def subject(conn, event_id):
@@ -333,10 +335,14 @@ def test_a_weak_judgment_leaves_an_official_score_alone(conn):
 
 
 def enrichment_row(conn, event_id, task):
-    return conn.execute(
-        text("select * from event_enrichment where event_id = :e and task = :t"),
-        {"e": event_id, "t": task},
-    ).mappings().one()
+    return (
+        conn.execute(
+            text("select * from event_enrichment where event_id = :e and task = :t"),
+            {"e": event_id, "t": task},
+        )
+        .mappings()
+        .one()
+    )
 
 
 def test_failures_back_off_then_give_up_and_a_success_resets_them(conn):
@@ -368,15 +374,14 @@ def test_a_new_version_starts_the_count_again(conn):
 
 def test_the_table_rejects_a_task_or_status_it_does_not_know(conn):
     insert_event(conn, EVENT)
-    with pytest.raises(Exception, match="check"):
-        with conn.begin_nested():
-            conn.execute(
-                text(
-                    "insert into event_enrichment (event_id, task, version, status) "
-                    "values (:e, 'mitre', '1', 'done')"
-                ),
-                {"e": EVENT},
-            )
+    with pytest.raises(Exception, match="check"), conn.begin_nested():
+        conn.execute(
+            text(
+                "insert into event_enrichment (event_id, task, version, status) "
+                "values (:e, 'summarise', '1', 'done')"
+            ),
+            {"e": EVENT},
+        )
 
 
 def done(conn, event_id, *tasks):

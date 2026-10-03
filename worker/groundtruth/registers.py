@@ -1,8 +1,8 @@
 """Downloading the registers. The parsing lives next door; this is only the network half.
 
-Three registers, two shapes. KEV and EPSS are bulk: one download answers for every CVE at once.
-The CVSS chain of PLAN.md §2.5 is per-record, so it is one request per CVE and the only one of the
-three that needs rationing.
+Two shapes. KEV and EPSS are bulk: one download answers for every CVE at once, and so do the MITRE
+catalogues, which are downloaded only when a new release appears. The CVSS chain of PLAN.md §2.5
+and the OSV advisories are per-record, one request per CVE, and those are the ones rationed.
 
 Two decisions here are deliberate and easy to "fix" into bugs:
 
@@ -19,6 +19,7 @@ about the world, and the file it was derived from is the only thing that can sho
 than invented.
 """
 
+import asyncio
 import json
 import logging
 from dataclasses import dataclass
@@ -29,6 +30,23 @@ from worker.collectors.http import FetchResult, FetchStatus, cache_raw, fetch
 from worker.groundtruth.epss import EPSS_SNAPSHOT_URL, EpssSnapshot, parse_epss_snapshot
 from worker.groundtruth.errors import GroundTruthError
 from worker.groundtruth.kev import KEV_CATALOGUE_URL, KevCatalogue, parse_kev_catalogue
+from worker.groundtruth.mitre import (
+    ATLAS_MANIFEST_URL,
+    ATTACK_INDEX_URL,
+    Catalogue,
+    Release,
+    latest_atlas_release,
+    latest_attack_release,
+    parse_atlas,
+    parse_attack_bundle,
+)
+from worker.groundtruth.osv import (
+    OSV_RECORD_URL,
+    Advisory,
+    ghsa_aliases,
+    names_cve,
+    parse_osv_record,
+)
 from worker.models import Lane, SourceConfig
 
 logger = logging.getLogger(__name__)
@@ -49,10 +67,16 @@ BULK_TIMEOUT_SECONDS = 120.0
 # rather than the payload being large, and the batch is better off moving on to the next CVE.
 RECORD_TIMEOUT_SECONDS = 20.0
 
+# The Enterprise ATT&CK bundle is 54 MB, well over the collectors' 32 MiB cap.
+MITRE_MAX_BYTES = 128 * 1024 * 1024
+
 _REGISTER_IDS = {
     "kev": "register_cisa_kev",
     "epss": "register_epss",
     "cve_record": "register_cve_record",
+    "attack": "register_mitre_attack",
+    "atlas": "register_mitre_atlas",
+    "osv": "register_osv",
 }
 
 
@@ -87,13 +111,20 @@ def _register_source(register: str, url: str) -> SourceConfig:
 
 
 async def _get(
-    client: httpx.AsyncClient, register: str, url: str, *, timeout: float, retries: int = 3
+    client: httpx.AsyncClient,
+    register: str,
+    url: str,
+    *,
+    timeout: float,
+    retries: int = 3,
+    max_bytes: int = 32 * 1024 * 1024,
 ) -> FetchResult:
     return await fetch(
         client,
         _register_source(register, url),
         timeout=timeout,
         max_retries=retries,
+        max_size_bytes=max_bytes,
     )
 
 
@@ -226,3 +257,150 @@ async def fetch_cve_record(client: httpx.AsyncClient, cve_id: str) -> RecordLook
         detail=result.error or result.status.value,
         retry_after=result.status_code == 429,
     )
+
+
+# ─── MITRE ────────────────────────────────────────────────────────────────────────────────────────
+
+
+async def fetch_mitre_release(client: httpx.AsyncClient, matrix: str) -> Release:
+    """The newest published release of 'enterprise' or 'atlas'. The index and the manifest are
+    small, so this is cheap enough to ask on every sync.
+
+    Raises
+    ------
+    GroundTruthError
+        If the index or manifest could not be downloaded or read.
+    """
+    register, url = (
+        ("attack", ATTACK_INDEX_URL)
+        if matrix == "enterprise"
+        else (
+            "atlas",
+            ATLAS_MANIFEST_URL,
+        )
+    )
+    result = await _get(client, register, url, timeout=RECORD_TIMEOUT_SECONDS)
+    if result.status is not FetchStatus.OK or result.body is None:
+        raise GroundTruthError(
+            f"{register} index unavailable: {result.status.value}"
+            f"{f' ({result.error})' if result.error else ''}"
+        )
+    body = result.body
+    return latest_attack_release(body) if matrix == "enterprise" else latest_atlas_release(body)
+
+
+async def fetch_mitre_catalogue(client: httpx.AsyncClient, release: Release) -> Catalogue:
+    """Download and parse one release. Only called for a release not loaded yet.
+
+    Raises
+    ------
+    GroundTruthError
+        If the release could not be downloaded or did not parse as complete.
+    """
+    register = "attack" if release.matrix == "enterprise" else "atlas"
+    result = await _get(
+        client, register, release.url, timeout=BULK_TIMEOUT_SECONDS, max_bytes=MITRE_MAX_BYTES
+    )
+    body = _body_or_raise(register, result)
+    if len(body) >= MITRE_MAX_BYTES:
+        raise GroundTruthError(f"{release.version} is larger than {MITRE_MAX_BYTES} bytes")
+    parse = parse_attack_bundle if release.matrix == "enterprise" else parse_atlas
+    # Off the event loop: parsing the ATT&CK bundle takes seconds, and the lanes share the loop.
+    catalogue = await asyncio.to_thread(parse, body, release)
+    logger.info("%s: %d techniques", release.version, len(catalogue.techniques))
+    return catalogue
+
+
+# ─── OSV ──────────────────────────────────────────────────────────────────────────────────────────
+
+
+async def fetch_osv_record(client: httpx.AsyncClient, advisory_id: str) -> RecordLookup:
+    """One OSV record by id, a CVE or a GHSA. Like `fetch_cve_record`, it never raises: a 404
+    is the answer "no record", and anything else is an error for that one id."""
+    result = await _get(
+        client,
+        "osv",
+        OSV_RECORD_URL.format(id=advisory_id),
+        timeout=RECORD_TIMEOUT_SECONDS,
+    )
+    if result.status is FetchStatus.OK and result.body is not None:
+        try:
+            cache_raw(_REGISTER_IDS["osv"], result.body)
+        except OSError as exc:
+            logger.warning("raw cache write failed for OSV %s: %s", advisory_id, exc)
+        return RecordLookup("found", record=result.body)
+    if result.status_code == 404:
+        return RecordLookup("absent", detail="HTTP 404")
+    return RecordLookup(
+        "error",
+        detail=result.error or result.status.value,
+        retry_after=result.status_code == 429,
+    )
+
+
+@dataclass(frozen=True)
+class AdvisoryLookup:
+    """What OSV says about one CVE: its own record of it, and the GitHub advisories it names.
+
+    Attributes
+    ----------
+    outcome : str
+        'found', 'absent' or 'error', the values `cve_advisory_checks.outcome` accepts. 'error'
+        also covers a found record whose GitHub advisories could not all be read, so the CVE is
+        asked about again soon rather than in three days.
+    advisories : tuple[Advisory, ...]
+        The advisories to record: OSV's own record only when it names a package, then each
+        GitHub advisory that names the CVE back.
+    complete : bool
+        Whether every advisory the record names was read. Only a complete answer may remove an
+        advisory recorded earlier.
+    """
+
+    outcome: str
+    advisories: tuple[Advisory, ...] = ()
+    detail: str | None = None
+    complete: bool = False
+
+
+async def fetch_advisories(client: httpx.AsyncClient, cve_id: str) -> AdvisoryLookup | None:
+    """Look one CVE up in OSV, then each GitHub advisory its record names. Never raises.
+
+    Returns None when OSV asked us to back off (HTTP 429), at any of the requests: the CVE is
+    then not recorded at all, as in the CVSS batch.
+    """
+    first = await fetch_osv_record(client, cve_id)
+    if first.retry_after:
+        return None
+    if first.outcome != "found":
+        return AdvisoryLookup(first.outcome, detail=first.detail)
+    try:
+        record = parse_osv_record(first.record)  # type: ignore[arg-type]
+    except GroundTruthError as exc:
+        return AdvisoryLookup("error", detail=str(exc))
+    if not names_cve(record, cve_id):
+        return AdvisoryLookup("error", detail=f"OSV answered with {record.id}")
+
+    found: list[Advisory] = [record] if record.packages and not record.withdrawn else []
+    unread: list[str] = []
+    for ghsa in ghsa_aliases(record):
+        lookup = await fetch_osv_record(client, ghsa)
+        if lookup.retry_after:
+            return None
+        if lookup.outcome == "absent":
+            continue
+        if lookup.outcome != "found":
+            unread.append(ghsa)
+            continue
+        try:
+            advisory = parse_osv_record(lookup.record)  # type: ignore[arg-type]
+        except GroundTruthError:
+            unread.append(ghsa)
+            continue
+        # The advisory must name the CVE back: an alias group that has drifted is not evidence.
+        if advisory.id == ghsa and not advisory.withdrawn and names_cve(advisory, cve_id):
+            found.append(advisory)
+    if unread:
+        return AdvisoryLookup(
+            "error", tuple(found), detail=f"could not read {', '.join(unread)}", complete=False
+        )
+    return AdvisoryLookup("found", tuple(found), detail=f"{len(found)} advisories", complete=True)

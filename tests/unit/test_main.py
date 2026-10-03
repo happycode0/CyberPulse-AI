@@ -87,17 +87,18 @@ def test_migrate_alone_exits_without_starting_the_scheduler(calls):
 def test_enrich_runs_after_ground_truth_and_before_publish(calls, monkeypatch):
     # A severity judgment is asked for only where the registers still have no official score,
     # and the publish that follows carries what both wrote.
-    monkeypatch.setattr(main_mod, "_groundtruth", lambda n: calls.append(("groundtruth", n)) or 0)
-    monkeypatch.setattr(main_mod, "_enrich", lambda n: calls.append(("enrich", n)) or 0)
+    monkeypatch.setattr(main_mod, "_groundtruth", lambda *n: calls.append(("groundtruth", *n)) or 0)
+    monkeypatch.setattr(main_mod, "_enrich", lambda *n: calls.append(("enrich", *n)) or 0)
     argv = ["--publish", "--enrich", "--enrich-batch", "4", "--groundtruth", "--cvss-batch", "7"]
+    argv += ["--advisory-batch", "9", "--mitre-batch", "2"]
     assert main_mod.main(argv) == 0
-    assert calls == [("groundtruth", 7), ("enrich", 4), ("publish",)]
+    assert calls == [("groundtruth", 7, 9), ("enrich", 4, 2), ("publish",)]
 
 
 def test_enrich_alone_exits_without_starting_the_scheduler(calls, monkeypatch):
-    monkeypatch.setattr(main_mod, "_enrich", lambda n: calls.append(("enrich", n)) or 0)
+    monkeypatch.setattr(main_mod, "_enrich", lambda *n: calls.append(("enrich", *n)) or 0)
     assert main_mod.main(["--enrich"]) == 0
-    assert calls == [("enrich", main_mod.DEFAULT_BATCH)]
+    assert calls == [("enrich", main_mod.DEFAULT_BATCH, main_mod.DEFAULT_MITRE_BATCH)]
 
 
 def test_failed_publish_returns_a_failure_code(calls, monkeypatch):

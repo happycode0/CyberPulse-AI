@@ -3,9 +3,9 @@
 [← Stage 0 — Prerequisites](stage-0-prerequisites.md) · [Wiki home](README.md) ·
 [Stage 2 — Ground truth →](stage-2-ground-truth.md)
 
-**Status: 🟡 live, one step left.** The site serves real events. The VM collects, builds the site's
-data and pushes it to the `data` branch every 15 minutes, but the site redeploys only when `main`
-changes or someone runs the Pages workflow. Plan: [PLAN.md §9, Stage 1](../../PLAN.md#9-stages)
+**Status: ✅ done (2026-10-03).** The site serves real events. The VM collects, builds the site's
+data and pushes it to the `data` branch every 15 minutes, and a timer on `main` redeploys the site
+every 15 minutes. Plan: [PLAN.md §9, Stage 1](../../PLAN.md#9-stages)
 · Build record: [runbook Part 5](../vm200-runbook.md)
 
 ---
@@ -44,14 +44,14 @@ command that hangs is stopped after three minutes, and the next publish pushes a
 ## What's left
 
 1. ✅ **Push after each run** (2026-10-03).
-2. 🔴 **Make a push redeploy the site (owner).** `pages.yml` lists `data` under `on: push`, but
-   GitHub runs a push-triggered workflow from the workflow file *inside the pushed commit*. The
-   `data` branch holds only JSON, so a push to it never starts a deploy. The fix is a timer on
-   `main`: add `schedule: - cron: "*/15 * * * *"` under `on:` in `.github/workflows/pages.yml`.
-   It is a change to CI, so the owner commits it rather than Claude. GitHub runs schedules only
-   from the default branch, and turns them off after 60 days without a commit. Until then, the
-   **Run workflow** button on the Actions tab's `pages` workflow redeploys by hand. The fix must not
-   put a workflow file on `data`, which would need the forbidden `workflow` scope.
+2. ✅ **Make a push redeploy the site** (2026-10-03, PR #3). GitHub runs a push-triggered
+   workflow from the workflow file *inside the pushed commit*, and the `data` branch holds only
+   JSON, so a push to it never starts a deploy. `pages.yml` on `main` now also has
+   `schedule: - cron: "*/15 * * * *"`. GitHub runs schedules only from the default branch, may
+   start them late when it is busy, and turns them off after 60 days without a commit to the
+   repo. If that happens, the **Run workflow** button on the Actions tab's `pages` workflow
+   redeploys by hand, and any commit to `main` turns the timer back on. No workflow file goes on
+   `data`: that would need the forbidden `workflow` scope.
 3. ✅ **Merge `stage-1-foundation` into `main`** (2026-10-03, PR #1).
 
 ## How to check it
@@ -62,8 +62,12 @@ docker compose ps worker                                   # "Up"
 docker compose logs --since 30m worker | grep -E 'done:|published|pushed|ERROR'
 ```
 
-When the last step is done, the [public site](https://happycode0.github.io/CyberPulse-AI/) stays
-within about 15 minutes of the VM without anyone touching it.
+The [public site](https://happycode0.github.io/CyberPulse-AI/) stays within about 15 minutes of
+the VM without anyone touching it. To see the timer at work:
+
+```bash
+gh run list --workflow pages --limit 5    # "schedule" runs, about every 15 minutes
+```
 
 ## If it breaks
 
@@ -76,8 +80,8 @@ within about 15 minutes of the VM without anyone touching it.
 ## Done when
 
 - [x] `docker compose up` collects real events
-- [ ] The site is live on GitHub Pages with genuine AU and global intelligence
-- [ ] `pytest` green, re-checked before the merge into `main`
+- [x] The site is live on GitHub Pages with genuine AU and global intelligence
+- [x] `pytest` green, re-checked before the merge into `main`
 
 ---
 

@@ -11,6 +11,7 @@ from typing import Any
 
 from sqlalchemy import Connection, text
 
+from worker.db.advisories import advisories_for
 from worker.models import (
     Claim,
     CveRef,
@@ -319,6 +320,7 @@ def _cve_refs(
             {"ids": ids},
         ).mappings()
         latest = {(s["cve_id"], s["kind"]): s for s in scores}
+    advisories = advisories_for(conn, ids)
 
     out: dict[str, list[CveRef]] = {}
     for event_id, rs in event_cves.items():
@@ -348,6 +350,7 @@ def _cve_refs(
                         date_added=c["kev_date_added"],
                         due_date=c["kev_due_date"],
                     ),
+                    advisories=advisories.get(c["cve_id"], []),
                 )
             )
         out[event_id] = refs
