@@ -13,7 +13,8 @@ from worker.ai.enrich import AiLayer, enrich_pending
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
 from worker.pipeline import run as pipeline_run
-from worker.publish.run import publish_now
+from worker.publish.push import publish_token_configured
+from worker.publish.run import publish_now, push_now
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,33 @@ def job_id(lane: Lane) -> str:
     return f"lane-{lane.value}"
 
 
+async def _publish(after: str, *, stands: str) -> None:
+    """Rebuild data/*.json, then push it to the `data` branch the site is built from.
+
+    Neither step failing is fatal, and a push is not tried after a failed publish: it would push
+    the previous files again. A failed push leaves `data/` current on this host and the site a
+    publish behind; the next publish pushes again. `stands` says what the failure leaves intact.
+    """
+    try:
+        written = await publish_now()
+    except Exception:
+        logger.exception("publish after %s failed; %s", after, stands)
+        return
+    logger.info("published %d files after %s", len(written), after)
+
+    try:
+        pushed = await push_now()
+    except Exception:
+        logger.exception("push after %s failed; the next publish pushes again", after)
+        return
+    if pushed is None:
+        return  # no publish token on this host; serve() said so at start
+    if pushed.pushed:
+        logger.info("pushed %s to the data branch", pushed.commit_sha)
+    else:
+        logger.info("data branch already current; nothing pushed")
+
+
 async def _run_lane_job(lane: Lane) -> None:
     """Run one lane and republish from it; either step failing leaves the schedule running.
 
@@ -78,15 +106,10 @@ async def _run_lane_job(lane: Lane) -> None:
         logger.exception("scheduled %s run failed", lane.value)
         return
 
-    try:
-        written = await publish_now()
-    except Exception:
-        # Deliberately not fatal. Collection is the irreplaceable half: a missed publish is
-        # corrected by the next run 15 minutes later, whereas a lane that stops running loses
-        # items that have already fallen off the end of their feed and cannot be re-fetched.
-        logger.exception("publish after the %s lane failed; collection is unaffected", lane.value)
-    else:
-        logger.info("published %d files after the %s lane", len(written), lane.value)
+    # Deliberately not fatal. Collection is the irreplaceable half: a missed publish is corrected
+    # by the next run 15 minutes later, whereas a lane that stops running loses items that have
+    # already fallen off the end of their feed and cannot be re-fetched.
+    await _publish(f"the {lane.value} lane", stands="collection is unaffected")
 
 
 async def _groundtruth_job() -> None:
@@ -107,12 +130,7 @@ async def _groundtruth_job() -> None:
     if not summary.changed_anything:
         logger.info("ground-truth sync changed nothing; not republishing")
         return
-    try:
-        written = await publish_now()
-    except Exception:
-        logger.exception("publish after the ground-truth sync failed; the sync itself stands")
-    else:
-        logger.info("published %d files after the ground-truth sync", len(written))
+    await _publish("the ground-truth sync", stands="the sync itself stands")
 
 
 async def _enrich_job() -> None:
@@ -132,12 +150,7 @@ async def _enrich_job() -> None:
 
     if not summary.changed_anything:
         return
-    try:
-        written = await publish_now()
-    except Exception:
-        logger.exception("publish after enrichment failed; the enrichment itself stands")
-    else:
-        logger.info("published %d files after enrichment", len(written))
+    await _publish("enrichment", stands="the enrichment itself stands")
 
 
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
@@ -196,6 +209,10 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
         loop.add_signal_handler(sig, stop.set)
     scheduler.start()
     logger.info("scheduler started: %s", ", ".join(j.id for j in scheduler.get_jobs()))
+    if publish_token_configured():
+        logger.info("each publish is pushed to the data branch")
+    else:
+        logger.info("no publish token: data/ is written here and not pushed")
     try:
         await stop.wait()
     finally:

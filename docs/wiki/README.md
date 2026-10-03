@@ -16,8 +16,8 @@ layer on top of both.
 | # | Page | What it gives you | Status |
 |---|---|---|---|
 | 0 | [Prerequisites](stage-0-prerequisites.md) | Accounts, keys, the VM, `.env` | ✅ done |
-| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | 🟡 last step: real data onto the site |
-| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS, then AI enrichment within budget | 🟡 half |
+| 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | 🟡 live; last step: a timer that redeploys the site |
+| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS, then AI enrichment within budget | 🟡 enrichment live; registers and AU engine left |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ⬜ |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
@@ -31,8 +31,8 @@ layer on top of both.
 
 ```text
 Stage 0  Prerequisites ............................ ✅ done
-Stage 1  Foundation: pipeline + site .............. 🟡 collecting every 15 min; real data not on the site yet
-Stage 2  Ground truth + enrichment ................ 🟡 KEV / EPSS / CVSS live; AI side not built
+Stage 1  Foundation: pipeline + site .............. 🟡 real events on the site; redeploy timer is yours
+Stage 2  Ground truth + enrichment ................ 🟡 KEV / EPSS / CVSS and AI enrichment live
 Stage 3  Correlation depth + trends ............... ⬜
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ Paperclip Docker service ............ ✅ running, healthy, since 2026-10-02 20:15 Sydney
@@ -51,8 +51,9 @@ Stage 7  Hardening + operations ................... ⬜
 2. **Set it up:** [4a steps 4–8](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6):
    turn on board approval for new hires, give the existing `CyberPulse` company its mission and
    US$12 budget, then the 16 agents, the routines, a first test ticket.
-3. **Approve merging `stage-1-foundation` into `main`.** The public site is built from `main`
-   ([Stage 1](stage-1-foundation.md#whats-left)).
+3. ~~**Approve merging `stage-1-foundation` into `main`.**~~ ✅ Merged 2026-10-03 (PR #1).
+   **Then commit the Pages timer**, so the site redeploys every 15 minutes on its own
+   ([Stage 1, item 2](stage-1-foundation.md#whats-left)).
 4. **Provide an off-host backup target** (NAS, USB disk or PBS). The host has a single disk
    ([Stage 7](stage-7-hardening.md)).
 5. Later: a Telegram bot for Stage 5, and NetBird if you want the dashboard from outside the house.
@@ -61,13 +62,13 @@ Stage 7  Hardening + operations ................... ⬜
 
 | Thing | Where | Notes |
 |---|---|---|
-| Repo (your checkout) | `C:\Users\d739962\HappyCode\CyberPulse-AI` | branch `stage-1-foundation`; not merged into `main` yet |
+| Repo (your checkout) | `C:\Users\d739962\HappyCode\CyberPulse-AI` | branch `stage-1-foundation`; merged into `main` 2026-10-03 |
 | VM 200 | `ssh cyberpulse-vm` → `oxygen@192.168.128.39` | Debian 13, 4 vCPU / 12 GB / 60 GB |
 | SSH key | WSL `~/.ssh/cyberpulse_vm_ed25519` | no passphrase, no backup |
 | The stack | VM `~/CyberPulse-AI` | `docker compose ps` → `db`, `worker`, `server` |
 | Secrets | VM `~/CyberPulse-AI/.env` | git-ignored, never committed: the repo is public |
 | Paperclip dashboard | http://192.168.128.39:3100 | home network only, login required |
-| Public site | https://happycode0.github.io/CyberPulse-AI/ | still the sample data until Stage 1's last step |
+| Public site | https://happycode0.github.io/CyberPulse-AI/ | real events; redeploys on a push to `main` or a manual run until the timer is in |
 
 ## Everyday commands (on the VM)
 

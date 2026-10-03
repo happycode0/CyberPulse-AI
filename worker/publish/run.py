@@ -5,6 +5,9 @@ be tested without a database or a real data directory. This is the thin layer th
 from settings, mirroring how `worker/pipeline/run.py` wires the pure pipeline modules to the
 database. Both the CLI (`--publish`) and the scheduler call it, so a scheduled publish and a
 hand-run one cannot drift apart.
+
+The scheduler then pushes what it published (`push_now`); `--publish` does not, so it stays safe
+to run anywhere.
 """
 
 import asyncio
@@ -14,6 +17,7 @@ from pathlib import Path
 
 from worker.db.session import get_engine
 from worker.publish.build import build_all
+from worker.publish.push import PushResult, publish_token_configured, push_data
 from worker.settings import get_settings
 
 logger = logging.getLogger(__name__)
@@ -58,3 +62,21 @@ async def publish_now(*, now: datetime | None = None) -> list[Path]:
 def _build(now: datetime) -> list[Path]:
     with get_engine().connect() as conn:
         return build_all(conn, get_settings().data_dir, now=now)
+
+
+async def push_now() -> PushResult | None:
+    """Push `data/` to the `data` branch the site is built from, or return None when this host
+    holds no publish token (building needs none, so such a host stops at `data/`).
+
+    Under the publish lock: the push hashes the files while it runs, and a build moving new ones
+    into place at the same time would push a mix of the two.
+
+    Raises
+    ------
+    RuntimeError
+        If a git command fails or hangs. Its message is already free of the token.
+    """
+    if not publish_token_configured():
+        return None
+    async with _PUBLISH_LOCK:
+        return await asyncio.to_thread(push_data, get_settings().data_dir)

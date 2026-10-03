@@ -118,7 +118,12 @@ MAX_REASONS = 3
 # Codes people write that ISO 3166-1 spells differently.
 _COUNTRY_ALIASES = {"UK": "GB", "EL": "GR"}
 
-_CVE = re.compile(r"\bCVE-\d{4}-\d{4,}\b", re.IGNORECASE)
+# Models write CVE ids with U+2011 non-breaking hyphens as often as with "-". A CVE written with
+# any dash is still a CVE, so the check sees it. Hyphen look-alikes become "-" in what we
+# publish. En and em dashes stay, because in prose they are punctuation.
+_DASH = "[-\u2010-\u2015\u2212\ufe58\ufe63\uff0d]"
+_HYPHENS = str.maketrans(dict.fromkeys("\u2010\u2011\u2012\u2212\ufe63\uff0d", "-"))
+_CVE = re.compile(rf"\bCVE{_DASH}\d{{4}}{_DASH}\d{{4,}}\b", re.IGNORECASE)
 _URL = re.compile(r"https?://|\bwww\.", re.IGNORECASE)
 _WORD = re.compile(r"\w+")
 _COUNTRY = re.compile(r"^[A-Z]{2}$")
@@ -334,8 +339,9 @@ SEVERITY_SCHEMA = _object(
 
 
 def _clean(value: str) -> str:
-    """Whitespace collapsed, and control and format characters (such as bidi overrides) gone."""
-    spaced = " ".join(value.split())
+    """Whitespace collapsed, hyphen look-alikes made "-", and control and format characters (such
+    as bidi overrides) gone."""
+    spaced = " ".join(value.translate(_HYPHENS).split())
     return "".join(ch for ch in spaced if not unicodedata.category(ch).startswith("C"))
 
 
@@ -386,7 +392,8 @@ class Checker:
     def _safe(self, field: str, text: str) -> None:
         if _URL.search(text):
             raise Rejected(f"{field} contains a URL")
-        if any(m.upper() not in self._cves for m in _CVE.findall(text)):
+        named = {re.sub(_DASH, "-", m).upper() for m in _CVE.findall(text)}
+        if named - self._cves:
             raise Rejected(f"{field} names a CVE the record does not")
         if scan_text_for_secrets(text):
             raise Rejected(f"{field} contains something shaped like a credential")
