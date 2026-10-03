@@ -1,6 +1,6 @@
-"""Scheduling. FAST and NORMAL lanes, the ground-truth sync and AI enrichment run in the worker;
-DEEP is a Paperclip routine, so it has no schedule here and is only reachable through
-`--lane deep --once`."""
+"""Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment and the Telegram
+notifications run in the worker; DEEP is a Paperclip routine, so it has no schedule here and is
+only reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -17,6 +17,8 @@ from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
+from worker.notify.jobs import send_critical_alerts, send_daily_digest
+from worker.notify.telegram import Telegram
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
 from worker.publish.run import publish_now, push_now
@@ -55,6 +57,20 @@ GROUNDTRUTH_MISFIRE_GRACE_SECONDS = 3600
 ENRICH_SCHEDULE = "5,35 * * * *"
 ENRICH_JOB_ID = "ai-enrichment"
 ENRICH_MISFIRE_GRACE_SECONDS = 900
+
+# The daily digest at 07:00 Sydney time. 08:00 and 09:00 send it only if 07:00 failed or was
+# missed: each Sydney date's digest is sent once (worker/notify/jobs.py).
+DIGEST_SCHEDULE = "0 7,8,9 * * *"
+DIGEST_TIMEZONE = "Australia/Sydney"
+DIGEST_JOB_ID = "daily-digest"
+DIGEST_MISFIRE_GRACE_SECONDS = 1800
+
+# Three minutes after each FAST run, which is over in seconds, so a critical event collected at
+# :00 is in the chat by :03. :18 and :48 also follow the enrichment passes (:05 and :35), which
+# can raise an event's Australian relevance.
+ALERT_SCHEDULE = "3,18,33,48 * * * *"
+ALERT_JOB_ID = "critical-alerts"
+ALERT_MISFIRE_GRACE_SECONDS = 600
 
 # Kept for the life of the process: the governor in it must remember a 402 from one pass to the
 # next (worker/ai/enrich.py).
@@ -198,13 +214,29 @@ async def _enrich_job() -> None:
     await _publish("enrichment", stands="the enrichment itself stands")
 
 
+async def _digest_job() -> None:
+    """Never fatal to the schedule; 08:00 and 09:00 try again."""
+    try:
+        await send_daily_digest(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("daily digest failed")
+
+
+async def _alert_job() -> None:
+    """Never fatal to the schedule; an alert not sent now is tried by the next pass."""
+    try:
+        await send_critical_alerts(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("critical alert pass failed")
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync and enrichment are added only for the default schedule. `lanes` comes
+    The ground-truth sync, enrichment and notifications are added only for the default schedule. `lanes` comes
     from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
     model calls along with it would make the narrow form impossible to ask for.
     """
@@ -228,6 +260,26 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
             max_instances=1,
             coalesce=True,
             misfire_grace_time=ENRICH_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _digest_job,
+            CronTrigger.from_crontab(DIGEST_SCHEDULE, timezone=DIGEST_TIMEZONE),
+            id=DIGEST_JOB_ID,
+            name="daily digest",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=DIGEST_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _alert_job,
+            CronTrigger.from_crontab(ALERT_SCHEDULE, timezone="UTC"),
+            id=ALERT_JOB_ID,
+            name="critical alerts",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=ALERT_MISFIRE_GRACE_SECONDS,
             replace_existing=True,
         )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):
@@ -262,6 +314,11 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
         logger.info("each publish is pushed to the data branch")
     else:
         logger.info("no publish token: data/ is written here and not pushed")
+    if lanes is None:
+        if Telegram.from_settings(get_settings()) is None:
+            logger.info("no Telegram bot: the digest and alerts are not sent")
+        else:
+            logger.info("Telegram notifications are on")
     ops = ops_api.start(get_settings(), get_engine()) if lanes is None else None
     try:
         await stop.wait()

@@ -47,11 +47,21 @@ from sqlalchemy import Connection, Engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
 from worker.ai.budget import BudgetUnreadable, KeyStatus, assess, fetch_key_status
+from worker.db.digest import (
+    ESCALATE_AU_RELEVANCE,
+    EVENT_COLUMNS,
+    event_row,
+    ledger_totals,
+    load_digest,
+    month_bounds,
+    truncate,
+    usd,
+)
 from worker.db.events import load_events
 from worker.db.jobs import JobRun, load_latest_completed_job, load_latest_job
 from worker.db.sources import load_lifecycle_states, load_registry_rows
 from worker.models import EventStatus, LifecycleState, Severity
-from worker.publish.build import LIVE_MIN_PROMINENCE, _source_health_payload
+from worker.publish.build import _source_health_payload
 from worker.publish.claims import with_fact_claims
 from worker.publish.validate import scan_for_secrets, scan_text_for_secrets
 from worker.settings import Settings
@@ -89,11 +99,6 @@ KEY_STATUS_TIMEOUT_SECONDS = 15.0
 DIGEST_HOURS = (24, 1, 168)  # default, lowest, highest
 EVENTS_LIMIT = (50, 1, 200)
 RUNS_LIMIT = (20, 1, 100)
-TOP_EVENTS = 10
-ESCALATION_LIMIT = 25
-# ZION's rule (docs/wiki/stage-4b-the-crew.md): FAST-lane events this relevant to Australia.
-ESCALATE_AU_RELEVANCE = 0.7
-ERROR_MAX_CHARS = 300
 ERRORS_PER_RUN = 5
 QUERY_MAX_CHARS = 100
 
@@ -106,10 +111,6 @@ _DIGITS = re.compile(r"\d{1,9}")
 _LOGGABLE = re.compile(r"[^A-Za-z0-9/_.-]")
 
 _WITHHELD = "response withheld: it failed the secret scan"
-_EVENT_COLUMNS = (
-    "e.event_id, e.title, e.severity, e.status, e.prominence, e.au_relevance, "
-    "e.au_directly_reported, e.first_seen, e.last_material_update"
-)
 
 
 class ClientError(Exception):
@@ -161,10 +162,6 @@ def _json_default(value: Any) -> Any:
     raise TypeError(f"{type(value).__name__} is not JSON")
 
 
-def _usd(value: Decimal | float | None) -> float | None:
-    return None if value is None else round(float(value), 6)
-
-
 def _minutes(delta: timedelta) -> int:
     return int(delta.total_seconds() // 60)
 
@@ -176,18 +173,6 @@ def _error(status: int, message: str, headers: tuple[tuple[str, str], ...] = ())
 def _loggable(target: str) -> str:
     """The path alone, safe to log: no query string, nothing but plain path characters."""
     return _LOGGABLE.sub("?", target.split("?", 1)[0])[:80]
-
-
-def _truncate(message: str) -> str:
-    return message if len(message) <= ERROR_MAX_CHARS else message[:ERROR_MAX_CHARS] + "..."
-
-
-def _month_bounds(start: datetime) -> tuple[datetime, datetime]:
-    start = start.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    end = start.replace(year=start.year + 1, month=1) if start.month == 12 else start.replace(
-        month=start.month + 1
-    )
-    return start, end
 
 
 # --- Query parameters ------------------------------------------------------------------------
@@ -240,20 +225,6 @@ def _like(term: str) -> str:
 # --- Rows to JSON ------------------------------------------------------------------------------
 
 
-def _event_row(row: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        "event_id": row["event_id"],
-        "title": row["title"],
-        "severity": row["severity"],
-        "status": row["status"],
-        "prominence": row["prominence"],
-        "au_relevance": row["au_relevance"],
-        "au_directly_reported": row["au_directly_reported"],
-        "first_seen": row["first_seen"],
-        "last_material_update": row["last_material_update"],
-    }
-
-
 def _job_row(run: JobRun | None) -> dict[str, Any] | None:
     if run is None:
         return None
@@ -270,7 +241,7 @@ def _run_row(row: Mapping[str, Any]) -> dict[str, Any]:
     errors = list(row["errors"] or [])
     out = {k: row[k] for k in row.keys() if k != "errors"}  # noqa: SIM118 - a RowMapping
     out["error_count"] = len(errors)
-    out["errors"] = [_truncate(e) for e in errors[:ERRORS_PER_RUN]]
+    out["errors"] = [truncate(e) for e in errors[:ERRORS_PER_RUN]]
     return out
 
 
@@ -572,9 +543,9 @@ class OpsApi:
         return verdict
 
     def _cost_verdict(self) -> Verdict:
-        start, end = _month_bounds(self._clock())
+        start, end = month_bounds(self._clock())
         with self._read() as conn:
-            ledger = self._ledger_totals(conn, start, end)
+            ledger = ledger_totals(conn, start, end)
         summary: dict[str, Any] = {"month": f"{start:%Y-%m}", "ledger": ledger}
         reasons = []
         if ledger["unknown_cost_calls"]:
@@ -611,29 +582,17 @@ class OpsApi:
         except BudgetUnreadable as exc:
             return {"unreadable": str(exc)}
         reading = assess(status, self._budget)
-        used = _usd(status.usage_monthly) or 0.0
+        used = usd(status.usage_monthly) or 0.0
         return {
             "usage_month_usd": used,
-            "usage_today_usd": _usd(status.usage_daily),
-            "limit_usd": _usd(status.limit),
-            "limit_remaining_usd": _usd(status.limit_remaining),
-            "monthly_budget_usd": _usd(self._budget),
+            "usage_today_usd": usd(status.usage_daily),
+            "limit_usd": usd(status.limit),
+            "limit_remaining_usd": usd(status.limit_remaining),
+            "monthly_budget_usd": usd(self._budget),
             "mode": reading.mode.value,
-            "remaining_usd": _usd(reading.remaining_usd),
+            "remaining_usd": usd(reading.remaining_usd),
             "outside_ledger_usd": round(max(used - (ledger_usd or 0.0), 0.0), 6),
         }
-
-    @staticmethod
-    def _ledger_totals(conn: Connection, start: datetime, end: datetime) -> dict[str, Any]:
-        calls, cost, unknown = conn.execute(
-            text(
-                "select count(*), coalesce(sum(cost_usd), 0), "
-                "count(*) filter (where cost_usd is null) "
-                "from cost_ledger where ts >= :start and ts < :end"
-            ),
-            {"start": start, "end": end},
-        ).one()
-        return {"calls": calls, "cost_usd": _usd(cost), "unknown_cost_calls": unknown}
 
     # --- Reads ---
 
@@ -665,103 +624,12 @@ class OpsApi:
     def _digest(self, query: Mapping[str, list[str]]) -> Reply:
         _only(query, "hours")
         hours = _int(query, "hours", DIGEST_HOURS)
-        now = self._clock()
-        since = now - timedelta(hours=hours)
-        params = {"since": since}
-        start, end = _month_bounds(now)
         with self._read() as conn:
-            counts = (
-                conn.execute(
-                    text(
-                        "select "
-                        "count(*) filter (where first_seen >= :since and merged_into is null) "
-                        "as new, "
-                        "count(*) filter (where first_seen >= :since and merged_into is null "
-                        "and status = 'archived') as new_archived_on_arrival, "
-                        "count(*) filter (where first_seen < :since and merged_into is null "
-                        "and last_material_update >= :since) as updated, "
-                        "count(*) filter (where merged_into is not null and updated_at >= :since) "
-                        "as merged, "
-                        "count(*) filter (where merged_into is null and status <> 'archived') "
-                        "as standing "
-                        "from events"
-                    ),
-                    params,
-                )
-                .mappings()
-                .one()
-            )
-            top = conn.execute(
-                text(
-                    f"select {_EVENT_COLUMNS} from events e "
-                    "where e.status <> 'archived' and e.merged_into is null "
-                    "and e.prominence > :min "
-                    "order by e.prominence desc, e.last_material_update desc nulls last, "
-                    "e.event_id limit :limit"
-                ),
-                {"min": LIVE_MIN_PROMINENCE, "limit": TOP_EVENTS},
-            ).mappings()
-            top_events = [_event_row(r) for r in top]
-            candidates = conn.execute(
-                text(
-                    f"select {_EVENT_COLUMNS}, array(select distinct r.lane "
-                    "from event_sources s join source_registry r on r.id = s.source_id "
-                    "where s.event_id = e.event_id order by r.lane) as lanes "
-                    "from events e "
-                    "where e.status <> 'archived' and e.merged_into is null "
-                    "and (e.first_seen >= :since or e.last_material_update >= :since) "
-                    "and (e.severity = 'critical' or e.au_relevance >= :au) "
-                    "order by e.prominence desc nulls last, e.event_id limit :limit"
-                ),
-                {**params, "au": ESCALATE_AU_RELEVANCE, "limit": ESCALATION_LIMIT},
-            ).mappings()
-            escalations = [
-                {**_event_row(r), "lanes": list(r["lanes"]), "fast_lane": "fast" in r["lanes"]}
-                for r in candidates
-            ]
-            changes = conn.execute(
-                text(
-                    "with latest as ("
-                    "  select distinct on (source_id) source_id, status, error, checked_at "
-                    "  from source_health order by source_id, checked_at desc, id desc"
-                    "), earlier as ("
-                    "  select distinct on (source_id) source_id, status from source_health "
-                    "  where checked_at < :since order by source_id, checked_at desc, id desc"
-                    ") "
-                    "select l.source_id, b.status as was, l.status as now, l.checked_at, l.error "
-                    "from latest l left join earlier b using (source_id) "
-                    "where b.status is distinct from l.status order by l.source_id"
-                ),
-                params,
-            ).mappings()
-            health_changes = [
-                {**dict(r), "error": _truncate(r["error"]) if r["error"] else None}
-                for r in changes
-            ]
-            runs = conn.execute(
-                text(
-                    "select lane, count(*) as runs, "
-                    "count(*) filter (where finished_at is null) as unfinished, "
-                    "coalesce(sum(new_events), 0) as new_events, "
-                    "coalesce(sum(updated_events), 0) as updated_events, "
-                    "coalesce(sum(archived_events), 0) as archived_events, "
-                    "coalesce(sum(cardinality(errors)), 0) as errors "
-                    "from runs where started_at >= :since group by lane order by lane"
-                ),
-                params,
-            ).mappings()
-            by_lane = {r["lane"]: {k: int(v) for k, v in r.items() if k != "lane"} for r in runs}
-            ledger = self._ledger_totals(conn, start, end)
+            digest = load_digest(conn, now=self._clock(), hours=hours)
         return Reply(
             200,
             {
-                "window": {"hours": hours, "from": since, "to": now},
-                "events": dict(counts),
-                "top": top_events,
-                "escalation_candidates": escalations,
-                "source_health_changes": health_changes,
-                "runs": by_lane,
-                "cost_this_month": {"month": f"{start:%Y-%m}", **ledger},
+                **digest,
                 "notes": [
                     (
                         "Escalation candidates are critical, or Australian relevance of "
@@ -801,13 +669,13 @@ class OpsApi:
         with self._read() as conn:
             rows = conn.execute(
                 text(
-                    f"select {_EVENT_COLUMNS} from events e where {' and '.join(clauses)} "
+                    f"select {EVENT_COLUMNS} from events e where {' and '.join(clauses)} "
                     "order by e.prominence desc nulls last, "
                     "e.last_material_update desc nulls last, e.event_id limit :limit"
                 ),
                 params,
             ).mappings()
-            events = [_event_row(r) for r in rows]
+            events = [event_row(r) for r in rows]
         return Reply(200, {"count": len(events), "events": events})
 
     def _event(self, event_id: str) -> Reply:
@@ -850,9 +718,9 @@ class OpsApi:
         now = self._clock()
         month = _one(query, "month")
         if month is None:
-            start, end = _month_bounds(now)
+            start, end = month_bounds(now)
         elif match := _MONTH.fullmatch(month):
-            start, end = _month_bounds(
+            start, end = month_bounds(
                 datetime(int(match[1]), int(match[2]), 1, tzinfo=UTC)
             )
         else:
@@ -872,14 +740,14 @@ class OpsApi:
                 {"start": start, "end": end},
             ).mappings()
             return [
-                {**dict(r), "cost_usd": _usd(r["cost_usd"]), "tokens_in": int(r["tokens_in"]),
+                {**dict(r), "cost_usd": usd(r["cost_usd"]), "tokens_in": int(r["tokens_in"]),
                  "tokens_out": int(r["tokens_out"])}
                 for r in rows
             ]
 
         # Column expressions are fixed here, never taken from the request.
         with self._read() as conn:
-            totals = self._ledger_totals(conn, start, end)
+            totals = ledger_totals(conn, start, end)
             by_stage = grouped(conn, "stage")
             by_model = grouped(conn, "coalesce(model, requested_model, 'unknown')")
             by_agent = grouped(conn, "coalesce(agent, 'none')")

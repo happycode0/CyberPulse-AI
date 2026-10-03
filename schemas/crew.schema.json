@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crew.schema.json",
+  "title": "CyberPulse-AI crew.json",
+  "description": "This month's work by the agents the worker runs itself, counted from the rows their jobs leave. The AI agents work in the private control panel and are not listed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "month", "agents", "pipeline_ai"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "callsign", "status", "tasks_completed", "items_processed", "cost_usd", "last_active_at"
+        ],
+        "properties": {
+          "callsign": { "type": "string", "pattern": "^[A-Z]{2,20}$" },
+          "status": { "enum": ["active", "idle", "degraded"] },
+          "tasks_completed": { "type": ["integer", "null"], "minimum": 0 },
+          "items_processed": { "type": ["integer", "null"], "minimum": 0 },
+          "cost_usd": { "type": ["number", "null"], "minimum": 0 },
+          "last_active_at": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    },
+    "pipeline_ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["calls", "cost_usd"],
+      "properties": {
+        "calls": { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}
