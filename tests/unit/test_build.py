@@ -8,10 +8,13 @@ previous output byte-for-byte intact.
 import json
 import os
 from datetime import UTC, date, datetime, timedelta
+from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 import worker.publish.build as build
+from worker.db.crew import Activity, PipelineAi
 from worker.db.sources import RegistryRow
 from worker.db.trends import TrendInputs
 from worker.models import (
@@ -69,6 +72,13 @@ def db(monkeypatch):
         "lifecycle": {"old-feed": LifecycleState.RETIRED},
         "merged": {},
         "trends": TrendInputs([], [], {}, NOW - timedelta(days=3)),
+        "crew": {
+            "librarian": Activity(4, None, NOW - timedelta(hours=2)),
+            "prowl": Activity(90, 4000, NOW - timedelta(minutes=3)),
+            "seraph": Activity(800, 45, NOW - timedelta(minutes=50)),
+            "rogue": Activity(0, None, None),
+        },
+        "pipeline_ai": PipelineAi(12, Decimal("0.0412")),
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
@@ -81,6 +91,8 @@ def db(monkeypatch):
     monkeypatch.setattr(build, "load_lifecycle_states", lambda conn: state["lifecycle"])
     monkeypatch.setattr(build, "merged_redirects", lambda conn, **kw: state["merged"])
     monkeypatch.setattr(build, "load_trend_inputs", lambda conn, **kw: state["trends"])
+    monkeypatch.setattr(build, "load_crew_activity", lambda conn, **kw: state["crew"])
+    monkeypatch.setattr(build, "load_pipeline_ai", lambda conn, **kw: state["pipeline_ai"])
     return state
 
 
@@ -100,7 +112,7 @@ def test_build_emits_expected_files(tmp_path, db):
     names = {p.relative_to(tmp_path).as_posix() for p in build_all(None, tmp_path, now=NOW)}
     assert names == {
         "live.json", "index.json", "source-health.json", "system-status.json", "trends.json",
-        "history/2026-09-30.json",
+        "crew.json", "history/2026-09-30.json",
     }
     assert {p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*") if p.is_file()} == names
 
@@ -397,3 +409,31 @@ def test_rebuild_replaces_previous_output(tmp_path, db):
     live = read(tmp_path, "live.json")
     assert [e["event_id"] for e in live["events"]] == ["evt-2026-000007"]
     assert live["generated_at"] == "2026-09-30T12:15:00Z"
+
+
+def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
+    db["crew"]["librarian"] = Activity(4, None, NOW - timedelta(hours=2), failing=True)
+    build_all(None, tmp_path, now=NOW)
+    crew = read(tmp_path, "crew.json")
+    agents = {a["callsign"]: a for a in crew["agents"]}
+    assert set(agents) == {"LIBRARIAN", "PROWL", "SERAPH", "ROGUE", "LINK"}
+    assert crew["month"] == "2026-09"
+    # The newest ground-truth pass raised: degraded, whatever the last good one says.
+    assert agents["LIBRARIAN"]["status"] == "degraded"
+    assert agents["PROWL"] | {"last_active_at": "-"} == {
+        "callsign": "PROWL", "status": "active", "tasks_completed": 90,
+        "items_processed": 4000, "cost_usd": 0.0, "last_active_at": "-",
+    }
+    assert agents["SERAPH"]["status"] == "idle"  # no source checked in 30 minutes
+    assert agents["ROGUE"] == {
+        "callsign": "ROGUE", "status": "idle", "tasks_completed": 0, "items_processed": None,
+        "cost_usd": 0.0, "last_active_at": None,
+    }
+    assert agents["LINK"]["last_active_at"] == "2026-09-30T12:00:00Z"
+    assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412}
+
+
+def test_the_site_roster_has_every_agent_crew_json_names():
+    hud = (Path(__file__).resolve().parents[2] / "site/assets/hud.js").read_text()
+    for callsign in ("LIBRARIAN", "PROWL", "SERAPH", "ROGUE", "LINK"):
+        assert f"callsign: '{callsign}'" in hud

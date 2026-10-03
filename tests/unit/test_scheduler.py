@@ -9,7 +9,14 @@ from worker.ai.enrich import EnrichSummary
 from worker.ai.mitre import MitreSummary
 from worker.models import Lane
 from worker.publish.push import PushResult
-from worker.scheduler import ENRICH_JOB_ID, GROUNDTRUTH_JOB_ID, build_scheduler, job_id
+from worker.scheduler import (
+    ALERT_JOB_ID,
+    DIGEST_JOB_ID,
+    ENRICH_JOB_ID,
+    GROUNDTRUTH_JOB_ID,
+    build_scheduler,
+    job_id,
+)
 
 
 def fields(trigger: CronTrigger) -> dict[str, str]:
@@ -18,7 +25,10 @@ def fields(trigger: CronTrigger) -> dict[str, str]:
 
 def test_fast_and_normal_are_scheduled_deep_is_not():
     jobs = {j.id for j in build_scheduler().get_jobs()}
-    assert jobs == {job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID}
+    assert jobs == {
+        job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
+        ALERT_JOB_ID,
+    }
 
 
 def test_the_ground_truth_sync_runs_four_times_a_day_off_the_lane_hours():
@@ -45,6 +55,37 @@ def test_enrichment_runs_twice_an_hour_after_the_fast_lane():
 
 def test_asking_for_one_lane_does_not_bring_model_calls_along():
     assert ENRICH_JOB_ID not in {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+
+
+def test_the_digest_goes_at_seven_sydney_time_with_two_retries():
+    job = {j.id: j for j in build_scheduler().get_jobs()}[DIGEST_JOB_ID]
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("0", "7,8,9")
+    assert str(job.trigger.timezone) == "Australia/Sydney"
+
+
+def test_alerts_follow_each_fast_run():
+    job = {j.id: j for j in build_scheduler().get_jobs()}[ALERT_JOB_ID]
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("3,18,33,48", "*")
+
+
+def test_asking_for_one_lane_does_not_bring_notifications_along():
+    jobs = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+    assert DIGEST_JOB_ID not in jobs and ALERT_JOB_ID not in jobs
+
+
+@pytest.mark.parametrize("name, sender", [("_digest_job", "send_daily_digest"),
+                                          ("_alert_job", "send_critical_alerts")])
+async def test_a_notification_pass_that_raises_does_not_stop_the_schedule(
+    monkeypatch, caplog, name, sender
+):
+    async def boom(engine, settings, *, now):
+        raise RuntimeError("database unreachable")
+
+    monkeypatch.setattr(scheduler, sender, boom)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
+    await getattr(scheduler, name)()  # must not raise
+    assert "failed" in caplog.text
 
 
 def test_cadences():
