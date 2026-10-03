@@ -1,7 +1,7 @@
 # Versioned scoring configuration (PLAN.md section 5, "Scoring").
 # `version` must equal worker.version.SCORING_VERSION; bump both together whenever
 # any number below changes, so stored scores can be traced to the rules that made them.
-version: "2"
+version: "3"
 
 # Base severity weight. Severity and prominence stay separate: this is severity only.
 severity_weights:
@@ -49,6 +49,13 @@ prominence_weights:
   corroboration: 0.20
   au_relevance: 0.25
   novelty: 0.15
+
+# Archive, never delete. An event is archived once its prominence decays below
+# `prominence_below` or its last material update is more than `idle_days` old. It stays on the
+# site's day pages but leaves the live set, and only a material change brings it back.
+archive:
+  prominence_below: 0.05
+  idle_days: 30
 
 # AU relevance (worker/pipeline/au.py). Facts in the record set a floor under the number, each
 # with a reason; the model's reading may lift it but never lower it. Matching is case-sensitive
