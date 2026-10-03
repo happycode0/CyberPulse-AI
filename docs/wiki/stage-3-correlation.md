@@ -3,8 +3,8 @@
 [← Stage 2 — Ground truth](stage-2-ground-truth.md) · [Wiki home](README.md) ·
 [Stage 4 — Paperclip →](stage-4-paperclip.md)
 
-**Status: ▶ in progress.** Consolidation (one story = one event) and source lineage are built.
-Archiving, material changes, trends and the new adapters come next. Nothing in it is yours to do.
+**Status: ▶ in progress.** Consolidation (one story = one event), source lineage and material
+change are built. Archiving, trends and the new adapters come next. Nothing in it is yours to do.
 Plan:
 [PLAN.md §9, Stage 3](../../PLAN.md#9-stages)
 
@@ -27,6 +27,7 @@ impressions.
 | `python -m worker --check-duplicates`: the duplicate rate now, and as it would be after merging | ✅ |
 | Source lineage: one organisation's feeds, a relay of an agency and a word-for-word copy are one voice (`worker/pipeline/lineage.py`) | ✅ |
 | `python -m worker --check-lineage`: confirmations counted by outlet and by lineage | ✅ |
+| Material change: what a new report or a register adds to an event moves it up again (`worker/pipeline/material.py`) | ✅ |
 
 ### The duplicate rate (measured on the VM, 2026-10-03)
 
@@ -104,14 +105,36 @@ other eight, six are one agency's two feeds on one item, and two are an outlet r
 each now. Few events change because most stories here have one outlet; the rule matters most on
 the big ones.
 
+### Material change (measured on the VM, 2026-10-03)
+
+An event's prominence decays from its last **material** update, so only news brings it back up,
+and a new event that gains some becomes a developing one. Another outlet agreeing is evidence,
+not news. Found without a model:
+
+| Change | When |
+|---|---|
+| `NEW_CVE` | A report names a CVE the event did not have |
+| `EXPLOIT_CONFIRMED`, `NEW_EXPLOIT`, `NEW_PATCH`, `NEW_MITIGATION`, `CORRECTION` | A report's headline says so ("…exploited in attacks", "PoC exploit released…", "…patches…") and nothing the event had already did. "No patch yet…" and "no evidence of exploitation" do not count |
+| `NEW_AU_EXPOSURE` | The first Australian source on a story first reported elsewhere |
+| `EXPLOIT_CONFIRMED` | CISA adds one of the event's CVEs to KEV after the event began |
+| `NEW_PATCH` | An advisory on one of its CVEs that named no fixed version names one |
+
+Each kind is written once per event: CISA's "Adds … to Catalog" notice and the listing it
+announces are one confirmation. Headlines only, never feed summaries, whose boilerplate ("apply
+the latest updates") would read as news on every story. New actors, targets, geography and impact
+need the entities a model reads, so they wait for the AI layer.
+
+Replayed over the last 30 days (118 events with more than one report), the headline rules find
+4 confirmed exploitations, 1 new exploit and 12 first Australian reports: few, and each one real,
+such as "Cisco warns of new SD-WAN zero-day exploited in attacks" joining a Cisco advisory.
+
 ## Still to build (🟢 all Claude)
 
-1. **Material-change detection** (14 types), so an event only moves up again when something real
-   changed.
-2. **Prominence decay**, gated on material updates, then **archiving**.
-3. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
-4. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
-5. **pgvector embeddings, only if measurement shows they are needed.** The database image already
+1. **Archiving:** an event whose prominence has decayed away, or that has had no material update
+   for 30 days, is archived (never deleted).
+2. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
+3. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
+4. **pgvector embeddings, only if measurement shows they are needed.** The database image already
    has pgvector; it stays unused unless deterministic matching measurably falls short.
 
 ## Done when
