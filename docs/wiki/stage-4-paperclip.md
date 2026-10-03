@@ -52,7 +52,7 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | 5 | ✅ | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#how-it-was-built--all-claude) |
 | 6 | ✅ | The worker's ops API and its token; the `http` agents' URL | [below](#the-workers-ops-api) |
 | 7 | ✅ | First test tickets, one per AI agent | [4a step 8](stage-4a-paperclip-setup.md#8--first-test--one-ticket-one-agent) |
-| 8 | 🔴 **you** | Resume agents and routines: MORPHEUS, ZION and ROGUE first | [4a step 7](stage-4a-paperclip-setup.md) |
+| 8 | 🔴 **you** | Resume agents and routines, **after** the 8-agent crew change lands and the agents no longer inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)) | [4a step 7](stage-4a-paperclip-setup.md) |
 
 MORPHEUS and ZION can do real work now that 5 and 6 are done. Every routine is still paused.
 Resume only theirs, and ROGUE's, at first.
