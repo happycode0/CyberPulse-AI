@@ -3,8 +3,9 @@
 [← Stage 2 — Ground truth](stage-2-ground-truth.md) · [Wiki home](README.md) ·
 [Stage 4 — Paperclip →](stage-4-paperclip.md)
 
-**Status: ▶ in progress.** Consolidation (one story = one event) is built. Lineage, archiving,
-material changes, trends and the new adapters come next. Nothing in it is yours to do. Plan:
+**Status: ▶ in progress.** Consolidation (one story = one event) and source lineage are built.
+Archiving, material changes, trends and the new adapters come next. Nothing in it is yours to do.
+Plan:
 [PLAN.md §9, Stage 3](../../PLAN.md#9-stages)
 
 ---
@@ -24,6 +25,8 @@ impressions.
 | Consolidation pass every run: stored events that are one story are merged (`worker/pipeline/correlate.py`) | ✅ |
 | Merged events are archived with `merged_into`, never deleted; old links redirect on the site | ✅ |
 | `python -m worker --check-duplicates`: the duplicate rate now, and as it would be after merging | ✅ |
+| Source lineage: one organisation's feeds, a relay of an agency and a word-for-word copy are one voice (`worker/pipeline/lineage.py`) | ✅ |
+| `python -m worker --check-lineage`: confirmations counted by outlet and by lineage | ✅ |
 
 ### The duplicate rate (measured on the VM, 2026-10-03)
 
@@ -70,22 +73,51 @@ headline. The losers' sources, CVEs, timeline, claims, MITRE techniques and link
 Another outlet's report does not count as a material update, so it does not refresh the
 winner's prominence. A CVE it did not have does.
 
+### Independent confirmation (measured on the VM, 2026-10-03)
+
+A confirmation used to be any other outlet. Now it is any other **lineage**, and each report on
+an event belongs to one, the first of these that applies:
+
+1. **A relay.** The headline names an agency that also reported the event ("CISA Says Attackers
+   Are Exploiting…", "ACSC warns of…"). Only agencies are matched, by the `names` under
+   `publishers` in `config/sources.yaml`: "Microsoft" in a headline is as often the product.
+2. **A copy.** The headline is word for word another publisher's earlier one (five words or
+   more; "CVE-2026-1234" is a headline two registers arrive at on their own).
+3. **The publisher's own.** ACSC's alert and its news item are one voice (`publisher:` on each
+   of ASD's seven feeds, CISA's four, Google's, Microsoft's and My Security Media's).
+
+One report per lineage is independent: the originator's own, else the earliest. Ingest still
+guesses one outlet at a time; the run's correlation pass settles it for every event seen in the
+last 30 days, in the same transaction as the merges, before anything is scored.
+
+| | Last 30 days |
+|---|---|
+| Events | 2,216 |
+| Confirmations counted by outlet | 2,265 |
+| Counted by lineage | 2,255 |
+| Events that had been counting one voice twice or more | 9 |
+
+The NetScaler zero-days go from seven voices to five (CISA's KEV entries, its advisory and THN's
+"CISA Says…" are CISA's; ACSC's alert and My Security Media's "ACSC warns…" are ASD's). Of the
+other eight, six are one agency's two feeds on one item, and two are an outlet relaying an agency
+(My Security Media on ACSC's AI-misalignment alert, THN on CISA's WSO2 KEV entry): one voice
+each now. Few events change because most stories here have one outlet; the rule matters most on
+the big ones.
+
 ## Still to build (🟢 all Claude)
 
 1. **Material-change detection** (14 types), so an event only moves up again when something real
    changed.
-2. **Source lineage and independent confirmation:** syndicated copies no longer inflate
-   confidence.
-3. **Prominence decay**, gated on material updates, then **archiving**.
-4. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
-5. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
-6. **pgvector embeddings, only if measurement shows they are needed.** The database image already
+2. **Prominence decay**, gated on material updates, then **archiving**.
+3. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
+4. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
+5. **pgvector embeddings, only if measurement shows they are needed.** The database image already
    has pgvector; it stays unused unless deterministic matching measurably falls short.
 
 ## Done when
 
 - [x] The duplicate rate is measured and acceptable (29.1% → 13.5%; the rest is explained above)
-- [ ] Syndication no longer inflates confidence
+- [x] Syndication no longer inflates confidence (2,265 → 2,255 confirmations; NetScaler 7 → 5)
 - [ ] Trends are computed from real data
 
 ---

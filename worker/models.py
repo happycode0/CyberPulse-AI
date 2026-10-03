@@ -327,7 +327,18 @@ class SourceConfig(_Model):
     parser: str
     expected_frequency: str
     notes: str | None = None
+    # The organisation behind the feed, when it publishes through more than one (an id under
+    # `publishers` in the registry); None means the source speaks for itself.
+    publisher: str | None = None
     lifecycle_state: LifecycleState | None = None
+
+
+class PublisherConfig(_Model):
+    """An organisation in the registry's `publishers` (worker/pipeline/lineage.py)."""
+
+    name: str
+    # How headlines name it when relaying what it said ("ACSC warns ..."); see lineage.py.
+    names: list[str] = Field(default_factory=list)
 
 
 class SourceHealth(_Model):

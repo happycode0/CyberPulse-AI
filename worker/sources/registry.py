@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from worker.models import Lane, SourceConfig
+from worker.models import Lane, PublisherConfig, SourceConfig
 
 
 def load_registry(path: Path) -> list[SourceConfig]:
@@ -20,12 +20,14 @@ def load_registry(path: Path) -> list[SourceConfig]:
         List of validated SourceConfig objects.
         
     Raises:
-        ValueError: If duplicate source IDs are found, or a source sets `lifecycle_state`
-            (which is database-owned and overlaid at runtime).
+        ValueError: If duplicate source IDs are found, a source sets `lifecycle_state`
+            (which is database-owned and overlaid at runtime), or a source names a
+            `publisher` the registry's `publishers` does not list.
     """
     with open(path, "r") as f:
         data = yaml.safe_load(f)
     
+    publishers = _parse_publishers(data)
     sources_list = data.get("sources", [])
     seen_ids = set()
     sources = []
@@ -40,11 +42,23 @@ def load_registry(path: Path) -> list[SourceConfig]:
         
         if source.id in seen_ids:
             raise ValueError(f"duplicate source id: {source.id}")
+        if source.publisher is not None and source.publisher not in publishers:
+            raise ValueError(f"source {source.id!r}: unknown publisher {source.publisher!r}")
         
         seen_ids.add(source.id)
         sources.append(source)
     
     return sources
+
+
+def load_publishers(path: Path) -> dict[str, PublisherConfig]:
+    """The registry's `publishers`: organisations behind more than one feed, by id."""
+    with open(path) as f:
+        return _parse_publishers(yaml.safe_load(f))
+
+
+def _parse_publishers(data: dict) -> dict[str, PublisherConfig]:
+    return {pid: PublisherConfig(**p) for pid, p in (data.get("publishers") or {}).items()}
 
 
 def sources_for_lane(sources: list[SourceConfig], lane: Lane) -> list[SourceConfig]:

@@ -108,6 +108,11 @@ def test_independent_source_without_lineage_counts_once_each():
     assert independent_confirmations(e) == 2
 
 
+def test_a_source_without_a_lineage_yet_is_the_lineage_named_after_it():
+    e = event(sources=[src("thn", independent=True), src("x", lineage="thn", independent=True)])
+    assert independent_confirmations(e) == 1
+
+
 def test_no_independent_sources_means_zero_confirmations():
     assert independent_confirmations(event(sources=[src("a", lineage="L1")])) == 0
     assert independent_confirmations(event()) == 0

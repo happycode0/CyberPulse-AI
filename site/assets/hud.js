@@ -586,7 +586,10 @@ function sourceReportList(sources) {
             : h('span', { text: label }),
           h('span', { class: 'chip', text: src.independent ? 'INDEPENDENT' : 'NOT INDEPENDENT' }),
           src.published ? timeEl(src.published) : null,
-          src.lineage_id ? h('span', { class: 'mono source-report__lineage', text: `LINEAGE ${src.lineage_id}` }) : null,
+          // Its own lineage says nothing; another's says whose report this one repeats.
+          src.lineage_id && src.lineage_id !== src.source_id
+            ? h('span', { class: 'mono source-report__lineage', text: `LINEAGE ${src.lineage_id}` })
+            : null,
         );
       }),
     ),

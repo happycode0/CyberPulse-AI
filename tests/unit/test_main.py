@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 import httpx
 import pytest
 from pydantic import SecretStr
@@ -13,6 +15,7 @@ from worker.ai.ladder import (
     VerifiedLadder,
 )
 from worker.models import Lane
+from worker.pipeline.lineage import Report
 from worker.settings import Settings
 
 
@@ -218,3 +221,46 @@ def test_check_budget_fails_when_the_key_cannot_be_read(monkeypatch, caplog, res
     respx_mock.get(KEY_URL).mock(return_value=httpx.Response(401))
     assert main_mod._check_budget() == 1
     assert "did not accept the key" in caplog.text
+
+
+# ─── _check_lineage: confirmations by outlet and by lineage, read only ───────────────────────────
+
+
+def test_check_lineage_alone_exits_without_starting_the_scheduler(calls, monkeypatch):
+    monkeypatch.setattr(main_mod, "_check_lineage", lambda: calls.append(("lineage",)) or 0)
+    assert main_mod.main(["--check-lineage", "--check-budget"]) == 0
+    assert calls == [("budget",), ("lineage",)]
+
+
+def test_check_lineage_lists_the_events_one_publisher_inflated(monkeypatch, caplog):
+    at = datetime(2026, 10, 3, tzinfo=UTC)
+
+    class Conn:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def rollback(self):
+            pass
+
+    class Engine:
+        def connect(self):
+            return Conn()
+
+    reports = {
+        "evt-2026-000001": [
+            Report(1, "acsc_alerts", "CRITICAL ALERT: NetScaler", at),
+            Report(2, "acsc_news", "ASD on NetScaler", at + timedelta(hours=1)),
+            Report(3, "thn", "NetScaler flaws exploited", at + timedelta(hours=2)),
+        ],
+        "evt-2026-000002": [Report(4, "thn", "a", at), Report(5, "therecord", "b", at)],
+    }
+    monkeypatch.setattr(main_mod, "get_engine", Engine)
+    monkeypatch.setattr(main_mod, "load_reports", lambda conn, *, since: reports)
+    caplog.set_level("INFO")
+    assert main_mod._check_lineage() == 0
+    assert "5 confirmations counted by outlet, 4 by lineage; 1 events" in caplog.text
+    assert "evt-2026-000001: 3 outlets, 2 lineages: asd <- acsc_alerts, acsc_news" in caplog.text
+    assert "evt-2026-000002:" not in caplog.text
