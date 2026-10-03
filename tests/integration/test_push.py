@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from worker.publish import push as push_mod
 from worker.publish.push import push_data
 
 
@@ -114,3 +115,25 @@ def test_push_accepts_a_relative_data_dir(tmp_repo, monkeypatch):
     r = push_data(Path("data"))
     assert r.pushed is True
     assert push_data(Path("data")).reason == "no changes"
+
+
+def test_a_git_command_that_hangs_is_a_failure_that_does_not_repeat_the_token(
+    tmp_repo, monkeypatch
+):
+    # The original exception repeats the command, which carries the auth header.
+    def hang(cmd, **kwargs):
+        assert kwargs["timeout"] == push_mod.GIT_TIMEOUT_SECONDS
+        assert kwargs["env"]["GIT_TERMINAL_PROMPT"] == "0"
+        raise subprocess.TimeoutExpired(cmd, kwargs["timeout"])
+
+    monkeypatch.setattr(push_mod.subprocess, "run", hang)
+    with pytest.raises(RuntimeError, match="timed out") as raised:
+        push_data(tmp_repo / "data")
+    assert raised.value.__suppress_context__ is True
+    assert "github_pat" not in str(raised.value)
+
+
+def test_a_host_knows_whether_it_can_push(tmp_repo, monkeypatch):
+    assert push_mod.publish_token_configured() is True
+    monkeypatch.delenv("CYBERPULSE_PUBLISH_TOKEN")
+    assert push_mod.publish_token_configured() is False
