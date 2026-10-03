@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime, timedelta
 
 import httpx
@@ -306,3 +307,32 @@ def test_check_lineage_lists_the_events_one_publisher_inflated(monkeypatch, capl
     assert "5 confirmations counted by outlet, 4 by lineage; 1 events" in caplog.text
     assert "evt-2026-000001: 3 outlets, 2 lineages: asd <- acsc_alerts, acsc_news" in caplog.text
     assert "evt-2026-000002:" not in caplog.text
+
+
+def test_the_watchdog_runs_last_and_alone_starts_no_scheduler(calls, monkeypatch):
+    monkeypatch.setattr(main_mod, "_watchdog", lambda: calls.append(("watchdog",)) or 0)
+    assert main_mod.main(["--watchdog", "--publish"]) == 0
+    assert calls == [("publish",), ("watchdog",)]
+    calls.clear()
+    assert main_mod.main(["--watchdog"]) == 0
+    assert calls == [("watchdog",)]
+
+
+@pytest.mark.parametrize("database, code", [(True, 0), (False, 1)])
+def test_a_watchdog_pass_fails_only_without_the_database(monkeypatch, caplog, database, code):
+    from worker.watchdog.run import PassSummary
+
+    class Fake:
+        def __init__(self, settings):
+            pass
+
+        async def run_pass(self, engine):
+            return PassSummary(database=database, findings=2, opened=1, uncovered=["cost"])
+
+    monkeypatch.setattr(main_mod, "Watchdog", Fake)
+    monkeypatch.setattr(main_mod, "get_settings", lambda: None)
+    monkeypatch.setattr(main_mod, "get_engine", lambda: None)
+    caplog.set_level(logging.INFO)
+    assert main_mod._watchdog() == code
+    if database:
+        assert "2 findings, 1 opened" in caplog.text and "could not read cost" in caplog.text

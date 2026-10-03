@@ -1,12 +1,12 @@
 """Command line: `python -m worker [--check-models] [--check-budget] [--check-duplicates]
 [--check-lineage] [--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich]
-[--pin-golden-set] [--scan-models] [--gauntlet] [--publish]`.
+[--pin-golden-set] [--scan-models] [--gauntlet] [--publish] [--watchdog]`.
 
 With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync, AI enrichment and the
 rest of the schedule until interrupted. Explicit actions run in a fixed order (check models,
 check budget, check duplicates, check lineage, migrate, collect, ground truth, enrich, pin the
-golden set, scan models, gauntlet, publish) and then exit, unless `--lane` is given without
-`--once`, which schedules that one lane instead.
+golden set, scan models, gauntlet, publish, watchdog) and then exit, unless `--lane` is given
+without `--once`, which schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -54,6 +54,7 @@ from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
 from worker.settings import get_settings
 from worker.sources.registry import load_publishers, load_registry
+from worker.watchdog.run import Watchdog
 
 logger = logging.getLogger("worker")
 
@@ -161,6 +162,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="run the model gauntlet on the golden set now, within its monthly cap",
     )
     p.add_argument("--publish", action="store_true", help="build and write the public JSON files")
+    p.add_argument(
+        "--watchdog",
+        action="store_true",
+        help="run one watchdog pass now: check the system, open and resolve incidents, notify",
+    )
     return p
 
 
@@ -430,6 +436,27 @@ def _publish() -> int:
     return EXIT_OK
 
 
+def _watchdog() -> int:
+    """One pass. Non-zero only when the database could not be reached: an incident is the
+    watchdog working, not failing."""
+    summary = asyncio.run(Watchdog(get_settings()).run_pass(get_engine()))
+    if not summary.database:
+        logger.error("watchdog: the database cannot be reached")
+        return EXIT_FAILED
+    logger.info(
+        "watchdog: %d findings, %d opened, %d resolved, %d unresolved; %d notices sent, "
+        "%d failed%s",
+        summary.findings,
+        summary.opened,
+        summary.resolved,
+        summary.unresolved,
+        summary.sent,
+        summary.failed,
+        f"; could not read {', '.join(summary.uncovered)}" if summary.uncovered else "",
+    )
+    return EXIT_OK
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
@@ -486,6 +513,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         (args.scan_models, _scan_models),
         (args.gauntlet, _gauntlet),
         (args.publish, _publish),
+        (args.watchdog, _watchdog),
     ):
         if asked:
             code = step()
@@ -504,6 +532,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or args.pin_golden_set
         or args.scan_models
         or args.gauntlet
+        or args.watchdog
         or lane
     )
     if schedule:

@@ -16,7 +16,7 @@ EXPECTED_TABLES = {
     "organisations", "products", "threat_actors", "threat_actor_aliases", "countries",
     "sectors", "source_registry", "source_health", "source_lineage", "runs", "trends",
     "cost_ledger", "followup_tasks", "incidents", "agent_proposals", "schema_migrations",
-    "job_runs",
+    "job_runs", "incident_verdicts",
 }
 
 
