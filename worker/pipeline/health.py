@@ -96,6 +96,11 @@ def _carry_forward(
     reachable source failing (and eventually degraded) for as long as it answers 304. The
     verdict is instead rebuilt from the last OK / STALE record, so a feed that was already
     stale before the blip is not laundered into OK.
+
+    Where the newest item's age is known it is judged again against the source's threshold
+    now, rather than the old verdict being kept. The age only grows, so this can only clear
+    a STALE verdict when the threshold itself has changed: the four ACSC feeds stayed STALE
+    for a day under thresholds they had already been given.
     """
     verdicts = sorted(
         (h for h in history if h.status in (HealthStatus.OK, HealthStatus.STALE)),
@@ -112,13 +117,13 @@ def _carry_forward(
     if age_days is not None:
         age_days += _days(max(timedelta(0), now - previous.checked_at))
     status, error = previous.status, previous.error
-    threshold = staleness_threshold(source)
-    if (
-        status in (HealthStatus.OK, HealthStatus.STALE)
-        and age_days is not None
-        and timedelta(days=age_days) > threshold
-    ):
-        status, error = HealthStatus.STALE, _stale_reason(timedelta(days=age_days), threshold)
+    if age_days is not None:
+        age, threshold = timedelta(days=age_days), staleness_threshold(source)
+        status, error = (
+            (HealthStatus.STALE, _stale_reason(age, threshold))
+            if age > threshold
+            else (HealthStatus.OK, None)
+        )
     return SourceHealth(status=status, error=error, newest_item_age_days=age_days, **base)
 
 
