@@ -32,6 +32,7 @@ impressions.
 | Trends: topic and CVE velocity counted from independent reports, published as `trends.json` and shown under TRENDS (`worker/pipeline/trends.py`) | ✅ |
 | Sources with no feed: ASD, OAIC and Anthropic read from their listing pages (`worker/collectors/web_page.py`), Microsoft's security releases from its API | ✅ |
 | Source health judged against each feed's measured rhythm: the four ACSC feeds no longer read STALE between alerts | ✅ |
+| AI sources moved from DEEP, which nothing schedules, to NORMAL, as PLAN.md §5 says | ✅ |
 
 ### The duplicate rate (measured on VM 200, 2026-10-03)
 
@@ -232,6 +233,32 @@ hourly rhythms they do not keep. Their thresholds now follow what was measured o
 year (alerts: median 8 days apart, longest 41, now `monthly`; news: median 5, longest 21, now
 `weekly`). ASD's own news page posts months apart (231 days in 2025), so it has a new
 `quarterly` threshold of 270 days.
+
+### The AI sources were never read (found 2026-10-03)
+
+The runs table had fast and normal runs and no deep run, ever. DEEP is a Paperclip routine with
+no schedule in the worker, and the routines are paused, so the eight AI sources registered in
+DEEP had never been collected. PLAN.md §5 puts AI sources in NORMAL, so they are there now:
+Simon Willison, Embrace The Red, OpenAI, DeepMind, Microsoft AI security, OWASP GenAI, Hugging
+Face and Anthropic. Each one's threshold follows its posting gaps over the last year, measured
+on VM 200:
+
+| Source | Median / longest gap | Threshold |
+|---|---|---|
+| Simon Willison | 0.2 / 1.3 days | `daily` |
+| OpenAI | 0.3 / 11 days | `weekly` |
+| Hugging Face | 0.8 / 14 days | `weekly` |
+| Microsoft AI security | 1.0 / 7 days | `weekly` |
+| DeepMind | 1.7 / 21 days | `weekly` |
+| Anthropic | 2.0 / 9 days | `weekly` |
+| Embrace The Red | 17 / 52 days | `monthly` |
+| OWASP GenAI | 28 / 111 days | `quarterly` |
+
+arXiv cs.CR stays in DEEP. It is long-form research, at 50 or more papers each weekday, and
+PLAN.md §5 gives long-form research to DEEP. It is read once the DEEP routine is unpaused. A test now fails if an AI source sits in a lane the
+worker does not schedule. The first normal run after the move takes in each feed's back catalogue
+once. Old items land on their own day pages and are archived in the same run, as for every
+feed added before.
 
 ### Embeddings: not needed (measured on VM 200, 2026-10-03)
 
