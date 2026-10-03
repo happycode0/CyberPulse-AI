@@ -28,8 +28,9 @@ const HEALTH = {
 };
 
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
-// ship with the site. Workload per agent, when there is any, comes from data/crew.json
-// (published from Stage 5) and is looked up by callsign at render time.
+// ship with the site. Workload per agent comes from data/crew.json and is looked up by
+// callsign at render time. It lists only the agents the worker runs itself; the AI agents
+// work in the private control panel and publish nothing here.
 // Each agent carries a `face`: the key of the one accessory that distinguishes its drawn
 // portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
 // and the names PLAN.md assigns permissions and budgets to.
@@ -1615,7 +1616,7 @@ const CREW_JOBS = {
   WINTERMUTE: { owns: 'The AI desk — attacks on models, and models used to attack', run: () => null },
   TACHIKOMA: { owns: 'Finding sources we do not have yet, and proposing them for review', run: () => null },
   DECKARD: { owns: 'Developing events: keeping one open until it is patched or closed', run: () => null },
-  VOIGHT: { owns: 'The publication veto — every critical and high claim is checked or held', run: () => 'Not in Stage 1. The QA gate arrives with the agents.' },
+  VOIGHT: { owns: 'The publication veto — every critical and high claim is checked or held', run: () => null },
   WHEELJACK: { owns: 'Writing and repairing the collectors and parsers this pipeline runs on', run: () => null },
   TRON: { owns: 'Reviewing WHEELJACK\u2019s work on a different model family (two-person rule)', run: () => null },
   TELETRAAN: {
@@ -1625,7 +1626,7 @@ const CREW_JOBS = {
   ROGUE: { owns: 'The US$20/month ceiling, the spend ledger and the degradation tiers', run: () => null },
   RIPPERDOC: {
     owns: 'Assigning every agent its model: cheapest capable, free where possible, never above US$1/M output — re-checked daily, and swapped immediately if a model starts failing an agent',
-    run: () => 'Not in Stage 1. The catalogue scan starts with the agents.',
+    run: () => null,
   },
   LINK: {
     owns: 'Publishing the snapshot this page is reading, and notifying on change',
@@ -1914,7 +1915,7 @@ function botFace(agent, klass = 'bot') {
 function crewCard(agent, stat) {
   const status = stat?.status || 'not_active';
   const led = { active: 'ok', idle: 'idle', degraded: 'warn', not_active: 'idle' }[status] || 'idle';
-  const label = { active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED', not_active: 'NOT YET ACTIVE' }[status] || status.toUpperCase();
+  const label = { active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED', not_active: 'NOT PUBLISHED' }[status] || status.toUpperCase();
   const fmtStat = (value, fmt = (v) => String(v)) => (value === null || value === undefined ? '—' : fmt(value));
   return h(
     'li',
@@ -1941,20 +1942,20 @@ function crewCard(agent, stat) {
       ? h(
         'dl',
         { class: 'kv crew-card__stats mono' },
-        h('dt', { text: 'TASKS COMPLETED' }), h('dd', { text: fmtStat(stat.tasks_completed) }),
-        h('dt', { text: 'ITEMS PROCESSED' }), h('dd', { text: fmtStat(stat.items_processed) }),
-        h('dt', { text: 'EST. COST (MTD)' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
+        h('dt', { text: 'TASKS THIS MONTH' }), h('dd', { text: fmtStat(stat.tasks_completed) }),
+        h('dt', { text: 'ITEMS THIS MONTH' }), h('dd', { text: fmtStat(stat.items_processed) }),
+        h('dt', { text: 'COST THIS MONTH' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
         h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat.last_active_at, formatSydney) }),
       )
-      : h('p', { class: 'crew-card__idle', text: 'No workload published for this agent yet.' }),
+      : h('p', { class: 'crew-card__idle', text: 'Works in the private control panel. Its workload is not published here.' }),
     h('span', { class: 'chip crew-card__runtime', text: agent.runtime }),
   );
 }
 
 // Renders the full sixteen-agent roster every time: personas ship with the site regardless
-// of data, and each card's workload falls back to "—"/NOT YET ACTIVE when data/crew.json
-// has nothing for that callsign, which is the honest state for as long as Stage 1 runs
-// with no agents wired up yet.
+// of data, and a card falls back to NOT PUBLISHED when data/crew.json has nothing for that
+// callsign. That is the honest state for an AI agent: the worker never reads the control
+// panel, so it has nothing true to say about one.
 export function renderCrew(crew) {
   const host = document.getElementById('crew-list');
   if (!host) return;
@@ -1964,13 +1965,14 @@ export function renderCrew(crew) {
   if (summary) {
     const reporting = byCallsign.size;
     const totalTasks = [...byCallsign.values()].reduce((sum, a) => sum + (a.tasks_completed || 0), 0);
-    const totalCost = [...byCallsign.values()].reduce((sum, a) => sum + (a.cost_usd || 0), 0);
+    const ai = crew?.pipeline_ai;
+    const spend = ai ? ` · the pipeline's own model calls this month: ${plural(ai.calls, 'call')}, US$${Number(ai.cost_usd).toFixed(2)}` : '';
     clear(summary).append(
       h('p', {
         class: 'hint',
         text: reporting
-          ? `${reporting} of ${CREW.length} agents reporting · ${plural(totalTasks, 'task')} completed · US$${totalCost.toFixed(2)} spent this month.`
-          : `${CREW.length} agents are planned for this project; none are wired up yet. Workload figures publish from Stage 5 onward.`,
+          ? `${reporting} of ${CREW.length} agents publish their workload · ${plural(totalTasks, 'task')} completed this month${spend}.`
+          : `${CREW.length} agents. No workload has been published yet.`,
       }),
     );
   }

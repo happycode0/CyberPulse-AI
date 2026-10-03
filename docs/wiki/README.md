@@ -23,7 +23,7 @@ layer on top of both.
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
 | 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
-| 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ⬜ |
+| 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram and THE CREW built |
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ⬜ |
 | 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ⬜ |
 
@@ -41,7 +41,9 @@ Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ 16 agents + routines ................ ✅ imported, smoke-tested; all paused
            ├─ OpenCode, ops API, http agents ...... ✅ 2026-10-03
            └─ resume agents and routines .......... 🔴 you: MORPHEUS, ZION, ROGUE first
-Stage 5  Full crew + notifications ................ ⬜
+Stage 5  Full crew + notifications ................ ▶ building
+           ├─ Telegram digest + critical alerts ... ✅ built; 🔴 you: the bot token
+           └─ THE CREW workload (crew.json) ....... ✅ built
 Stage 6  Self-healing ............................. ⬜
 Stage 7  Hardening + operations ................... ⬜
 ```
@@ -57,7 +59,8 @@ Stage 7  Hardening + operations ................... ⬜
    ([Stage 1, item 2](stage-1-foundation.md#whats-left)).
 4. **Provide an off-host backup target** (NAS, USB disk or PBS). The host has a single disk
    ([Stage 7](stage-7-hardening.md)).
-5. Later: a Telegram bot for Stage 5, and NetBird if you want the dashboard from outside the house.
+5. **A Telegram bot** for the daily digest and alerts ([Stage 5, Telegram](stage-5-full-crew.md#telegram)).
+   Later, NetBird if you want the dashboard from outside the house.
 
 ## Where things live
 
