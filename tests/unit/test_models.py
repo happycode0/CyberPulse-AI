@@ -37,10 +37,10 @@ from worker.models import (
     TimelineEntry,
 )
 from worker.version import (
-    ENRICHMENT_VERSION,
     PIPELINE_VERSION,
     SCHEMA_VERSION,
     SCORING_VERSION,
+    UNENRICHED,
 )
 
 NOW = datetime(2026, 9, 29, 12, 0, tzinfo=UTC)
@@ -174,7 +174,7 @@ def test_event_defaults_versions_from_version_module():
         PIPELINE_VERSION,
         SCORING_VERSION,
     )
-    assert e.enrichment_version == ENRICHMENT_VERSION
+    assert e.enrichment_version == UNENRICHED
 
 
 def test_event_minimal_defaults():

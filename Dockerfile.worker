@@ -18,6 +18,15 @@ COPY . .
 # Change ownership to non-root user
 RUN chown -R cyberpulse:cyberpulse /app
 
+# The rawcache volume mounts over this path. Docker initialises an empty named volume from whatever
+# the image holds at the mount point, ownership included — so the directory has to exist and belong
+# to cyberpulse here. Without it Docker invents the mount point as root:root, and because
+# worker/pipeline/run.py only warns when a cache write fails, every run then reports success while
+# writing no provenance at all. That is the one failure this cache cannot have: it stores the raw
+# bytes each published event was derived from, content-addressed by sha256, and it is the only
+# record that can show an event was not invented.
+RUN install -d -o cyberpulse -g cyberpulse -m 0750 /var/cache/cyberpulse
+
 USER cyberpulse
 
 CMD ["python", "-m", "worker"]

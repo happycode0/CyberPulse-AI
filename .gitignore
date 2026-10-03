@@ -7,14 +7,37 @@
 !site/assets/**/*.key
 auth.json
 master.key
+decision-signing.key
 secrets/
 credentials.json
+# SSH and certificate material: the VM key lives in ~/.ssh, but a copy dropped here must not ship.
+id_rsa*
+id_ecdsa*
+id_ed25519*
+*_ed25519
+*_ed25519.pub
+*_rsa
+*.ppk
+*.p12
+*.pfx
+*.jks
+*.kdbx
+.netrc
+.npmrc
+# Paperclip's home holds its master.key, agent JWT secret and embedded database.
+.paperclip/
+# Database dumps are the whole dataset, secrets columns included.
+*.sql.gz
+*.dump
+backup/
+backups/
 
 # ─── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.venv
 venv/
 .pytest_cache/
 .ruff_cache/
@@ -54,3 +77,5 @@ desktop.ini
 scratch/
 tmp/
 *.local
+# ops/build-paperclip-package.py output: rebuilt from the wiki whenever it is needed.
+/build/

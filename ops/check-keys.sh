@@ -75,37 +75,26 @@ else
   [[ "${s:-0}" -gt 0 ]] && ok "/datasets/session-cost reachable — ${s} cells (real cost-per-task signal)" || bad "/datasets/session-cost failed"
 fi
 
-# ─── Model ladder: verify every configured model against the price ceiling ────
-head_ "Model ladder vs \$${MAX_OUTPUT_PRICE_PER_MTOK:-1.00}/M output ceiling"
-if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
-  all=$(curl -sS -m 20 https://openrouter.ai/api/v1/models)
-  ceil=${MAX_OUTPUT_PRICE_PER_MTOK:-1.00}
-  for var in MODEL_TIER0_FREE MODEL_TIER1_CHEAP MODEL_TIER2_STRONG MODEL_CODE MODEL_AUDIT; do
-    chain="${!var:-}"
-    [[ -z "$chain" ]] && { skip "$var not set"; continue; }
-    IFS=',' read -ra models <<< "$chain"
-    for m in "${models[@]}"; do
-      m=$(echo "$m" | xargs)
-      row=$(echo "$all" | jq -r --arg s "$m" '.data[]|select(.id==$s)|
-        "\((.pricing.completion|tonumber)*1000000)|\((.pricing.prompt|tonumber)*1000000)|\(
-          if (((.supported_parameters//[])|index("structured_outputs")) and ((.supported_parameters//[])|index("tools"))) then "cap" else "NOCAP" end)"' 2>/dev/null)
-      if [[ -z "$row" ]]; then
-        bad "$var: $m — NOT FOUND on OpenRouter (withdrawn?)"
-        continue
-      fi
-      out=${row%%|*}; rest=${row#*|}; in=${rest%%|*}; cap=${rest##*|}
-      over=$(awk -v a="$out" -v b="$ceil" 'BEGIN{print (a>b)?1:0}')
-      if [[ "$over" == "1" ]]; then
-        bad "$var: $m — output \$${out}/M EXCEEDS ceiling \$${ceil}"
-      elif [[ "$cap" == "NOCAP" ]]; then
-        bad "$var: $m — lacks tools+structured_outputs (unusable)"
-      else
-        ok "$var: $m — in \$${in} / out \$${out} per M"
-      fi
-    done
-  done
+# ─── Model ladder: the worker's own price-ceiling guard ───────────────────────
+# One rule in one place: worker/ai/ladder.py checks every route, not the headline
+# price, which can pass a model whose usable routes all cost more (mimo-v2.5 did).
+head_ "Model ladder (config/models.yaml) vs the \$1.00/M output ceiling"
+py=""
+for c in .venv/bin/python python3; do
+  if command -v "$c" >/dev/null && "$c" -c 'import worker.ai.ladder' 2>/dev/null; then py=$c; break; fi
+done
+if [[ -n "$py" ]]; then
+  out=$("$py" -m worker --check-models 2>&1); rc=$?
+  mapfile -t msgs < <(printf '%s\n' "$out" | sed -nE 's/^.* worker: (model ladder.*)$/\1/p')
+  if [[ $rc -eq 0 ]]; then
+    ok "${msgs[-1]:-model ladder passed}"
+  elif [[ ${#msgs[@]} -gt 0 ]]; then
+    for m in "${msgs[@]}"; do bad "$m"; done
+  else
+    bad "check did not run: $(printf '%s\n' "$out" | tail -1)"
+  fi
 else
-  skip "needs OPENROUTER_API_KEY"
+  skip "needs the worker's Python; on the VM: docker compose run --rm worker python -m worker --check-models"
 fi
 
 # ─── Tavily ──────────────────────────────────────────────────────────────────
