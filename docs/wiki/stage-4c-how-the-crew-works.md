@@ -126,13 +126,17 @@ Three stops are stacked on top of each other, so a runaway agent cannot run up a
 ### 6. Repair loop — Stage 6
 
 ```text
-worker health check fails ──► [INCIDENT] ──► TELETRAAN diagnoses the root cause
-                                                └─► [ENGINEERING] (structured summary only, no raw content)
-                                                       └─► WHEELJACK: branch ► fix ► regression test ► PR
-                                                              └─► TRON (different model vendor): PASS / FAIL
-                                                                     └─► YOU approve and merge
-same fix fails 3 times ──► circuit breaker: everything stops and waits for you
+watchdog (every 5 min) sees a signature ──► incident INC-<n> ──► Telegram (high and critical)
+   └─► Incident routine ──► [INCIDENT] ──► TELETRAAN reads GET /ops/incidents, finds the cause
+          └─► [ENGINEERING] INC-<n> (structured summary only, no raw content)
+                 └─► WHEELJACK: fix/inc-<n>-… ► fix ► regression test ► PR
+                        └─► TRON (different model vendor): POST /ops/incidents/<n>/verdict, PASS / FAIL
+                               └─► YOU approve and merge ──► the fault clears ──► resolved after 15 min
+3 FAIL verdicts ──► circuit breaker: needs_human, verdicts refused (409), everything waits for you
 ```
+
+The watchdog opens and resolves incidents itself; no agent can close one.
+[Stage 6](stage-6-self-healing.md) has the signatures and the setup.
 
 ---
 

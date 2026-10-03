@@ -1,6 +1,6 @@
 """Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery, the
-model scan and gauntlet, and the Telegram notifications run in the worker; DEEP is a Paperclip
-routine, so it has no schedule here and is only reachable through `--lane deep --once`."""
+model scan and gauntlet, the Telegram notifications and the watchdog run in the worker; DEEP is a
+Paperclip routine, so it has no schedule here and is only reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -30,6 +30,7 @@ from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
 from worker.publish.run import publish_now, push_now
 from worker.settings import get_settings
+from worker.watchdog.run import Watchdog
 
 logger = logging.getLogger(__name__)
 
@@ -105,9 +106,18 @@ GAUNTLET_SCHEDULE = "40 3 * * sun"
 GAUNTLET_JOB_ID = "model-gauntlet"
 GAUNTLET_MISFIRE_GRACE_SECONDS = 3600
 
+# The watchdog every five minutes, two minutes off the FAST lane's quarter hours and the alerts'
+# :03, so a pass reads a run that has just finished rather than one in progress
+# (worker/watchdog/run.py).
+WATCHDOG_SCHEDULE = "2-57/5 * * * *"
+WATCHDOG_JOB_ID = "watchdog"
+WATCHDOG_MISFIRE_GRACE_SECONDS = 240
+
 # Kept for the life of the process: the governor in it must remember a 402 from one pass to the
 # next (worker/ai/enrich.py), and the model scan hands it the ladder as it checked it.
 _ai_layer: AiLayer | None = None
+# Kept for the same reason: its probes count failures from one pass to the next.
+_watchdog: Watchdog | None = None
 
 
 def _layer() -> AiLayer:
@@ -115,6 +125,13 @@ def _layer() -> AiLayer:
     if _ai_layer is None:
         _ai_layer = AiLayer()
     return _ai_layer
+
+
+def _the_watchdog() -> Watchdog:
+    global _watchdog
+    if _watchdog is None:
+        _watchdog = Watchdog(get_settings())
+    return _watchdog
 
 
 def job_id(lane: Lane) -> str:
@@ -140,21 +157,29 @@ async def _publish(after: str, *, stands: str) -> None:
     Neither step failing is fatal, and a push is not tried after a failed publish: it would push
     the previous files again. A failed push leaves `data/` current on this host and the site a
     publish behind; the next publish pushes again. `stands` says what the failure leaves intact.
+    Each step that is tried leaves a job_runs row, which is how the watchdog tells when they
+    keep failing.
     """
+    started = _now()
     try:
         written = await publish_now()
-    except Exception:
+    except Exception as exc:
         logger.exception("publish after %s failed; %s", after, stands)
+        await _record(JobRun("publish", started, _now(), False, note=type(exc).__name__))
         return
     logger.info("published %d files after %s", len(written), after)
+    await _record(JobRun("publish", started, _now(), True, changed=bool(written)))
 
+    started = _now()
     try:
         pushed = await push_now()
-    except Exception:
+    except Exception as exc:
         logger.exception("push after %s failed; the next publish pushes again", after)
+        await _record(JobRun("push", started, _now(), False, note=type(exc).__name__))
         return
     if pushed is None:
         return  # no publish token on this host; serve() said so at start
+    await _record(JobRun("push", started, _now(), True, changed=pushed.pushed))
     if pushed.pushed:
         logger.info("pushed %s to the data branch", pushed.commit_sha)
     else:
@@ -364,14 +389,25 @@ async def _gauntlet_job() -> None:
     )
 
 
+async def _watchdog_job() -> None:
+    """Never fatal to the schedule; the next pass is five minutes away. A pass records itself
+    (worker/watchdog/run.py); one that raised is recorded here."""
+    started = _now()
+    try:
+        await _the_watchdog().run_pass(get_engine(), started)
+    except Exception as exc:
+        logger.exception("watchdog pass failed")
+        await _record(JobRun("watchdog", started, _now(), False, note=type(exc).__name__))
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync, enrichment, discovery, the model scan and gauntlet, and notifications
-    are added only for the default schedule. `lanes` comes from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
+    The ground-truth sync, enrichment, discovery, the model scan and gauntlet, notifications and
+    the watchdog are added only for the default schedule. `lanes` comes from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
     model calls along with it would make the narrow form impossible to ask for.
     """
     scheduler = AsyncIOScheduler(timezone="UTC")
@@ -456,6 +492,16 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
             misfire_grace_time=GAUNTLET_MISFIRE_GRACE_SECONDS,
             replace_existing=True,
         )
+        scheduler.add_job(
+            _watchdog_job,
+            CronTrigger.from_crontab(WATCHDOG_SCHEDULE, timezone="UTC"),
+            id=WATCHDOG_JOB_ID,
+            name="watchdog",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=WATCHDOG_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):
         scheduler.add_job(
             _run_lane_job,
@@ -493,6 +539,11 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
             logger.info("no Telegram bot: the digest and alerts are not sent")
         else:
             logger.info("Telegram notifications are on")
+        settings = get_settings()
+        if settings.paperclip_incident_webhook_url and settings.paperclip_incident_webhook_secret:
+            logger.info("incidents go to the Incident routine in Paperclip")
+        else:
+            logger.info("no Incident routine webhook: incidents are not sent to Paperclip")
     ops = ops_api.start(get_settings(), get_engine()) if lanes is None else None
     try:
         await stop.wait()

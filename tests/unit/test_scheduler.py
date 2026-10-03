@@ -20,6 +20,7 @@ from worker.scheduler import (
     GAUNTLET_JOB_ID,
     GROUNDTRUTH_JOB_ID,
     MODEL_SCAN_JOB_ID,
+    WATCHDOG_JOB_ID,
     build_scheduler,
     job_id,
 )
@@ -34,6 +35,7 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
         ALERT_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID, GAUNTLET_JOB_ID,
+        WATCHDOG_JOB_ID,
     }
 
 
@@ -338,7 +340,7 @@ async def test_a_scheduled_lane_run_publishes_what_it_collected_and_pushes_it(la
     log, _ = lane_job
     caplog.set_level(logging.INFO, logger="worker.scheduler")
     await scheduler._run_lane_job(Lane.FAST)
-    assert log == [("run", Lane.FAST), ("publish",), ("push",)]
+    assert [entry[0] for entry in log] == ["run", "publish", "record", "push", "record"]
     assert "published 1 files after the fast lane" in caplog.text
     assert f"pushed {'a' * 40} to the data branch" in caplog.text
 
@@ -355,7 +357,35 @@ async def test_a_failed_push_does_not_stop_the_schedule(lane_job, caplog):
     log, state = lane_job
     state["push_raises"] = True
     await scheduler._run_lane_job(Lane.FAST)  # must not raise
-    assert log[-1] == ("push",) and "push after the fast lane failed" in caplog.text
+    assert log[-2] == ("push",) and "push after the fast lane failed" in caplog.text
+
+
+async def test_each_publish_and_push_leaves_a_job_row_for_the_watchdog(lane_job):
+    log, _ = lane_job
+    await scheduler._run_lane_job(Lane.FAST)
+    runs = [entry[1] for entry in log if entry[0] == "record"]
+    assert [(r.job, r.completed, r.changed, r.note) for r in runs] == [
+        ("publish", True, True, None),
+        ("push", True, True, None),
+    ]
+    assert all(r.started_at <= r.finished_at for r in runs)
+
+
+@pytest.mark.parametrize("failing, job", [("publish_raises", "publish"), ("push_raises", "push")])
+async def test_a_failed_publish_or_push_is_recorded_with_its_type_only(lane_job, failing, job):
+    """The note is the exception's type name: its message may carry a URL or a path."""
+    log, state = lane_job
+    state[failing] = True
+    await scheduler._run_lane_job(Lane.FAST)
+    run = log[-1][1]
+    assert (run.job, run.completed, run.note) == (job, False, "RuntimeError")
+
+
+async def test_a_host_with_no_publish_token_records_no_push(lane_job):
+    log, state = lane_job
+    state["pushed"] = None
+    await scheduler._run_lane_job(Lane.FAST)
+    assert [entry[1].job for entry in log if entry[0] == "record"] == ["publish"]
 
 
 @pytest.mark.parametrize(
@@ -387,7 +417,7 @@ async def test_a_broken_publisher_does_not_stop_the_schedule(lane_job):
     log, state = lane_job
     state["publish_raises"] = True
     await scheduler._run_lane_job(Lane.FAST)  # must not raise
-    assert log == [("run", Lane.FAST), ("publish",)]
+    assert [entry[0] for entry in log] == ["run", "publish", "record"]
 
 
 async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_job, monkeypatch):
@@ -403,7 +433,7 @@ async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_j
 
     monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
     await scheduler._groundtruth_job()
-    assert [entry[0] for entry in log] == ["sync", "record", "publish", "push"]
+    assert [entry[0] for entry in log] == ["sync", "record", "publish", "record", "push", "record"]
     run = log[1][1]
     assert (run.job, run.completed, run.errors, run.changed) == ("groundtruth", True, 1, True)
     assert run.started_at <= run.finished_at
@@ -436,7 +466,7 @@ async def test_a_pass_whose_record_fails_still_publishes(lane_job, monkeypatch, 
 
     monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
     await scheduler._groundtruth_job()
-    assert [entry[0] for entry in log] == ["record", "publish", "push"]
+    assert [entry[0] for entry in log] == ["record", "publish", "record", "push", "record"]
     assert "could not record the groundtruth pass" in caplog.text
 
 
@@ -551,7 +581,7 @@ async def test_an_enrichment_pass_is_recorded_with_what_it_absorbed(enrich_job):
     state["summary"].errors.append("rescore evt-2026-000001: deadlock")
     state["mitre"].failed = 2
     await scheduler._enrich_job()
-    [run] = state["recorded"]
+    [run] = [r for r in state["recorded"] if r.job == "enrichment"]
     assert (run.job, run.completed, run.errors, run.changed) == ("enrichment", True, 4, True)
 
 
@@ -561,3 +591,53 @@ async def test_an_enrichment_half_that_raised_is_recorded_as_not_completed(enric
     await scheduler._enrich_job()
     [run] = state["recorded"]
     assert (run.completed, run.changed) == (False, False)
+
+
+def test_the_watchdog_runs_every_five_minutes_off_the_lane_minutes():
+    job = {j.id: j for j in build_scheduler().get_jobs()}[WATCHDOG_JOB_ID]
+    assert fields(job.trigger)["minute"] == "2-57/5"
+    assert str(job.trigger.timezone) == "UTC"
+
+
+def test_asking_for_one_lane_does_not_bring_the_watchdog_along():
+    assert WATCHDOG_JOB_ID not in {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+
+
+async def test_a_watchdog_pass_that_raises_is_recorded_and_not_fatal(monkeypatch, caplog):
+    recorded = []
+
+    class Broken:
+        async def run_pass(self, engine, now):
+            raise RuntimeError("snapshot unreadable")
+
+    async def record(run):
+        recorded.append(run)
+
+    monkeypatch.setattr(scheduler, "_the_watchdog", lambda: Broken())
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    await scheduler._watchdog_job()  # must not raise
+    assert "watchdog pass failed" in caplog.text
+    assert [(r.job, r.completed, r.note) for r in recorded] == [
+        ("watchdog", False, "RuntimeError")
+    ]
+
+
+async def test_the_watchdog_is_kept_between_passes(monkeypatch):
+    """Its probes count failures in a row, so a new one each pass would never alarm."""
+    made, passes = [], []
+
+    class Fake:
+        def __init__(self, settings):
+            made.append(settings)
+
+        async def run_pass(self, engine, now):
+            passes.append(now)
+
+    monkeypatch.setattr(scheduler, "Watchdog", Fake)
+    monkeypatch.setattr(scheduler, "_watchdog", None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: "settings")
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    await scheduler._watchdog_job()
+    await scheduler._watchdog_job()
+    assert made == ["settings"] and len(passes) == 2
