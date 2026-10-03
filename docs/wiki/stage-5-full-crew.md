@@ -189,8 +189,11 @@ enrichment. An HTTP 402 from OpenRouter stops the run. The scan costs nothing.
   OpenRouter's authenticated datasets, so check [the rankings](https://openrouter.ai/rankings)
   before approving.
 - **The labels are not reviewed.** They come from the registers and the source registry, not
-  from a person. The set leans on CISA KEV entries and has few Australian events, so the AU
-  relevance score rests on a handful of them.
+  from a person.
+- **Few Australian events.** Tier 1's brief is scored on AU relevance only, and the only events
+  labelled Australian are ones an Australian advisory carried: 2 of the 538 that qualified
+  when the set was first pinned. Up to 2 per severity are taken first, and every tier 1
+  proposal says how many the score rests on.
 - **The `code` and `audit` tiers** (WHEELJACK and TRON) do no enrichment, so the gauntlet has
   nothing to judge them on. Their models are still checked by the daily scan.
 

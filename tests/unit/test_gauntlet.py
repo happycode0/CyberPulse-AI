@@ -288,12 +288,13 @@ def test_the_proposal_shows_both_models_and_what_was_not_checked():
     cheaper = measured("v/cheap", cost="0.0001")
     d = decide(Tier.CHEAP, incumbent, [cheaper])
     assert proposal_title(d) == "[MODEL] Proposal: tier1_cheap -> v/cheap"
-    body = proposal_body(d, golden_size=30, reviewed=0)
+    body = proposal_body(d, golden_size=30, reviewed=0, au_labels=(2, 28))
     assert (
         "| `v/now` (now) | `v/cheap` |" in body
         and "| cost per event | $0.001000 | $0.000100 |" in body
     )
     assert "adoption veto" in body and "0 of 30 have been reviewed" in body
+    assert "over 2 Australian and 28 non-Australian events, too few of one kind" in body
     assert "MORPHEUS and ROGUE" in body and "config/models.yaml" in body
     payload = proposal_payload(d, gauntlet_run=7)
     assert (payload["tier"], payload["slug"], payload["replaces"], payload["gauntlet_run"]) == (
@@ -303,3 +304,18 @@ def test_the_proposal_shows_both_models_and_what_was_not_checked():
         7,
     )
     assert payload["challenger"]["cost_per_event"] == 0.0001
+
+
+def test_only_the_brief_proposal_says_how_many_au_labels_it_rests_on():
+    def body(tier, au_labels):
+        d = decide(
+            tier,
+            measured("v/now", tier=tier, incumbent=True, cost="0.001"),
+            [measured("v/cheap", tier=tier, cost="0.0001")],
+        )
+        return proposal_body(d, golden_size=30, reviewed=0, au_labels=au_labels)
+
+    enough = body(Tier.CHEAP, (6, 20))
+    assert "over 6 Australian and 20 non-Australian events." in enough
+    assert "too few" not in enough
+    assert "AU relevance" not in body(Tier.STRONG, (0, 30))

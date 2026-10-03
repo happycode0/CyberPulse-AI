@@ -83,6 +83,8 @@ AGREEMENT_TOLERANCE = 0.05
 AGREEMENT_FLOOR = 0.6
 # A paid challenger must cost at least this much less per event to be worth the change.
 CHEAPER_BY = 0.2
+# Fewer golden events than this with one AU desk answer, and agreement on the brief says little.
+MIN_AU_LABELS = 5
 
 # The tokens a call is assumed to use, to estimate a model's cost before running it.
 EST_TOKENS_IN = 2000
@@ -420,7 +422,11 @@ def _ms(value: int | None) -> str:
     return "n/a" if value is None else f"{value / 1000:.1f} s"
 
 
-def proposal_body(d: Decision, *, golden_size: int, reviewed: int) -> str:
+def proposal_body(
+    d: Decision, *, golden_size: int, reviewed: int, au_labels: tuple[int, int]
+) -> str:
+    """`au_labels`: how many of the set the AU desk label calls Australian, and how many not
+    (worker/ai/golden.py `au_label_counts`)."""
     inc, ch = d.incumbent, d.challenger
     rows = [
         ("schema compliance", _pct(inc.compliance), _pct(ch.compliance)),
@@ -462,6 +468,19 @@ def proposal_body(d: Decision, *, golden_size: int, reviewed: int) -> str:
             f"- The labels come from the registers and the source registry: {reviewed} of "
             f"{golden_size} have been reviewed by a person."
         ),
+    ]
+    if d.tier is Tier.CHEAP:
+        australian, not_australian = au_labels
+        lines.append(
+            f"- The brief is scored on AU relevance only, over {australian} Australian and "
+            f"{not_australian} non-Australian events"
+            + (
+                ", too few of one kind to tell the models apart."
+                if min(au_labels) < MIN_AU_LABELS
+                else "."
+            )
+        )
+    lines += [
         "",
         (
             "A promotion needs MORPHEUS and ROGUE (§7.7). Approving changes nothing by itself: "

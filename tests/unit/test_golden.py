@@ -4,7 +4,9 @@ import pytest
 
 from worker.ai.golden import (
     GOLDEN_SIZE,
+    GoldenEvent,
     au_desk_label,
+    au_label_counts,
     blinded,
     digest,
     labels_for,
@@ -118,6 +120,11 @@ def test_an_acsc_advisory_belongs_on_the_au_desk():
 )
 def test_an_event_australia_touches_without_an_advisory_is_not_labelled(changes):
     assert au_desk_label(subject(**changes)) is None
+
+
+def test_the_au_labels_are_counted_by_answer():
+    golden = [GoldenEvent(f"e{i}", {}, {"au_desk": v}) for i, v in enumerate((True, False, None))]
+    assert au_label_counts([*golden, GoldenEvent("e9", {}, {})]) == (1, 1)
 
 
 # ─── Pinning ──────────────────────────────────────────────────────────────────────────────────────
