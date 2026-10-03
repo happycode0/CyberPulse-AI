@@ -289,3 +289,22 @@ def test_config_rejects_missing_severity():
     del weights["unknown"]
     with pytest.raises(ValidationError, match="severity_weights missing"):
         ScoringConfig.model_validate(_config_dict(severity_weights=weights))
+
+
+@pytest.mark.parametrize(
+    "rule",
+    [
+        {"prominence_below": 2, "idle_days": 30},
+        {"prominence_below": 0.05, "idle_days": 0},
+        {"prominence_below": 0.05},
+        {"prominence_below": 0.05, "idle_days": 30, "delete": True},
+    ],
+)
+def test_config_rejects_a_bad_archive_rule(rule):
+    with pytest.raises(ValidationError, match="archive"):
+        ScoringConfig.model_validate(_config_dict(archive=rule))
+
+
+def test_the_committed_archive_rule_matches_the_plan():
+    rule = ScoringConfig.model_validate(_config_dict()).archive
+    assert (rule.prominence_below, rule.idle_days) == (0.05, 30)

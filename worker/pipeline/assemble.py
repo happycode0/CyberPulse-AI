@@ -10,7 +10,8 @@ that look brand new, so `first_seen` is the earliest published time among the so
 `last_material_update` starts there too. `last_seen` is the one field that tracks ingestion.
 
 Only a material change (a CVE the event did not have, or what worker/pipeline/material.py
-finds) moves `last_material_update` forward and marks a new event as developing. Another outlet
+finds) moves `last_material_update` forward and makes a new or archived event a developing one.
+Another outlet
 repeating the story adds evidence and corroboration but does not refresh prominence, which is
 the scoring engine's contract.
 """
@@ -140,7 +141,7 @@ class EventUpdate:
     # A headline for an event whose own is a generic notice ("CISA Adds Two Known Exploited
     # Vulnerabilities to Catalog"); None keeps the event's title.
     title: str | None = None
-    # Something material changed: a new event becomes a developing one.
+    # Something material changed: a new or archived event becomes a developing one.
     material: bool = False
 
 

@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Self
 
 import yaml
-from pydantic import BaseModel, ConfigDict, PositiveFloat, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, model_validator
 
 from worker.models import Event, EvidenceClass, Risk, Severity
 from worker.pipeline.au import AuConfig
@@ -44,6 +44,15 @@ class ProminenceWeights(BaseModel):
         return self
 
 
+class ArchiveRule(BaseModel):
+    """When an event has faded for good (worker/db/archive.py)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    prominence_below: float = Field(ge=0.0, le=1.0)
+    idle_days: PositiveFloat
+
+
 class ScoringConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -56,6 +65,7 @@ class ScoringConfig(BaseModel):
     corroboration_cap: PositiveFloat
     novelty_half_life_hours: PositiveFloat
     prominence_weights: ProminenceWeights
+    archive: ArchiveRule
     au: AuConfig
 
     @model_validator(mode="after")

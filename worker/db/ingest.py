@@ -194,7 +194,8 @@ def apply_update(
         text(
             "update events set first_seen = :first_seen, last_seen = :last_seen, "
             "last_material_update = :lmu, last_independent_confirmation = :lic, "
-            "status = case when :material and status = 'new' then 'developing' else status end, "
+            "status = case when :material and status in ('new', 'archived') then 'developing' "
+            "else status end, "
             "title = coalesce(:title, title), "
             "normalised_title = coalesce(:normalised_title, normalised_title), "
             "updated_at = now() where event_id = :event_id"

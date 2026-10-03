@@ -134,7 +134,7 @@ def test_a_listing_the_event_already_reported_is_not_news_again(conn):
     assert record_register_changes(conn, [kev_listing(CVE, ADDED)]) == set()
 
 
-def test_merged_and_archived_events_are_left_alone_and_a_later_clock_stands(conn):
+def test_a_merged_event_is_left_alone_an_archived_one_comes_back_and_a_later_clock_stands(conn):
     old = NOW - timedelta(days=5)
     insert_event(conn, "evt-2026-000001", first_seen=old, status="monitoring")
     insert_event(
@@ -145,9 +145,12 @@ def test_merged_and_archived_events_are_left_alone_and_a_later_clock_stands(conn
         text("update events set last_material_update = :t where event_id = 'evt-2026-000001'"),
         {"t": NOW},
     )
-    assert record_register_changes(conn, [kev_listing(CVE, ADDED)]) == {"evt-2026-000001"}
-    # Only a new event becomes a developing one, and the clock never moves back.
+    change = kev_listing(CVE, ADDED)
+    assert record_register_changes(conn, [change]) == {"evt-2026-000001", "evt-2026-000003"}
+    # A standing event keeps its status, and the clock never moves back.
     assert tuple(state(conn, "evt-2026-000001")) == ("monitoring", NOW)
+    assert tuple(state(conn, "evt-2026-000003")) == ("developing", change.at)
+    assert timeline(conn, "evt-2026-000002") == []
 
 
 def test_kev_reports_only_the_listings_that_are_new(conn):
