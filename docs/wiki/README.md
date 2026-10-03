@@ -25,7 +25,7 @@ layer on top of both.
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
 | 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
 | 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ▶ watchdog, incidents, breaker and rollback built; the crew's part waits for you |
-| 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ⬜ |
+| 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ✅ restore rehearsed, 53 failure tests pass; the backup target and schedule are yours |
 
 ## You are here
 
@@ -40,7 +40,7 @@ Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ board-approval toggle, company ...... ✅ mission and budgets set 2026-10-03
            ├─ 16 agents + routines ................ ✅ imported, smoke-tested; all paused
            ├─ OpenCode, ops API, http agents ...... ✅ 2026-10-03
-           └─ resume agents and routines .......... 🔴 you: MORPHEUS, ZION, ROGUE first
+           └─ resume agents and routines .......... ⏸ after the 8-agent crew change
 Stage 5  Full crew + notifications ................ ▶ building
            ├─ Telegram digest + critical alerts ... ✅ built; 🔴 you: the bot token
            └─ THE CREW workload (crew.json) ....... ✅ built
@@ -50,15 +50,18 @@ Stage 6  Self-healing ............................. ▶ built
            ├─ rollback (ops/rollback.sh) .......... ✅ built
            └─ engineer token, branch protection,
               Incident routine, un-pause ........... 🔴 you
-Stage 7  Hardening + operations ................... ⬜
+Stage 7  Hardening + operations ................... ✅ built and passed
+           ├─ backup.sh, restore rehearsed ........ ✅ 2026-10-03, every row count matched
+           ├─ failure tests (53), threat model .... ✅ all pass; risks ranked
+           └─ off-host target, schedule, vzdump ... 🔴 you
 ```
 
 ## What is yours to do (🔴), in order
 
 1. ~~**Claim Paperclip.**~~ ✅ Done 2026-10-02; sign-up is now off.
 2. ~~**Set it up.**~~ ✅ Company, mission, budgets, 16 agents and their smoke tests, 2026-10-03.
-   **Then resume** MORPHEUS, ZION and ROGUE and their routines when you are ready for them to
-   spend ([Stage 4](stage-4-paperclip.md#whats-left-in-order)).
+   **Keep them paused** until the 8-agent crew change lands, and until the agents no longer
+   inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)).
 3. ~~**Approve merging `stage-1-foundation` into `main`.**~~ ✅ Merged 2026-10-03 (PR #1).
    **Then commit the Pages timer**, so the site redeploys every 15 minutes on its own
    ([Stage 1, item 2](stage-1-foundation.md#whats-left)).

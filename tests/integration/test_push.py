@@ -91,6 +91,19 @@ def test_push_never_touches_main(tmp_repo):
     assert git_rev_parse(tmp_repo, "main") == before
 
 
+@pytest.mark.parametrize(
+    "branch", ["main", "master", "gh-pages", "data/../main", "data..x", "-data", "datamain"]
+)
+def test_push_refuses_any_branch_but_data(tmp_repo, branch):
+    with pytest.raises(RuntimeError, match="unsafe branch name"):
+        push_data(tmp_repo / "data", branch=branch)
+    assert git(tmp_repo, "ls-remote", "origin") == ""
+
+
+def test_push_accepts_a_named_data_branch(tmp_repo):
+    assert push_data(tmp_repo / "data", branch="data-preview").pushed is True
+
+
 def test_token_is_absent_from_the_git_remote_config(tmp_repo):
     push_data(tmp_repo / "data")
     assert "github_pat" not in (tmp_repo / ".git" / "config").read_text()

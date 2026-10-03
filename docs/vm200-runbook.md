@@ -619,16 +619,16 @@ Paperclip auto-loads that folder's `.env`, inherits `DATABASE_URL=…@db…`, an
 ## Part 7 🔴 — Backups
 
 ```bash
-# in the VM
-docker compose exec -T db pg_dump -U cyberpulse cyber_intel | gzip > /backup/cyber_intel.sql.gz
-docker compose exec -T db pg_dump -U cyberpulse paperclip  | gzip > /backup/paperclip.sql.gz
-docker compose cp server:/paperclip/instances/default/secrets /backup/paperclip-secrets
-cp -p .env /backup/env                                       # keep this copy private
+# in the VM, with the target mounted at /mnt/backup
+cd ~/CyberPulse-AI
+./ops/backup.sh /mnt/backup                              # both databases, Paperclip's keys, .env
+./ops/restore.sh rehearse /mnt/backup/cyberpulse-<UTC time>   # prove it restores
 ```
 
-The database and Paperclip's secrets folder are both required; neither restores without the
-other. Copy the whole folder, not a single file. On 2026-10-02 it held only
-`decision-signing.key`; `master.key` appears there once Paperclip first stores a secret.
+The databases and Paperclip's secrets folder are both required; neither restores without the
+other, and `backup.sh` takes both, plus `.env`. Keep the target private. The rehearsal was run
+for real on 2026-10-03 and passed; scheduling, `vzdump` and rebuilding on a new VM are in
+[wiki Stage 7](wiki/stage-7-hardening.md).
 
 On the Proxmox host, add a `vzdump` job in **snapshot** mode with `prune-backups` set to
 `keep-daily=7,keep-weekly=4,keep-monthly=3` and *Repeat missed* enabled.
