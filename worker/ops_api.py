@@ -55,6 +55,7 @@ from sqlalchemy import Connection, Engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
 from worker.ai.budget import BudgetUnreadable, KeyStatus, assess, fetch_key_status
+from worker.cadence import FAST_INTERVAL
 from worker.db.digest import (
     ESCALATE_AU_RELEVANCE,
     EVENT_COLUMNS,
@@ -121,8 +122,9 @@ WAKE_JOBS: dict[str, str] = {
     "link": "publish",
 }
 
-# A collection runs every 15 minutes and publishes after it, so 30 minutes is one missed run.
-COLLECTION_FRESH = timedelta(minutes=30)
+# A FAST collection runs every FAST_INTERVAL (worker/cadence.py) and publishes after it, so two
+# intervals is one missed run.
+COLLECTION_FRESH = 2 * FAST_INTERVAL
 # The ground-truth sync runs every 6 hours and takes about a minute.
 GROUNDTRUTH_FRESH = timedelta(hours=7)
 
