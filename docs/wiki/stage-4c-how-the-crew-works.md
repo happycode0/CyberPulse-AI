@@ -90,7 +90,7 @@ after ZION, so three desks never wake on the same minute.
 ```text
 07:00  VOIGHT samples yesterday's published events          ──► verdicts
 07:30  MORPHEUS reads the overnight digest + VOIGHT's verdicts
-         ├─ developing story needs watching  ──► [FOLLOW-UP] ──► DECKARD (every 6 h until resolved)
+         ├─ developing story needs watching  ──► [FOLLOW-UP] ──► DECKARD (beside the worker's own queue)
          ├─ topic has gone quiet             ──► [GAP]       ──► TACHIKOMA
          ├─ two desks claim one story        ──► decides the owner
          └─ writes the daily intelligence report

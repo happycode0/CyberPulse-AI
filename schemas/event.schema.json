@@ -8,7 +8,7 @@
   "required": [
     "event_id", "schema_version", "pipeline_version", "scoring_version", "enrichment_version",
     "first_seen", "last_seen", "last_material_update", "last_independent_confirmation", "status",
-    "title", "summary", "why_it_matters",
+    "title", "summary", "why_it_matters", "resolution",
     "domains", "categories", "ai_subdomain",
     "severity", "severity_source",
     "risk", "au", "entities",
@@ -33,6 +33,7 @@
     "title": { "type": "string" },
     "summary": { "type": "string" },
     "why_it_matters": { "type": ["string", "null"] },
+    "resolution": { "type": ["string", "null"] },
 
     "domains": { "type": "array", "items": { "type": "string" } },
     "categories": { "type": "array", "items": { "type": "string" } },

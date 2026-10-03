@@ -460,6 +460,7 @@ function eventCard(event) {
 function eventDetail(event) {
   const body = h('div', { class: 'event-more__body' });
   if (event.why_it_matters) body.append(h('h4', { text: 'WHY IT MATTERS' }), h('p', { text: event.why_it_matters }));
+  if (event.resolution) body.append(h('h4', { text: 'RESOLUTION' }), h('p', { text: event.resolution }));
   if (event.au?.reasons?.length) {
     body.append(h('h4', { text: 'AUSTRALIAN RELEVANCE' }), h('ul', {}, event.au.reasons.map((r) => h('li', { text: r }))));
   }
@@ -796,6 +797,9 @@ export function renderEventDetail(event, related = []) {
     event.summary ? h('p', { class: 'detail__summary', text: event.summary }) : null,
     event.why_it_matters
       ? h('p', { class: 'detail__why' }, h('strong', { text: 'WHY IT MATTERS: ' }), event.why_it_matters)
+      : null,
+    event.resolution
+      ? h('p', { class: 'detail__why' }, h('strong', { text: 'RESOLUTION: ' }), event.resolution)
       : null,
   ]);
 
