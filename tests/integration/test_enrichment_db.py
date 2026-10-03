@@ -26,7 +26,6 @@ from worker.db.enrichment import (
 )
 from worker.db.migrate import run_migrations
 from worker.models import AiSubdomain, Severity
-from worker.pipeline.assemble import AU_SOURCE_REASON
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION, UNENRICHED
 
 NOW = datetime(2026, 10, 3, 1, 5, tzinfo=UTC)
@@ -247,27 +246,23 @@ def test_triage_puts_the_models_categories_first_and_keeps_the_sources(conn):
     assert row["tags"] == ["vpn"] and row["pending_enrichment"] is True
 
 
-@pytest.mark.parametrize(
-    "direct, expected",
-    [
-        (True, [AU_SOURCE_REASON, "Victorian hospitals were hit"]),
-        (False, ["Victorian hospitals were hit"]),
-    ],
-)
-def test_a_brief_keeps_the_australian_source_fact_as_the_first_reason(conn, direct, expected):
-    insert_event(conn, EVENT, au_directly_reported=direct, source_summary="The feed's words.")
+def test_a_brief_keeps_the_models_au_reading_apart_from_the_published_one(conn):
+    insert_event(conn, EVENT, au_directly_reported=True, source_summary="The feed's words.")
     b = Brief(
         summary="Our own words.",
         why_it_matters=None,
         au_relevance=0.8,
-        au_reasons=("Victorian hospitals were hit", AU_SOURCE_REASON),
+        au_reasons=("Victorian hospitals were hit",),
         au_sectors=("health",),
     )
     apply_brief(conn, subject(conn, EVENT), b)
     row = event_row(conn, EVENT)
-    assert row["au_reasons"] == expected
     assert row["summary"] == "Our own words." and row["source_summary"] == "The feed's words."
-    assert row["au_relevance"] == 0.8 and row["au_sectors"] == ["health"]
+    assert row["au_model_relevance"] == 0.8
+    assert row["au_model_reasons"] == ["Victorian hospitals were hit"]
+    assert row["au_model_sectors"] == ["health"]
+    # What the site shows is the AU engine's, set at the next rescore.
+    assert row["au_relevance"] is None and row["au_reasons"] == [] and row["au_sectors"] == []
 
 
 def ai_evidence(conn, event_id):

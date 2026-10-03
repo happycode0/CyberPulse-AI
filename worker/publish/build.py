@@ -32,6 +32,7 @@ from worker.db.sources import (
     load_registry_rows,
 )
 from worker.models import Event, LifecycleState, SourceHealth
+from worker.publish.claims import with_fact_claims
 from worker.publish.validate import (
     ValidationFailure,
     scan_for_secrets,
@@ -169,7 +170,8 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
     """
     generated_at = _iso(now)
 
-    all_events = _load_events(conn)  # prominence-descending
+    # Prominence-descending, each with the claims its ground truth supports.
+    all_events = [with_fact_claims(e) for e in _load_events(conn)]
     public = [e.model_dump_public() for e in all_events]
     live = [
         p
