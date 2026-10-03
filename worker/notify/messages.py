@@ -9,6 +9,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from worker.db.digest import ESCALATE_AU_RELEVANCE
+from worker.db.discovery import Activation
 from worker.db.notifications import AlertEvent, UpdateEntry
 
 SYDNEY = ZoneInfo("Australia/Sydney")
@@ -185,5 +186,30 @@ def developing_update(entry: UpdateEntry, *, site_url: str) -> str:
         f"Status {entry.status} · {at:%H:%M} Sydney time, {_day(entry.created_at)}",
         "",
         event_url(site_url, entry.event_id),
+    ]
+    return "\n".join(lines)
+
+
+def source_activated(source: Activation, *, site_url: str) -> str:
+    """A feed SERAPH's gate let in, collected from the next NORMAL run."""
+    by = "the nightly search" if source.found_by == "search" else "TACHIKOMA"
+    where = " · Australia" if source.region == "au" else ""
+    lines = [
+        "CyberPulse-AI · new source",
+        "",
+        f"{_title(source.name)} · {source.host}{where}",
+        (f"Found by {by}; passed SERAPH's gate with {_plural(source.passes, 'healthy probe')} "
+         "in a row."),
+    ]
+    last = source.last_result or {}
+    if isinstance(last.get("recent"), int) and isinstance(last.get("on_beat"), int):
+        lines.append(
+            f"Last probe: {_plural(last['recent'], 'recent item')}, {last['on_beat']} on the beat."
+        )
+    lines += [
+        ("Collected from the next normal run as community evidence, which never confirms an "
+         "event on its own."),
+        "",
+        site_url,
     ]
     return "\n".join(lines)
