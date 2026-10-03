@@ -255,6 +255,10 @@ export async function findEvent(eventId, { bases = DATA_BASES, fetchImpl = globa
 const has = (list, ...wanted) => (list || []).some((x) => wanted.includes(String(x).toLowerCase()));
 const isAu = (e) => Boolean(e.au?.directly_reported_in_au) || (e.au?.relevance ?? 0) >= 0.5;
 const isAi = (e) => Boolean(e.ai_subdomain) || has(e.domains, 'ai') || has(e.categories, 'ai_security', 'ai-security', 'ai');
+// Events under a new or rising topic in trends.json. renderTrends fills it and EMERGING
+// THREATS reads it, so a story the counts say is taking off is listed there even before a
+// model has tagged it.
+const trending = new Set();
 
 export const SECTIONS = [
   { id: 'australia-now', match: isAu },
@@ -272,7 +276,8 @@ export const SECTIONS = [
     id: 'emerging-threats',
     match: (e) =>
       has(e.categories, 'emerging-threat', 'emerging_threat', 'malware', 'ransomware', 'zero-day') ||
-      (e.status === 'new' && (e.severity === 'critical' || e.severity === 'high')),
+      (e.status === 'new' && (e.severity === 'critical' || e.severity === 'high')) ||
+      trending.has(e.event_id),
   },
   { id: 'threat-actors', match: (e) => (e.entities?.actors || []).length > 0 },
   { id: 'vulnerabilities', match: (e) => (e.cves || []).length > 0 || has(e.categories, 'vulnerability') },
@@ -1249,6 +1254,221 @@ export function renderRadar(data) {
   );
 }
 
+// ----------------------------------------------------------------- trends
+
+// trends.json is counted from stored reports, never estimated (worker/pipeline/trends.py).
+// A state is always a word and a glyph, so none of this rests on colour.
+export const TREND_STATE = {
+  new: { glyph: '✦', label: 'NEW' },
+  rising: { glyph: '▲', label: 'RISING' },
+  steady: { glyph: '●', label: 'STEADY' },
+  falling: { glyph: '▼', label: 'FALLING' },
+  warming_up: { glyph: '◌', label: 'WARMING UP' },
+};
+const TOPIC_KIND = { vendor: 'VENDOR', actor: 'ACTOR', malware: 'MALWARE', threat: 'THREAT' };
+const DAY_COVERAGE = { full: 'WHOLE DAY', partial: 'PART OF THE DAY', none: 'NOT COLLECTED' };
+const TREND_ROWS = 10;
+const expandedTrends = new Set();
+
+function hours(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+function trendState(state) {
+  const key = TREND_STATE[state] ? state : 'steady';
+  const info = TREND_STATE[key];
+  return h('span', { class: 'trend-state', 'data-trend': key }, h('span', { 'aria-hidden': 'true', text: info.glyph }), info.label);
+}
+
+function trendEvents(ids, titles) {
+  if (!ids?.length) return '—';
+  return h(
+    'ul',
+    { class: 'trend-events' },
+    ids.map((id) => h('li', {}, h('a', { href: `event.html?id=${encodeURIComponent(id)}`, text: titles.get(id) || id }))),
+  );
+}
+
+function trendTable(caption, cols, rows) {
+  return h(
+    'div',
+    { class: 'trend-scroll' },
+    h(
+      'table',
+      { class: 'trend-table' },
+      h('caption', { class: 'trend-caption', text: caption }),
+      h('thead', {}, h('tr', {}, cols.map((c) => h('th', { scope: 'col', text: c })))),
+      h('tbody', {}, rows.map((cells) => h('tr', {}, cells))),
+    ),
+  );
+}
+
+// The first TREND_ROWS rows, and a button for the rest, the way a section caps its cards.
+function cappedRows(key, items, render) {
+  const host = h('div', { class: 'trend-block' });
+  const draw = () => {
+    const open = expandedTrends.has(key);
+    clear(host).append(render(open ? items : items.slice(0, TREND_ROWS)));
+    if (items.length <= TREND_ROWS) return;
+    const btn = h('button', {
+      type: 'button',
+      class: 'btn btn--small show-more',
+      'aria-expanded': open ? 'true' : 'false',
+      text: open ? 'SHOW FEWER' : `SHOW ALL ${items.length}`,
+    });
+    btn.addEventListener('click', () => {
+      if (open) expandedTrends.delete(key);
+      else expandedTrends.add(key);
+      draw();
+      host.querySelector('.show-more')?.focus();
+    });
+    host.append(btn);
+  };
+  draw();
+  return host;
+}
+
+function trendCoverage(c) {
+  if (!c.collecting_since) return 'No collection has run yet, so there is nothing to count.';
+  const began = formatSydney(c.collecting_since);
+  if (c.warming_up) {
+    return `WARMING UP. Collection began ${began}. A trend compares the last ${hours(c.recent_hours)} hours with the per-day rate before them, and needs ${hours(c.baseline_hours_needed)} hours of that before anything is called rising or falling; there are ${hours(c.baseline_hours)} so far. Until then topics are counted, not judged.`;
+  }
+  const short = c.baseline_hours < c.baseline_hours_wanted;
+  return `The last ${hours(c.recent_hours)} hours against the per-day rate over the ${hours(c.baseline_hours)} hours before them${short ? `, which is as far back as collection goes (it began ${began}; the full window is ${hours(c.baseline_hours_wanted)} hours)` : ''}.`;
+}
+
+// One bar per UTC day. Coverage is shape as well as tone: a whole day collected is a filled
+// bar, part of one an outlined bar, and a day before collection began a flat line with no
+// count, because nothing was counted on it.
+function activityChart(days) {
+  const step = 22;
+  const base = 62;
+  const counted = days.filter((d) => d.coverage !== 'none');
+  const most = Math.max(0, ...counted.map((d) => d.stories));
+  const peak = Math.max(1, most);
+  const total = counted.reduce((n, d) => n + d.stories, 0);
+  const svg = s('svg', {
+    class: 'trend-chart',
+    viewBox: `0 0 ${days.length * step} 78`,
+    role: 'img',
+    'aria-label': counted.length
+      ? `New stories per UTC day over the last ${days.length} days: ${total} new ${total === 1 ? 'story' : 'stories'} on the ${plural(counted.length, 'day')} collected, the most on one day ${most}. ${plural(days.length - counted.length, 'day')} before collection began ${days.length - counted.length === 1 ? 'is' : 'are'} not counted. The table below has every figure.`
+      : `Nothing was collected in the last ${days.length} days, so no day is counted.`,
+  });
+  days.forEach((d, i) => {
+    const x = i * step;
+    const mid = x + step / 2;
+    const g = s('g', { class: 'trend-day', 'data-coverage': d.coverage });
+    if (d.coverage === 'none') {
+      g.append(s('line', { class: 'trend-day__gap', x1: x + 5, x2: x + step - 5, y1: base, y2: base }));
+    } else {
+      const height = d.stories ? Math.max(2, (d.stories / peak) * 42) : 0;
+      g.append(
+        s('rect', { class: 'trend-day__bar', x: x + 4, y: +(base - height).toFixed(1), width: step - 8, height: +height.toFixed(1) }),
+        s('text', { class: 'trend-day__num', x: mid, y: +(base - height - 4).toFixed(1) }, String(d.stories)),
+      );
+    }
+    g.append(s('text', { class: 'trend-day__date', x: mid, y: base + 12 }, d.date.slice(8)));
+    svg.append(g);
+  });
+  return svg;
+}
+
+function activityTable(days) {
+  return trendTable(
+    'Day by day, newest first. A day before collection began shows — rather than a zero; KEV additions are CISA’s own dates, so they are complete on every day.',
+    ['DAY (UTC)', 'COLLECTED', 'NEW STORIES', 'REPORTS', 'CRITICAL / HIGH', 'AUSTRALIAN', 'ADDED TO KEV'],
+    [...days].reverse().map((d) => {
+      const n = (v) => (d.coverage === 'none' ? '—' : String(v));
+      return [
+        h('th', { scope: 'row', class: 'mono', text: d.date }),
+        h('td', { text: DAY_COVERAGE[d.coverage] || d.coverage }),
+        h('td', { class: 'mono', text: n(d.stories) }),
+        h('td', { class: 'mono', text: n(d.reports) }),
+        h('td', { class: 'mono', text: n(d.critical_high) }),
+        h('td', { class: 'mono', text: n(d.au_stories) }),
+        h('td', { class: 'mono', text: String(d.kev_added) }),
+      ];
+    }),
+  );
+}
+
+function topicTable(topics, titles) {
+  return trendTable(
+    'Topics named in headlines, most reported in the last 24 hours first.',
+    ['TOPIC', 'LAST 24 H', 'PER DAY BEFORE', 'CHANGE', 'STATE', 'MOST PROMINENT STORIES'],
+    topics.map((t) => [
+      h('th', { scope: 'row' }, h('span', { class: 'trend-topic', text: t.label }), h('span', { class: 'trend-kind mono', text: TOPIC_KIND[t.kind] || t.kind })),
+      h('td', { class: 'mono', text: String(t.recent) }),
+      h('td', { class: 'mono', text: t.baseline_per_day.toFixed(1) }),
+      h('td', { class: 'mono', text: `×${t.ratio.toFixed(1)}` }),
+      h('td', {}, trendState(t.state)),
+      h('td', {}, trendEvents(t.event_ids, titles)),
+    ]),
+  );
+}
+
+function cveTable(cves, titles) {
+  return trendTable(
+    'CVEs named by the stories reported on, most reports first.',
+    ['CVE', 'LAST 24 H', 'IN THE WINDOW', 'STORIES', 'CISA KEV', 'STATE', 'MOST PROMINENT STORIES'],
+    cves.map((c) => [
+      h('th', { scope: 'row', class: 'mono', text: c.cve_id }),
+      h('td', { class: 'mono', text: String(c.recent) }),
+      h('td', { class: 'mono', text: String(c.week) }),
+      h('td', { class: 'mono', text: String(c.stories) }),
+      h('td', {}, c.kev ? h('span', { class: 'chip chip--kev' }, h('span', { 'aria-hidden': 'true', text: '◆ ' }), 'LISTED') : 'NOT LISTED'),
+      h('td', {}, trendState(c.state)),
+      h('td', {}, trendEvents(c.event_ids, titles)),
+    ]),
+  );
+}
+
+// `unread` is the same third state renderSections has: no snapshot was read, which is not the
+// same claim as a snapshot that carries no trends.json (one published before trends existed).
+export function renderTrends(trends, events = [], { unread = false } = {}) {
+  trending.clear();
+  const host = document.getElementById('trends');
+  const count = document.getElementById('trends-count');
+  const led = document.getElementById('trends-led');
+  if (!host) return;
+  clear(host);
+  const readable = trends && trends.coverage && Array.isArray(trends.activity) && Array.isArray(trends.topics) && Array.isArray(trends.cves);
+  if (!readable) {
+    host.append(h('p', { class: 'empty', text: unread ? 'UNKNOWN — NO SNAPSHOT WAS READ.' : 'NO TRENDS WERE PUBLISHED WITH THIS SNAPSHOT.' }));
+    if (count) count.textContent = 'AWAITING DATA';
+    if (led) led.dataset.state = 'idle';
+    return;
+  }
+  for (const t of trends.topics) {
+    if (t.state === 'new' || t.state === 'rising') for (const id of t.event_ids || []) trending.add(id);
+  }
+  const titles = new Map(events.map((e) => [e.event_id, e.title]));
+  const { topics, cves, activity } = trends;
+  if (count) count.textContent = `${topics.length} ${topics.length === 1 ? 'TOPIC' : 'TOPICS'}`;
+  if (led) led.dataset.state = topics.length ? 'ok' : 'idle';
+  host.append(
+    h('p', { class: 'hint', text: trendCoverage(trends.coverage) }),
+    h('p', {
+      class: 'hint',
+      text: 'Every figure is a count of independent reports since collection began: copies of one wire story count once, and no figure is a model’s estimate. A report counts toward a topic when its own headline names it. CHANGE compares the last 24 hours with the rate before them, softened by one so that a single report on a quiet topic does not read as a surge.',
+    }),
+    h('h4', { class: 'subhead', text: `NEW STORIES PER DAY, LAST ${activity.length} DAYS (UTC)` }),
+    activityChart(activity),
+    h('p', { class: 'trend-legend', text: 'FILLED BAR: WHOLE DAY COLLECTED. OUTLINED BAR: PART OF THE DAY. FLAT LINE: BEFORE COLLECTION BEGAN, NOT COUNTED.' }),
+    h('details', { class: 'trend-days' }, h('summary', { text: 'DAY BY DAY' }), activityTable(activity)),
+    h('h4', { class: 'subhead', text: 'TOPICS' }),
+    topics.length
+      ? cappedRows('topics', topics, (rows) => topicTable(rows, titles))
+      : h('p', { class: 'empty', text: 'NO HEADLINE IN THESE WINDOWS NAMED A TRACKED TOPIC.' }),
+    h('h4', { class: 'subhead', text: 'MOST-REPORTED CVES' }),
+    cves.length
+      ? cappedRows('cves', cves, (rows) => cveTable(rows, titles))
+      : h('p', { class: 'empty', text: 'NO STORY REPORTED ON IN THESE WINDOWS NAMES A CVE.' }),
+  );
+}
+
 // --------------------------------------------------------------- pipeline
 
 const STAGES = ['SOURCES', 'COLLECT', 'MATCH', 'VERIFY', 'ENRICH', 'CROSS-REF', 'SCORE', 'PUBLISH'];
@@ -2175,6 +2395,7 @@ export async function main() {
   renderCrew(data ? await getJson(`${data.base}crew.json`, globalThis.fetch) : null);
   if (!data) {
     renderSections({ events: [], unread: true });
+    renderTrends(null, [], { unread: true });
     // A deep link is still a deep link on a page with no events. The sections have just been
     // given their final (one-line) contents, so this is the same moment as the call at the end
     // of the readable path: the layout will not move again.
@@ -2187,6 +2408,8 @@ export async function main() {
   renderGauges(data);
   renderRadar(data);
   renderHeadlines(data.events);
+  // Before the first refresh: EMERGING THREATS reads which events the trends say are rising.
+  renderTrends(await getJson(`${data.base}trends.json`, globalThis.fetch), data.events);
 
   const count = document.getElementById('filter-count');
   const refresh = () => {

@@ -1,5 +1,6 @@
 """Static assertions on the Task 15 site additions: map, replay, detail, history."""
 
+import json
 import re
 from pathlib import Path
 
@@ -209,3 +210,74 @@ def test_a_deep_link_to_a_sub_section_is_finished_after_the_first_render():
     js = read("site/assets/hud.js")
     assert "return { activate, rescrollToHash }" in js, "initTabs does not expose the deep-link fix"
     assert "rescrollToHash" in js.split("export async function main", 1)[1], "main() never calls it"
+
+
+def _main_body(js: str) -> str:
+    return js.split("export async function main", 1)[1].split("\nasync function mainEvent", 1)[0]
+
+
+def test_trends_have_a_home_and_a_jump_link_but_no_section_body():
+    """TRENDS reads trends.json, not the event list, so it is not one of the ten sections.
+
+    Given a data-section-body it would be counted as a section with nothing to render; outside
+    every panel it would show on every tab. It sits inside OVERVIEW with its own host.
+    """
+    html = read("site/index.html")
+    panels = html.split('<div class="tab-panels">', 1)[1].split("</main>", 1)[0]
+    overview = panels.split('id="sec-overview"', 1)[1].split('id="sec-the-crew"', 1)[0]
+    for needle in ('id="sec-trends"', 'id="trends"', 'id="trends-count"', 'id="trends-led"'):
+        assert needle in overview, needle
+    subnav = html.split('<nav class="subnav"', 1)[1].split("</nav>", 1)[0]
+    assert 'href="#sec-trends"' in subnav
+    assert 'data-section-body="trends"' not in html
+
+
+def test_every_trend_state_is_a_word_and_a_glyph():
+    schema = json.loads(read("schemas/trends.schema.json"))
+    states = schema["$defs"]["state"]["enum"]
+    js = read("site/assets/hud.js")
+    block = js.split("export const TREND_STATE", 1)[1].split("};", 1)[0]
+    for state in states:
+        assert re.search(rf"\b{state}: \{{ glyph: '[^']+', label: '[A-Z ]+' \}}", block), state
+    assert "'aria-hidden': 'true', text: info.glyph" in js, "the glyph is read out as well as the word"
+
+
+def test_trends_are_read_before_the_sections_and_the_deep_link_settle():
+    """EMERGING THREATS reads which events are rising, and #sec-trends is a deep-link target,
+    so trends.json has to be rendered before the first refresh and the final rescroll."""
+    body = _main_body(read("site/assets/hud.js"))
+    readable = body.split("if (!data) {", 1)[1].split("\n  }\n", 1)[1]
+    trends = readable.index("renderTrends(await getJson(`${data.base}trends.json`")
+    assert trends < readable.index("refresh();\n") < readable.rindex("tabs?.rescrollToHash()")
+    unread = body.split("if (!data) {", 1)[1].split("\n  }\n", 1)[0]
+    assert "renderTrends(null, [], { unread: true })" in unread
+    assert unread.index("renderTrends") < unread.index("rescrollToHash")
+
+
+def test_missing_trends_are_not_reported_as_no_trends():
+    js = read("site/assets/hud.js")
+    block = js.split("export function renderTrends", 1)[1].split("\n}\n", 1)[0]
+    assert "'UNKNOWN — NO SNAPSHOT WAS READ.'" in block
+    assert "'NO TRENDS WERE PUBLISHED WITH THIS SNAPSHOT.'" in block
+    assert "count.textContent = 'AWAITING DATA'" in block
+    assert ">0 TOPICS<" not in read("site/index.html")
+
+
+def test_a_day_before_collection_began_is_not_drawn_as_zero():
+    js = read("site/assets/hud.js")
+    chart = js.split("function activityChart", 1)[1].split("\nfunction ", 1)[0]
+    assert "d.coverage === 'none'" in chart and "trend-day__gap" in chart
+    table = js.split("function activityTable", 1)[1].split("\nfunction ", 1)[0]
+    assert "d.coverage === 'none' ? '—'" in table
+    css = read("site/assets/hud.css")
+    assert '.trend-day[data-coverage="partial"] .trend-day__bar { fill: none;' in css
+
+
+def test_emerging_threats_lists_events_the_trends_say_are_rising():
+    js = read("site/assets/hud.js")
+    sections = js.split("export const SECTIONS", 1)[1].split("];", 1)[0]
+    emerging = sections.split("id: 'emerging-threats'", 1)[1].split("\n  },", 1)[0]
+    assert "trending.has(e.event_id)" in emerging
+    block = js.split("export function renderTrends", 1)[1].split("\n}\n", 1)[0]
+    assert "t.state === 'new' || t.state === 'rising'" in block
+    assert block.index("trending.clear()") < block.index("if (!readable)")

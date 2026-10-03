@@ -362,6 +362,35 @@ button.chip[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg-vo
   .run-table th, .run-table td { border: 0; padding: 2px 0; }
 }
 
+/* TRENDS. The tables scroll sideways on a narrow screen rather than stacking like the run
+   table: every cell is a figure, and a figure without its column heading means nothing. */
+#trends > .hint + .hint { margin-top: 10px; }
+.trend-chart { display: block; width: 100%; max-width: 560px; height: auto; }
+.trend-day__bar { fill: var(--cyan); }
+/* Part of a day collected is an outline, not a paler fill: a shape difference survives
+   greyscale and colour-blindness, and a reader is told in words in the legend below. */
+.trend-day[data-coverage="partial"] .trend-day__bar { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.trend-day__gap { stroke: var(--text-muted); stroke-width: 1.5; }
+.trend-day__num, .trend-day__date { font: 500 8px/1 var(--font-mono); text-anchor: middle; fill: var(--text-dim); }
+.trend-day__date { fill: var(--text-muted); }
+.trend-legend { font: 500 12px/1.5 var(--font-mono); color: var(--text-muted); margin: 0; }
+.trend-days > summary { cursor: pointer; font: 600 12.5px/1.6 var(--font-sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); }
+.trend-days[open] > summary { color: var(--cyan); }
+.trend-block { display: grid; gap: 10px; justify-items: start; }
+.trend-scroll { width: 100%; overflow-x: auto; }
+.trend-table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; }
+.trend-caption { caption-side: top; text-align: left; padding: 0 0 8px; font-size: 13px; color: var(--text-muted); }
+.trend-table th, .trend-table td { padding: 8px 14px 8px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+.trend-table thead th { font: 600 12px/1.4 var(--font-sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); border-bottom-color: var(--line-strong); white-space: nowrap; }
+.trend-table td { color: var(--text-dim); }
+.trend-table tbody th { font-weight: 600; color: var(--text); min-width: 120px; }
+.trend-kind { display: block; font-size: 11.5px; font-weight: 400; color: var(--text-muted); }
+.trend-state { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-sans); letter-spacing: 0.06em; white-space: nowrap; color: var(--text-dim); }
+.trend-state[data-trend="new"], .trend-state[data-trend="rising"] { color: var(--sev-high); }
+.trend-state[data-trend="falling"] { color: var(--sev-low); }
+.trend-events { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; min-width: 220px; }
+.chip--kev { border-color: var(--sev-critical); color: var(--sev-critical); }
+
 .crew-card { background: var(--bg-raised); border-radius: var(--radius); padding: 14px; display: grid; gap: 9px; align-content: start; }
 /* A bot takes its accent from whatever is carrying it, so the same agent's eyes are the same
    colour on its card and in its run-table row. Declared on both carriers rather than as a
