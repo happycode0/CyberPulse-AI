@@ -27,6 +27,8 @@ labelled as AI assessment, within a hard budget.
 | OSV and GitHub advisories per CVE: affected packages and fixed versions | ✅ |
 | MITRE ATT&CK and ATLAS catalogues, cached per release | ✅ |
 | Event detail page (`site/event.html`) | ✅ |
+| AU relevance from facts, with reasons (`config/scoring.yaml` → `au:`) | ✅ |
+| Claims with evidence: KEV, CVSS, EPSS, fixes, corroboration | ✅ |
 
 The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs, 223 were
 "Deferred" at NVD with no score, but 297 had a score from the CNA or CISA's ADP container
@@ -128,7 +130,41 @@ makes it safe to switch the AI agents on.
    The first live pass (2026-10-03 00:35 UTC, conserve mode) took 10 events: 9 finished and 1
    brief failed the copy check. It made 21 billed calls for US$0.00068 in all, about US$0.00007
    an event. Triage ran on a free model and briefs on `openai/gpt-oss-20b`.
-7. AU relevance engine with its reasons, and the evidence engine (claims linked to sources).
+7. ✅ **AU relevance and evidence engines** (2026-10-03, migration 008;
+   `worker/pipeline/au.py`, `worker/publish/claims.py`).
+   - **AU relevance** is now set from the record's facts at every rescore, by the rules under
+     `au:` in `config/scoring.yaml`. Each fact sets a floor and gives its reason in fixed words:
+     - an Australian government authority published it (ACSC, ASD, OAIC, DTA): 0.70;
+     - it names an Australian organisation (Optus, Medibank, APRA and 58 more), which also adds
+       that organisation's sectors: 0.75;
+     - it names Australia, an Australian place or a .au web address: 0.55;
+     - an Australian outlet reported it: 0.30.
+
+     Matching reads what the sources said (the title, the feed's text, every source's
+     headline), never the model's summary, so no model can make an event Australian by writing
+     the word. It matches whole words, case-sensitive, so "NAB" doesn't match "unable". Names
+     that often mean something else (Victoria, Darwin, Medicare, ASIC, ABC, ATO) are left out.
+     Feed boilerplate and the outlet's own name don't count.
+
+     The brief's AU reading is now kept apart, in migration 008's `au_model_*` columns, which
+     are not published. It may raise the number but never lower it, and its reasons come after
+     the facts'. SOCI sectors come from the sectors through a fixed map, and only at 0.5 or more.
+     Because this runs at every rescore, an Australian report merged in later now marks the
+     event "reported in AU". Before, only the first source counted.
+   - **Claims with evidence.** Each published event gets claims a reader can check against the
+     register they cite:
+     - the CISA KEV listing and its dates;
+     - the highest CVSS score and who set it;
+     - the highest EPSS score;
+     - the fixed versions of each package, from the best advisory, or that no fix is published;
+     - how many independent sources report it.
+
+     A claim's confidence is its register's evidence-class weight from `config/scoring.yaml`.
+     Claims are worked out at publish time from what the event already carries, so they can't
+     disagree with its CVE data, and nothing new is stored.
+
+   Scoring version 2 makes the worker rescore every event once, which sets AU relevance on all
+   of them.
 
 ## How to check it
 
@@ -153,6 +189,9 @@ and collection and publishing carry on.
 - [x] The ceiling guard rejects an over-priced model in a test (`tests/unit/test_ladder.py`)
 - [x] CVEs carry OSV / GitHub advisories, and technique suggestions come only from the cached
   ATT&CK / ATLAS release (`tests/unit/test_ai_mitre.py`)
+- [x] AU relevance comes from the record's facts with reasons, and the model can only raise it
+  (`tests/unit/test_au.py`, `tests/integration/test_au_db.py`)
+- [x] Published claims cite the register they come from (`tests/unit/test_claims.py`)
 
 ---
 

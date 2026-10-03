@@ -19,7 +19,10 @@ import yaml
 from pydantic import BaseModel, ConfigDict, PositiveFloat, model_validator
 
 from worker.models import Event, EvidenceClass, Risk, Severity
+from worker.pipeline.au import AuConfig
 from worker.version import SCORING_VERSION
+
+DEFAULT_SCORING_PATH = Path(__file__).resolve().parents[2] / "config" / "scoring.yaml"
 
 # The scored result is an `Event` with `risk` and `scoring_version` populated.
 ScoredEvent = Event
@@ -53,6 +56,7 @@ class ScoringConfig(BaseModel):
     corroboration_cap: PositiveFloat
     novelty_half_life_hours: PositiveFloat
     prominence_weights: ProminenceWeights
+    au: AuConfig
 
     @model_validator(mode="after")
     def _complete_and_consistent(self) -> Self:

@@ -120,6 +120,22 @@ def test_no_raw_article_body_is_published(tmp_path, conn):
     assert all("raw_body" not in e for e in read(tmp_path, "live.json")["events"])
 
 
+def test_a_kev_listed_cve_is_published_as_a_claim_citing_the_catalogue(tmp_path, conn):
+    insert_event(conn, "evt-2026-000001")
+    conn.execute(
+        text(
+            "insert into cves (cve_id, kev_listed, kev_date_added) "
+            "values ('CVE-2026-88772', true, '2026-09-29')"
+        )
+    )
+    conn.execute(text("insert into event_cves values ('evt-2026-000001', 'CVE-2026-88772')"))
+    build_all(conn, tmp_path, now=NOW)
+    (event,) = read(tmp_path, "live.json")["events"]
+    assert [(c["text"], c["evidence"]) for c in event["claims"]] == [
+        ("CISA lists CVE-2026-88772 as exploited in the wild, added 2026-09-29.", ["cisa_kev"])
+    ]
+
+
 def test_system_status_uses_last_completed_collection_not_live(tmp_path, conn):
     insert_run(conn)
     build_all(conn, tmp_path, now=NOW)
