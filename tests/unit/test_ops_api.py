@@ -263,7 +263,7 @@ def no_db(monkeypatch):
         yield None
 
     monkeypatch.setattr(OpsApi, "_read", read)
-    monkeypatch.setattr(OpsApi, "_ledger_totals", staticmethod(lambda conn, start, end: ledger))
+    monkeypatch.setattr(ops_api, "ledger_totals", lambda conn, start, end: ledger)
     return ledger
 
 

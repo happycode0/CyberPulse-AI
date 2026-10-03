@@ -19,8 +19,12 @@ class Settings(BaseSettings):
     nvd_api_key: SecretStr | None = None
     github_token: SecretStr | None = None
     github_repository: str = "happycode0/CyberPulse-AI"
+    # Telegram notifications (worker/notify/): the daily digest and critical alerts for
+    # Australia. With either unset, nothing is sent.
     telegram_bot_token: SecretStr | None = None
     telegram_chat_id: str | None = None
+    # The public site, for the event links in notifications.
+    site_url: str = "https://happycode0.github.io/CyberPulse-AI/"
     raw_cache_dir: Path = Path("/var/cache/cyberpulse")
     data_dir: Path = Path("data")
     # Product and version only, with no contact URL, because the URL is what gets us blocked.
@@ -68,6 +72,7 @@ class Settings(BaseSettings):
             f"github_repository={self.github_repository!r}",
             f"telegram_bot_token={self.telegram_bot_token!r}",
             f"telegram_chat_id={self.telegram_chat_id!r}",
+            f"site_url={self.site_url!r}",
             f"raw_cache_dir={self.raw_cache_dir!r}",
             f"data_dir={self.data_dir!r}",
             f"user_agent={self.user_agent!r}",
