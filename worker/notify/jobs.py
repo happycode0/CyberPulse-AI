@@ -1,8 +1,8 @@
 """The notification passes the scheduler runs (worker/scheduler.py).
 
-- **The daily digest**, at 07:00 Sydney time, tried again at 08:00 and 09:00 if it failed.
-- **Critical alerts for Australia**, every 15 minutes: a new event that is critical or carries a
-  KEV-listed CVE, and that matters to Australia.
+- **The daily digest**, at 07:10 Sydney time, tried again at 08:10 and 09:10 if it failed.
+- **Critical alerts for Australia**, after each FAST run and each enrichment pass: a new event
+  that is critical or carries a KEV-listed CVE, and that matters to Australia.
 - **Developing updates**, in the same pass: a material change to such an event after its first
   hour, or one that newly exposes a critical or high event in Australia.
 - **New sources**, after each source-gate pass: a feed SERAPH's gate has just activated.
@@ -48,7 +48,7 @@ DIGEST_HOURS = 24
 # How new an event must be to alert. Longer than the ground-truth cadence (6 hours), so a CVE
 # that KEV lists a few hours after the event arrived still raises its alert.
 ALERT_WINDOW = timedelta(hours=12)
-# The rest wait for the next pass, 15 minutes later: a backlog never floods the chat.
+# The rest wait for the next pass, at most half an hour later: a backlog never floods the chat.
 MAX_ALERTS_PER_PASS = 5
 # A new source is announced if the gate pass that activated it, or one of the next few, can send.
 ACTIVATION_WINDOW = timedelta(hours=24)

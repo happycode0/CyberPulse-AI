@@ -75,7 +75,7 @@ def db(monkeypatch):
         "crew": {
             "librarian": Activity(4, None, NOW - timedelta(hours=2)),
             "prowl": Activity(90, 4000, NOW - timedelta(minutes=3)),
-            "seraph": Activity(800, 45, NOW - timedelta(minutes=50)),
+            "seraph": Activity(800, 45, NOW - build.CREW_FRESH["seraph"] - timedelta(minutes=10)),
             "rogue": Activity(0, None, None),
         },
         "pipeline_ai": PipelineAi(12, Decimal("0.0412")),
@@ -424,13 +424,23 @@ def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
         "callsign": "PROWL", "status": "active", "tasks_completed": 90,
         "items_processed": 4000, "cost_usd": 0.0, "last_active_at": "-",
     }
-    assert agents["SERAPH"]["status"] == "idle"  # no source checked in 30 minutes
+    assert agents["SERAPH"]["status"] == "idle"  # no source checked in two FAST intervals
     assert agents["ROGUE"] == {
         "callsign": "ROGUE", "status": "idle", "tasks_completed": 0, "items_processed": None,
         "cost_usd": 0.0, "last_active_at": None,
     }
     assert agents["LINK"]["last_active_at"] == "2026-09-30T12:00:00Z"
     assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412}
+
+
+def test_prowl_and_seraph_stay_active_between_fast_runs(tmp_path, db):
+    # An enrichment pass publishes between runs, and a restart can cost one run.
+    since = NOW - build.FAST_INTERVAL - timedelta(minutes=5)
+    db["crew"]["prowl"] = Activity(90, 4000, since)
+    db["crew"]["seraph"] = Activity(800, 45, since)
+    build_all(None, tmp_path, now=NOW)
+    agents = {a["callsign"]: a["status"] for a in read(tmp_path, "crew.json")["agents"]}
+    assert agents["PROWL"] == agents["SERAPH"] == "active"
 
 
 def test_the_site_roster_has_every_agent_crew_json_names():

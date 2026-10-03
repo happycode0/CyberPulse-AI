@@ -24,7 +24,7 @@ from worker.ops_api import OpsApi, Reply
 from worker.publish.build import build_all
 from worker.publish.push import push_data
 from worker.publish.validate import ValidationFailure
-from worker.watchdog.checks import Jobs, job_findings
+from worker.watchdog.checks import PUBLISH_LIMIT, PUSH_LIMIT, Jobs, job_findings
 from worker.watchdog.paperclip import IncidentRoutine
 
 from .conftest import OPS_TOKEN, credential, telegram_token
@@ -79,7 +79,7 @@ async def test_a_blocked_publish_is_not_pushed_and_the_watchdog_calls_it_schema_
         ("publish", False, "ValidationFailure")
     ]
     jobs = Jobs(latest={"publish": recorded[0]}, completed={})
-    found = job_findings(jobs, recorded[0].started_at + timedelta(minutes=31))
+    found = job_findings(jobs, recorded[0].started_at + PUBLISH_LIMIT + timedelta(minutes=1))
     assert [(f.kind, f.severity) for f in found] == [("schema-drift", "high")]
 
 
@@ -162,12 +162,13 @@ async def test_a_failed_push_keeps_the_data_and_the_next_publish_pushes_it(
     assert git(tmp_path / "remote.git", "rev-parse", "--verify", "refs/heads/data")
 
 
-def test_push_failures_past_45_minutes_open_a_push_failure_incident():
+def test_push_failures_past_their_limit_open_a_push_failure_incident():
+    minute = timedelta(minutes=1)
     failed = JobRun("push", NOW, NOW, False, note="RuntimeError")
-    last_good = JobRun("push", NOW - timedelta(minutes=1), NOW - timedelta(minutes=1), True)
+    last_good = JobRun("push", NOW - minute, NOW - minute, True)
     jobs = Jobs(latest={"push": failed}, completed={"push": last_good})
-    assert job_findings(jobs, NOW + timedelta(minutes=43)) == []
-    found = job_findings(jobs, NOW + timedelta(minutes=46))
+    assert job_findings(jobs, NOW + PUSH_LIMIT - 2 * minute) == []
+    found = job_findings(jobs, NOW + PUSH_LIMIT + minute)
     assert [(f.kind, f.severity) for f in found] == [("push-failure", "high")]
 
 

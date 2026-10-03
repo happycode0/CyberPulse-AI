@@ -15,6 +15,7 @@ import httpx
 import pytest
 from pydantic import SecretStr
 
+from worker.cadence import FAST_INTERVAL, FAST_INTERVAL_MINUTES
 from worker.db.incidents import Incident, PassResult
 from worker.db.jobs import JobRun
 from worker.db.notifications import Claim
@@ -26,10 +27,23 @@ from worker.notify.messages import (
     incident_resolved,
 )
 from worker.notify.telegram import SendResult
+from worker.pipeline.health import DEGRADE_AFTER, WARN_AFTER
 from worker.settings import Settings
 from worker.watchdog import run as watchdog_run
 from worker.watchdog.checks import (
+    COLLECTION_LIMIT,
+    EMPTY_AFTER,
+    FAILING_AFTER,
+    FAILING_SPAN,
+    PAGES_INTERVAL,
+    PUBLISH_LIMIT,
+    PUSH_LIMIT,
+    SITE_LIMIT,
+    STALE_AFTER,
+    ZERO_RUNS,
+    ZERO_SPAN,
     Cost,
+    FastLimits,
     Finding,
     Jobs,
     LaneRun,
@@ -40,6 +54,7 @@ from worker.watchdog.checks import (
     Volume,
     cost_findings,
     evaluate,
+    fast_limits,
     job_findings,
     lane_findings,
     paperclip_findings,
@@ -71,6 +86,52 @@ def kinds(findings) -> list[tuple[str, str, str]]:
     return [(f.kind, f.subject, f.severity) for f in findings]
 
 
+# ─── The thresholds that follow the FAST cadence ──────────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "every, limits",
+    [
+        # The values the watchdog was first given, but for the site.
+        (15, FastLimits(35 * MIN, 3, 5, 30 * MIN, 45 * MIN, 135 * MIN)),
+        (30, FastLimits(65 * MIN, 2, 3, 60 * MIN, 75 * MIN, 150 * MIN)),
+        (60, FastLimits(125 * MIN, 2, 3, 120 * MIN, 135 * MIN, 180 * MIN)),
+    ],
+)
+def test_the_fast_thresholds_follow_the_cadence(every, limits):
+    assert fast_limits(every * MIN) == limits
+
+
+@pytest.mark.parametrize("every", [15, 30, 60])
+def test_the_fast_thresholds_keep_their_reasons_at_any_cadence(every):
+    interval = every * MIN
+    limits = fast_limits(interval)
+    # A restart across a run's minute loses that run; that alone is not a fault.
+    assert limits.collection > 2 * interval
+    assert (limits.zero_runs - 1) * interval >= ZERO_SPAN
+    assert (limits.failing_after - 1) * interval >= FAILING_SPAN
+    assert limits.failing_after >= WARN_AFTER
+    # One failed publish is put right by the next run's.
+    assert limits.publish >= 2 * interval
+    # A stale site's cause opens before the stale site does.
+    assert limits.publish < limits.push < limits.site
+    # The publish and the Pages build both on time never make a stale site.
+    assert interval + PAGES_INTERVAL < limits.site
+
+
+def test_the_watchdog_uses_the_thresholds_of_the_fast_cadence():
+    limits = fast_limits(FAST_INTERVAL)
+    assert (COLLECTION_LIMIT["fast"], ZERO_RUNS["fast"]) == (limits.collection, limits.zero_runs)
+    assert FAILING_AFTER["fast"] == limits.failing_after
+    assert (PUBLISH_LIMIT, PUSH_LIMIT, SITE_LIMIT) == (limits.publish, limits.push, limits.site)
+
+
+def test_the_normal_lane_keeps_its_own_thresholds():
+    assert COLLECTION_LIMIT["normal"] == timedelta(hours=4, minutes=35)
+    assert ZERO_RUNS["normal"] == 2
+    assert FAILING_AFTER["normal"] == DEGRADE_AFTER
+
+
 # ─── Collection ───────────────────────────────────────────────────────────────────────────────────
 
 
@@ -78,11 +139,20 @@ def runs(*minutes_ago, items=90):
     return [LaneRun(NOW - m * MIN, items) for m in minutes_ago]
 
 
+def fast_runs(count, items=0):
+    """`count` fast runs one FAST interval apart, newest first, the newest a minute ago."""
+    return runs(*(1 + n * FAST_INTERVAL_MINUTES for n in range(count)), items=items)
+
+
+FAST_LIMIT = COLLECTION_LIMIT["fast"] // MIN  # minutes
+
+
 def test_a_lane_past_its_limit_has_stopped():
-    found = lane_findings({"fast": runs(36), "normal": runs(270, items=320)}, NOW)
+    late = FAST_LIMIT + 1
+    found = lane_findings({"fast": runs(late), "normal": runs(270, items=320)}, NOW)
     assert kinds(found) == [("no-collection", "fast", "critical")]
-    assert found[0].title == "The fast lane has not finished a run for 36 minutes"
-    assert found[0].evidence["limit_minutes"] == 35
+    assert found[0].title == f"The fast lane has not finished a run for {span(late * MIN)}"
+    assert found[0].evidence["limit_minutes"] == FAST_LIMIT
 
 
 def test_a_normal_lane_that_stops_is_high():
@@ -90,18 +160,22 @@ def test_a_normal_lane_that_stops_is_high():
 
 
 def test_a_lane_within_its_limit_or_never_run_or_unscheduled_is_fine():
-    assert lane_findings({"fast": runs(34), "normal": [], "deep": runs(9000)}, NOW) == []
+    assert lane_findings({"fast": runs(FAST_LIMIT - 1), "normal": [], "deep": runs(9000)}, NOW) == []
 
 
-def test_runs_that_fetch_nothing_for_half_an_hour_are_zero_volume():
-    found = lane_findings({"fast": runs(1, 16, 31, items=0)}, NOW)
+def test_fast_runs_that_fetch_nothing_in_a_row_are_zero_volume():
+    found = lane_findings({"fast": fast_runs(ZERO_RUNS["fast"])}, NOW)
     assert kinds(found) == [("zero-volume", "fast", "high")]
+    assert found[0].title == f"The fast lane's last {ZERO_RUNS['fast']} runs fetched nothing"
 
 
 def test_empty_runs_close_together_are_not_yet_zero_volume():
-    """Three `--once` runs a minute apart are not half an hour of nothing."""
-    assert lane_findings({"fast": runs(1, 2, 3, items=0)}, NOW) == []
-    assert lane_findings({"fast": [*runs(1, 16, items=0), *runs(31)]}, NOW) == []
+    """`--once` runs a minute apart are not half an hour of nothing."""
+    needed = ZERO_RUNS["fast"]
+    assert lane_findings({"fast": runs(*range(1, needed + 2), items=0)}, NOW) == []
+    newest_empty = fast_runs(needed - 1)
+    one_with_items = runs(1 + (needed - 1) * FAST_INTERVAL_MINUTES)
+    assert lane_findings({"fast": [*newest_empty, *one_with_items]}, NOW) == []
 
 
 # ─── Sources ──────────────────────────────────────────────────────────────────────────────────────
@@ -123,7 +197,7 @@ def source(source_id="acsc-alerts", statuses=(), **overrides) -> SourceState:
     return SourceState(**{**values, **overrides})
 
 
-def test_five_failed_checks_in_a_row_is_a_failing_feed():
+def test_failed_checks_in_a_row_make_a_failing_feed():
     failing = source(statuses=["ok", "error", "timeout", "error", "error", "error"],
                      last_error="HTTP 503")
     sibling = source("acsc-advisories", ["ok", "ok"])
@@ -147,20 +221,39 @@ def test_a_lower_priority_failing_feed_is_medium():
     assert kinds(source_findings([source(statuses=["error"] * 5, priority=2)]))[0][2] == "medium"
 
 
-def test_four_failures_or_a_success_between_them_is_not_yet_failing():
-    assert source_findings([source(statuses=["error"] * 4)]) == []
-    assert source_findings([source(statuses=["error"] * 4 + ["ok"])]) == []
+@pytest.mark.parametrize("lane", ["fast", "normal", "deep"])
+def test_a_feed_fails_after_its_lane_s_count_of_checks(lane):
+    needed = FAILING_AFTER.get(lane, FAILING_AFTER["normal"])
+    [finding] = source_findings([source(statuses=["error"] * needed, lane=lane)])
+    assert finding.kind == "feed-failing" and finding.evidence["failures_in_a_row"] == needed
+    assert finding.evidence["lane"] == lane
 
 
-def test_a_feed_that_answers_with_nothing_three_times_has_drifted():
-    found = source_findings([source(statuses=["ok", "empty", "empty", "empty"])])
+@pytest.mark.parametrize("lane", ["fast", "normal", "deep"])
+def test_one_failure_short_or_a_success_after_them_is_not_yet_failing(lane):
+    needed = FAILING_AFTER.get(lane, FAILING_AFTER["normal"])
+    assert source_findings([source(statuses=["error"] * (needed - 1), lane=lane)]) == []
+    assert source_findings([source(statuses=["error"] * needed + ["ok"], lane=lane)]) == []
+
+
+def test_a_fast_feed_is_failing_no_later_than_a_normal_one():
+    """Fast sources feed the critical alerts; a normal feed's items wait in it for days."""
+    assert WARN_AFTER <= FAILING_AFTER["fast"] <= FAILING_AFTER["normal"]
+
+
+@pytest.mark.parametrize("lane", ["fast", "normal", "deep"])
+def test_a_feed_that_answers_with_nothing_check_after_check_has_drifted(lane):
+    found = source_findings([source(statuses=["ok"] + ["empty"] * EMPTY_AFTER, lane=lane)])
     assert kinds(found) == [("parser-drift", "acsc-alerts", "high")]
     assert found[0].evidence["had_items_before"] is True
+    assert source_findings([source(statuses=["empty"] * (EMPTY_AFTER - 1), lane=lane)]) == []
 
 
-def test_a_feed_stale_three_times_is_low():
-    found = source_findings([source(statuses=["stale"] * 3)])
+@pytest.mark.parametrize("lane", ["fast", "normal", "deep"])
+def test_a_feed_stale_check_after_check_is_low(lane):
+    found = source_findings([source(statuses=["stale"] * STALE_AFTER, lane=lane)])
     assert kinds(found) == [("stale-feed", "acsc-alerts", "low")]
+    assert source_findings([source(statuses=["stale"] * (STALE_AFTER - 1), lane=lane)]) == []
 
 
 def test_a_long_error_is_cut():
@@ -243,16 +336,21 @@ def test_a_job_that_never_ran_here_is_not_failing():
 
 
 def test_a_publish_failing_past_its_limit_is_a_publish_failure():
+    late = PUBLISH_LIMIT // MIN + 1
     found = job_findings(
-        jobs(job("publish", 31), job("publish", 1, completed=False, note="OSError")), NOW
+        jobs(job("publish", late), job("publish", 1, completed=False, note="OSError")), NOW
     )
     assert kinds(found) == [("publish-failure", "", "high")]
-    assert found[0].title == "Building the site's data has failed for 31 minutes"
+    assert found[0].title == f"Building the site's data has failed for {span(late * MIN)}"
+    assert found[0].evidence["limit_minutes"] == PUBLISH_LIMIT // MIN
 
 
 def test_a_publish_that_failed_once_or_recovered_is_fine():
-    assert job_findings(jobs(job("publish", 20), job("publish", 1, completed=False)), NOW) == []
-    assert job_findings(jobs(job("publish", 40, completed=False), job("publish", 1)), NOW) == []
+    once = FAST_INTERVAL_MINUTES + 1  # the run before's publish worked
+    assert job_findings(jobs(job("publish", once), job("publish", 1, completed=False)), NOW) == []
+    long_ago = PUBLISH_LIMIT // MIN + 10
+    recovered = jobs(job("publish", long_ago, completed=False), job("publish", 1))
+    assert job_findings(recovered, NOW) == []
 
 
 def test_a_publish_the_validator_blocks_is_schema_drift():
@@ -261,18 +359,25 @@ def test_a_publish_the_validator_blocks_is_schema_drift():
 
 
 def test_a_push_failing_past_its_limit_is_a_push_failure():
-    found = job_findings(jobs(job("push", 46), job("push", 2, completed=False)), NOW)
+    late, within = PUSH_LIMIT // MIN + 1, PUSH_LIMIT // MIN - 1
+    found = job_findings(jobs(job("push", late), job("push", 2, completed=False)), NOW)
     assert kinds(found) == [("push-failure", "", "high")]
-    assert job_findings(jobs(job("push", 44), job("push", 2, completed=False)), NOW) == []
+    assert found[0].title == f"Pushing the site's data has failed for {span(late * MIN)}"
+    assert job_findings(jobs(job("push", within), job("push", 2, completed=False)), NOW) == []
 
 
 # ─── The site, the spend and Paperclip ────────────────────────────────────────────────────────────
 
 
 def test_site_data_older_than_its_limit_is_stale():
-    found = site_findings(SiteReading(NOW - timedelta(hours=3, minutes=1)), NOW)
+    found = site_findings(SiteReading(NOW - SITE_LIMIT - MIN), NOW)
     assert kinds(found) == [("site-stale", "", "high")]
-    assert site_findings(SiteReading(NOW - timedelta(hours=2, minutes=59)), NOW) == []
+    assert found[0].evidence["limit_minutes"] == SITE_LIMIT // MIN
+    assert site_findings(SiteReading(NOW - SITE_LIMIT + MIN), NOW) == []
+
+
+def test_site_data_a_fast_run_and_a_pages_build_old_is_not_stale():
+    assert site_findings(SiteReading(NOW - FAST_INTERVAL - PAGES_INTERVAL), NOW) == []
 
 
 def test_site_data_that_cannot_be_read_three_times_is_stale():
@@ -312,7 +417,7 @@ def test_paperclip_down_three_times_in_a_row():
 
 def test_evaluate_covers_only_the_parts_it_has():
     assert evaluate(Snapshot(NOW)) == ([], frozenset())
-    findings, covered = evaluate(Snapshot(NOW, lanes={"fast": runs(40)}, jobs=jobs()))
+    findings, covered = evaluate(Snapshot(NOW, lanes={"fast": runs(FAST_LIMIT + 5)}, jobs=jobs()))
     assert kinds(findings) == [("no-collection", "fast", "critical")]
     assert covered == {
         "no-collection", "zero-volume", "job-failing", "publish-failure", "schema-drift",
@@ -705,7 +810,7 @@ async def test_a_failed_fire_is_settled_and_counted(db):
 
 
 async def test_a_pass_is_recorded_with_the_parts_it_could_not_read(db):
-    db["snapshot"] = Snapshot(NOW, lanes={"fast": runs(40)}, sources=[], volume=None,
+    db["snapshot"] = Snapshot(NOW, lanes={"fast": runs(FAST_LIMIT + 5)}, sources=[], volume=None,
                               jobs=jobs(), cost=None)
     db["result"] = PassResult(opened=[incident()])
     summary = await watchdog().run_pass(None, NOW)
@@ -755,7 +860,7 @@ def site_answer(generated_at: datetime | None = None, status=200):
 
 
 async def test_old_site_data_is_found_when_this_host_pushes(db):
-    dog = watchdog(token=True, site=site_answer(NOW - timedelta(hours=4)))
+    dog = watchdog(token=True, site=site_answer(NOW - SITE_LIMIT - timedelta(hours=1)))
     await dog.run_pass(None, NOW)
     [(findings, covered)] = db["passes"]
     assert kinds(findings) == [("site-stale", "", "high")] and "site-stale" in covered

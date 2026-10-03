@@ -123,7 +123,7 @@ curl -s -m 3 http://10.0.0.0:8700/ops/health || echo "not reachable: good"
 
 - [ ] Agents are visible in Paperclip, waking on schedule and spending within budget
 - [ ] The pipeline survives Paperclip being stopped. Test it: `docker compose stop server`, wait
-      for the next 15-minute run, check the worker still logs `done:` and `published`, then
+      for the next hourly run at :00 UTC, check the worker still logs `done:` and `published`, then
       `docker compose start server`
 
 ---

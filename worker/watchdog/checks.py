@@ -13,8 +13,12 @@ outside, and the site already publishes it (source-health.json).
 The thresholds were set against what the VM showed on 2026-10-03. A fast run brings about 90
 items and a normal run about 320, nearly all duplicates. Fresh events are what volume is
 judged on, because a new source's back catalogue arrives as thousands of old events at once.
+
+The thresholds that follow the FAST lane's cadence are derived from it (`fast_limits`), so
+changing worker/cadence.py moves them too. The FAST lane has run hourly since 2026-10-04.
 """
 
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -22,8 +26,10 @@ from decimal import Decimal
 from statistics import median
 from typing import Any, Literal
 
+from worker.cadence import FAST_INTERVAL
 from worker.db.digest import truncate, usd
 from worker.db.jobs import Job, JobRun
+from worker.pipeline.health import DEGRADE_AFTER, WARN_AFTER
 
 Kind = Literal[
     "no-collection",
@@ -48,18 +54,80 @@ NOTIFY_AT: frozenset[str] = frozenset({"high", "critical"})
 # Kinds whose subject is a source id.
 SOURCE_KINDS: frozenset[str] = frozenset({"feed-failing", "parser-drift", "stale-feed"})
 
-# A lane with no finished run for this long has stopped: two runs missed, and a little.
+# ─── Thresholds that follow the FAST cadence ──────────────────────────────────────────────────────
+
+# The least time a lane's runs that fetched nothing must span. A 304, or a fetch skipped for its
+# own interval, fetches nothing, so one quiet run proves little.
+ZERO_SPAN = timedelta(minutes=30)
+# About how long a fast source fails before it is an incident.
+FAILING_SPAN = timedelta(hours=1)
+# How often the Pages workflow rebuilds the site from the data branch. It is the owner's file
+# (.github/workflows/pages.yml); docs/vm200-runbook.md gives the hourly schedule to set.
+PAGES_INTERVAL = timedelta(hours=1)
+
+
+def runs_spanning(period: timedelta, every: timedelta) -> int:
+    """How many runs in a row, `every` apart, it takes to span at least `period`."""
+    return 1 + math.ceil(period / every)
+
+
+@dataclass(frozen=True)
+class FastLimits:
+    collection: timedelta  # no-collection: no finished fast run for this long
+    zero_runs: int  # zero-volume: fast runs in a row that fetched nothing
+    failing_after: int  # feed-failing: a fast source's failed checks in a row
+    publish: timedelta  # publish-failure and schema-drift: nothing published for this long
+    push: timedelta  # push-failure: nothing pushed for this long
+    site: timedelta  # site-stale: the public site's data is older than this
+
+
+def fast_limits(every: timedelta, pages: timedelta = PAGES_INTERVAL) -> FastLimits:
+    """The thresholds for a FAST run every `every`. At 15 minutes, all but `site` are the
+    values the watchdog was first given: 35 minutes, 3 runs, 5 checks, 30 and 45 minutes."""
+    publish = 2 * every
+    return FastLimits(
+        # Two runs missed, and a little. A restart across a run's minute loses that run (the
+        # job store is in memory), so one missed run is not a fault.
+        collection=2 * every + timedelta(minutes=5),
+        zero_runs=max(2, runs_spanning(ZERO_SPAN, every)),
+        # Never fewer than the failures at which source health warns (worker/pipeline/health.py),
+        # so a blip or two opens nothing.
+        failing_after=max(WARN_AFTER, runs_spanning(FAILING_SPAN, every)),
+        # Two publishes in a row. Every FAST run publishes, so one failure is put right by the
+        # next run's publish.
+        publish=publish,
+        # A quarter of an hour more for a push, which also fails while GitHub has a blip. Both
+        # stay well inside `site`, so a stale site's cause opens before the stale site does.
+        push=publish + timedelta(minutes=15),
+        # The oldest the site's data gets with the publish and the Pages build both on time,
+        # and an hour more for a Pages run that GitHub drops or runs late.
+        site=every + pages + timedelta(hours=1),
+    )
+
+
+FAST = fast_limits(FAST_INTERVAL)
+
+# A lane with no finished run for this long has stopped. FAST: two runs missed, and a little.
+# NORMAL: one run missed, and a little.
 COLLECTION_LIMIT: dict[str, timedelta] = {
-    "fast": timedelta(minutes=35),
+    "fast": FAST.collection,
     "normal": timedelta(hours=4, minutes=35),
 }
 COLLECTION_SEVERITY: dict[str, Severity] = {"fast": "critical", "normal": "high"}
-# Runs in a row that fetched nothing at all, and the least time they must span between them.
-ZERO_RUNS: dict[str, int] = {"fast": 3, "normal": 2}
-ZERO_SPAN = timedelta(minutes=30)
+# Runs in a row that fetched nothing at all, spanning at least ZERO_SPAN between them.
+ZERO_RUNS: dict[str, int] = {"fast": FAST.zero_runs, "normal": 2}
 
-# Checks in a row. Failing matches the five that degrade a source (worker/pipeline/health.py).
-FAILING_AFTER = 5
+# A source's checks in a row, by its lane; a lane not named here (deep) uses normal's count.
+# Each lane checks its sources once per run, so a count is a span of time.
+# - Failing, fast: about an hour, and at least 3 checks (FAST.failing_after). Hourly, 3 checks
+#   span 2 hours. Fast sources feed the critical alerts, so 5 hours would be too long to wait.
+# - Failing, normal: the 5 that degrade a source (worker/pipeline/health.py). Its cadence did not
+#   change, and its items stay in their feeds for days.
+# - Empty (parser drift): 3 for every lane. A changed feed does not mend itself, and the fix is a
+#   code change, so 2 hours makes no difference. Fewer would let a maintenance page that answers
+#   200 open a high incident.
+# - Stale: 3 for every lane. Staleness is judged in days against a feed's expected frequency.
+FAILING_AFTER: dict[str, int] = {"fast": FAST.failing_after, "normal": DEGRADE_AFTER}
 EMPTY_AFTER = 3
 STALE_AFTER = 3
 # How many of a source's latest meaningful checks the snapshot holds.
@@ -87,10 +155,10 @@ JOB_LIMIT: dict[Job, timedelta] = {
 }
 JOB_SEVERITY: dict[Job, Severity] = {"groundtruth": "high", "enrichment": "high"}
 # The publish and push after each run: failing, and nothing completed for this long.
-PUBLISH_LIMIT = timedelta(minutes=30)
-PUSH_LIMIT = timedelta(minutes=45)
-# Pages rebuilds from the data branch every 15 minutes, when GitHub runs the schedule on time.
-SITE_LIMIT = timedelta(hours=3)
+PUBLISH_LIMIT = FAST.publish
+PUSH_LIMIT = FAST.push
+# Pages rebuilds from the data branch every PAGES_INTERVAL, when GitHub runs the schedule on time.
+SITE_LIMIT = FAST.site
 # Probes that fail this many times in a row count; fewer is a blip.
 PROBE_FAILURES = 3
 
@@ -337,7 +405,7 @@ def source_findings(sources: Sequence[SourceState]) -> list[Finding]:
             "recent_statuses": list(s.statuses),
         }
         failed = _trailing(s.statuses, _FAILED)
-        if failed >= FAILING_AFTER:
+        if failed >= FAILING_AFTER.get(s.lane, FAILING_AFTER["normal"]):
             siblings = [
                 {"source": o.source_id, "latest": o.statuses[-1] if o.statuses else None}
                 for o in by_host.get(s.host, ())

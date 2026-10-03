@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 # os.replace, so two publishes running at once would interleave their renames and could leave
 # data/ holding some files from one build and some from another — a combination no single
 # collection ever produced, and one the schema validation cannot catch because each file is
-# individually valid. The cadences make this reachable rather than theoretical: "*/15 * * * *" and
-# "0 */4 * * *" both fire at 00:00, 04:00, 08:00 and so on.
+# individually valid. The cadences make this reachable rather than theoretical: the FAST lane runs
+# at the top of every hour, and the NORMAL lane ("0 */4 * * *") at 00:00, 04:00, 08:00 and so on.
 _PUBLISH_LOCK = asyncio.Lock()
 
 
