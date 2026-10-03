@@ -14,7 +14,12 @@ have them cost $0.18 to $1.60. Checking the headline would reject a model with a
 routes, and would equally pass one whose only capable route is over the ceiling. The guard proves
 a usable route exists. Keeping each call on such a route is the request's own price cap (§7.2).
 
-Failing closed here means the AI layer stays off, not that the worker stops: see worker/ai.
+A model that fails is dropped from its chain, for as long as it fails (§7.6: "immediately drop
+any that drifted above the ceiling"). Going down a chain that was already signed off is not a new
+decision (§7.7), and one withdrawn model should not switch off every tier. What is left must still
+be a ladder `Ladder` accepts — no empty tier, tier 0 still ending in a paid model — or the whole
+ladder is rejected. Failing closed here means the AI layer stays off, not that the worker stops:
+see worker/ai. The daily model scan (worker/ai/catalogue.py) records every drop and return.
 """
 
 import asyncio
@@ -140,11 +145,16 @@ class LadderInvalid(LadderUnusable):
 
 
 class LadderRejected(LadderUnusable):
-    """At least one configured model breaks the guard, so none of them may be called."""
+    """Configured models break the guard, and what is left without them is not a usable ladder,
+    so none of them may be called. `remainder` says what is wrong with what is left."""
 
-    def __init__(self, breaches: list[Breach]):
+    def __init__(self, breaches: list[Breach], remainder: str | None = None):
         self.breaches = breaches
-        super().__init__("; ".join(str(b) for b in breaches))
+        self.remainder = remainder
+        message = "; ".join(str(b) for b in breaches)
+        if remainder:
+            message += f" (without them, {remainder})"
+        super().__init__(message)
 
 
 class CatalogueUnavailable(LadderUnusable):
@@ -156,14 +166,29 @@ class VerifiedLadder:
     """A ladder that passed the guard, and when.
 
     Only `verify_ladder` makes one. Code that calls a model takes this rather than a `Ladder`,
-    so a ladder nobody has checked cannot reach OpenRouter.
+    so a ladder nobody has checked cannot reach OpenRouter. `ladder` is what may be called: the
+    configured ladder without the models in `dropped`.
     """
 
     ladder: Ladder
     checked_at: datetime
+    dropped: tuple[Breach, ...] = ()
 
 
-def _per_mtok(price: Any) -> Decimal | None:
+@dataclass(frozen=True)
+class VerifiedCandidate:
+    """A model outside the ladder that passed the guard for one tier, and when.
+
+    Only `verify_candidate` makes one, and `OpenRouterClient.trial` takes nothing else, so
+    RIPPERDOC's gauntlet can call a challenger without the guard being skipped for it.
+    """
+
+    tier: Tier
+    slug: str
+    checked_at: datetime
+
+
+def per_mtok(price: Any) -> Decimal | None:
     """OpenRouter's per-token price string as US$ per million tokens, or None if it is not one.
 
     A negative price is how the catalogue marks a router whose cost depends on the model it picks,
@@ -181,9 +206,9 @@ def _per_mtok(price: Any) -> Decimal | None:
 def _output_price(route: Mapping[str, Any]) -> Decimal | None:
     """The route's output price, provided both of its prices are fixed."""
     pricing = route.get("pricing") or {}
-    if _per_mtok(pricing.get("prompt")) is None:
+    if per_mtok(pricing.get("prompt")) is None:
         return None
-    return _per_mtok(pricing.get("completion"))
+    return per_mtok(pricing.get("completion"))
 
 
 def breach_reason(routes: list[Mapping[str, Any]] | None, tier: Tier) -> str | None:
@@ -263,26 +288,68 @@ async def fetch_routes(
     return dict(results)
 
 
+def prune(ladder: Ladder, breaches: Iterable[Breach]) -> Ladder:
+    """The ladder without the models that breached, in the tiers they breached in.
+
+    Rebuilt through `Ladder`'s own validation, so every rule it enforces holds for what is left.
+    Raises `LadderRejected` when one does not.
+    """
+    breaches = list(breaches)
+    if not breaches:
+        return ladder
+    out = {(b.tier, b.slug) for b in breaches}
+    tiers = {t: tuple(s for s in chain if (t, s) not in out) for t, chain in ladder.tiers.items()}
+    try:
+        return Ladder.model_validate({"tiers": tiers})
+    except ValidationError as exc:
+        reason = str(exc.errors()[0]["msg"]).removeprefix("Value error, ")
+        raise LadderRejected(breaches, reason) from None
+
+
+async def _routes(
+    client: httpx.AsyncClient | None, slugs: Iterable[str]
+) -> dict[str, list[Mapping[str, Any]] | None]:
+    if client is not None:
+        return await fetch_routes(client, slugs)
+    async with httpx.AsyncClient(headers={"User-Agent": get_settings().user_agent}) as owned:
+        return await fetch_routes(owned, slugs)
+
+
 async def verify_ladder(
     ladder: Ladder | None = None, client: httpx.AsyncClient | None = None
 ) -> VerifiedLadder:
-    """Check every configured model against OpenRouter's live routes.
+    """Check every configured model against OpenRouter's live routes, and drop the ones that fail.
 
     Raises a `LadderUnusable`: `LadderInvalid` if the file cannot be loaded, `LadderRejected` when
-    any model fails, `CatalogueUnavailable` when the check could not be made. Whichever it is, the
-    caller leaves the AI layer off.
+    what is left after the drops is not a usable ladder, `CatalogueUnavailable` when the check
+    could not be made. Whichever it is, the caller leaves the AI layer off.
     """
     if ladder is None:
         try:
             ladder = Ladder.load()
         except (OSError, yaml.YAMLError, ValidationError) as exc:
             raise LadderInvalid(f"{DEFAULT_LADDER_PATH.name}: {exc}") from exc
-    if client is None:
-        async with httpx.AsyncClient(headers={"User-Agent": get_settings().user_agent}) as owned:
-            routes = await fetch_routes(owned, ladder.slugs())
-    else:
-        routes = await fetch_routes(client, ladder.slugs())
-    breaches = check_ladder(ladder, routes)
-    if breaches:
-        raise LadderRejected(breaches)
-    return VerifiedLadder(ladder=ladder, checked_at=datetime.now(UTC))
+    breaches = check_ladder(ladder, await _routes(client, ladder.slugs()))
+    return VerifiedLadder(
+        ladder=prune(ladder, breaches), checked_at=datetime.now(UTC), dropped=tuple(breaches)
+    )
+
+
+async def verify_candidate(
+    slug: str, tier: Tier, client: httpx.AsyncClient | None = None
+) -> VerifiedCandidate:
+    """Put one model outside the ladder through the same guard, for one tier.
+
+    Raises `LadderRejected` when it fails and `CatalogueUnavailable` when it could not be checked.
+    A slug the ladder itself would refuse (a router, a batch variant) is rejected without a fetch.
+    """
+    try:
+        _check_slug(tier, slug)
+    except ValueError as exc:
+        reason = str(exc).removeprefix(f"{tier.value}: ")
+        raise LadderRejected([Breach(tier, slug, reason)]) from None
+    routes = await _routes(client, [slug])
+    reason = breach_reason(routes.get(slug), tier)
+    if reason is not None:
+        raise LadderRejected([Breach(tier, slug, reason)])
+    return VerifiedCandidate(tier=tier, slug=slug, checked_at=datetime.now(UTC))

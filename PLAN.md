@@ -494,9 +494,9 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 
 | | |
 |---|---|
-| Role / adapter | `researcher` · `http` adapter → worker for harvest and evaluation (**deterministic**), tier 1 LLM only to draft the recommendation |
+| Role / adapter | `researcher` · `opencode_local` (fast tier). The worker runs the scan and the gauntlet (**deterministic**) and holds the OpenRouter key; the model reads the results from `GET /ops/models` and raises the proposals |
 | Reports to | ROGUE, with MORPHEUS approving any change that affects output quality |
-| Wakes on | **Daily** DEEP routine, 04:00 AEST, for the deterministic catalogue scan (zero tokens); **weekly** Sunday 04:00 AEST for the full gauntlet and any promotion proposal; on-demand within minutes when TELETRAAN reports a configured model failing, withdrawn, or above the price ceiling |
+| Wakes on | **Daily** routine, 04:00 AEST, after the worker's 03:20 catalogue scan (zero tokens); **weekly** Sunday 05:00 AEST, after the worker's 03:40 gauntlet, for any promotion proposal; on-demand within minutes when TELETRAAN reports a configured model failing, withdrawn, or above the price ceiling |
 | Owns | Keeping the §7.1 ladder optimal — the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling — and the **agent-to-model assignment** built on it (§7.7): which model each of the sixteen agents is running right now, and swapping an agent off a model that is failing it |
 | Specialised tasks | Snapshot `/api/v1/models` each run and diff against the last: new models, withdrawn models, price changes. **Flag new `:free` models loudly** — free is always evaluated first. Filter candidates to `tools` + `structured_outputs`, output ≤ $1/M, non-`:batch`, with a capable route at acceptable quantisation. Score survivors on published signals (§7.6). Run the **local gauntlet** — a pinned golden set of ~30 human-verified events — measuring schema compliance, agreement with golden labels, **refusal rate on security content**, p95 latency and measured cost from `usage.cost`. Open a proposal issue with a side-by-side table and a recommendation. Re-verify every ladder model's current price each run and immediately drop any that drifted above the ceiling. Repair fallback chains when a `:free` variant disappears, before a pipeline run discovers it. |
 | Never | Changes a tier **default** unilaterally — that needs MORPHEUS (quality) and ROGUE (cost); proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set; swaps the same agent more than **3× in 24 h** (circuit breaker → escalate, §7.7) |
@@ -570,7 +570,7 @@ Least privilege, per the source prompts' §60, made concrete:
 | Desks (×3) | Ops API token (scoped to their desk) | Write ground truth; publish |
 | TACHIKOMA | Ops API token (the worker holds the Tavily key) | Activate a source |
 | SERAPH, LIBRARIAN, PROWL, LINK, ROGUE | Worker-internal only (no LLM) | — |
-| RIPPERDOC | Ops API token, OpenRouter key (read-only endpoints + gauntlet calls) | Change a tier default; exceed the price ceiling |
+| RIPPERDOC | Ops API token (the worker holds the OpenRouter key and makes the gauntlet calls) | Change a tier default; exceed the price ceiling |
 | DECKARD | Ops API token, Tavily key | Publish |
 | VOIGHT | Ops API token (read + verdict) | Edit event facts |
 | TELETRAAN | Ops API token, health endpoints | Disable security controls |
@@ -921,8 +921,8 @@ job have different costs**:
 
 | Cycle | What runs | Cost | Why this cadence |
 |---|---|---|---|
-| **Daily**, 04:00 AEST | Deterministic catalogue scan: snapshot `/api/v1/models` and `/endpoints`, diff against yesterday, re-verify the current price of every model in the ladder, detect `:free` variants that appeared or disappeared, and flag any ladder model that has drifted above the ceiling or lost its capable route | **$0.00** — plain HTTP, no inference | The thing that changes daily is *price and availability*, and catching a ceiling breach or a withdrawn `:free` model the morning it happens is worth a free API call. A pipeline run should never be the thing that discovers a model is gone |
-| **Weekly**, Sunday 04:00 AEST | Score candidates on the published signals below, run the local gauntlet, open a promotion proposal | ≤ $0.25/month | The gauntlet is what actually decides, and it costs money. Running it daily would be ~7× the spend to re-answer a question whose answer is a pinned golden set — it does not change overnight. The adoption veto below is also defined **week-on-week**, so it needs a week of data to mean anything |
+| **Daily**, 03:20 AEST in the worker; RIPPERDOC reports at 04:00 | Deterministic catalogue scan: snapshot `/api/v1/models` and `/endpoints`, diff against yesterday, re-verify the current price of every model in the ladder, detect `:free` variants that appeared or disappeared, and flag any ladder model that has drifted above the ceiling or lost its capable route | **$0.00** — plain HTTP, no inference | The thing that changes daily is *price and availability*, and catching a ceiling breach or a withdrawn `:free` model the morning it happens is worth a free API call. A pipeline run should never be the thing that discovers a model is gone |
+| **Weekly**, Sunday 03:40 AEST in the worker; RIPPERDOC raises proposals at 05:00 | Score candidates on the published signals below, run the local gauntlet, open a promotion proposal | ≤ $0.25/month | The gauntlet is what actually decides, and it costs money. Running it daily would be ~7× the spend to re-answer a question whose answer is a pinned golden set — it does not change overnight. The adoption veto below is also defined **week-on-week**, so it needs a week of data to mean anything |
 | **On demand**, within minutes | Repair a fallback chain, or swap a failing agent down its chain (§7.7) | $0.00 | Triggered by TELETRAAN, not by a clock |
 
 Splitting it this way is what makes a daily assessment affordable: the free half runs every
@@ -986,6 +986,26 @@ gauntlet as the thing that decides.
 
 Gauntlet cost is budgeted at ≤ US$0.25/month — about 30 events across a handful of
 candidates, which at these prices is rounding error.
+
+**As built in Stage 5** (`worker/ai/scout.py`, `gauntlet.py`, `golden.py`), where it differs
+from the above:
+
+- The worker, not RIPPERDOC, holds the OpenRouter key and makes every call. RIPPERDOC reads
+  `GET /ops/models` and opens the issues.
+- The gauntlet is also capped at US$0.08 a run, and follows the budget mode (§7.4): tier 2 only
+  in `full`, tier 1 down to `conserve`, free models only below that.
+- The authenticated benchmark and dataset endpoints are not read. Challengers are ranked by
+  first listed in the last 14 days, then Artificial Analysis' `intelligence_index` where the
+  model list carries it, then price. **The adoption veto is not automated**; every proposal
+  says so and links the rankings.
+- Each tier is judged on its production task: tier 0 on triage, tier 1 on the brief (AU
+  relevance), tier 2 on the severity judgment. Entity and CVE extraction are not scored. The
+  `code` and `audit` tiers do no enrichment and are not gauntleted; the daily scan still
+  checks their models.
+- The golden set is 30 events with a register severity and a CVE, pinned by stratum (9
+  critical, 9 high, 9 medium, 3 low). Its labels come from the registers and the source
+  registry, so they are **not yet human-verified**; `golden_events.reviewed` records which
+  ones a person has checked, and every proposal gives the count.
 
 **Attribution.** Benchmark data carries a required citation in `meta.citation`. Both
 datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as of
