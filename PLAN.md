@@ -1003,9 +1003,11 @@ from the above:
   `code` and `audit` tiers do no enrichment and are not gauntleted; the daily scan still
   checks their models.
 - The golden set is 30 events with a register severity and a CVE, pinned by stratum (9
-  critical, 9 high, 9 medium, 3 low). Its labels come from the registers and the source
-  registry, so they are **not yet human-verified**; `golden_events.reviewed` records which
-  ones a person has checked, and every proposal gives the count.
+  critical, 9 high, 9 medium, 3 low), taking up to 2 per stratum that an Australian advisory
+  carried first: those are the only events the AU label calls Australian, and they are rare.
+  The labels come from the registers and the source registry, so they are **not yet
+  human-verified**; `golden_events.reviewed` records which ones a person has checked, and
+  every proposal gives the count.
 
 **Attribution.** Benchmark data carries a required citation in `meta.citation`. Both
 datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as of

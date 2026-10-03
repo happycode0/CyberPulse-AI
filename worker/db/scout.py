@@ -16,7 +16,7 @@ from sqlalchemy import Connection, text
 
 from worker.ai.catalogue import Change, Known, ListedModel
 from worker.ai.gauntlet import AGENT, STAGE, Listed, Measured
-from worker.ai.golden import MIN_SOURCE_CHARS, OFFICIAL_SOURCES, GoldenEvent
+from worker.ai.golden import AU_PER_STRATUM, MIN_SOURCE_CHARS, OFFICIAL_SOURCES, GoldenEvent
 from worker.db.digest import truncate, usd
 
 PROPOSAL_KIND = "model-promotion"
@@ -170,19 +170,27 @@ def record_scan(
 def golden_candidates(conn: Connection, limit: int = 1000) -> list[tuple[str, str]]:
     """(event_id, severity) of every event that could be pinned, in a stable order that does not
     follow collection order: an official severity, a CVE, enough of the feed's own text, and
-    not merged into another event."""
+    not merged into another event. Up to `AU_PER_STRATUM` per severity that an Australian
+    advisory carried come first, so the AU desk label has both answers in the set."""
     rows = conn.execute(
         text(
-            "select e.event_id, e.severity from events e "
+            "with c as (select e.event_id, e.severity, exists ("
+            "select 1 from event_sources es join source_registry r on r.id = es.source_id "
+            "where es.event_id = e.event_id and r.region = 'au' and r.category = 'advisory'"
+            ") as au from events e "
             "where e.severity_source = any(cast(:official as text[])) "
             "and e.severity <> 'unknown' and e.merged_into is null "
             "and length(coalesce(e.source_summary, e.summary)) >= :min_chars "
-            "and exists (select 1 from event_cves ec where ec.event_id = e.event_id) "
-            "order by md5(e.event_id), e.event_id limit :limit"
+            "and exists (select 1 from event_cves ec where ec.event_id = e.event_id)), "
+            "ranked as (select c.*, row_number() over (partition by severity, au "
+            "order by md5(event_id), event_id) as n from c) "
+            "select event_id, severity from ranked "
+            "order by (au and n <= :au_per_stratum) desc, md5(event_id), event_id limit :limit"
         ),
         {
             "official": [s.value for s in OFFICIAL_SOURCES],
             "min_chars": MIN_SOURCE_CHARS,
+            "au_per_stratum": AU_PER_STRATUM,
             "limit": limit,
         },
     )

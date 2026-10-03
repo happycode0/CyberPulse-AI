@@ -75,7 +75,15 @@ from worker.ai.gauntlet import (
     proposal_title,
     score,
 )
-from worker.ai.golden import GoldenEvent, blinded, digest, pin, stratify, subject_from_record
+from worker.ai.golden import (
+    GoldenEvent,
+    au_label_counts,
+    blinded,
+    digest,
+    pin,
+    stratify,
+    subject_from_record,
+)
 from worker.ai.ladder import (
     DEFAULT_LADDER_PATH,
     CatalogueUnavailable,
@@ -466,6 +474,7 @@ def _record(
     decisions: Sequence[Decision],
     golden_size: int,
     reviewed: int,
+    au_labels: tuple[int, int],
 ) -> tuple[int, list[str]]:
     run_id = db.record_gauntlet(
         conn,
@@ -482,7 +491,7 @@ def _record(
         made = db.propose(
             conn,
             title=title,
-            body=proposal_body(d, golden_size=golden_size, reviewed=reviewed),
+            body=proposal_body(d, golden_size=golden_size, reviewed=reviewed, au_labels=au_labels),
             payload=proposal_payload(d, gauntlet_run=run_id),
             now=finished,
         )
@@ -576,6 +585,7 @@ async def run_gauntlet(
         decisions=decisions,
         golden_size=len(golden),
         reviewed=reviewed,
+        au_labels=au_label_counts(golden),
     )
     logger.info(
         "gauntlet: %d results, %d new proposals, $%.4f spent%s",

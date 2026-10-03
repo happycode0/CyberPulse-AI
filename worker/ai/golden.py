@@ -59,6 +59,9 @@ OFFICIAL_SOURCES = (
 )
 # Less of the feed's own text than this, and there is not much for a model to work from.
 MIN_SOURCE_CHARS = 80
+# Events an Australian advisory carried are rare, and the only ones the AU desk label calls
+# Australian. Up to this many per severity are taken before the rest (worker/db/scout.py).
+AU_PER_STRATUM = 2
 TRIAGE_CATEGORIES = ("vulnerability", "zero-day")
 
 
@@ -89,6 +92,12 @@ def au_desk_label(subject: Subject) -> bool | None:
     if not australian and "australia" not in text:
         return False
     return None
+
+
+def au_label_counts(golden: Sequence[GoldenEvent]) -> tuple[int, int]:
+    """How many of the set the AU desk label calls Australian, and how many not."""
+    labels = [g.labels.get("au_desk") for g in golden]
+    return sum(1 for v in labels if v is True), sum(1 for v in labels if v is False)
 
 
 def labels_for(subject: Subject) -> dict[str, Any]:
