@@ -16,6 +16,9 @@ from pathlib import Path
 
 import pytest
 
+from worker import scheduler
+from worker.cadence import fast_minutes
+
 OPS = Path(__file__).resolve().parents[2] / "ops"
 BASH = shutil.which("bash")
 
@@ -227,6 +230,24 @@ def test_backup_and_restore_count_rows_with_the_same_query():
     assert all(queries)
     assert queries[0].group(1) == queries[1].group(1)
     assert "READ ONLY" in (OPS / "backup.sh").read_text()
+
+
+def test_the_safe_minutes_to_restart_miss_the_busy_ones():
+    """A restart across a job's minute loses that run. The window rollback.sh gives must miss each
+    fast run, the alerts and the enrichment pass right after it, and the gate. A new fast cadence
+    needs a new window here and in the runbooks."""
+    window = re.compile(r"between :(\d\d) and :(\d\d)")
+    found = window.search((OPS / "rollback.sh").read_text())
+    assert found
+    runbooks = (OPS.parent / "docs" / "runbooks" / "README.md").read_text()
+    assert found.groups() in {m.groups() for m in window.finditer(runbooks)}
+    safe = set(range(int(found[1]), int(found[2]) + 1))
+    busy = {int(scheduler.GATE_SCHEDULE.split()[0])}
+    for fast in fast_minutes():
+        busy |= {fast, fast + scheduler.ALERT_AFTER_COLLECTION}
+        busy |= {next((m for m in sorted(scheduler.ENRICH_MINUTES) if m > fast), fast)}
+    assert not safe & busy
+    assert len(safe) >= 30  # room to work in
 
 
 @pytest.mark.parametrize(

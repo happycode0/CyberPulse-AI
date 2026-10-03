@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from worker import scheduler
 from worker.ai.enrich import EnrichSummary
 from worker.ai.mitre import MitreSummary
 from worker.ai.scout import GauntletSummary, ScanSummary
+from worker.cadence import FAST_INTERVAL_MINUTES, fast_minutes
 from worker.models import Lane
 from worker.publish.push import PushResult
 from worker.scheduler import (
@@ -21,6 +23,7 @@ from worker.scheduler import (
     GROUNDTRUTH_JOB_ID,
     MODEL_SCAN_JOB_ID,
     WATCHDOG_JOB_ID,
+    alert_minutes,
     build_scheduler,
     job_id,
 )
@@ -28,6 +31,22 @@ from worker.scheduler import (
 
 def fields(trigger: CronTrigger) -> dict[str, str]:
     return {f.name: str(f) for f in trigger.fields}
+
+
+def fire_times(trigger: CronTrigger, start: datetime, end: datetime) -> list[datetime]:
+    out = []
+    at = trigger.get_next_fire_time(None, start)
+    while at is not None and at < end:
+        out.append(at.astimezone(UTC))
+        at = trigger.get_next_fire_time(at, at + timedelta(seconds=1))
+    return out
+
+
+def minutes(spec: str) -> set[int]:
+    """The minutes past the hour a cron line can start at."""
+    trigger = CronTrigger.from_crontab(spec, timezone="UTC")
+    start = datetime(2026, 10, 3, tzinfo=UTC)
+    return {at.minute for at in fire_times(trigger, start, start + timedelta(days=7))}
 
 
 def test_fast_and_normal_are_scheduled_deep_is_not():
@@ -65,15 +84,28 @@ def test_asking_for_one_lane_does_not_bring_model_calls_along():
     assert ENRICH_JOB_ID not in {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
 
 
-def test_the_digest_goes_at_seven_sydney_time_with_two_retries():
+def test_the_digest_goes_at_ten_past_seven_sydney_time_with_two_retries():
+    # Ten past, so it reports the 07:00 run and the enrichment pass after it.
     job = {j.id: j for j in build_scheduler().get_jobs()}[DIGEST_JOB_ID]
-    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("0", "7,8,9")
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("10", "7,8,9")
     assert str(job.trigger.timezone) == "Australia/Sydney"
 
 
-def test_alerts_follow_each_fast_run():
+def test_alerts_follow_each_fast_run_and_each_enrichment_pass():
     job = {j.id: j for j in build_scheduler().get_jobs()}[ALERT_JOB_ID]
-    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("3,18,33,48", "*")
+    expected = {m + 3 for m in scheduler.FAST_MINUTES} | {m + 13 for m in scheduler.ENRICH_MINUTES}
+    assert minutes(scheduler.ALERT_SCHEDULE) == expected
+    assert fields(job.trigger)["hour"] == "*" and str(job.trigger.timezone) == "UTC"
+
+
+@pytest.mark.parametrize(
+    "every, expected",
+    [(60, (3, 18, 48)), (30, (3, 18, 33, 48)), (15, (3, 18, 33, 48))],
+)
+def test_the_alert_minutes_follow_the_fast_cadence(every, expected):
+    # Hourly: :03 after the run, :18 after the :05 pass, :48 after the :35 backlog pass. At 15
+    # minutes it is the schedule the alerts started with.
+    assert alert_minutes(fast_minutes(every), scheduler.ENRICH_MINUTES) == expected
 
 
 def test_asking_for_one_lane_does_not_bring_notifications_along():
@@ -83,7 +115,7 @@ def test_asking_for_one_lane_does_not_bring_notifications_along():
 
 def test_the_discovery_search_runs_nightly_sydney_time():
     job = {j.id: j for j in build_scheduler().get_jobs()}[DISCOVERY_JOB_ID]
-    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("0", "3")
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("10", "3")
     assert str(job.trigger.timezone) == "Australia/Sydney"
 
 
@@ -171,7 +203,7 @@ def test_the_model_scan_runs_daily_after_the_discovery_search():
     assert str(scan.timezone) == "Australia/Sydney"
     after = datetime(2026, 10, 3, 0, 0, tzinfo=UTC)
     search = jobs[DISCOVERY_JOB_ID].trigger.get_next_fire_time(None, after)
-    assert scan.get_next_fire_time(None, after) - search == timedelta(minutes=20)
+    assert scan.get_next_fire_time(None, after) - search == timedelta(minutes=10)
 
 
 def test_the_gauntlet_runs_on_sunday_after_the_scan():
@@ -272,9 +304,64 @@ async def test_a_gauntlet_is_recorded_with_the_proposals_it_made(scout_jobs):
 def test_cadences():
     jobs = {j.id: j for j in build_scheduler().get_jobs()}
     fast, normal = jobs[job_id(Lane.FAST)].trigger, jobs[job_id(Lane.NORMAL)].trigger
-    assert fields(fast)["minute"] == "*/15" and fields(fast)["hour"] == "*"
+    after = datetime(2026, 10, 3, 0, 0, tzinfo=UTC)
+    first = fast.get_next_fire_time(None, after)
+    assert first == after  # from the top of the hour
+    gap = fast.get_next_fire_time(first, first + timedelta(seconds=1)) - first
+    assert gap == timedelta(minutes=FAST_INTERVAL_MINUTES)
+    assert fields(fast)["hour"] == "*"
     assert (fields(normal)["minute"], fields(normal)["hour"]) == ("0", "*/4")
     assert str(fast.timezone) == str(normal.timezone) == "UTC"
+
+
+@pytest.mark.parametrize(
+    "every, expected", [(60, (0,)), (30, (0, 30)), (15, (0, 15, 30, 45))]
+)
+def test_the_fast_minutes_come_from_one_interval(every, expected):
+    assert fast_minutes(every) == expected
+
+
+def test_a_late_fast_run_still_ends_before_the_next_is_due():
+    grace = scheduler.MISFIRE_GRACE_SECONDS[Lane.FAST]
+    assert FAST_INTERVAL_MINUTES * 60 / 2 < grace < FAST_INTERVAL_MINUTES * 60
+
+
+def test_no_two_jobs_start_in_the_same_minute_but_the_two_lanes():
+    # Eight days from Saturday 3 October 2026, across Sydney's change to daylight time: the
+    # digest, discovery, the model scan and the gauntlet run on Sydney time.
+    start = datetime(2026, 10, 3, tzinfo=UTC)
+    starts: dict[datetime, list[str]] = defaultdict(list)
+    for job in build_scheduler().get_jobs():
+        for at in fire_times(job.trigger, start, start + timedelta(days=8)):
+            starts[at].append(job.id)
+    shared = [sorted(ids) for ids in starts.values() if len(ids) > 1]
+    # Both lanes at :00 every four hours is by design: `publish_now` holds a lock.
+    lanes = sorted([job_id(Lane.FAST), job_id(Lane.NORMAL)])
+    assert shared and all(ids == lanes for ids in shared)
+
+
+@pytest.mark.parametrize("every", [15, 30, 60])
+def test_the_hourly_jobs_keep_to_their_own_minutes_at_any_fast_cadence(every):
+    fast = set(fast_minutes(every))
+    hourly = [
+        fast,
+        set(alert_minutes(fast, scheduler.ENRICH_MINUTES)),
+        set(scheduler.ENRICH_MINUTES),
+        minutes(scheduler.WATCHDOG_SCHEDULE),
+    ]
+    daily = {
+        int(spec.split()[0])
+        for spec in (
+            scheduler.GROUNDTRUTH_SCHEDULE,
+            scheduler.GATE_SCHEDULE,
+            scheduler.DIGEST_SCHEDULE,
+            scheduler.DISCOVERY_SCHEDULE,
+            scheduler.MODEL_SCAN_SCHEDULE,
+            scheduler.GAUNTLET_SCHEDULE,
+        )
+    }
+    groups = [*hourly, daily]
+    assert sum(len(g) for g in groups) == len(set().union(*groups))
 
 
 def test_runs_never_overlap_and_missed_ticks_collapse():

@@ -33,7 +33,9 @@ logger = logging.getLogger(__name__)
 # Authenticated with the ordinary key: /credits would need a management key (§2.8).
 KEY_URL = "https://openrouter.ai/api/v1/key"
 
-# Lanes poll before each cycle and run every 15 minutes, so this tolerates one missed poll.
+# The enrichment passes poll before they call, twice an hour (worker/scheduler.py). A pass whose
+# poll fails finds the last reading about this old, so it soon runs on free models rather than
+# spend on it.
 MAX_READING_AGE = timedelta(minutes=30)
 
 # How long paid calls wait after a 402 or 429 that sent no Retry-After.

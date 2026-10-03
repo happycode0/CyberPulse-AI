@@ -17,6 +17,7 @@ from worker.db.digest import month_bounds
 from worker.db.jobs import load_latest_jobs
 from worker.watchdog.checks import (
     SOURCE_HISTORY,
+    ZERO_RUNS,
     Cost,
     Jobs,
     LaneRun,
@@ -32,7 +33,7 @@ STATEMENT_TIMEOUT = "15s"
 USUAL_DAYS = 7
 # The lanes with a schedule (worker/scheduler.py), and the most runs a check looks back on.
 LANES = ("fast", "normal")
-LANE_RUNS = 3
+LANE_RUNS = max(ZERO_RUNS.values())
 
 T = TypeVar("T")
 

@@ -68,8 +68,8 @@ add:
 10 16 * * * cd ~/CyberPulse-AI && ./ops/backup.sh /mnt/backup >> ~/backup.log 2>&1
 ```
 
-That is 16:10 in the VM's time zone. Pick any minute clear of the collection runs (:00, :15,
-:30, :45 UTC). Then check `~/backup.log` the next day for `complete:`.
+That is 16:10 in the VM's time zone. Pick any minute from :10 to :45, clear of the hourly
+collection run at :00 UTC and the passes just after it. Then check `~/backup.log` the next day for `complete:`.
 
 ## Restore rehearsal
 
@@ -128,7 +128,7 @@ in the output and schema-invalid output.
 
 What §11 plans but is not built is listed there under Gaps, rather than tested as if it were. The
 main ones: nothing rate-limits ingest during a duplicate storm (the watchdog flags it); a failed
-push has no backoff of its own (the next publish, 15 minutes later, is the retry); and with
+push has no backoff of its own (the next hourly publish is the retry); and with
 Paperclip down, Telegram's notices still say "The crew has been told" although the routine call
 may not have gone through.
 
