@@ -220,7 +220,9 @@ const HISTORY_SCAN = 45;
 
 // Find one event: the current snapshot first, then archived days newest first.
 // Returns { event, events, feed } or null; `events` pools everything searched so
-// related-event links can be resolved without another round trip.
+// related-event links can be resolved without another round trip. An event that was
+// merged into another (index.json's `merged` map) finds the event it joined, and the
+// result says so with `mergedFrom`, the id that was asked for.
 export async function findEvent(eventId, { bases = DATA_BASES, fetchImpl = globalThis.fetch } = {}) {
   for (const base of bases) {
     const feed = await getJson(`${base}live.json`, fetchImpl);
@@ -228,6 +230,11 @@ export async function findEvent(eventId, { bases = DATA_BASES, fetchImpl = globa
     const hit = feedEvents.find((e) => e.event_id === eventId);
     if (hit) return { event: hit, events: feedEvents, feed };
     const index = await getJson(`${base}index.json`, fetchImpl);
+    const joined = index && index.merged && typeof index.merged[eventId] === 'string' ? index.merged[eventId] : null;
+    const wanted = joined || eventId;
+    const merged = joined ? { mergedFrom: eventId } : {};
+    const joinedHit = joined ? feedEvents.find((e) => e.event_id === wanted) : null;
+    if (joinedHit) return { event: joinedHit, events: feedEvents, feed, ...merged };
     if (index && Array.isArray(index.days)) {
       const days = [...index.days]
         .sort((a, b) => String(b.date).localeCompare(String(a.date)))
@@ -235,8 +242,8 @@ export async function findEvent(eventId, { bases = DATA_BASES, fetchImpl = globa
       for (const meta of days) {
         const day = await getJson(`${base}${meta.path}`, fetchImpl);
         const dayEvents = day && Array.isArray(day.events) ? day.events : [];
-        const dayHit = dayEvents.find((e) => e.event_id === eventId);
-        if (dayHit) return { event: dayHit, events: [...feedEvents, ...dayEvents], feed };
+        const dayHit = dayEvents.find((e) => e.event_id === wanted);
+        if (dayHit) return { event: dayHit, events: [...feedEvents, ...dayEvents], feed, ...merged };
       }
     }
   }
@@ -2233,7 +2240,13 @@ async function mainEvent() {
     showError(`Event ${id} is not in the published snapshots. It may belong to a day that has not been published.`);
     return;
   }
-  const { event, events, feed } = found;
+  const { event, events, feed, mergedFrom } = found;
+  if (mergedFrom) {
+    // The link named an event since merged into this one: show this one's address.
+    const url = new URL(window.location.href);
+    url.searchParams.set('id', event.event_id);
+    window.history.replaceState(null, '', url);
+  }
   renderStrip({ feed });
   document.title = `${event.title} | CyberPulse-AI`;
   const wanted = new Set((event.relationships || []).map((r) => r.event_id));

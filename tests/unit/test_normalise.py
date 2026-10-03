@@ -89,3 +89,21 @@ def test_normalised_item_tokens_match_across_punctuation_variants(item):
     a = normalise(item.model_copy(update={"title": "Critical RCE in Acme!"}), now=NOW)
     b = normalise(item.model_copy(update={"title": "Critical RCE in Acme"}), now=NOW)
     assert a.tokens == b.tokens
+
+
+def test_titles_are_published_as_plain_text(item):
+    from worker.pipeline.normalise import clean_title
+
+    dta = (
+        '<a href="https://www.dta.gov.au/articles/australia-joins-new-oecd-working-group" '
+        'hreflang="en">Australia joins new OECD working group on agentic AI in government</a>'
+    )
+    assert clean_title(dta) == "Australia joins new OECD working group on agentic AI in government"
+    assert clean_title("SASE Converges Network &amp; Security") == "SASE Converges Network & Security"
+    assert clean_title("  Forrester Wave&trade;:  Q3  ") == "Forrester Wave™: Q3"
+    assert clean_title("<br/>") == "<br/>"  # nothing but markup: kept rather than emptied
+
+    n = normalise(item.model_copy(update={"title": dta}), now=NOW)
+    assert n.title.startswith("Australia joins")
+    assert n.normalised_title == normalise_title(n.title)
+    assert "href" not in n.tokens

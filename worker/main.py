@@ -1,10 +1,10 @@
-"""Command line: `python -m worker [--check-models] [--check-budget] [--migrate]
-[--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
+"""Command line: `python -m worker [--check-models] [--check-budget] [--check-duplicates]
+[--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
 
 With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync and AI enrichment until
-interrupted. Explicit actions run in a fixed order (check models, check budget, migrate, collect,
-ground truth, enrich, publish) and then exit, unless `--lane` is given without `--once`, which
-schedules that one lane instead.
+interrupted. Explicit actions run in a fixed order (check models, check budget, check duplicates,
+migrate, collect, ground truth, enrich, publish) and then exit, unless `--lane` is given without
+`--once`, which schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -17,6 +17,7 @@ import asyncio
 import logging
 import sys
 from collections.abc import Sequence
+from datetime import UTC, datetime
 
 import httpx
 
@@ -29,11 +30,14 @@ from worker.ai.ladder import (
     verify_ladder,
 )
 from worker.ai.mitre import DEFAULT_MITRE_BATCH, suggest_techniques
+from worker.db.merge import load_live_ids, load_story_records, load_token_weights
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
 from worker.groundtruth.sync import DEFAULT_ADVISORY_BATCH, DEFAULT_CVSS_BATCH, sync_groundtruth
 from worker.models import Lane
-from worker.pipeline.run import run_lane
+from worker.pipeline.correlate import after_merges, plan_merges, possible_duplicates
+from worker.pipeline.run import CONSOLIDATE_LOOKBACK, WORD_WEIGHT_LOOKBACK, run_lane
+from worker.publish.build import LIVE_MIN_PROMINENCE
 from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
@@ -44,6 +48,9 @@ logger = logging.getLogger("worker")
 EXIT_OK = 0
 EXIT_FAILED = 1
 EXIT_USAGE = 2
+
+# How many of the groups consolidation would merge `--check-duplicates` lists.
+SHOWN_GROUPS = 40
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -57,6 +64,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--check-budget",
         action="store_true",
         help="read the OpenRouter key's spend and show the mode it allows; spends nothing",
+    )
+    p.add_argument(
+        "--check-duplicates",
+        action="store_true",
+        help="report the duplicate rate on the site and what consolidation would merge; reads only",
     )
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
@@ -180,6 +192,68 @@ def _check_budget() -> int:
     return EXIT_OK
 
 
+def _check_duplicates() -> int:
+    """Measure the duplicate rate in published output (PLAN.md's KPI for the resolver), now and
+    as it would be once consolidation merged what it would merge, and list those merges.
+
+    Reads only: the connection's transaction is rolled back, and nothing is merged.
+    """
+    now = datetime.now(UTC)
+    with get_engine().connect() as conn:
+        records = load_story_records(conn, since=now - CONSOLIDATE_LOOKBACK)
+        weights = load_token_weights(conn, since=now - WORD_WEIGHT_LOOKBACK)
+        live = set(load_live_ids(conn, min_prominence=LIVE_MIN_PROMINENCE))
+        conn.rollback()
+
+    groups = plan_merges(records, weights)
+    before = possible_duplicates(records, live, weights)
+    losers = {e for g in groups for e in g.losers}
+    live_after = (live - losers) | {g.winner for g in groups if live & {g.winner, *g.losers}}
+    after = possible_duplicates(after_merges(records, groups), live_after, weights)
+    titles = {r.event_id: r.title for r in records}
+
+    logger.info(
+        "duplicates: %d events on the site seen in the last %d days; %d (%.1f%%) are in a "
+        "possible-duplicate pair",
+        before.live,
+        CONSOLIDATE_LOOKBACK.days,
+        before.in_pairs,
+        100 * before.rate,
+    )
+    logger.info(
+        "duplicates: consolidation would merge %d events into %d (largest group %d); "
+        "afterwards %d of %d (%.1f%%) would be in a pair",
+        len(losers),
+        len(groups),
+        max((1 + len(g.losers) for g in groups), default=0),
+        after.in_pairs,
+        after.live,
+        100 * after.rate,
+    )
+    for g in sorted(groups, key=lambda g: (-len(g.losers), g.winner))[:SHOWN_GROUPS]:
+        logger.info(
+            "  %s <- %s [%s] %s%s",
+            g.winner,
+            ", ".join(g.losers),
+            ", ".join(g.methods),
+            titles[g.winner][:90],
+            f" (retitled: {g.title[:60]})" if g.title else "",
+        )
+        for e in g.losers:
+            logger.info("      %s %s", e, titles[e][:90])
+    for a, b, why, score in after.pairs[:SHOWN_GROUPS]:
+        logger.info(
+            "  left apart: %s / %s (%s %.2f): %s | %s",
+            a,
+            b,
+            why,
+            score,
+            titles[a][:60],
+            titles[b][:60],
+        )
+    return EXIT_OK
+
+
 def _groundtruth(cvss_batch: int, advisory_batch: int) -> int:
     """Run one sync. Only a failure the sync itself could not absorb is non-zero.
 
@@ -254,6 +328,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if code != EXIT_OK:
             return code
 
+    if args.check_duplicates:
+        code = _check_duplicates()
+        if code != EXIT_OK:
+            return code
+
     if args.migrate:
         applied = run_migrations(get_engine())
         logger.info("migrations applied: %s", ", ".join(applied) or "none")
@@ -280,6 +359,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     schedule = (lane is not None and not args.once) or not (
         args.check_models
         or args.check_budget
+        or args.check_duplicates
         or args.migrate
         or args.publish
         or args.groundtruth

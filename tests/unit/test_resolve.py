@@ -274,11 +274,12 @@ def test_event_origin_is_its_earliest_source_publication():
 
 def test_shared_cve_and_high_token_overlap_updates_existing():
     item_title, event_title = titles_with_overlap(6, 1, 1)  # 6/8 = 0.75
-    item = make_item(f"CVE-2026-88772 {item_title}", published=NOW)
+    # Each names a CVE the other doesn't, so `cve_set` does not apply.
+    item = make_item(f"CVE-2026-88772 CVE-2026-90001 {item_title}", published=NOW)
     event = make_event(
         f"CVE-2026-88772 {event_title}",
         first_seen=NOW - timedelta(days=9),
-        cves=["CVE-2026-88772"],
+        cves=["CVE-2026-88772", "CVE-2026-90002"],
     )
     r = resolve(item, [event])
     assert (r.decision, r.method) == (Decision.UPDATE_EXISTING, "cve+tokens")
@@ -290,14 +291,16 @@ def test_shared_cve_matches_regardless_of_the_title_window():
     item = make_item(f"{item_title} CVE-2026-88772")
     event = make_event(
         f"{event_title} CVE-2026-88772",
-        first_seen=NOW - timedelta(days=25),
+        first_seen=NOW - timedelta(days=45),  # past `cve_set`'s 30 days
         cves=["CVE-2026-88772"],
     )
     assert resolve(item, [event]).method == "cve+tokens"
 
 
 def test_shared_cve_with_unrelated_titles_is_related_but_distinct():
-    item = make_item("Patch Tuesday roundup lists fixes including CVE-2026-88772")
+    # The roundup names one more CVE, and the headlines share no word, so `cve_set` does not
+    # apply either.
+    item = make_item("Patch Tuesday roundup lists fixes for CVE-2026-88772 and CVE-2026-90001")
     event = make_event(
         "Threat actor weaponises the flaw in ransomware campaign",
         cves=["CVE-2026-88772"],
@@ -406,3 +409,178 @@ def test_match_keys_never_leak_into_the_published_shape():
     assert "source_url_hashes" not in dumped and "source_titles" not in dumped
     assert "source_guids" not in dumped and "source_canonical_urls" not in dumped
     Event.model_validate(dumped)
+
+
+# --- generic titles ---------------------------------------------------------------
+
+
+def test_generic_notice_titles_are_recognised_raw_or_normalised():
+    from worker.pipeline.resolve import is_generic_title
+
+    for title in (
+        "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+        "CISA Adds One Known Exploited Vulnerability to the Catalog",
+        "cisa releases four industrial control systems advisories",
+        "ISC Stormcast For Friday, October 2nd, 2026 https://isc.sans.edu/podcastdetail/9999",
+        "Smashing Security podcast #437: The pig butcher's apprentice",
+    ):
+        assert is_generic_title(title), title
+    assert not is_generic_title("CISA adds Citrix flaw to KEV after attacks")
+
+
+def test_a_generic_title_never_merges_on_its_words():
+    title = "CISA Adds Two Known Exploited Vulnerabilities to Catalog"
+    item = make_item(title, url="https://example.org/kev-2")
+    event = make_event(title, first_seen=NOW - timedelta(hours=20))
+    assert resolve(item, [event]).decision is Decision.NEW_EVENT
+
+
+# --- CVE sets -------------------------------------------------------------------
+
+
+def test_the_same_cves_in_different_words_are_one_story():
+    item = make_item("Zimbra mail servers hit through CVE-2026-88772")
+    event = make_event(
+        "Collaboration suite flaw under active attack",
+        first_seen=NOW - timedelta(days=6),
+        cves=["CVE-2026-88772"],
+    )
+    r = resolve(item, [event])
+    assert (r.decision, r.method, r.score) == (Decision.UPDATE_EXISTING, "cve_set", 1.0)
+
+
+def test_a_few_of_an_events_cves_need_a_shared_headline_word():
+    event = make_event(
+        "Citrix fixes four NetScaler flaws",
+        first_seen=NOW - timedelta(days=2),
+        cves=["CVE-2026-88771", "CVE-2026-88772", "CVE-2026-88773", "CVE-2026-88774"],
+    )
+    shares = make_item("NetScaler bug CVE-2026-88772 exploited")
+    r = resolve(shares, [event])
+    assert (r.decision, r.method, r.score) == (Decision.UPDATE_EXISTING, "cve_set", 0.25)
+    unrelated = make_item("Ransomware crew abuses CVE-2026-88772")
+    assert resolve(unrelated, [event]).decision is Decision.RELATED_BUT_DISTINCT
+
+
+def test_a_generic_notice_joins_a_story_through_its_cves_but_never_absorbs_one():
+    story = make_event(
+        "Citrix fixes four NetScaler flaws",
+        first_seen=NOW - timedelta(days=1),
+        cves=["CVE-2026-88771", "CVE-2026-88772"],
+    )
+    notice = make_item("CISA Adds One Known Exploited Vulnerability to Catalog CVE-2026-88772")
+    r = resolve(notice, [story])
+    assert (r.decision, r.method) == (Decision.UPDATE_EXISTING, "cve_set")
+
+    roundup = make_event(
+        "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+        first_seen=NOW - timedelta(days=1),
+        cves=["CVE-2026-88772", "CVE-2026-90001"],
+    )
+    article = make_item("Attackers exploit CVE-2026-88772 in NetScaler")
+    assert resolve(article, [roundup]).decision is Decision.RELATED_BUT_DISTINCT
+
+
+def test_cve_sets_are_bounded_in_size_and_time():
+    many = [f"CVE-2026-{88700 + i}" for i in range(11)]
+    big = make_event("Vendor patch roundup NetScaler", cves=many)
+    item = make_item(f"NetScaler flaw {many[0]}")
+    assert resolve(item, [big]).method != "cve_set"
+    old = make_event("Zimbra flaw", first_seen=NOW - timedelta(days=31), cves=["CVE-2026-88772"])
+    assert resolve(make_item("Mail suite hit via CVE-2026-88772"), [old]).method != "cve_set"
+
+
+def test_one_registers_two_advisories_never_merge_on_their_cves():
+    register = SourceRef(
+        source_id="cisa_ics",
+        url="https://example.org/icsa-26-01",
+        evidence_class=EvidenceClass.AUTHORITATIVE,
+    )
+    event = make_event(
+        "Siemens SIMATIC advisory",
+        cves=["CVE-2026-88772"],
+        sources=[register],
+    )
+    item = make_item(
+        "ABB controller advisory CVE-2026-88772",
+        url="https://example.org/icsa-26-02",
+        source_id="cisa_ics",
+    )
+    r = resolve(item, [event], evidence_class=EvidenceClass.AUTHORITATIVE)
+    assert r.decision is Decision.RELATED_BUT_DISTINCT
+    # Another source's report of the same CVE still joins.
+    news = make_item("Mail suite hit via CVE-2026-88772", source_id="wire")
+    assert resolve(news, [event], evidence_class=EvidenceClass.NEWS).method == "cve_set"
+
+
+# --- the consolidation rungs ------------------------------------------------------
+
+
+def test_weighted_overlap_counts_rare_words_for_more():
+    from worker.pipeline.resolve import TokenWeights, weighted_overlap
+
+    weights = TokenWeights.from_titles(
+        ["ransomware attack hits firm"] * 9 + ["KillSec claims Medibank"]
+    )
+    assert weights.weight("ransomware") < weights.weight("killsec") < weights.weight("unseen")
+    rare = weighted_overlap(
+        frozenset({"killsec", "ransomware", "hospital"}),
+        frozenset({"killsec", "ransomware", "clinic"}),
+        weights,
+    )
+    common = weighted_overlap(
+        frozenset({"killsec", "ransomware", "hospital"}),
+        frozenset({"lockbit", "ransomware", "clinic"}),
+        weights,
+    )
+    assert common < 0.1 < rare
+    assert weighted_overlap(frozenset(), frozenset({"a"}), weights) == 0.0
+
+
+def test_same_story_adds_the_weighted_rung_within_72_hours():
+    from worker.pipeline.resolve import TokenWeights, same_story, story_keys
+
+    weights = TokenWeights.from_titles(
+        ["ransomware gang claims attack"] * 100 + ["KillSec Medibank"]
+    )
+    a = story_keys("KillSec claims Medibank ransomware attack", (), (), NOW)
+    b = story_keys("Medibank confirms KillSec breach", (), (), NOW + timedelta(hours=30))
+    assert same_story(a, b, weights)[0] == "weighted"
+    # On a handful of headlines every word looks rare: the rung waits.
+    thin = TokenWeights.from_titles(["ransomware gang claims attack"] * 20 + ["KillSec Medibank"])
+    assert same_story(a, b, thin) is None
+    late = story_keys("Medibank confirms KillSec breach", (), (), NOW + timedelta(hours=73))
+    assert same_story(a, late, weights) is None
+    # Different CVEs say different stories, whatever the words.
+    a2 = story_keys("KillSec claims Medibank attack", (), ("CVE-2026-1001",), NOW)
+    b2 = story_keys("Medibank confirms KillSec breach", (), ("CVE-2026-1002",), NOW)
+    assert same_story(a2, b2, weights) is None
+    # And one register's two items stay two.
+    a3 = story_keys("KillSec claims Medibank", (), (), NOW, registers=("acsc",))
+    b3 = story_keys("Medibank confirms KillSec breach", (), (), NOW, registers=("acsc",))
+    assert same_story(a3, b3, weights) is None
+    # Nor do two pieces only one outlet wrote: that is its house style.
+    a4 = story_keys("KillSec claims Medibank ransomware attack", (), (), NOW, outlets=("wire",))
+    b4 = story_keys("Medibank confirms KillSec breach", (), (), NOW, outlets=("wire",))
+    assert same_story(a4, b4, weights) is None
+    b5 = story_keys("Medibank confirms KillSec breach", (), (), NOW, outlets=("wire", "itnews"))
+    assert same_story(a4, b5, weights)[0] == "weighted"
+
+
+def test_stored_events_naming_only_different_cves_are_two_stories_on_every_rung():
+    from worker.pipeline.resolve import TokenWeights, same_story, story_keys
+
+    weights = TokenWeights.from_titles(["ransomware gang claims attack"] * 100)
+    microsoft = story_keys(
+        "The July 2026 Security Update Review", (), ("CVE-2026-32161", "CVE-2026-32170"), NOW
+    )
+    apple = story_keys(
+        "The July 2026 Apple Security Update Review",
+        (),
+        ("CVE-2026-28819", "CVE-2026-28840"),
+        NOW + timedelta(hours=10),
+    )
+    assert same_story(microsoft, apple, weights) is None
+    # The same words with no CVEs on one side are still `tokens+date`.
+    bare = story_keys("July 2026 Apple Security Update Review published", (), (), NOW)
+    assert same_story(apple, bare, weights)[0] == "tokens+date"

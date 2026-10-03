@@ -116,3 +116,14 @@ def test_update_never_leaves_last_material_update_unset():
     e = base_event().model_copy(update={"last_material_update": None})
     u = plan_update(e, item(url="https://o.example/x"), source("s2"), now=NOW)
     assert u.last_material_update == e.first_seen
+
+
+def test_a_real_headline_replaces_a_generic_notice_title_and_never_the_reverse():
+    notice = "CISA Adds One Known Exploited Vulnerability to Catalog"
+    e = base_event().model_copy(update={"title": notice})
+    u = plan_update(e, item(title="NetScaler flaw exploited", url="https://o.example/x"),
+                    source("s2"), now=NOW)
+    assert u.title == "NetScaler flaw exploited"
+    kept = plan_update(base_event(), item(title=notice, url="https://o.example/y"), source("s2"),
+                       now=NOW)
+    assert kept.title is None
