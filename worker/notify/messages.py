@@ -242,7 +242,7 @@ def incident_opened(incident: Incident, *, crew: bool) -> str:
     if crew:
         lines += ["", "The crew has been told: TELETRAAN reads it from GET /ops/incidents."]
     if incident.fix_failures:
-        lines.append(f"Fixes that failed TRON's tests so far: {incident.fix_failures}.")
+        lines.append(f"Fixes that failed TELETRAAN's tests so far: {incident.fix_failures}.")
     return "\n".join(lines)
 
 
@@ -256,7 +256,7 @@ def incident_breaker(incident: Incident) -> str:
             "",
             (
                 f"{incident.fix_failures} fix{'' if incident.fix_failures == 1 else 'es'} "
-                "failed TRON's tests, so the crew has "
+                "failed TELETRAAN's tests, so the crew has "
                 "stopped work on it and the ops API takes no more verdicts. A person decides "
                 "what happens next."
             ),

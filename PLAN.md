@@ -135,7 +135,7 @@ OpenRouter prices and the four-tier ladder in §7.1:
 | Tier 1 (cheap): summaries, AU reasoning, desk digests | 7.2M in / 1.44M out @ $0.018/$0.09 | ~$0.26 |
 | Tier 2 (strong): severity, impact, evidence, MITRE, editorial | 300 judgments @ $0.435/$0.87 | ~$1.17 |
 | CODE: WHEELJACK | ~4 sessions @ $0.14/$0.28 | ~$0.34 |
-| AUDIT: TRON | ~4 diff reviews, input-heavy @ $0.018/$0.32 | ~$0.05 |
+| AUDIT: TELETRAAN | ~4 diff reviews, input-heavy @ $0.018/$0.32 | ~$0.05 |
 | RIPPERDOC gauntlet | weekly, ~30 golden events per candidate | ~$0.25 |
 | **Total** | | **~$2.07 (10% of cap)** |
 
@@ -270,11 +270,10 @@ Neither appeared in the source prompts.
         ┌──────────────────────┼──────────────────────┐
         ▼                      ▼                      ▼
   INTELLIGENCE            ENGINEERING             OPERATIONS
-  MORPHEUS (CEO)            WHEELJACK                  TELETRAAN (SRE)
-  ZION          TRON                 ROGUE (CFO)
-  BLASTER · WINTERMUTE                                 LINK
-  TACHIKOMA · DECKARD                             LIBRARIAN · SERAPH
-  VOIGHT                                         PROWL
+  MORPHEUS (CEO)          WHEELJACK (Coder)       TELETRAAN (Operation)
+  DECKARD (Researcher)                            RIPPERDOC (Cheap)
+  VOIGHT (Publisher)                              SERAPH (Collector)
+  TACHIKOMA (Finder)
         └──────────────────────┼──────────────────────┘
                                ▼
                     ┌──────────────────────┐
@@ -319,12 +318,24 @@ Neither appeared in the source prompts.
 
 ## 4. The crew
 
-Sixteen agents, each named after a figure from the cyberpunk canon whose role matches the
-job — Matrix, Transformers, Blade Runner, Neuromancer, Ghost in the Shell, Snow Crash,
-Tron and Cyberpunk 2077. Each has a persona (it makes the org legible, and the private
-dashboard genuinely pleasant to read), a Paperclip role, an adapter, an explicit wake
-trigger, and a hard boundary. **Deterministic agents cost zero tokens** — that is the point
-of the split.
+Eight agents, each named after a figure from the cyberpunk canon whose role matches the
+job — Matrix, Transformers, Blade Runner, Ghost in the Shell and Cyberpunk 2077. Each has a
+persona (it makes the org legible, and the private dashboard genuinely pleasant to read), a
+plain job title, a Paperclip role, an adapter, an explicit wake trigger, and a hard boundary.
+**Deterministic work costs zero tokens** — that is the point of the split. It runs in the
+worker, and the one `http` agent only asks the worker whether it is healthy.
+
+**Sixteen until October 2026.** The first crew had sixteen agents, but they were eight jobs.
+Five were `http` health checks that did no reasoning, and three research desks ran the same
+loop on different beats. The callsigns were kept, so nothing stored in the database changed,
+and each job title became plain:
+
+| Retired | Now done by |
+|---|---|
+| ZION (Australian desk), BLASTER (global desk), WINTERMUTE (AI desk) | DECKARD, the Researcher: one pass over all three beats, each beat a skill |
+| TRON (independent verification) | TELETRAAN, the Operation agent, on the AUDIT model from a different vendor to WHEELJACK |
+| ROGUE (cost) | RIPPERDOC, the Cheap agent: the monthly cost review. The worker keeps the ledger and sets the degradation tier |
+| LIBRARIAN, PROWL, LINK (ground truth, correlation, publishing) | The worker, with SERAPH, the Collector, reporting on all four jobs in one `http` wake |
 
 Personas are presentation, not licence: an agent's authority comes from its Paperclip role,
 permissions and budget, never from its voice. The names are homage, used internally as
@@ -332,85 +343,34 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 
 ### 4.1 Intelligence team
 
-#### MORPHEUS — Intelligence Director / Chief Editor
+#### MORPHEUS — CEO / Chief Editor
 > *Matrix.* Sees the whole board and refuses to walk it for you. Recruits, briefs, delegates, and always asks one question more than is comfortable. Calm to the point of unnerving.
 > **"I can only show you the door."**
 
 | | |
 |---|---|
 | Role / adapter | `ceo` · `opencode_local` (OpenRouter, strong tier, 1×/day + on escalation) |
-| Wakes on | Daily editorial routine 07:30 AEST; escalation from any desk; budget or watchdog incident |
-| Owns | Intelligence quality and direction; coverage gaps; what gets promoted; the daily report |
-| Specialised tasks | Read the overnight digest (counts, new/updated/archived, top events by prominence, desk escalations, source-health deltas). Decide which developing events need follow-up and assign DECKARD. Detect coverage gaps ("nothing on AU health sector in 9 days") and task TACHIKOMA. Adjudicate when two desks claim the same event. Approve or reject publication of events VOIGHT has flagged. Write the human-readable daily intelligence report. |
+| Wakes on | Daily editorial routine 07:30 AEST; escalation from DECKARD, VOIGHT or TELETRAAN; a `[MODEL]` proposal from RIPPERDOC; budget or watchdog incident |
+| Owns | Intelligence quality and direction; coverage gaps; what gets promoted; the daily report; approving model changes |
+| Specialised tasks | Read the overnight digest (counts, new/updated/archived, top events by prominence, desk escalations, source-health deltas). Decide which developing events need follow-up and assign DECKARD. Detect coverage gaps ("nothing on AU health sector in 9 days") and task TACHIKOMA. Approve or reject publication of events VOIGHT has flagged. Approve or decline RIPPERDOC's `[MODEL]` proposals, on the worker's own cost and gauntlet figures. Write the human-readable daily intelligence report. |
 | Never | Collects or enriches anything itself; edits code; raises its own budget |
 | KPI | Coverage gap closure time; % of published events with no QA finding |
 
-#### ZION — Australian Intelligence Desk
-> *Matrix.* Named for the last human city, because this desk guards the home ground. Knows which agency owns what, who actually answers the phone in Canberra, and treats every press release as a first draft.
-> **"Home ground. Our watch."**
-
-| | |
-|---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier) |
-| Wakes on | FAST-lane escalation where `au.relevance ≥ 0.7`; 4-hourly desk digest routine |
-| Owns | Everything Australian: ACSC/ASD advisories, regulators (OAIC, APRA, ACMA), critical infrastructure (SOCI), AU incidents/breaches/ransomware, AU AI policy, AU researchers and universities |
-| Specialised tasks | Review candidate AU events and confirm or correct the AU relevance score **with reasons**, not a number alone. Distinguish "an Australian outlet reported it" from "Australia is affected" — the central AU judgment. Map events to AU sectors and to SOCI asset classes. Draft the "Why this matters to Australia" paragraph from evidence. Flag events that warrant an OAIC notifiable-data-breach watch. Escalate to MORPHEUS when AU critical infrastructure is implicated. |
-| Never | Overrides ground truth; publishes without VOIGHT on high/critical |
-| KPI | AU relevance precision on a weekly human-reviewed sample; AU event lead time vs. AU media |
-
-#### BLASTER — Global Cyber Desk
-> *Transformers.* Communications officer, monitoring every band at once. Tracks ransomware crews the way other people track football teams, and is permanently three timezones from sleep.
-> **"I'm picking up chatter on every band."**
-
-| | |
-|---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier) |
-| Wakes on | 4-hourly desk digest; FAST-lane critical escalation |
-| Owns | Global cyber: ransomware, APT/nation-state, malware, zero-days, breaches, phishing, identity, cloud/SaaS, supply chain, critical infrastructure, appsec, cybercrime, security research |
-| Specialised tasks | Cluster related events into campaigns and propose `related_event` / `attributed_to` edges. Track threat-actor aliases across vendor naming schemes (the perennial mess) and maintain the alias table. Judge whether an "exploitation" claim is confirmed, credible or speculative. Spot the AU angle in a global story and hand it to ZION. Propose MITRE ATT&CK techniques **from the cached dataset only**, always labelled `ai_suggested` with confidence. |
-| Never | Invents technique IDs, CVEs or CVSS values; treats a single social post as confirmation |
-| KPI | Campaign clustering accuracy; false-attribution rate (target zero) |
-
-#### WINTERMUTE — AI Intelligence Desk
-> *Neuromancer.* An AI whose beat is other AI. Studies the thing it is made of, and finds that equal parts fascination and alarm is the only correct posture.
-> **"The model is the attack surface."**
-
-| | |
-|---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier) |
-| Wakes on | 4-hourly desk digest; any AI-security escalation |
-| Owns | AI as a first-class domain **and** the cyber↔AI convergence: frontier models, agent frameworks, MCP, AI infra/chips, open-weight models, AI security/safety, red teaming, prompt injection, model poisoning/theft, training-data attacks, agent hijacking, AI supply chain, AI-enabled attacks, AI-generated malware, AI regulation |
-| Specialised tasks | Separate `AI_INDUSTRY` / `AI_SECURITY` / `AI_THREAT_ACTIVITY` / `AI_CYBER_CONVERGENCE` — the distinction the source prompts insisted on and most feeds collapse. Ruthlessly de-prioritise product-launch marketing with no security relevance. Map AI incidents to MITRE ATLAS where it applies. Track the MCP ecosystem specifically, as a fast-moving and under-covered attack surface. Flag when an AI capability materially changes attacker economics. |
-| Never | Lets general AI industry news crowd out security intelligence |
-| KPI | AI-security recall vs. a curated watchlist; marketing-noise rate |
-
-#### TACHIKOMA — Source Discovery
-> *Ghost in the Shell.* Relentlessly curious think-tank that wanders off, pokes at everything unindexed, and comes back chattering. Occasionally returns with a bottle cap.
-> **"Ooh — what's this one?"**
-
-| | |
-|---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier). The worker runs the Tavily searches (~30/day) and holds the key |
-| Wakes on | DEEP-lane routine 03:00 AEST; coverage-gap task from MORPHEUS |
-| Owns | Continuously finding sources the registry does not know about |
-| Specialised tasks | Read the worker's nightly discovery finds (AU security, AU AI policy, AI red teaming, MCP security, prompt injection, named sectors) from `GET /ops/candidates`, and mine citations in existing high-quality sources for unregistered outlets. Find new AU researchers, CERTs, regulators, vendor PSIRTs, newsletters, YouTube channels. Submit every find to `POST /ops/candidates` with its feed or home page and a reason (at most 20 a day). Detect when a registered source has moved (the `blog.google/security` case). Propose retirement of sources with sustained poor value. |
-| Never | Activates a source — that is SERAPH's gate, always |
-| KPI | Candidates promoted to ACTIVE per month; % later degraded (over-eagerness signal) |
-
-#### DECKARD — Follow-up & Developing Events
-> *Blade Runner.* Works the open cases nobody else wants. Keeps a wall of unfinished threads and will not let you forget a single one of them.
+#### DECKARD — Researcher
+> *Blade Runner.* Works the open cases nobody else wants. Keeps a wall of unfinished threads and will not let you forget a single one of them. Now walks every beat as well: the home ground, the global wire and the AI frontier.
 > **"The case stays open until it's patched."**
 
 | | |
 |---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier; strong on critical) + Strands follow-up graph |
-| Wakes on | Follow-up routine every 6 h; assignment from MORPHEUS |
-| Owns | Every event in `developing` or `monitoring` status |
-| Specialised tasks | For each tracked event ask the one question that matters — *did anything materially change?* Watch for: PoC published, exploitation confirmed, KEV addition, patch released, vendor update, new victim/actor/geography, new AU exposure, regulatory response, resolution. Write timeline entries for genuine changes only. Drive status transitions `new → active → developing → monitoring → contained → resolved`. Close the loop: an event that reaches `resolved` gets a final summary. Escalate new AU exposure on a global event immediately. |
-| Never | Refreshes prominence because another outlet repeated the story |
-| KPI | Median lag from real-world change to timeline entry; stale-developing-event count |
+| Role / adapter | `researcher` · `opencode_local` (fast tier; strong on critical) + Strands follow-up graph. A short core prompt; each beat is a Paperclip skill it loads only for an event that needs it (`cyberpulse-au-desk`, `cyberpulse-global-desk`, `cyberpulse-ai-desk`, `cyberpulse-follow-up`) |
+| Wakes on | Desk digest routine 06:00, 14:00 and 22:00 AEST, each reading the last 8 hours; follow-up routine every 6 h, at least an hour from any digest; assignment from MORPHEUS |
+| Owns | The three beats — Australian, global cyber and AI — and every event in `developing` or `monitoring` status |
+| Specialised tasks | **Australia first, in every pass.** *Australian beat:* confirm or correct the AU relevance score **with reasons**, not a number alone. Distinguish "an Australian outlet reported it" from "Australia is affected" — the central AU judgment. Map events to AU sectors and SOCI asset classes. Draft the "Why this matters to Australia" paragraph from evidence. Flag events that warrant an OAIC notifiable-data-breach watch. Escalate to MORPHEUS when AU critical infrastructure is implicated. *Global beat:* cluster related events into campaigns and propose `related_event` / `attributed_to` edges. Track threat-actor aliases across vendor naming schemes. Judge whether an "exploitation" claim is confirmed, credible or speculative. Propose MITRE ATT&CK techniques **from the cached dataset only**, labelled `ai_suggested` with confidence. *AI beat:* separate `AI_INDUSTRY` / `AI_SECURITY` / `AI_THREAT_ACTIVITY` / `AI_CYBER_CONVERGENCE`. De-prioritise product-launch marketing with no security relevance. Map AI incidents to MITRE ATLAS where it applies. Track the MCP ecosystem specifically. Flag when an AI capability materially changes attacker economics. *Follow-up:* for each tracked event ask the one question that matters — *did anything materially change?* Watch for: PoC published, exploitation confirmed, KEV addition, patch released, vendor update, new victim/actor/geography, new AU exposure, regulatory response, resolution. Write timeline entries for genuine changes only; the worker moves the status from the record. An event that reaches `resolved` gets a final summary. Escalate new AU exposure on a global event immediately. |
+| Guards | One budget (US$2/month) and one run slot (`maxConcurrentRuns` 1) cover all research; every routine skips a run while one is still going. At most 2 subagents in a run, one beat each — never one per event |
+| Never | Overrides ground truth; invents technique IDs, CVEs or CVSS values; treats a single social post as confirmation; refreshes prominence because another outlet repeated the story; lets general AI industry news crowd out security intelligence; publishes without VOIGHT on high/critical |
+| KPI | AU relevance precision on a weekly human-reviewed sample; false-attribution rate (target zero); AI-security recall vs. a curated watchlist; median lag from real-world change to timeline entry |
 
-#### VOIGHT — Editorial QA
+#### VOIGHT — Publisher
 > *Blade Runner.* Named for the Voight-Kampff test, because the job is telling the real from the synthetic. Asks the same question repeatedly, watching for the flinch. Has killed better copy than yours.
 > **"Says who?"**
 
@@ -419,149 +379,96 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 | Role / adapter | `qa` · `opencode_local` (strong tier, gated: all critical/high + a daily sample) |
 | Wakes on | Publish-candidate gate for critical/high; daily sampling routine |
 | Owns | Veto over publication |
-| Specialised tasks | Check every claim against its attached evidence and reject unsupported ones. Hunt hallucinated CVEs, wrong dates, wrong organisations, inflated severity. Catch duplicate events that slipped past PROWL. Enforce the copyright rule — original short summaries, no substantial reproduction. Verify AI inference is labelled as such and never presented as official MITRE attribution or vendor confirmation. Confirm a primary source is linked. |
+| Specialised tasks | Check every claim against its attached evidence and reject unsupported ones. Hunt hallucinated CVEs, wrong dates, wrong organisations, inflated severity. Catch duplicate events that slipped past the worker's correlation. Enforce the copyright rule — original short summaries, no substantial reproduction. Verify AI inference is labelled as such and never presented as official MITRE attribution or vendor confirmation. Confirm a primary source is linked. |
 | Never | Rewrites facts; silently downgrades severity without recording a reason |
 | KPI | Post-publication corrections (target zero); false-rejection rate |
 
-### 4.2 Operations team
-
-#### LIBRARIAN — Vulnerability Ground Truth
-> *Snow Crash.* A research daemon that retrieves, cites, and is scrupulous about the limits of its own knowledge. Will not be hurried, and will not speculate.
-> **"Cite it or it didn't happen."**
+#### TACHIKOMA — Finder
+> *Ghost in the Shell.* Relentlessly curious think-tank that wanders off, pokes at everything unindexed, and comes back chattering. Occasionally returns with a bottle cap.
+> **"Ooh — what's this one?"**
 
 | | |
 |---|---|
-| Role / adapter | `researcher` · `http` adapter → worker (**deterministic, zero tokens**) |
-| Wakes on | FAST lane (KEV, CVE deltas); daily (ATT&CK, ATLAS, EPSS bulk) |
-| Owns | All authoritative vulnerability and technique data |
-| Specialised tasks | Sync CISA KEV (JSON + GitHub mirror). Pull CVE deltas from `cvelistV5/cves/delta.json` (~7-min cadence) and keep the daily baseline zip as a catch-up path, because the delta log has been trimmed from 30 days to 15 before. Resolve CVSS in the validated order: **CNA record → CISA Vulnrichment ADP → NVD (optional)**. Fetch EPSS with `unknown` on absence. Query OSV and the GitHub Advisory Database. Cache ATT&CK STIX (currently v19.2) and ATLAS via `dist/manifest.yaml` — never the `ATLAS-latest.yaml` symlink, which raw GitHub serves as a filename string. Extract CVE IDs by regex, never by model. |
-| Never | Lets a model author a CVSS score, KEV status or technique ID |
-| KPI | Ground-truth freshness lag; % of CVE-bearing events with resolved severity |
+| Role / adapter | `researcher` · `opencode_local` (fast tier). The worker runs the Tavily searches (~30/day) and holds the key |
+| Wakes on | Routine *Source discovery* 03:30 Sydney, after the worker's 03:10 search; coverage-gap task from MORPHEUS |
+| Owns | Continuously finding sources the registry does not know about |
+| Specialised tasks | Read the worker's nightly discovery finds (AU security, AU AI policy, AI red teaming, MCP security, prompt injection, named sectors) from `GET /ops/candidates`, and mine citations in existing high-quality sources for unregistered outlets. Find new AU researchers, CERTs, regulators, vendor PSIRTs, newsletters, YouTube channels. Submit every find to `POST /ops/candidates` with its feed or home page and a reason (at most 20 a day). Detect when a registered source has moved (the `blog.google/security` case). Propose retirement of sources with sustained poor value. |
+| Never | Activates a source — that is the worker's source gate, always |
+| KPI | Candidates promoted to ACTIVE per month; % later degraded (over-eagerness signal) |
 
-#### SERAPH — Source Verification
+### 4.2 Operations team
+
+#### TELETRAAN — Operation
+> *Transformers.* The ship's computer that scans continuously and wakes the whole crew when something moves. Notices the one missing signal before anyone else does, and has never once said "looks good to me" without reading it.
+> **"Anomaly detected on the grid."**
+
+| | |
+|---|---|
+| Role / adapter | `devops` · `opencode_local` on the AUDIT tier, **a deliberately different vendor from WHEELJACK's CODE model**. The worker's watchdog runs the deterministic checks every 5 min; the model only diagnoses an open incident and verifies a fix |
+| Wakes on | Incident routine (the watchdog fires it for a high or critical incident); PR opened by WHEELJACK |
+| Owns | System health, the self-healing loop, and the two-person rule for code |
+| Specialised tasks | Monitor Paperclip, agent heartbeats, collectors, sources, Postgres, OpenRouter, Tavily, GitHub, generated data, publication and site freshness. Detect the specific failure signatures: no collection, repeated feed failure, parser drift, **unexpected zero volume**, event-count collapse, duplicate explosion, schema drift, cost anomaly, publish failure, stale public site, **stale-but-healthy feed**. Open an incident with a reproduction case, diagnose root cause, then hand a *structured, sanitised* task to WHEELJACK — never raw fetched content. **Verify the fix as if someone else had asked for it**: does it address the root cause rather than the symptom; run the full test suite and the source-sample ingestion; check the diff for scope creep, secret exposure, weakened validation or silently disabled controls; confirm the regression test would actually have caught the original failure — the check that makes self-healing trustworthy. Report a clear pass/fail with reasons; a fail returns the issue to WHEELJACK and counts against the circuit breaker. Enforce circuit breakers: same automatic fix fails 3× → stop, escalate to human. Also halt on repeated test failure, failed migration, failed security scan, unexpected file modifications, or unresolvable merge conflict. |
+| Never | Approves as the final gate — a human still merges; passes a fix because it asked for it; disables a security control; retries a failing fix indefinitely |
+| KPI | Mean time to detect; auto-resolved incident rate; false-positive alerts; escaped defects |
+
+TELETRAAN both asks for a fix and checks it, which is why the rule holds three ways: the agent
+that writes the code is never the one that passes it, the two run on different vendors'
+models, and a person always merges.
+
+#### RIPPERDOC — Cheap
+> *Cyberpunk 2077.* The street surgeon who knows which chrome is worth fitting and which will cook your nervous system. Watches what just landed on the market, counts every cent it costs, and is unsentimental about ripping out last month's upgrade.
+> **"Better chrome just came in."**
+
+| | |
+|---|---|
+| Role / adapter | `cfo` · `opencode_local` (fast tier). The worker runs the scan and the gauntlet (**deterministic**), keeps the cost ledger and holds the OpenRouter key; the model reads the results from `GET /ops/models` and `GET /ops/cost` and raises the proposals |
+| Reports to | MORPHEUS, who approves every `[MODEL]` proposal |
+| Wakes on | **Daily** routine, 04:00 AEST, after the worker's 03:20 catalogue scan (zero tokens); **weekly** Sunday 05:00 AEST, after the worker's 03:40 gauntlet, for any promotion proposal; **monthly** cost review, 09:00 AEST on the 1st; on-demand within minutes when TELETRAAN reports a configured model failing, withdrawn, or above the price ceiling |
+| Owns | Keeping the §7.1 ladder optimal — the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling — the **agent-to-model assignment** built on it (§7.7): which model each of the eight agents is running right now, and swapping an agent off a model that is failing it — and the monthly cost review |
+| Specialised tasks | Snapshot `/api/v1/models` each run and diff against the last: new models, withdrawn models, price changes. **Flag new `:free` models loudly** — free is always evaluated first. Filter candidates to `tools` + `structured_outputs`, output ≤ $1/M, non-`:batch`, with a capable route at acceptable quantisation. Score survivors on published signals (§7.6). Run the **local gauntlet** — a pinned golden set of ~30 human-verified events — measuring schema compliance, agreement with golden labels, **refusal rate on security content**, p95 latency and measured cost from `usage.cost`. Open a proposal issue with a side-by-side table and a recommendation; the cost figures in it are the worker's own (the price guard and the ledger), copied unchanged. Re-verify every ladder model's current price each run and immediately drop any that drifted above the ceiling. Repair fallback chains when a `:free` variant disappears, before a pipeline run discovers it. Monthly, report last month from the ledger — by agent, stage and model, with the calls that had no billed cost — and whether the ledger and the key agree, then at most three recommendations. |
+| Worker-side, not the agent | Records every AI call from OpenRouter's `usage.cost` — actual billed cost, not an estimate — attributed to agent, event and pipeline stage. Polls `GET /api/v1/key` for `limit_remaining` and `usage_daily`, and sets the degradation tier **before** the spend happens. Tracks Tavily credits from `include_usage` against the free 1,000/month. Branches correctly on 402 `limit_source`: `in_flight_budget` is transient (honour `Retry-After`), `key_limit` degrades, `credits` alerts and stops |
+| Never | Approves its own proposal; changes a tier **default** unilaterally — that needs MORPHEUS; raises or asks for a budget; proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set; swaps the same agent more than **3× in 24 h** (circuit breaker → escalate, §7.7) |
+| KPI | Cost per 1,000 enrichments, trending down; share of pipeline volume served by the free tier, trending up; regressions caught before promotion; ceiling breaches (must be zero); actual vs. budgeted spend |
+
+#### SERAPH — Collector
 > *Matrix.* The guardian who tests you before you are admitted. Unfailingly courteous, entirely immovable, and apologises while refusing you.
 > **"I had to be sure."**
 
 | | |
 |---|---|
-| Role / adapter | `qa` · `http` adapter → worker (**deterministic, zero tokens**) |
-| Wakes on | Its heartbeat; the worker runs the discovery gate itself every 4 hours, before each normal run; a degraded source returning; post-repair validation |
-| Owns | The source lifecycle gate: `DISCOVERED → CANDIDATE → TESTING → VALIDATED → ACTIVE → DEGRADED → BROKEN → RETIRED` |
-| Specialised tasks | Probe connectivity, feed/API validity, auth, content type, parser correctness. Require **genuine recent relevant items** before promotion — the explicit anti-pattern from the source prompts is activating a source blind. Measure duplicate rate, freshness and relevance; record a baseline quality profile. Run the new-source feedback loop (validate day 0, precision over runs 1–3, reliability over runs 4–7, then a long-term score). Apply auto-degradation: 3 failures warn, 5 consecutive degrade, structural failure opens an engineering task. **Detect stale-but-200 feeds by age of newest item.** |
-| Never | Promotes on a single successful fetch |
-| KPI | Post-activation degradation rate; stale-feed detection lead time |
-
-#### PROWL — Event Correlation & Material Change
-> *Transformers.* Military strategist, coldly logical. Takes forty scattered reports and returns one coherent picture, and can show you every strand that built it.
-> **"One event. Many threads."**
-
-| | |
-|---|---|
-| Role / adapter | Worker pipeline stage + Strands verification graph (LLM only for genuinely ambiguous cases) |
-| Wakes on | Every pipeline run (in-process) |
-| Owns | Canonical event identity and the material-change decision |
-| Specialised tasks | Resolve `NEW_EVENT / UPDATE_EXISTING / DUPLICATE / RELATED_BUT_DISTINCT / UNVERIFIED_SIGNAL` through the cheap-to-expensive ladder: URL hash → canonical URL/GUID → normalised title hash → trigram + entity overlap → date proximity → (Stage 3) embeddings → LLM last. Classify material change into the 14 defined types, defaulting to `NO_MATERIAL_CHANGE`. Build source lineage so a vendor release plus three syndicated rewrites counts as **one** primary claim, not four confirmations. Maintain `first_seen`, `last_seen`, `last_material_update`, `last_independent_confirmation` separately. |
-| Never | Treats title similarity alone as identity; counts syndication as corroboration |
-| KPI | Duplicate rate in published output; false-merge rate |
-
-#### LINK — Publisher & Notifications
-> *Matrix.* The operator at the console — nothing reaches the outside except through them. Transmits only what has been checked, and never the same thing twice.
-> **"Transmission clean. Here's the diff."**
-
-| | |
-|---|---|
-| Role / adapter | `devops` · `process`/`http` adapter (**deterministic, zero tokens**) |
-| Wakes on | End of every pipeline run; daily report schedule |
-| Owns | Everything crossing the public boundary |
-| Specialised tasks | Generate `live.json`, `index.json`, `trends.json`, `source-health.json`, `system-status.json`, daily history files. Validate against JSON Schema and **fail closed** on any critical failure. Run the secret scan before every push — the last line of defence. Force-push the single-commit orphan `data` branch, which keeps repo history flat. Verify the Pages deployment actually succeeded and retry with backoff, retaining output locally on failure. Send Telegram notifications: critical AU alert, daily digest, developing update, self-healing incident, source discovery, system failure, weekly trends. |
-| Never | Publishes unvalidated data, raw article bodies, or anything that trips the secret scan |
-| KPI | Publish success rate; secret-scan escapes (must be zero); site staleness |
-
-#### ROGUE — Cost / FinOps
-> *Cyberpunk 2077.* The fixer who has never fronted a job without knowing who is paying. Counts every token, turns the lights off behind you, and has firm opinions about the strong tier.
-> **"Nothing in this city is free."**
-
-| | |
-|---|---|
-| Role / adapter | `cfo` · deterministic ledger + monthly LLM review |
-| Wakes on | Before every AI-heavy cycle; hourly reconciliation; monthly review |
-| Owns | The $20/month cap and the degradation state |
-| Specialised tasks | Record every AI call from OpenRouter's `usage.cost` — actual billed cost, not an estimate — attributed to agent, event and pipeline stage. Poll `GET /api/v1/key` for `limit_remaining` and `usage_daily`, and set the degradation tier **before** the spend happens. Track Tavily credits from `include_usage` against the free 1,000/month. Branch correctly on 402 `limit_source`: `in_flight_budget` is transient (honour `Retry-After`), `key_limit` degrades, `credits` alerts and stops. Report cost per event and per source so a wasteful source can be justified or dropped. |
-| Never | Raises a budget limit autonomously |
-| KPI | Actual vs. budgeted spend; cost per published event |
-
-#### RIPPERDOC — Model Scout
-> *Cyberpunk 2077.* The street surgeon who knows which chrome is worth fitting and which will cook your nervous system. Watches what just landed on the market, and is unsentimental about ripping out last month's upgrade.
-> **"Better chrome just came in."**
-
-| | |
-|---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier). The worker runs the scan and the gauntlet (**deterministic**) and holds the OpenRouter key; the model reads the results from `GET /ops/models` and raises the proposals |
-| Reports to | ROGUE, with MORPHEUS approving any change that affects output quality |
-| Wakes on | **Daily** routine, 04:00 AEST, after the worker's 03:20 catalogue scan (zero tokens); **weekly** Sunday 05:00 AEST, after the worker's 03:40 gauntlet, for any promotion proposal; on-demand within minutes when TELETRAAN reports a configured model failing, withdrawn, or above the price ceiling |
-| Owns | Keeping the §7.1 ladder optimal — the cheapest capable model for each tier, free wherever possible, never above the US$1 output ceiling — and the **agent-to-model assignment** built on it (§7.7): which model each of the sixteen agents is running right now, and swapping an agent off a model that is failing it |
-| Specialised tasks | Snapshot `/api/v1/models` each run and diff against the last: new models, withdrawn models, price changes. **Flag new `:free` models loudly** — free is always evaluated first. Filter candidates to `tools` + `structured_outputs`, output ≤ $1/M, non-`:batch`, with a capable route at acceptable quantisation. Score survivors on published signals (§7.6). Run the **local gauntlet** — a pinned golden set of ~30 human-verified events — measuring schema compliance, agreement with golden labels, **refusal rate on security content**, p95 latency and measured cost from `usage.cost`. Open a proposal issue with a side-by-side table and a recommendation. Re-verify every ladder model's current price each run and immediately drop any that drifted above the ceiling. Repair fallback chains when a `:free` variant disappears, before a pipeline run discovers it. |
-| Never | Changes a tier **default** unilaterally — that needs MORPHEUS (quality) and ROGUE (cost); proposes anything above the ceiling; justifies a promotion on adoption figures alone; runs the gauntlet against live events instead of the golden set; swaps the same agent more than **3× in 24 h** (circuit breaker → escalate, §7.7) |
-| KPI | Cost per 1,000 enrichments, trending down; share of pipeline volume served by the free tier, trending up; regressions caught before promotion; ceiling breaches (must be zero) |
-
-#### TELETRAAN — Watchdog / SRE
-> *Transformers.* The ship's computer that scans continuously and wakes the whole crew when something moves. Notices the one missing signal before anyone else does.
-> **"Anomaly detected on the grid."**
-
-| | |
-|---|---|
-| Role / adapter | `devops` · deterministic checks every 5 min; `opencode_local` (fast tier) **only** to diagnose an open incident |
-| Wakes on | Health-check schedule; any anomaly |
-| Owns | System health and the self-healing loop |
-| Specialised tasks | Monitor Paperclip, agent heartbeats, collectors, sources, Postgres, OpenRouter, Tavily, GitHub, generated data, publication and site freshness. Detect the specific failure signatures: no collection, repeated feed failure, parser drift, **unexpected zero volume**, event-count collapse, duplicate explosion, schema drift, cost anomaly, publish failure, stale public site, **stale-but-healthy feed**. Open an incident with a reproduction case, diagnose root cause, then hand a *structured, sanitised* task to WHEELJACK — never raw fetched content. Enforce circuit breakers: same automatic fix fails 3× → stop, escalate to human. Also halt on repeated test failure, failed migration, failed security scan, unexpected file modifications, or unresolvable merge conflict. |
-| Never | Disables a security control; retries a failing fix indefinitely |
-| KPI | Mean time to detect; auto-resolved incident rate; false-positive alerts |
+| Role / adapter | `devops` · `http` adapter → worker (**deterministic, zero tokens, permanently**). One wake, `POST /ops/agents/seraph/wake` with `{"job": "pipeline"}`, answers 200 when all four checks pass and 503 when any fails, each check reported on its own |
+| Wakes on | The worker's own schedule does the work. In Paperclip a wake (an issue assigned to SERAPH) only asks whether the four jobs are healthy |
+| Owns | The four deterministic jobs on one org-chart line: ground truth, the source gate, correlation and publishing |
+| Specialised tasks | **Ground truth.** Sync CISA KEV (JSON + GitHub mirror). Pull CVE deltas from `cvelistV5/cves/delta.json` (~7-min cadence) and keep the daily baseline zip as a catch-up path, because the delta log has been trimmed from 30 days to 15 before. Resolve CVSS in the validated order: **CNA record → CISA Vulnrichment ADP → NVD (optional)**. Fetch EPSS with `unknown` on absence. Query OSV and the GitHub Advisory Database. Cache ATT&CK STIX (currently v19.2) and ATLAS via `dist/manifest.yaml` — never the `ATLAS-latest.yaml` symlink, which raw GitHub serves as a filename string. Extract CVE IDs by regex, never by model. **The source gate:** `DISCOVERED → CANDIDATE → TESTING → VALIDATED → ACTIVE → DEGRADED → BROKEN → RETIRED`. Probe connectivity, feed/API validity, auth, content type, parser correctness. Require **genuine recent relevant items** before promotion — the explicit anti-pattern from the source prompts is activating a source blind. Measure duplicate rate, freshness and relevance; record a baseline quality profile. Run the new-source feedback loop (validate day 0, precision over runs 1–3, reliability over runs 4–7, then a long-term score). Apply auto-degradation: 3 failures warn, 5 consecutive degrade, structural failure opens an engineering task. **Detect stale-but-200 feeds by age of newest item.** **Correlation:** resolve `NEW_EVENT / UPDATE_EXISTING / DUPLICATE / RELATED_BUT_DISTINCT / UNVERIFIED_SIGNAL` through the cheap-to-expensive ladder: URL hash → canonical URL/GUID → normalised title hash → trigram + entity overlap → date proximity → (Stage 3) embeddings → LLM last, on the fast tier and only for genuinely ambiguous cases. Classify material change into the 14 defined types, defaulting to `NO_MATERIAL_CHANGE`. Build source lineage so a vendor release plus three syndicated rewrites counts as **one** primary claim, not four confirmations. Maintain `first_seen`, `last_seen`, `last_material_update`, `last_independent_confirmation` separately. **Publishing:** generate `live.json`, `index.json`, `trends.json`, `source-health.json`, `system-status.json`, daily history files. Validate against JSON Schema and **fail closed** on any critical failure. Run the secret scan before every push — the last line of defence. Force-push the single-commit orphan `data` branch, which keeps repo history flat. Verify the Pages deployment actually succeeded and retry with backoff, retaining output locally on failure. Send Telegram notifications: critical AU alert, daily digest, developing update, self-healing incident, source discovery, system failure, weekly trends. |
+| Never | Lets a model author a CVSS score, KEV status or technique ID; promotes on a single successful fetch; treats title similarity alone as identity, or syndication as corroboration; publishes unvalidated data, raw article bodies, or anything that trips the secret scan |
+| KPI | Ground-truth freshness lag; post-activation degradation rate; duplicate rate in published output; false-merge rate; publish success rate; secret-scan escapes (must be zero); site staleness |
 
 ### 4.3 Engineering team
 
-#### WHEELJACK — Source & Platform Engineer
+#### WHEELJACK — Coder
 > *Transformers.* Inventor and mechanic. Fixes parsers before breakfast, has strong views about feed formats, and knows exactly why the tests are not optional.
 > **"She'll be right — after the tests pass."**
 
 | | |
 |---|---|
 | Role / adapter | `engineer` · `opencode_local` (OpenRouter code tier), `maxDailyRuns` capped |
-| Wakes on | Engineering issue from TELETRAAN, SERAPH or MORPHEUS. **Never on a timer** |
+| Wakes on | Engineering issue from TELETRAAN or MORPHEUS. **Never on a timer** |
 | Owns | Code changes |
-| Specialised tasks | Repair broken parsers and feed-schema changes; write new source adapters (`rss`, `atom`, `json_api`, `github_api`, `advisory_api`, `web_page`, `sitemap`, `search`, `youtube`, `community`); fix deduplication, enrichment, transformation and frontend defects; repair publishing failures; add a regression test for every fix. Workflow is fixed: `issue → git worktree → implement → tests → self-check → PR → TRON verify → human approve → merge → deploy → post-deploy check`. |
+| Specialised tasks | Repair broken parsers and feed-schema changes; write new source adapters (`rss`, `atom`, `json_api`, `github_api`, `advisory_api`, `web_page`, `sitemap`, `search`, `youtube`, `community`); fix deduplication, enrichment, transformation and frontend defects; repair publishing failures; add a regression test for every fix. Workflow is fixed: `issue → git worktree → implement → tests → self-check → PR → TELETRAAN verify → human approve → merge → deploy → post-deploy check`. |
 | Never | Pushes to `main`; touches auth, secrets, permissions, budgets, deployment controls or schema migrations without human approval; sees any credential other than its branch-scoped GitHub token |
 | KPI | Fix success rate at first attempt; regression rate; time from incident to merged fix |
-
-#### TRON — Independent Verification
-> *Tron.* A security program that answers to the users, not to the system it audits. Reviews WHEELJACK's work on a different model, on principle, and has never once said "looks good to me" without reading it.
-> **"I fight for the users."**
-
-| | |
-|---|---|
-| Role / adapter | `qa` · `opencode_local` on a **deliberately different model family** from WHEELJACK |
-| Wakes on | PR opened by WHEELJACK |
-| Owns | The two-person rule for code |
-| Specialised tasks | Independently verify the fix addresses the incident's root cause rather than its symptom. Run the full test suite and the source-sample ingestion. Check the diff for scope creep, secret exposure, weakened validation or silently disabled controls. Confirm the regression test would actually have caught the original failure — the check that makes self-healing trustworthy. Report a clear pass/fail with reasons; a fail returns the issue to WHEELJACK and counts against the circuit breaker. |
-| Never | Approves its own or WHEELJACK's work as the final gate — a human still merges |
-| KPI | Escaped defects; review turnaround |
 
 ### 4.4 Org chart and permissions
 
 ```text
 MORPHEUS (ceo)
-├── ZION (AU desk)
-├── BLASTER (global desk)
-├── WINTERMUTE (AI desk)
-├── TACHIKOMA (discovery) ──► SERAPH (verification gate)
-├── DECKARD (follow-up)
-├── VOIGHT (editorial QA)
-├── TELETRAAN (devops lead)
-│   ├── WHEELJACK (engineer) ──► TRON (independent QA)
-│   ├── LIBRARIAN (ground truth sync)
-│   ├── PROWL (correlation)
-│   └── LINK (publish + notify)
-└── ROGUE (cfo)
-    └── RIPPERDOC (model scout)
+├── DECKARD (researcher: AU, global and AI beats, follow-up)
+├── VOIGHT (publisher: editorial QA)
+├── TACHIKOMA (finder: source discovery) ──► the worker's source gate
+├── RIPPERDOC (cheap: models and the monthly cost review)
+└── TELETRAAN (operation: incidents, and the check on every fix)
+    ├── WHEELJACK (coder) ──► TELETRAAN verifies, a human merges
+    └── SERAPH (collector: ground truth, source gate, correlation, publishing)
 ```
 
 Least privilege, per the source prompts' §60, made concrete:
@@ -569,16 +476,13 @@ Least privilege, per the source prompts' §60, made concrete:
 | Agent | Secrets it receives | Cannot |
 |---|---|---|
 | MORPHEUS | Ops API token (read + task create) | Merge code; raise budgets |
-| Desks (×3) | Ops API token (scoped to their desk) | Write ground truth; publish |
-| TACHIKOMA | Ops API token (the worker holds the Tavily key) | Activate a source |
-| SERAPH, LIBRARIAN, PROWL, LINK, ROGUE | Worker-internal only (no LLM) | — |
-| RIPPERDOC | Ops API token (the worker holds the OpenRouter key and makes the gauntlet calls) | Change a tier default; exceed the price ceiling |
-| DECKARD | Ops API token, Tavily key | Publish |
+| DECKARD | Ops API token (reads, and follow-up reports only) | Write ground truth; publish |
 | VOIGHT | Ops API token (read + verdict) | Edit event facts |
-| TELETRAAN | Ops API token, health endpoints | Disable security controls |
+| TACHIKOMA | Ops API token (the worker holds the Tavily key) | Activate a source |
+| RIPPERDOC | Ops API token (the worker holds the OpenRouter key, makes the gauntlet calls and keeps the ledger) | Change a tier default; approve its own proposal; exceed the price ceiling |
+| TELETRAAN | Ops API token (reads, health endpoints, incident verdicts). No repo token: the repository is public | Disable security controls; approve as final gate |
 | WHEELJACK | Branch-scoped `GITHUB_TOKEN` **only** | Push to `main`; read any other secret |
-| TRON | No repo token: the repository is public | Approve as final gate |
-| LINK | Publish `GITHUB_TOKEN`, Telegram token | Read OpenRouter or Tavily keys |
+| SERAPH | None. The wake needs no token; the work runs in the worker, which alone holds the publish `GITHUB_TOKEN` and the Telegram token | Read OpenRouter or Tavily keys; run a model |
 
 ---
 
@@ -739,7 +643,7 @@ use** — the catalogue changes weekly. All slugs configurable via `config/model
 | **1 — CHEAP** | `openai/gpt-oss-20b` | `deepseek/deepseek-v4-flash-0731` → `z-ai/glm-5.3-flash` | $0.018 / $0.09 | Short summaries, AU relevance reasoning, ambiguous matching, desk digests |
 | **2 — STRONG** | `xiaomi/mimo-v2.6-pro` | `xiaomi/mimo-v2.6-flash` → `minimax/minimax-m2.7` | $0.435 / $0.87 | Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass |
 | **CODE** | `xiaomi/mimo-v2.6-flash` | `xiaomi/mimo-v2.5` → `mistralai/codestral-2508` | $0.14 / $0.28 | WHEELJACK |
-| **AUDIT** | `deepseek/deepseek-v4-flash-0731` | `qwen/qwen3.8-flash` | $0.018 / $0.32 | TRON — must be a different vendor from CODE (two-person rule) |
+| **AUDIT** | `deepseek/deepseek-v4-flash-0731` | `qwen/qwen3.8-flash` | $0.018 / $0.32 | TELETRAAN — must be a different vendor from CODE (two-person rule) |
 
 **Changed 2026-10-03** by the price-ceiling guard and the Paperclip smoke tests. The live ladder
 is `config/models.yaml`:
@@ -748,7 +652,7 @@ is `config/models.yaml`:
   structured outputs.
 - CODE drops `xiaomi/mimo-v2.5`: every capable route costs $2.00/M output or more.
 - AUDIT now leads with `qwen/qwen3.8-flash`, the model TRON passed on, with 0731 as its
-  fallback.
+  fallback. TELETRAAN has run AUDIT since TRON retired in October 2026 (§4).
 
 The guard checks each route, not the headline price (`worker/ai/ladder.py`).
 
@@ -816,7 +720,7 @@ serve a 15-minute collection lane.
 requests/day** once an account has purchased ≥10 credits all-time — which our $20 top-up
 satisfies. Our fast-tier volume is ~124 calls/day (≈3,000 enrichments + 720 desk digests
 per month), about **12% of the free daily cap**. `GET /api/v1/key` reports
-`free_model_daily_requests.{used,limit,remaining}` so ROGUE can track it directly.
+`free_model_daily_requests.{used,limit,remaining}` so the worker can track it directly.
 
 **Free-tier rules** (these are what make it safe to depend on):
 
@@ -949,7 +853,7 @@ a weekly cycle uses a negligible fraction of.
 | Price, capability, quantisation | `GET /api/v1/models`, `.../endpoints` | Per-provider price, `supported_parameters`, quantisation, data policy |
 
 **Match `turn_range` to the tier.** Our enrichment is a single structured call, so `1-turn`
-is the relevant cell for tiers 0–2. WHEELJACK and TRON run long agentic sessions, so
+is the relevant cell for tiers 0–2. WHEELJACK and TELETRAAN run long agentic sessions, so
 `10-49-turns` and `50-plus-turns` govern CODE and AUDIT. Reading the wrong cell is how you
 end up optimising for the wrong workload.
 
@@ -1018,32 +922,29 @@ datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), 
 ### 7.7 Agent-to-model assignment, and swapping a failing model
 
 §7.1 keeps the *best model per tier*. This section is the layer above it: **which model each
-of the sixteen agents is actually running**, and what happens when one of them stops working.
+of the eight agents is actually running**, and what happens when one of them stops working.
 
 **Assignment is by tier, not per agent, and that is the point.** An agent is assigned the
 cheapest tier that can do its work; RIPPERDOC keeps that tier on the best model available.
-Sixteen independent per-agent choices would need sixteen gauntlets to justify, and there is no
-evidence on which to make them differently — the work of four research desks is the same
-shape. The indirection is what makes one evaluation serve every agent that shares a need.
+Eight independent per-agent choices would need eight gauntlets to justify, and there is no
+evidence on which to make them differently — DECKARD's three beats and its follow-up are the
+same shape of work. The indirection is what makes one evaluation serve every agent that shares
+a need.
 
 | Agent | Tier | Why that tier |
 |---|---|---|
 | MORPHEUS | 2 — STRONG | Editorial judgment over conflicting evidence; runs once a day, so the cost is bounded |
 | VOIGHT | 2 — STRONG | It holds the publication veto; the gate must not be weaker than what it is gating |
-| ZION · BLASTER · WINTERMUTE | 1 — CHEAP | Desk summaries and AU-relevance reasoning over supplied evidence |
-| TACHIKOMA | 1 — CHEAP + Tavily | Judging whether a discovered source is worth proposing |
-| DECKARD | 1 — CHEAP, 2 on critical | Routine follow-up is cheap; a critical developing event earns the strong tier |
-| PROWL | 1 — CHEAP, ambiguous cases only | Deterministic matching first; the model only sees what the rules could not decide |
+| DECKARD | 1 — CHEAP, 2 on critical | Desk notes and AU-relevance reasoning over supplied evidence, and routine follow-up, are cheap; a critical developing event earns the strong tier |
+| TACHIKOMA | 1 — CHEAP + Tavily | Judging whether a discovered source is worth proposing; the worker runs the searches |
 | WHEELJACK | CODE | Long agentic coding sessions — chosen on session cost, not token price |
-| TRON | AUDIT | Deliberately a different vendor from CODE: a two-person rule is worthless if both halves share a failure mode |
-| TELETRAAN | 1 — CHEAP, incidents only | Deterministic checks every 5 min cost nothing; the model only diagnoses an open incident |
-| RIPPERDOC | 1 — CHEAP, drafting only | The harvest and the gauntlet are deterministic; the model writes up the recommendation |
-| ROGUE | none (monthly review) | A ledger is arithmetic |
-| SERAPH · LIBRARIAN · LINK | none | Deterministic by design — **zero tokens, permanently** |
+| TELETRAAN | AUDIT, incidents and fixes only | Deliberately a different vendor from CODE: a two-person rule is worthless if both halves share a failure mode. The watchdog's checks every 5 min cost nothing; the model only diagnoses an open incident and verifies a fix |
+| RIPPERDOC | 1 — CHEAP, drafting only | The harvest, the gauntlet and the ledger are deterministic; the model writes up the recommendation and the monthly review |
+| SERAPH | none | Deterministic by design — **zero tokens, permanently**. Inside the worker, correlation sends only the cases the rules could not decide to tier 1 |
 
 Tier 0 — FREE serves the mechanical sub-tasks inside the pipeline (classify, extract, tag,
 source relevance) rather than belonging to one agent, and §7.1 bars it from editorial
-reasoning. Ten of the sixteen agents spend nothing on a normal run.
+reasoning. SERAPH never spends anything, and the other seven spend only when they wake.
 
 **Swapping a model that is failing an agent.** This is a different event from a promotion and
 moves at a different speed, because it is a repair:
@@ -1052,9 +953,9 @@ moves at a different speed, because it is a repair:
    402 from the route, p95 latency outside the lane, or the daily scan finding the model
    withdrawn or over the ceiling.
 2. **RIPPERDOC moves the agent down its tier's fallback chain immediately**, no approval. Going
-   *down* a chain that MORPHEUS and ROGUE already signed off is not a new decision, and a
+   *down* a chain that MORPHEUS already signed off is not a new decision, and a
    pipeline that waits for a human to approve a documented fallback is a pipeline that stops.
-3. **A promotion still needs both approvals.** Moving *up*, or changing a tier default, goes
+3. **A promotion still needs MORPHEUS's approval.** Moving *up*, or changing a tier default, goes
    through the proposal and the gauntlet as §7.6 describes. The asymmetry is deliberate:
    degrading is reversible and cheap to get wrong, promoting is neither.
 4. **Circuit breaker: three swaps for the same agent in 24 hours and RIPPERDOC stops** and
@@ -1066,12 +967,12 @@ moves at a different speed, because it is a repair:
 
 **Why Paperclip can carry this and what it must not hold.** Paperclip owns the *schedule* (a
 daily DEEP routine in `Australia/Sydney`, §2.3), the *authority* (RIPPERDOC's role, its
-approval chain to MORPHEUS and ROGUE) and the *audit trail* (issues, heartbeats, budgets).
+approval chain to MORPHEUS) and the *audit trail* (issues, heartbeats, budgets).
 It does **not** hold the ladder or the assignment table — §3 keeps application logic out of the
 control plane — so those stay in `config/models.yaml` and Postgres, and RIPPERDOC writes them
 through the worker's Ops API, which is the only write authority §4.4 grants it. Open question
 §13/4 applies directly here: whether an `http`-adapter run satisfies Paperclip's mandatory
-issue-comment backstop is **unverified**, and RIPPERDOC is an `http`-adapter agent. Stage 4
+issue-comment backstop is **unverified**, and SERAPH is the crew's `http`-adapter agent. Stage 4
 settles it; until then a manual comment is the fallback.
 
 ---
@@ -1263,9 +1164,9 @@ data. Plus the Actions Pages workflow.
 genuine AU + global intelligence; `pytest` green.
 
 ### Stage 2 — Ground truth + enrichment 🟢
-LIBRARIAN sync (KEV, cvelistV5 deltas, Vulnrichment, EPSS, OSV, GitHub Advisories,
+Ground-truth sync (KEV, cvelistV5 deltas, Vulnrichment, EPSS, OSV, GitHub Advisories,
 ATT&CK, ATLAS) with the validated CVSS chain. OpenRouter client with strict schemas, cost
-ledger from `usage.cost`, ROGUE's degradation tiers, **and the price-ceiling guard that
+ledger from `usage.cost`, the degradation tiers, **and the price-ceiling guard that
 refuses to start if any configured model exceeds US$1/M output** (§7.2). AI enrichment:
 classification, entities, summary, severity judgment, MITRE suggestion. AU relevance engine
 with reasons. Evidence engine and claims. Event detail page.
@@ -1285,14 +1186,14 @@ confidence; trends computed from real data.
 ### Stage 4 — Proxmox + Paperclip + first agents 🔴🟢
 🔴 Build the VM, install Docker, restore `.env`, claim the Paperclip instance, bind
 NetBird. 🟢 Deploy the stack, harden Paperclip (approvals on, sign-up off, telemetry off,
-strict secrets), create MORPHEUS + ZION + TELETRAAN with personas and skills, expose
-the worker ops API, wire deterministic `http` agents (LIBRARIAN, SERAPH, LINK,
-ROGUE), configure budgets.
+strict secrets), create MORPHEUS + DECKARD + TELETRAAN + RIPPERDOC with personas and
+skills, expose the worker ops API, wire the deterministic `http` agent (SERAPH), configure
+budgets. (Built with sixteen agents; moved to the eight of §4 in October 2026.)
 **Exit:** agents visible in Paperclip, waking on schedule, spending within budget; the
 pipeline survives Paperclip being stopped.
 
 ### Stage 5 — Full crew + follow-up + notifications 🟢
-BLASTER, WINTERMUTE, TACHIKOMA, DECKARD, VOIGHT, RIPPERDOC. Source discovery with Tavily
+VOIGHT, TACHIKOMA, DECKARD's follow-up, RIPPERDOC's model scout. Source discovery with Tavily
 and the SERAPH gate. The model-scout gauntlet and golden set (§7.6). Follow-up Strands graph
 and status transitions. Daily intelligence report. Telegram notifications. Public
 `THE CREW` page.
@@ -1302,7 +1203,7 @@ gauntlet evidence attached; the daily digest arrives in Telegram.
 
 ### Stage 6 — Self-healing 🟢
 TELETRAAN's full detection suite including stale-but-healthy feeds. Incident model. WHEELJACK
-with worktree workflow and sandbox confinement. TRON on a different model family.
+with worktree workflow and sandbox confinement. TELETRAAN verifying on a different vendor's model.
 Circuit breakers and the human approval gate. Rollback.
 **Exit:** a deliberately broken parser is detected, diagnosed, fixed on a branch,
 independently verified, and merged after your approval — with the circuit breaker proven
@@ -1317,8 +1218,8 @@ differs from the above:
   spends nothing. TELETRAAN's model is woken only by the Incident routine, which the watchdog
   fires through a Paperclip webhook trigger for each high or critical incident.
 - The watchdog alone opens, resolves (after 15 minutes clear) and reopens (within 6 hours)
-  incidents. Agents read them over the ops API; TRON's only write is its verdict.
-- The circuit breaker counts TRON's FAIL verdicts per incident, across reopens. At 3 the
+  incidents. Agents read them over the ops API; TELETRAAN's only write is its verdict.
+- The circuit breaker counts TELETRAAN's FAIL verdicts per incident, across reopens. At 3 the
   incident needs a human and the API refuses further verdicts.
 - WHEELJACK works in a new worktree and branch with a branch-and-PR token only; branch
   protection and a human merge are the gate. Its sandbox is the Paperclip server's container,
@@ -1364,7 +1265,7 @@ follow-up · trends from real data.
 
 **Autonomy** — Paperclip schedules agents · explicit per-agent ownership · heartbeats
 without token waste · recoverable failed tasks · source discovery → validation →
-activation · WHEELJACK fixes, TRON verifies, human approves · watchdog detects the listed
+activation · WHEELJACK fixes, TELETRAAN verifies, human approves · watchdog detects the listed
 signatures · budget control with degradation · circuit breaker halts runaway repair.
 
 **Public product** — GitHub Pages, static only · AU-first homepage · global + AI feeds ·
@@ -1441,7 +1342,7 @@ CyberPulse-AI/                      # public
 | 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop. The worker never writes to Paperclip: a wake's answer is the run's status and JSON body, and the Paperclip token in the wake's body is discarded. Comments on issues come from the AI agents. What the backstop does with an `http` run on an issue is seen on the first real wake | Stage 4, first wake |
 | 5 | Custom domain for the public site | Deferred: the owner's choice, whenever wanted |
 | 6 | Additional notification channels beyond Telegram | Deferred: Telegram only for now; `worker/notify/` takes another channel |
-| 7 | Whether ROGUE's monthly LLM review earns its cost | Open: the 8-agent crew chosen on 2026-10-03 has no ROGUE, so it is settled when that change lands |
+| 7 | Whether ROGUE's monthly LLM review earns its cost | Settled October 2026: ROGUE retired with the move to 8 agents. RIPPERDOC does the monthly review on the CHEAP tier, from the worker's ledger |
 
 ---
 

@@ -6,6 +6,9 @@ the routines and mission from docs/wiki/stage-4a-paperclip-setup.md, so the wiki
 source of truth. Writes a zip that Company Settings -> Import accepts (agentcompanies/v1 plus
 the paperclip/v1 .paperclip.yaml extension, release 2026.1001.0).
 
+A card's `### Skill `<name>`` sections (DECKARD's beats) become package skills,
+`skills/<name>/SKILL.md`, attached to that agent by name, so its own prompt stays short.
+
 The package carries no secret values and declares no secret inputs. Things the importer
 cannot carry are done after the import: agent budget policies, the company budget, and each
 agent's access to the OpenRouter connection (docs/wiki/stage-4a-paperclip-setup.md).
@@ -35,21 +38,19 @@ CREW = [
     # slug, role, reports to, adapter, icon
     ("morpheus", "ceo", None, "opencode_local", "crown"),
     ("teletraan", "devops", "morpheus", "opencode_local", "radar"),
-    ("rogue", "cfo", "morpheus", "http", "gem"),
-    ("zion", "researcher", "morpheus", "opencode_local", "target"),
-    ("librarian", "researcher", "teletraan", "http", "database"),
-    ("seraph", "qa", "morpheus", "http", "fingerprint"),
-    ("prowl", "general", "teletraan", "http", "puzzle"),
-    ("link", "devops", "teletraan", "http", "rocket"),
-    ("blaster", "researcher", "morpheus", "opencode_local", "globe"),
-    ("wintermute", "researcher", "morpheus", "opencode_local", "brain"),
-    ("tachikoma", "researcher", "morpheus", "opencode_local", "telescope"),
+    ("seraph", "devops", "teletraan", "http", "fingerprint"),
     ("deckard", "researcher", "morpheus", "opencode_local", "search"),
     ("voight", "qa", "morpheus", "opencode_local", "eye"),
-    ("ripperdoc", "researcher", "rogue", "opencode_local", "microscope"),
+    ("tachikoma", "researcher", "morpheus", "opencode_local", "telescope"),
+    ("ripperdoc", "cfo", "morpheus", "opencode_local", "microscope"),
     ("wheeljack", "engineer", "teletraan", "opencode_local", "wrench"),
-    ("tron", "qa", "teletraan", "opencode_local", "shield"),
 ]
+# The 16-agent crew's callsigns, retired when the 8 took over their work. None may come back
+# by accident: the owner terminates them in Paperclip (docs/wiki/stage-4a-paperclip-setup.md).
+RETIRED = ("zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link")
+# The company budget the owner sets after the import (stage-4a step 6). The agents' own budgets
+# must add up to less, so one agent's overrun hits its own budget before the company's.
+COMPANY_BUDGET_CENTS = 1200
 
 # MORPHEUS keeps the skills and appearance its hire gave it; replacing it must not change them.
 MORPHEUS_SKILLS = [
@@ -66,13 +67,9 @@ AGENT_SKILLS = ["paperclipai/paperclip/paperclip"]
 ROUTINE_TEXT = {
     "Daily editorial": ("[EDITORIAL] Daily — {{date}}",
                         "Run the daily editorial: overnight digest, follow-ups, gaps, VOIGHT verdicts, daily report."),
-    "AU desk digest": ("[DIGEST] AU desk — {{date}}",
-                       "Review the AU candidate events in the current desk digest."),
+    "Desk digest": ("[DIGEST] Desk — {{date}}",
+                    "Review the candidate events in the current desk digest: Australia first, then global, then AI."),
     "Daily QA sample": ("[QA] Daily sample", "QA a sample of yesterday's published events."),
-    "Global desk digest": ("[DIGEST] Global desk",
-                           "Review the candidate events for your beat in the current desk digest."),
-    "AI desk digest": ("[DIGEST] AI desk",
-                       "Review the candidate events for your beat in the current desk digest."),
     "Follow-up": ("[FOLLOW-UP] Sweep", "Work the follow-up queue: report on each task due."),
     "Source discovery": ("[DISCOVERY] Nightly",
                          "Read the worker's discovery finds and propose sources, plus any open [GAP] topics."),
@@ -80,7 +77,8 @@ ROUTINE_TEXT = {
                    "Do the daily model scan: read /ops/models and report what changed."),
     "Model gauntlet": ("[MODEL] Weekly gauntlet",
                        "Do the weekly gauntlet: report the results and raise each new proposal."),
-    "Monthly cost review": ("[COST] Monthly review", "Reconcile the month and report to MORPHEUS."),
+    "Monthly cost review": ("[COST] Monthly review",
+                            "Reconcile last month from /ops/cost and /ops/jobs, and report to MORPHEUS."),
 }
 
 
@@ -103,6 +101,21 @@ def row(section: str, label: str) -> str | None:
     return match.group(1) if match else None
 
 
+def read_skills(section: str, owner: str) -> list[dict]:
+    """A card's `### Skill `<name>`` sections: each a Description row and one text block."""
+    skills = []
+    for heading, body in sections(section, "###").items():
+        match = re.fullmatch(r"Skill `([a-z0-9]+(?:-[a-z0-9]+)*)`", heading)
+        if not match:
+            fail(f"{owner}: unexpected sub-heading {heading!r} in its card")
+        description = row(body, "Description")
+        blocks = text_blocks(body)
+        if not description or len(blocks) != 1:
+            fail(f"{owner}: skill {match.group(1)} needs a Description row and one text block")
+        skills.append({"name": match.group(1), "description": description, "text": blocks[0]})
+    return skills
+
+
 def read_crew() -> tuple[str, dict[str, dict]]:
     page = CREW_PAGE.read_text(encoding="utf-8")
     cards = sections(page, "##")
@@ -122,7 +135,10 @@ def read_crew() -> tuple[str, dict[str, dict]]:
         if not title:
             fail(f"{name}: no title row")
         card = {"name": name, "title": title.group(1)}
-        blocks = text_blocks(body)
+        # The card's own text stops at its first sub-heading; any after it are its skills.
+        own, _, rest = body.partition("\n### ")
+        card["skills"] = read_skills("### " + rest, name) if rest else []
+        blocks = text_blocks(own)
         if blocks:
             card["prompt"] = blocks[0]
             model = re.search(r"`(openrouter/[^`]+)`", row(body, "Adapter · Model") or "")
@@ -219,6 +235,18 @@ def build(output: Path) -> None:
     description, routines = read_setup()
     if sorted(cards) != sorted(slug for slug, *_ in CREW):
         fail(f"crew page agents {sorted(cards)} do not match CREW")
+    if set(cards) & set(RETIRED):
+        fail(f"retired agents on the crew page: {sorted(set(cards) & set(RETIRED))}")
+    strangers = {routine["assignee"] for routine in routines} - set(cards)
+    if strangers:
+        fail(f"routines assigned to agents not on the crew page: {sorted(strangers)}")
+    budgets = sum(card.get("budget_cents", 0) for card in cards.values())
+    if budgets >= COMPANY_BUDGET_CENTS:
+        fail(f"the agents' budgets add up to {budgets} cents, not under the company's {COMPANY_BUDGET_CENTS}")
+    # TELETRAAN checks WHEELJACK's code: the two-person rule needs two vendors (config/models.yaml).
+    vendors = {slug: cards[slug]["model"].split("/")[1] for slug in ("teletraan", "wheeljack")}
+    if vendors["teletraan"] == vendors["wheeljack"]:
+        fail(f"TELETRAAN and WHEELJACK both run a {vendors['wheeljack']} model; they must differ")
 
     files: dict[str, str] = {}
     agents_ext: dict[str, dict] = {}
@@ -231,7 +259,15 @@ def build(output: Path) -> None:
         if adapter == "opencode_local":
             if "prompt" not in card:
                 fail(f"{slug}: AI agent without a prompt")
-            frontmatter["skills"] = MORPHEUS_SKILLS if slug == "morpheus" else AGENT_SKILLS
+            frontmatter["skills"] = (MORPHEUS_SKILLS if slug == "morpheus" else AGENT_SKILLS) + [
+                skill["name"] for skill in card["skills"]
+            ]
+            for skill in card["skills"]:
+                path = f"skills/{skill['name']}/SKILL.md"
+                if path in files:
+                    fail(f"skill {skill['name']} is defined twice")
+                files[path] = markdown({"name": skill["name"], "description": skill["description"]},
+                                       skill["text"])
             body = house_rules + "\n\n" + card["prompt"]
             ext["adapter"] = {"type": adapter, "config": {
                 "model": card["model"],
@@ -254,6 +290,8 @@ def build(output: Path) -> None:
         else:
             if "payload" not in card:
                 fail(f"{slug}: http agent without a payload template")
+            if card["skills"]:
+                fail(f"{slug}: an http agent runs no model, so it takes no skills")
             body = http_instructions(card)
             ext["capabilities"] = card["does"].replace("**", "")
             ext["adapter"] = {"type": adapter, "config": {

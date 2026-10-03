@@ -16,6 +16,7 @@ from types import SimpleNamespace
 
 import pytest
 from pydantic import SecretStr
+from sqlalchemy.exc import OperationalError
 
 from worker import ops_api
 from worker.ai.budget import BudgetUnreadable, KeyStatus
@@ -88,7 +89,7 @@ def test_health_needs_no_token(make_api):
         ("GET", "/", 404),
         ("GET", "/api/health", 404),
         ("POST", "/ops/health", 405),
-        ("GET", "/ops/agents/link/wake", 405),
+        ("GET", "/ops/agents/seraph/wake", 405),
         ("DELETE", "/ops/digest", 405),
         ("GET", "/ops/nothing-here", 404),
     ],
@@ -98,7 +99,7 @@ def test_unknown_paths_and_wrong_methods(api, method, target, status):
 
 
 def test_a_wrong_method_says_which_one_to_use(api):
-    response = api.handle("GET", "/ops/agents/link/wake", {})
+    response = api.handle("GET", "/ops/agents/seraph/wake", {})
     assert ("Allow", "POST") in response.headers
 
 
@@ -145,7 +146,7 @@ def test_the_token_is_never_in_the_repr(api):
 def test_wakes_need_no_token(make_api, monkeypatch):
     api = make_api(token=None)
     monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {}))
-    assert wake(api, "link", {"job": "publish"}).status == 200
+    assert wake(api, "seraph", {"job": "pipeline"}).status == 200
 
 
 # --- Wakes -----------------------------------------------------------------------------------------
@@ -171,11 +172,11 @@ def test_a_wake_answers_with_the_jobs_health(api, monkeypatch, ok, status):
     monkeypatch.setattr(
         api, "verdict", lambda job: asked.append(job) or Verdict(ok, {"reason": "checked"})
     )
-    response = wake(api, "librarian", {"job": "groundtruth", "runId": "run-1"})
-    assert response.status == status and asked == ["groundtruth"]
+    response = wake(api, "seraph", {"job": "pipeline", "runId": "run-1"})
+    assert response.status == status and asked == ["pipeline"]
     assert response.json() == {
-        "agent": "librarian",
-        "job": "groundtruth",
+        "agent": "seraph",
+        "job": "pipeline",
         "ok": ok,
         "checked_at": "2026-10-03T08:00:00Z",
         "summary": {"reason": "checked"},
@@ -188,23 +189,104 @@ def test_a_wake_answers_with_the_jobs_health(api, monkeypatch, ok, status):
         (b"not json", "not JSON"),
         (b"[1, 2]", "not a JSON object"),
         (b"\xff\xfe", "not JSON"),
-        (json.dumps({"job": "publish"}).encode(), 'send {"job": "groundtruth"}'),
-        (b"{}", 'send {"job": "groundtruth"}'),
+        (json.dumps({"job": "publish"}).encode(), 'send {"job": "pipeline"}'),
+        (b"{}", 'send {"job": "pipeline"}'),
         (b"[" * 100_000 + b"]" * 100_000, "not JSON"),
     ],
 )
 def test_a_wake_with_the_wrong_body_is_a_400(api, body, says):
-    response = wake(api, "librarian", body)
+    response = wake(api, "seraph", body)
     assert response.status == 400 and says in response.json()["error"]
 
 
 def test_a_wrong_job_is_not_echoed(api):
-    response = wake(api, "librarian", {"job": "<script>"})
+    response = wake(api, "seraph", {"job": "<script>"})
     assert response.status == 400 and "<script>" not in response.data.decode()
 
 
 def test_an_unknown_agent_is_a_404(api):
-    assert wake(api, "morpheus", {"job": "publish"}).status == 404
+    assert wake(api, "morpheus", {"job": "pipeline"}).status == 404
+
+
+@pytest.mark.parametrize("slug", sorted(ops_api.RETIRED_WAKES))
+def test_a_retired_agent_is_a_404_that_says_so(api, monkeypatch, slug):
+    """The 16-agent crew's http agents stay on Paperclip's org chart until the owner terminates
+    them. Their wake must fail and say why, not pass on SERAPH's checks."""
+    monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {}))
+    response = wake(api, slug, {"job": "pipeline"})
+    assert response.status == 404
+    error = response.json()["error"]
+    assert "retired" in error and "SERAPH" in error
+
+
+def test_the_retired_wakes_are_the_old_http_agents():
+    assert ops_api.RETIRED_WAKES == {"rogue", "librarian", "prowl", "link"}
+    assert not ops_api.RETIRED_WAKES & set(WAKE_JOBS)
+
+
+def stub_checks(api, monkeypatch, results):
+    """Stand in for each of SERAPH's checks: a Verdict to return, or an exception to raise."""
+
+    def check(name):
+        def run():
+            if isinstance(results[name], Exception):
+                raise results[name]
+            return results[name]
+
+        return run
+
+    monkeypatch.setattr(api, "_checks", lambda: {name: check(name) for name in results})
+
+
+def test_the_pipeline_verdict_reports_each_check(api, monkeypatch):
+    stub_checks(api, monkeypatch, {
+        "cost-reconcile": Verdict(False, {"reason": "not one of SERAPH's checks"}),
+        "groundtruth": Verdict(True, {"age_minutes": 30}),
+        "source-verify": Verdict(True, {"sources": 60}),
+        "correlation-report": Verdict(True, {"events": 12}),
+        "publish": Verdict(True, {"age_minutes": 5}),
+    })
+    response = wake(api, "seraph", {"job": "pipeline"})
+    assert response.status == 200
+    summary = response.json()["summary"]
+    assert list(summary["checks"]) == list(ops_api.PIPELINE_CHECKS)
+    assert summary["checks"]["groundtruth"] == {"ok": True, "age_minutes": 30}
+    assert summary["checks"]["correlation-report"] == {"ok": True, "events": 12}
+    assert "reason" not in summary
+
+
+def test_a_failing_check_fails_the_pipeline_and_is_named(api, monkeypatch):
+    stub_checks(api, monkeypatch, {
+        "groundtruth": Verdict(False, {"reason": "no completed ground-truth pass is recorded"}),
+        "source-verify": Verdict(True, {}),
+        "correlation-report": Verdict(True, {}),
+        "publish": Verdict(False, {"reason": "the last publish was 60 minutes ago"}),
+    })
+    response = wake(api, "seraph", {"job": "pipeline"})
+    assert response.status == 503
+    summary = response.json()["summary"]
+    assert summary["reason"] == "failing: groundtruth, publish"
+    assert summary["checks"]["source-verify"] == {"ok": True}
+    assert summary["checks"]["publish"]["ok"] is False
+
+
+def test_a_check_that_cannot_run_fails_alone(api, monkeypatch):
+    stub_checks(api, monkeypatch, {
+        "groundtruth": OperationalError("select 1", {}, Exception("connection refused")),
+        "source-verify": RuntimeError("boom"),
+        "correlation-report": Verdict(True, {"events": 3}),
+        "publish": Verdict(True, {}),
+    })
+    verdict = api.verdict("pipeline")
+    checks = verdict.summary["checks"]
+    assert verdict.ok is False
+    assert checks["groundtruth"] == {"ok": False, "reason": "the database could not be read"}
+    assert checks["source-verify"] == {
+        "ok": False, "reason": "the check could not run (RuntimeError)"
+    }
+    assert checks["correlation-report"] == {"ok": True, "events": 3}
+    assert checks["publish"] == {"ok": True}
+    assert "connection refused" not in json.dumps(verdict.summary, default=str)
 
 
 def test_the_runtime_token_paperclip_adds_is_never_logged(api, monkeypatch, caplog):
@@ -212,13 +294,13 @@ def test_the_runtime_token_paperclip_adds_is_never_logged(api, monkeypatch, capl
     caplog.set_level(logging.DEBUG)
     monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {}))
     body = {
-        "job": "publish",
+        "job": "pipeline",
         "agentId": "8c3b2e9a-1111-4222-8333-944455556666",
         "runId": "run with spaces and a ; semicolon",
         "context": {"issue": "CYB-1"},
         "paperclipRuntimeTools": {"bearerToken": "runtime-bearer-TESTONLY-abcdef0123456789"},
     }
-    response = wake(api, "link", body)
+    response = wake(api, "seraph", body)
     assert response.status == 200
     assert "runtime-bearer" not in caplog.text and "runtime-bearer" not in response.data.decode()
     assert "semicolon" not in caplog.text  # a run id that is not a plain id is not logged either
@@ -323,7 +405,7 @@ def test_a_response_with_a_secret_in_it_is_withheld(api, monkeypatch, caplog):
     secret = "fake-key-TESTONLY-not-a-real-provider-key-77"
     monkeypatch.setenv("OPENROUTER_API_KEY", secret)
     monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {"leak": f"x {secret} y"}))
-    response = wake(api, "link", {"job": "publish"})
+    response = wake(api, "seraph", {"job": "pipeline"})
     assert response.status == 500
     assert response.json() == {"error": "response withheld: it failed the secret scan"}
     assert secret not in caplog.text and "OPENROUTER_API_KEY" in caplog.text
@@ -332,7 +414,7 @@ def test_a_response_with_a_secret_in_it_is_withheld(api, monkeypatch, caplog):
 def test_the_ops_token_itself_is_withheld(api, monkeypatch):
     monkeypatch.setenv("CYBERPULSE_OPS_TOKEN", TOKEN)
     monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {"echo": TOKEN}))
-    assert wake(api, "link", {"job": "publish"}).status == 500
+    assert wake(api, "seraph", {"job": "pipeline"}).status == 500
 
 
 def test_a_scan_that_cannot_run_withholds(api, monkeypatch):
@@ -423,9 +505,9 @@ def test_the_server_answers_with_safe_headers(server):
 
 def test_a_wake_over_the_socket(server, monkeypatch):
     monkeypatch.setattr(server.api, "verdict", lambda job: Verdict(False, {"reason": "stale"}))
-    body = json.dumps({"job": "publish"}).encode()
+    body = json.dumps({"job": "pipeline"}).encode()
     request = (
-        b"POST /ops/agents/link/wake HTTP/1.1\r\nHost: x\r\nContent-Type: application/json\r\n"
+        b"POST /ops/agents/seraph/wake HTTP/1.1\r\nHost: x\r\nContent-Type: application/json\r\n"
         + f"Content-Length: {len(body)}\r\n\r\n".encode() + body
     )
     status, _, reply = exchange(server, request)
@@ -442,7 +524,7 @@ def test_a_wake_over_the_socket(server, monkeypatch):
     ],
 )
 def test_bodies_the_server_will_not_read(server, headers, status):
-    request = f"POST /ops/agents/link/wake HTTP/1.1\r\nHost: x\r\n{headers}\r\n\r\n{{}}x".encode()
+    request = f"POST /ops/agents/seraph/wake HTTP/1.1\r\nHost: x\r\n{headers}\r\n\r\n{{}}x".encode()
     assert exchange(server, request, close_write=True)[0] == status
 
 
@@ -1061,6 +1143,15 @@ def test_the_jobs_read_has_the_watchdog_publish_and_push(api, monkeypatch):
 
     monkeypatch.setattr(OpsApi, "_read", connection)
     monkeypatch.setattr(ops_api, "load_latest_job", lambda conn, job: None)
-    monkeypatch.setattr(OpsApi, "verdict", lambda self, job: Verdict(True, {}))
-    passes = api.handle("GET", "/ops/jobs", AUTH).json()["passes"]
-    assert {"watchdog", "publish", "push"} <= set(passes)
+    asked = []
+    monkeypatch.setattr(
+        OpsApi, "verdict", lambda self, job: asked.append(job) or Verdict(True, {"job": job})
+    )
+    body = api.handle("GET", "/ops/jobs", AUTH).json()
+    assert {"watchdog", "publish", "push"} <= set(body["passes"])
+    # SERAPH's wake, and the cost check RIPPERDOC's monthly review reads (ROGUE's wake once).
+    assert body["wakes"] == {
+        "seraph": {"job": "pipeline", "ok": True, "summary": {"job": "pipeline"}}
+    }
+    assert body["cost_reconcile"] == {"ok": True, "summary": {"job": "cost-reconcile"}}
+    assert asked == ["pipeline", "cost-reconcile"]

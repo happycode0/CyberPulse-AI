@@ -529,7 +529,7 @@ def test_an_incident_the_crew_is_not_told_of_says_nothing_of_them():
 
 def test_a_reopened_incident_says_so_and_counts_its_failed_fixes():
     text = incident_opened(incident(reopened=2, fix_failures=1), crew=True)
-    assert "reopened (2 times)" in text and "failed TRON's tests so far: 1." in text
+    assert "reopened (2 times)" in text and "failed TELETRAAN's tests so far: 1." in text
 
 
 @pytest.mark.parametrize("n, said", [(1, "1 fix failed"), (3, "3 fixes failed")])

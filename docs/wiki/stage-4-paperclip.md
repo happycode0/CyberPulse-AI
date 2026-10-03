@@ -4,8 +4,10 @@
 [4a — Paperclip setup →](stage-4a-paperclip-setup.md)
 
 **Status: ▶ in progress — you are here.** Paperclip is running with the whole crew imported, the
-AI agents pass their smoke test, and the worker's ops API answers the `http` agents (row 6
-below). Every agent and routine stays paused until you resume them.
+AI agents pass their smoke test, and the worker's ops API answers the `http` agent (row 6
+below). The crew is now 8 agents, not 16: your part is [Moving from 16 agents to
+8](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8). Every agent and routine stays paused
+until you choose to resume them.
 Plan: [PLAN.md §9, Stage 4](../../PLAN.md#9-stages) · Build record:
 [runbook Part 6](../vm200-runbook.md)
 
@@ -14,7 +16,7 @@ Plan: [PLAN.md §9, Stage 4](../../PLAN.md#9-stages) · Build record:
 ## What this stage gives you
 
 **Paperclip** is the control panel for the AI crew: issues, assignments, schedules, budgets and
-approvals for all 16 agents, in one dashboard on your home network. It only adds judgment. The
+approvals for all 8 agents, in one dashboard on your home network. It only adds judgment. The
 worker keeps collecting and publishing even with Paperclip stopped.
 
 ## This stage's pages, in order
@@ -22,7 +24,7 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | | Page | Use it for |
 |---|---|---|
 | 4a | [Paperclip setup](stage-4a-paperclip-setup.md) | The steps: open, claim, harden, company, agents, routines, first test |
-| 4b | [The crew](stage-4b-the-crew.md) | What to type for each of the 16 agents. You need it at 4a step 6 |
+| 4b | [The crew](stage-4b-the-crew.md) | What to type for each of the 8 agents. You need it at 4a step 6 |
 | 4c | [How the crew works together](stage-4c-how-the-crew-works.md) | How work moves between agents, and what stops runaway cost or code |
 
 ## What is done
@@ -40,7 +42,8 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | Crew imported from the package: 16 agents, 10 routines (paused) | ✅ 2026-10-02 |
 | Mission, US$12 company budget, the 11 agent budgets | ✅ 2026-10-03 |
 | Smoke test: each AI agent replies, follows the house rules and closes its own ticket | ✅ 9 of 11 on 2026-10-03; TACHIKOMA and RIPPERDOC run when their daily cap resets |
-| The worker's ops API on port 8700, compose network only: the five `http` agents' wakes, and token-guarded reads for the AI agents | ✅ 2026-10-03 |
+| The worker's ops API on port 8700, compose network only: the `http` agents' wakes, and token-guarded reads for the AI agents | ✅ 2026-10-03 |
+| The crew cut from 16 agents to 8 in the wiki, the package and the ops API | ✅ October 2026. In Paperclip: 🔴 [your steps](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8) |
 
 ## What's left, in order
 
@@ -52,10 +55,12 @@ worker keeps collecting and publishing even with Paperclip stopped.
 | 5 | ✅ | Stage 2's money pieces: ledger, price guard, degradation | [Stage 2](stage-2-ground-truth.md#how-it-was-built--all-claude) |
 | 6 | ✅ | The worker's ops API and its token; the `http` agents' URL | [below](#the-workers-ops-api) |
 | 7 | ✅ | First test tickets, one per AI agent | [4a step 8](stage-4a-paperclip-setup.md#8--first-test--one-ticket-one-agent) |
-| 8 | 🔴 **you** | Resume agents and routines, **after** the 8-agent crew change lands and the agents no longer inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)) | [4a step 7](stage-4a-paperclip-setup.md) |
+| 8 | 🔴 **you** | Move Paperclip from 16 agents to 8: import, terminate the 8 retired agents, set the 7 budgets, smoke-test 3 agents | [4a, Moving from 16 agents to 8](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8) |
+| 9 | 🔴 **you** | Resume agents and routines, when you choose, and only after the agents no longer inherit the server's environment ([threat model, risk 1](../threat-model.md#open-risks-ranked)) | [4a step 7](stage-4a-paperclip-setup.md#7--create-the-routines) |
 
-MORPHEUS and ZION can do real work now that 5 and 6 are done. Every routine is still paused.
-Resume only theirs, and ROGUE's, at first.
+Every agent and routine is still paused, and stays paused until you decide. When you do, the
+first to resume are MORPHEUS, DECKARD and RIPPERDOC, and the routines marked "now" in 4a step 7.
+ZION and ROGUE are retired: never resume them, terminate them.
 
 **A change from the plan, on purpose:** PLAN.md puts the dashboard behind NetBird. You chose the
 home network instead, so it is published on the LAN address only, with login required. NetBird
@@ -67,21 +72,28 @@ The worker serves it on port 8700 inside its container (`worker/ops_api.py`). On
 server, on the same compose network, can reach it. `docker-compose.yml` publishes no worker
 port, and never should: Docker-published ports bypass the host firewall.
 
-**Wakes**: `POST /ops/agents/<callsign>/wake`, for the five `http` agents. The worker already
-runs each of their jobs on its own schedule, so a wake runs nothing. It answers **200** when the
-job is working and **503** when it is not, and Paperclip marks the run succeeded or failed. The
-body says what was checked. A wake needs no token, so the agents' package carries none.
+**Wakes**: `POST /ops/agents/seraph/wake`, for the one `http` agent, SERAPH. The worker already
+runs every job it answers for on its own schedule, so a wake runs nothing. It answers **200** when
+all four checks below pass and **503** when any fails, and Paperclip marks the run succeeded or
+failed. The body has each check under `checks`, with its own `ok` and figures, and `reason` names
+the failing ones. One check that cannot run fails on its own; the others still answer. A wake
+needs no token, so the agents' package carries none.
 
-| Agent | Job | 200 means |
-|---|---|---|
-| ROGUE | `cost-reconcile` | The key's budget can be read, and every ledger call this month has a billed cost. The summary also gives `outside_ledger_usd`: spend on the key that the ledger never saw, which is the Paperclip agents' own calls |
-| LIBRARIAN | `groundtruth` | A ground-truth pass completed in the last 7 hours (it runs every 6) |
-| SERAPH | `source-verify` | A source was checked in the last 30 minutes; the summary counts each enabled source's latest status and lifecycle state |
-| PROWL | `correlation-report` | A collection finished in the last 30 minutes; the summary gives its counts and the merges in the last 24 hours |
-| LINK | `publish` | `data/system-status.json` was written in the last 30 minutes |
+| Check (`{"job": "pipeline"}`) | Passes when |
+|---|---|
+| `groundtruth` | A ground-truth pass completed in the last 7 hours (it runs every 6) |
+| `source-verify` | A source was checked recently; the summary counts each enabled source's latest status and lifecycle state |
+| `correlation-report` | A collection finished recently; the summary gives its counts and the merges in the last 24 hours |
+| `publish` | `data/system-status.json` was written recently |
 
-LIBRARIAN's wake answers 503 until the first ground-truth pass after the deploy has been
-recorded. Passes run at :25 past every sixth hour UTC.
+The wake of a retired `http` agent (ROGUE, LIBRARIAN, PROWL or LINK) answers **404**, saying it
+was retired: terminate it in Paperclip. The old `cost-reconcile` check (ROGUE's) is now in
+`GET /ops/jobs` as `cost_reconcile`, for RIPPERDOC's monthly review: the key's budget can be read,
+every ledger call this month has a billed cost, and `outside_ledger_usd` is the spend on the key
+that the ledger never saw, which is the Paperclip agents' own calls.
+
+SERAPH's wake answers 503 until the first ground-truth pass after the deploy has been recorded.
+Passes run at :25 past every sixth hour UTC.
 
 **Reads**: `GET /ops/...`, for the AI agents. They need `Authorization: Bearer
 $CYBERPULSE_OPS_TOKEN`. The agents inherit that variable, and `CYBERPULSE_OPS_URL`, from the
@@ -97,7 +109,7 @@ answer 503 and only the wakes work.
 | `/ops/sources` | Source health, as `source-health.json` |
 | `/ops/runs?limit=20` | The latest collection runs |
 | `/ops/cost?month=YYYY-MM` | The ledger by stage, model, agent and outcome, and the key's own usage |
-| `/ops/jobs` | Every wake's verdict, and the latest ground-truth and enrichment passes |
+| `/ops/jobs` | SERAPH's verdict check by check, the cost reconcile check, and the worker's latest passes |
 
 Every read runs in a read-only transaction with a 15-second limit. Every response, wakes
 included, goes through the publisher's secret scan; a response that fails it is withheld with a
@@ -111,8 +123,8 @@ cd ~/CyberPulse-AI
 docker compose ps server worker                             # both "Up … (healthy)"
 curl -s http://192.168.128.39:3100/api/health; echo         # "status":"ok"
 # A wake, from where Paperclip calls it:
-docker compose exec -T server curl -sS -X POST http://worker:8700/ops/agents/link/wake \
-  -H 'content-type: application/json' -d '{"job":"publish"}' </dev/null; echo
+docker compose exec -T server curl -sS -X POST http://worker:8700/ops/agents/seraph/wake \
+  -H 'content-type: application/json' -d '{"job":"pipeline"}' </dev/null; echo
 # A read without the token is refused (401):
 docker compose exec -T server curl -s -o /dev/null -w '%{http_code}\n' http://worker:8700/ops/digest </dev/null
 # And nothing outside the compose network reaches it (connection refused):
