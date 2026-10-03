@@ -10,7 +10,7 @@ import pytest
 from pydantic import SecretStr
 
 from worker.ai import enrich as enrich_mod
-from worker.ai.budget import KEY_URL, Governor, KeyStatus, Mode
+from worker.ai.budget import KEY_URL, Governor, KeyStatus, Mode, Work
 from worker.ai.client import BudgetExhausted, CallFailed, Completion, InvalidOutput, RateLimited
 from worker.ai.enrich import (
     AiLayer,
@@ -21,7 +21,7 @@ from worker.ai.enrich import (
     enrich_pending,
     run_task,
 )
-from worker.ai.ladder import Ladder, LadderUnusable, Tier, VerifiedLadder
+from worker.ai.ladder import Breach, Ladder, LadderUnusable, Tier, VerifiedLadder
 from worker.ai.tasks import BRIEF, SEVERITY, TRIAGE, Brief, Subject, Triage
 from worker.models import Event, Severity, SeveritySource
 from worker.settings import Settings
@@ -292,6 +292,33 @@ async def test_the_ladder_is_checked_again_after_a_day_and_the_governor_kept(res
         assert await layer.ready(http) is first and verify.count == 1
         clock[0] = T0 + timedelta(hours=25)
         assert await layer.ready(http) is first and verify.count == 2
+
+
+async def test_a_ladder_the_scan_checked_is_used_without_checking_again(respx_mock, caplog):
+    respx_mock.get(KEY_URL).mock(return_value=httpx.Response(200, json=key_body()))
+    verify = Verifier()
+    layer = AiLayer(settings(), verify=verify, clock=lambda: T0 + timedelta(hours=1))
+    pruned = Ladder.model_validate(
+        {"tiers": {**LADDER.tiers, Tier.CHEAP: LADDER.tiers[Tier.CHEAP][1:]}}
+    )
+    gone = Breach(Tier.CHEAP, LADDER.tiers[Tier.CHEAP][0], "not on OpenRouter")
+    layer.adopt(VerifiedLadder(ladder=pruned, checked_at=T0, dropped=(gone,)))
+    async with httpx.AsyncClient() as http:
+        g = await layer.ready(http)
+    assert g is not None and verify.count == 0
+    assert g.route(Work(Tier.CHEAP, Severity.HIGH)).models == pruned.tiers[Tier.CHEAP]
+    assert "is dropped for now" in caplog.text
+
+
+async def test_a_scan_that_rejected_the_ladder_makes_the_next_pass_check(respx_mock):
+    respx_mock.get(KEY_URL).mock(return_value=httpx.Response(200, json=key_body()))
+    verify = Verifier()
+    layer = AiLayer(settings(), verify=verify, clock=lambda: T0)
+    layer.adopt(VERIFIED)
+    layer.adopt(None)
+    async with httpx.AsyncClient() as http:
+        assert await layer.ready(http) is not None
+    assert verify.count == 1
 
 
 async def test_an_unreadable_budget_leaves_only_free_models(respx_mock, caplog):

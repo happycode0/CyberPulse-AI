@@ -3,9 +3,13 @@
 # Every model here is checked against OpenRouter's live routes by worker/ai/ladder.py, at worker
 # start and on `python -m worker --check-models`. A model passes only if at least one route offers
 # both tools and structured outputs at no more than US$1.00 per million output tokens (in tier 2,
-# also at bf16, fp8 or unknown quantisation). If any model fails, the AI layer stays off;
-# collection and publishing carry on without it. The ceiling lives in that file, not here, so
-# raising it is a code change.
+# also at bf16, fp8 or unknown quantisation). A model that fails is dropped from its chain for as
+# long as it fails, and the daily model scan (03:20 Sydney) records it. If what is left is not a
+# usable ladder, the AI layer stays off; collection and publishing carry on without it. The
+# ceiling lives in that file, not here, so raising it is a code change.
+#
+# RIPPERDOC's Sunday gauntlet may propose a different default for tiers 0 to 2. A proposal is
+# only a row in agent_proposals: promoting a model is a reviewed edit to this file (PLAN.md 7.7).
 #
 # Prices drift, so the figures below are notes, not inputs. They are the cheapest capable route,
 # in/out per million tokens, measured 2026-10-03.

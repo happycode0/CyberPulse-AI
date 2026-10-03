@@ -17,6 +17,8 @@ from worker.ai.ladder import (
     VerifiedLadder,
     breach_reason,
     check_ladder,
+    prune,
+    verify_candidate,
     verify_ladder,
 )
 
@@ -231,7 +233,9 @@ async def test_an_over_priced_model_raises_ladder_rejected(respx_mock):
     mock_catalogue(respx_mock, lad, **{"vendor-d/audit-model": pricey})
     with pytest.raises(LadderRejected) as exc:
         await verify_ladder(lad)
+    # The audit tier had nothing else, so dropping its one model leaves no ladder to use.
     assert [b.slug for b in exc.value.breaches] == ["vendor-d/audit-model"]
+    assert exc.value.remainder == "audit is empty"
 
 
 async def test_a_404_is_a_withdrawn_model_not_an_outage(respx_mock):
@@ -239,6 +243,71 @@ async def test_a_404_is_a_withdrawn_model_not_an_outage(respx_mock):
     mock_catalogue(respx_mock, lad, **{"vendor-c/code-model": httpx.Response(404)})
     with pytest.raises(LadderRejected, match="not on OpenRouter"):
         await verify_ladder(lad)
+
+
+# ─── Pruning: a model that fails leaves its chain, not the whole ladder (§7.6, §7.7) ─────────────
+
+
+async def test_a_withdrawn_free_model_is_dropped_and_the_rest_stays_on(respx_mock):
+    chain = ["vendor-a/free-model:free", "vendor-e/other:free", "vendor-a/paid-model"]
+    lad = ladder(tier0_free=chain)
+    mock_catalogue(respx_mock, lad, **{"vendor-a/free-model:free": httpx.Response(404)})
+    verified = await verify_ladder(lad)
+    assert verified.ladder.tiers[Tier.FREE] == ("vendor-e/other:free", "vendor-a/paid-model")
+    assert verified.ladder.tiers[Tier.CHEAP] == lad.tiers[Tier.CHEAP]
+    assert [(b.tier, b.slug) for b in verified.dropped] == [(Tier.FREE, "vendor-a/free-model:free")]
+
+
+async def test_a_model_is_dropped_only_from_the_tier_it_fails_in(respx_mock):
+    # Tier 2 pins quantisation, so an fp4-only route fails there and passes in tier 1.
+    lad = ladder(
+        tier1_cheap=["vendor-b/both", "vendor-a/paid-model"],
+        tier2_strong=["vendor-b/both", "vendor-b/strong-model"],
+    )
+    fp4 = httpx.Response(200, json={"data": {"endpoints": [route(quantization="fp4")]}})
+    mock_catalogue(respx_mock, lad, **{"vendor-b/both": fp4})
+    verified = await verify_ladder(lad)
+    assert verified.ladder.tiers[Tier.CHEAP] == ("vendor-b/both", "vendor-a/paid-model")
+    assert verified.ladder.tiers[Tier.STRONG] == ("vendor-b/strong-model",)
+
+
+async def test_dropping_the_paid_tail_of_tier0_rejects_the_ladder(respx_mock):
+    lad = ladder(tier0_free=["vendor-a/free-model:free", "vendor-e/paid-tail"])
+    mock_catalogue(respx_mock, lad, **{"vendor-e/paid-tail": httpx.Response(404)})
+    with pytest.raises(LadderRejected) as exc:
+        await verify_ladder(lad)
+    assert exc.value.remainder == "tier0_free must end in a paid model"
+    assert "without them, tier0_free must end in a paid model" in str(exc.value)
+
+
+def test_prune_with_nothing_to_drop_is_the_same_ladder():
+    lad = ladder()
+    assert prune(lad, []) is lad
+
+
+async def test_a_candidate_passes_the_same_guard(respx_mock):
+    ok = "vendor-f/challenger"
+    respx_mock.get(ENDPOINTS_URL.format(slug=ok)).mock(
+        return_value=httpx.Response(200, json={"data": {"endpoints": [route()]}})
+    )
+    candidate = await verify_candidate(ok, Tier.CHEAP)
+    assert (candidate.tier, candidate.slug) == (Tier.CHEAP, ok)
+
+
+async def test_an_over_priced_candidate_is_rejected(respx_mock):
+    slug = "vendor-f/pricey"
+    respx_mock.get(ENDPOINTS_URL.format(slug=slug)).mock(
+        return_value=httpx.Response(200, json={"data": {"endpoints": [route(out="0.000002")]}})
+    )
+    with pytest.raises(LadderRejected, match="ceiling"):
+        await verify_candidate(slug, Tier.CHEAP)
+
+
+@pytest.mark.parametrize("slug", ["openrouter/auto", "vendor-f/model:batch", "no-slash"])
+async def test_a_candidate_the_ladder_would_refuse_is_not_fetched(respx_mock, slug):
+    with pytest.raises(LadderRejected):
+        await verify_candidate(slug, Tier.CHEAP)
+    assert not respx_mock.calls
 
 
 @pytest.mark.parametrize(

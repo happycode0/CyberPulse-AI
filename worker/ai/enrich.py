@@ -218,6 +218,17 @@ class AiLayer:
         self.verified: VerifiedLadder | None = None
         self.governor: Governor | None = None
 
+    def adopt(self, verified: VerifiedLadder | None) -> None:
+        """Take a ladder checked elsewhere — the daily model scan (worker/ai/catalogue.py) — or
+        None when it did not pass, which makes the next pass check again before it calls."""
+        self.verified = verified
+        if verified is None:
+            return
+        for breach in verified.dropped:
+            logger.warning("model ladder: %s is dropped for now", breach)
+        if self.governor is not None:
+            self.governor.adopt(verified)
+
     async def ready(self, http: httpx.AsyncClient) -> Governor | None:
         """The governor, with the ladder checked and the budget read, or None if the AI layer is
         off: no key, or a ladder that does not pass."""
@@ -232,14 +243,12 @@ class AiLayer:
                 self.verified = None
                 logger.error("enrichment: the model ladder did not pass, so nothing runs: %s", exc)
                 return None
-            self.verified = verified
-            if self.governor is None:
-                self.governor = Governor(
-                    verified, self.settings.ai_monthly_budget_usd, now=self._clock
-                )
-            else:
-                self.governor.adopt(verified)
-        assert self.governor is not None
+            self.adopt(verified)
+        assert self.verified is not None
+        if self.governor is None:
+            self.governor = Governor(
+                self.verified, self.settings.ai_monthly_budget_usd, now=self._clock
+            )
         try:
             self.governor.observe(await fetch_key_status(http, key, self.settings.user_agent))
         except BudgetUnreadable as exc:

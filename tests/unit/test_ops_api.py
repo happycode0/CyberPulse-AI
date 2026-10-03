@@ -19,6 +19,7 @@ from pydantic import SecretStr
 
 from worker import ops_api
 from worker.ai.budget import BudgetUnreadable, KeyStatus
+from worker.db.jobs import JobRun
 from worker.discovery.gate import DiscoveryConfig
 from worker.ops_api import WAKE_JOBS, OpsApi, Verdict
 from worker.settings import Settings
@@ -776,3 +777,59 @@ def test_each_proposal_result_has_its_status(api, discovery_db, result, status):
 def test_the_index_lists_the_candidates(api):
     body = api.handle("GET", "/ops", AUTH).json()
     assert "/ops/candidates" in body["reads"] and "POST /ops/candidates" in body["writes"]
+
+
+# ─── /ops/models ──────────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.fixture
+def models_db(monkeypatch):
+    seen = {"reads": 0, "asked": []}
+
+    @contextmanager
+    def connection(self):
+        seen["reads"] += 1
+        yield None
+
+    def report(conn, now):
+        seen["asked"].append(now)
+        return {
+            "scan": {"ts": NOW.isoformat(), "models_listed": 466, "changes": 2, "error": None},
+            "ladder": {"tier1_cheap": {"configured": ["a/b", "c/d"], "effective": ["c/d"],
+                                       "dropped": [{"slug": "a/b", "reason": "over"}]}},
+            "changes": [],
+            "new_free": [],
+            "expiring_in_ladder": [],
+            "gauntlet": None,
+            "proposals": [],
+            "golden": {"size": 30, "reviewed": 0, "pinned_at": None},
+            "prices_in": "US$ per million tokens",
+        }
+
+    def latest(conn, job):
+        return JobRun(job, NOW, NOW, completed=True) if job == "model-scan" else None
+
+    monkeypatch.setattr(OpsApi, "_read", connection)
+    monkeypatch.setattr(ops_api, "models_report", report)
+    monkeypatch.setattr(ops_api, "load_latest_job", latest)
+    return seen
+
+
+def test_the_models_report_is_what_ripperdoc_reads(api, models_db):
+    response = api.handle("GET", "/ops/models", AUTH)
+    assert response.status == 200
+    body = response.json()
+    assert body["ladder"]["tier1_cheap"]["effective"] == ["c/d"]
+    assert body["passes"]["model-scan"]["completed"] is True
+    assert body["passes"]["model-gauntlet"] is None
+    assert models_db["reads"] == 1 and len(models_db["asked"]) == 1
+
+
+def test_the_models_report_needs_the_token_and_takes_no_query(api, models_db):
+    assert api.handle("GET", "/ops/models", {}).status == 401
+    assert api.handle("GET", "/ops/models?tier=x", AUTH).status == 400
+    assert models_db["asked"] == []
+
+
+def test_the_index_lists_the_models_report(api):
+    assert "/ops/models" in api.handle("GET", "/ops", AUTH).json()["reads"]

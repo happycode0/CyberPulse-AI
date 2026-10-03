@@ -116,7 +116,7 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 | **2** | Ground truth + AI enrichment + AU relevance + evidence + cost ledger | 🟢 | ✅ done, live on the VM |
 | **3** | Material change, source lineage, trends, decay, extra adapters | 🟢 | ✅ done, live on the VM |
 | **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | ▶ in progress |
-| **5** | Full crew + follow-up + Telegram + public crew page | 🟢 | |
+| **5** | Full crew + follow-up + Telegram + public crew page | 🟢🔴 | ▶ built, live on the VM; agents wait for you to resume them |
 | **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢 | |
 | **7** | Hardening: backups, observability, failure injection, runbooks | 🟢🔴 | |
 
