@@ -46,6 +46,7 @@ from worker.db.groundtruth import (
     record_epss,
     set_event_severity,
 )
+from worker.db.material import record_register_changes
 from worker.db.mitre import load_catalogue, loaded_versions
 from worker.db.session import get_engine
 from worker.groundtruth.cvss import resolve_cvss
@@ -64,6 +65,7 @@ from worker.groundtruth.registers import (
     fetch_mitre_release,
 )
 from worker.models import CvssScore
+from worker.pipeline.material import fix_published, kev_listing
 from worker.pipeline.run import DEFAULT_SCORING_PATH, rescore
 from worker.pipeline.score import ScoringConfig
 
@@ -129,6 +131,8 @@ class AdvisoryTally:
     errored: int = 0
     recorded: int = 0
     backed_off: bool = False
+    # Events given a NEW_PATCH because an advisory gained a fixed version: their freshness moved.
+    patched_events: set[str] = field(default_factory=set, repr=False)
 
 
 @dataclass
@@ -240,6 +244,7 @@ async def sync_groundtruth(
             found, backed_off = await _resolve_advisories(client, due)
             summary.advisories = await asyncio.to_thread(_write_advisories, engine, found, moment)
             summary.advisories.backed_off = backed_off
+            touched |= summary.advisories.patched_events
             if backed_off:
                 summary.errors.append("advisories: OSV asked us to back off; batch cut short")
 
@@ -374,8 +379,12 @@ async def _sync_mitre(client: httpx.AsyncClient, engine: Engine) -> tuple[list[s
 
 
 def _write_kev(engine: Engine, catalogue: KevCatalogue) -> KevResult:
+    """The listings, and what a new one changes on the events naming its CVE (whose ids are
+    among `changed_cves`, so they are rescored with the rest)."""
     with engine.begin() as conn:
-        return apply_kev(conn, catalogue)
+        result = apply_kev(conn, catalogue)
+        record_register_changes(conn, [kev_listing(c, d) for c, d in result.newly_listed])
+        return result
 
 
 def _write_epss(engine: Engine, snapshot: EpssSnapshot) -> ScoreResult:
@@ -459,6 +468,9 @@ def _write_advisories(
                         conn, cve_id, lookup.advisories, now=now, complete=lookup.complete
                     )
                     tally.recorded += change.changed
+                    tally.patched_events |= record_register_changes(
+                        conn, [fix_published(cve_id, a, now=now) for a in change.fixed]
+                    )
                 record_advisory_check(conn, cve_id, lookup.outcome, lookup.detail, now=now)
                 name = _ADVISORY_TALLY_FIELD[lookup.outcome]
                 setattr(tally, name, getattr(tally, name) + 1)
