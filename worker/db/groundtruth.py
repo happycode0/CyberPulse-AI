@@ -60,6 +60,10 @@ class KevResult:
         logged as a whole dataclass by both `sync_groundtruth` and `worker.main`, every id appeared
         in the log twice — some 140 KB for one line that was supposed to be a summary. Nothing is
         lost: `len(changed_cves)` is `updated + delisted`, both of which are in the repr.
+    newly_listed : tuple[tuple[str, date], ...]
+        The CVEs that were not listed before, with the date CISA added them: a material change
+        for an event that named the CVE before then (worker/pipeline/material.py). Excluded from
+        the repr for the same reason.
     """
 
     updated: int = 0
@@ -67,6 +71,7 @@ class KevResult:
     unchanged: int = 0
     delist_withheld: int = 0
     changed_cves: tuple[str, ...] = field(default=(), repr=False)
+    newly_listed: tuple[tuple[str, date], ...] = field(default=(), repr=False)
 
 
 @dataclass(frozen=True)
@@ -126,6 +131,7 @@ def apply_kev(conn: Connection, catalogue: KevCatalogue) -> KevResult:
 
     updated = delisted = unchanged = withheld = 0
     changed: list[str] = []
+    listed: list[tuple[str, date]] = []
     for cve_id, was_listed, had_added, had_due in rows:
         entry = catalogue.lookup(cve_id)
         if entry.listed:
@@ -135,6 +141,8 @@ def apply_kev(conn: Connection, catalogue: KevCatalogue) -> KevResult:
                 _write_kev(conn, cve_id, True, entry.date_added, entry.due_date)
                 changed.append(cve_id)
                 updated += 1
+                if not was_listed and entry.date_added is not None:
+                    listed.append((cve_id, entry.date_added))
         elif not was_listed:
             unchanged += 1
         elif trust_absence:
@@ -150,6 +158,7 @@ def apply_kev(conn: Connection, catalogue: KevCatalogue) -> KevResult:
         unchanged=unchanged,
         delist_withheld=withheld,
         changed_cves=tuple(changed),
+        newly_listed=tuple(listed),
     )
 
 
