@@ -45,14 +45,14 @@ def conn(pg_engine):
 
 
 def insert_event(conn, event_id, *, summary="CVE-2026-88772 exploited; patch available.",
-                 prominence=0.9, first_seen=NOW, severity="high"):
+                 prominence=0.9, first_seen=NOW, severity="high", status="new"):
     conn.execute(
         text(
             "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
-            "enrichment_version, first_seen, last_seen, title, normalised_title, summary, "
+            "enrichment_version, first_seen, last_seen, status, title, normalised_title, summary, "
             "severity, prominence) values (:id, :schema, :pipeline, :scoring, :enrichment, "
-            ":first, :first, 'Acme VPN zero-day', 'acme vpn zero-day', :summary, :severity, "
-            ":prominence)"
+            ":first, :first, :status, 'Acme VPN zero-day', 'acme vpn zero-day', :summary, "
+            ":severity, :prominence)"
         ),
         {
             "id": event_id,
@@ -64,6 +64,7 @@ def insert_event(conn, event_id, *, summary="CVE-2026-88772 exploited; patch ava
             "summary": summary,
             "severity": severity,
             "prominence": prominence,
+            "status": status,
         },
     )
 
@@ -101,6 +102,15 @@ def test_live_json_lists_events_by_prominence_above_the_threshold(tmp_path, conn
     build_all(conn, tmp_path, now=NOW)
     ids = [e["event_id"] for e in read(tmp_path, "live.json")["events"]]
     assert ids == ["evt-2026-000002", "evt-2026-000001"]
+
+
+def test_an_archived_event_keeps_its_day_page_but_is_not_live(tmp_path, conn):
+    insert_event(conn, "evt-2026-000001", prominence=0.9)
+    insert_event(conn, "evt-2026-000002", prominence=0.8, status="archived")
+    build_all(conn, tmp_path, now=NOW)
+    assert [e["event_id"] for e in read(tmp_path, "live.json")["events"]] == ["evt-2026-000001"]
+    day = read(tmp_path, "history/2026-09-30.json")["events"]
+    assert {e["event_id"] for e in day} == {"evt-2026-000001", "evt-2026-000002"}
 
 
 def test_history_and_index_follow_first_seen_dates(tmp_path, conn):

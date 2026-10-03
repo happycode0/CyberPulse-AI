@@ -3,8 +3,8 @@
 [← Stage 2 — Ground truth](stage-2-ground-truth.md) · [Wiki home](README.md) ·
 [Stage 4 — Paperclip →](stage-4-paperclip.md)
 
-**Status: ▶ in progress.** Consolidation (one story = one event), source lineage and material
-change are built. Archiving, trends and the new adapters come next. Nothing in it is yours to do.
+**Status: ▶ in progress.** Consolidation (one story = one event), source lineage, material change
+and archiving are built. Trends and the new adapters come next. Nothing in it is yours to do.
 Plan:
 [PLAN.md §9, Stage 3](../../PLAN.md#9-stages)
 
@@ -28,6 +28,7 @@ impressions.
 | Source lineage: one organisation's feeds, a relay of an agency and a word-for-word copy are one voice (`worker/pipeline/lineage.py`) | ✅ |
 | `python -m worker --check-lineage`: confirmations counted by outlet and by lineage | ✅ |
 | Material change: what a new report or a register adds to an event moves it up again (`worker/pipeline/material.py`) | ✅ |
+| Archiving: a faded event leaves the live set, keeps its day page, and comes back on news (`worker/db/archive.py`) | ✅ |
 
 ### The duplicate rate (measured on the VM, 2026-10-03)
 
@@ -128,13 +129,35 @@ Replayed over the last 30 days (118 events with more than one report), the headl
 4 confirmed exploitations, 1 new exploit and 12 first Australian reports: few, and each one real,
 such as "Cisco warns of new SD-WAN zero-day exploited in attacks" joining a Cisco advisory.
 
+### Archiving (measured on the VM, 2026-10-03)
+
+Every run, after scoring, an event is archived when its prominence has decayed below 0.05 or it
+has had no material update for 30 days (`archive:` in `config/scoring.yaml`). Nothing is deleted.
+An archived event:
+
+- stays on its day page in the site's history, and its link still works;
+- leaves `live.json`, and is no longer rescored, enriched, given MITRE techniques or merged;
+- comes back as a **developing** event on a material change: a report that adds something, a
+  KEV listing, or a published fix. Another outlet repeating the story does not bring it back.
+
+| | Events |
+|---|---|
+| Standing before the first pass | 2,216 |
+| Archived by the first pass | 2,026 |
+| … faded below 0.05 in the last 30 days | 313 |
+| … faded and idle for more than 30 days | 1,713 |
+| Still live | 190 |
+
+No event idle for 30 days still scored 0.05 or more (the highest was 0.021): decay already made
+them invisible. Archiving turns that number into a status that the site, enrichment and the
+merge pass all read the same way. The oldest dates from November 2021: some feeds list years of
+items.
+
 ## Still to build (🟢 all Claude)
 
-1. **Archiving:** an event whose prominence has decayed away, or that has had no material update
-   for 30 days, is archived (never deleted).
-2. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
-3. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
-4. **pgvector embeddings, only if measurement shows they are needed.** The database image already
+1. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
+2. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
+3. **pgvector embeddings, only if measurement shows they are needed.** The database image already
    has pgvector; it stays unused unless deterministic matching measurably falls short.
 
 ## Done when
