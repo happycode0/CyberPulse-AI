@@ -36,6 +36,7 @@ from worker.collectors.http import (
     prune_cache,
 )
 from worker.collectors.json_api import parse_json_api
+from worker.collectors.web_page import parse_web_page
 from worker.db.archive import archive_faded
 from worker.db.au import load_au_facts, save_au
 from worker.db.events import find_candidates, load_events, next_event_id
@@ -156,6 +157,8 @@ def parse_body(source: SourceConfig, body: bytes) -> list[RawItem]:
         return parse_json_api(source, body)
     if source.type in ("rss", "atom"):
         return parse_feed(source, body)
+    if source.type == "web_page":
+        return parse_web_page(source, body)
     raise ValueError(f"unsupported source type {source.type!r}")
 
 
