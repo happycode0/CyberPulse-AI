@@ -3,8 +3,8 @@
 [← Stage 2 — Ground truth](stage-2-ground-truth.md) · [Wiki home](README.md) ·
 [Stage 4 — Paperclip →](stage-4-paperclip.md)
 
-**Status: ▶ in progress.** Consolidation (one story = one event), source lineage, material change
-and archiving are built. Trends and the new adapters come next. Nothing in it is yours to do.
+**Status: ▶ in progress.** Consolidation (one story = one event), source lineage, material change,
+archiving and trends are built. The new adapters come next. Nothing in it is yours to do.
 Plan:
 [PLAN.md §9, Stage 3](../../PLAN.md#9-stages)
 
@@ -29,6 +29,7 @@ impressions.
 | `python -m worker --check-lineage`: confirmations counted by outlet and by lineage | ✅ |
 | Material change: what a new report or a register adds to an event moves it up again (`worker/pipeline/material.py`) | ✅ |
 | Archiving: a faded event leaves the live set, keeps its day page, and comes back on news (`worker/db/archive.py`) | ✅ |
+| Trends: topic and CVE velocity counted from independent reports, published as `trends.json` and shown under TRENDS (`worker/pipeline/trends.py`) | ✅ |
 
 ### The duplicate rate (measured on VM 200, 2026-10-03)
 
@@ -153,18 +154,51 @@ them invisible. Archiving turns that number into a status that the site, enrichm
 merge pass all read the same way. The oldest dates from November 2021: some feeds list years of
 items.
 
+### Trends (measured on VM 200, 2026-10-03)
+
+Every publish counts what the database already holds into `trends.json`
+(`worker/pipeline/trends.py`); nothing is stored and no model is asked. The site shows it as
+TRENDS, the first section under OVERVIEW.
+
+- **What is counted.** Independent reports (one per lineage, as above), each on the day it was
+  published. A report counts toward a topic when its own headline names it: a vendor, actor,
+  malware family or kind of threat from the curated list in `config/trends.yaml` (126 topics,
+  whole words only). A CVE counts every report on an event that names it.
+- **Only since collection began.** Feeds list years of items, so a report or story dated before
+  the first run is not counted anywhere. CISA's KEV dates are the exception: they cover its whole
+  catalogue, so KEV additions count on every day.
+- **Velocity.** The last 24 hours against the per-day rate over up to six days before them,
+  softened by one: (last day + 1) / (per day before + 1). **New** is three or more reports where
+  there were none; **rising** is three or more at twice the rate or more; **falling** is a rate of
+  one a day or more that has halved. Anything else is **steady**.
+- **Warming up.** With under 48 hours before the last day, nothing is called rising or falling.
+  The site says so, and says how many hours there are.
+- **Emerging threats.** An event named by a new or rising topic is listed under EMERGING THREATS.
+
+| | First production payload |
+|---|---|
+| Collecting since | 2026-10-01 11:33 UTC (21:33 AEST) |
+| Hours before the last day | 18 of the 48 needed: warming up until about 2026-10-04 11:33 UTC |
+| New stories, 1 Oct (part of the day) / 2 Oct (whole day) | 41 / 64 |
+| Topics named in the last week / CVEs | 25 / 15 |
+| Busiest topics, last 24 h | Microsoft 4, ransomware 3 |
+| Size | 9.7 KB |
+
+Days before collection began show as a flat line and "—", never as zero. A missing or unreadable
+`trends.json` says so in the panel and the rest of the page still renders.
+
 ## Still to build (🟢 all Claude)
 
-1. **Trend engine** with real velocity metrics, and the trends and emerging-threats pages.
-2. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
-3. **pgvector embeddings, only if measurement shows they are needed.** The database image already
+1. **Adapters for sources with no feed:** YouTube, `web_page`, `sitemap`.
+2. **pgvector embeddings, only if measurement shows they are needed.** The database image already
    has pgvector; it stays unused unless deterministic matching measurably falls short.
 
 ## Done when
 
 - [x] The duplicate rate is measured and acceptable (29.1% → 13.5%; the rest is explained above)
 - [x] Syndication no longer inflates confidence (2,265 → 2,255 confirmations; NetScaler 7 → 5)
-- [ ] Trends are computed from real data
+- [x] Trends are computed from real data (independent reports since 2026-10-01; states once 48 h
+  of baseline exist)
 
 ---
 

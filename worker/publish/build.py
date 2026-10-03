@@ -17,7 +17,7 @@ import os
 import shutil
 import tempfile
 from collections import Counter, defaultdict
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +32,9 @@ from worker.db.sources import (
     load_lifecycle_states,
     load_registry_rows,
 )
+from worker.db.trends import load_trend_inputs
 from worker.models import Event, EventStatus, LifecycleState, SourceHealth
+from worker.pipeline.trends import ACTIVITY_DAYS, compute_trends, load_trends_config
 from worker.publish.claims import with_fact_claims
 from worker.publish.validate import (
     ValidationFailure,
@@ -166,6 +168,22 @@ def _system_status_payload(
     }
 
 
+def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[str, Any]:
+    """Counted from the stored reports (worker/pipeline/trends.py), over the activity chart's
+    days, which take in both velocity windows."""
+    first_day = now.astimezone(UTC).date() - timedelta(days=ACTIVITY_DAYS - 1)
+    inputs = load_trend_inputs(conn, since=datetime.combine(first_day, time(), tzinfo=UTC))
+    trends = compute_trends(
+        inputs.reports,
+        inputs.stories,
+        inputs.kev_added,
+        load_trends_config(),
+        now=now,
+        collecting_since=inputs.collecting_since,
+    )
+    return {"generated_at": generated_at, "pipeline_version": PIPELINE_VERSION, **trends}
+
+
 def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, dict[str, Any]]]:
     """Every public file as `relative path -> (schema name, payload)`, in write order.
 
@@ -209,6 +227,7 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
         "system-status",
         _system_status_payload(conn, generated_at, published=len(live), total=len(public)),
     )
+    out["trends.json"] = ("trends", _trends_payload(conn, generated_at, now))
     out["index.json"] = (
         "index",
         {
