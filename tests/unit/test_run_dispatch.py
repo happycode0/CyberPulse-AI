@@ -3,6 +3,7 @@ import pytest
 
 from worker.collectors.json_api import JSON_PARSERS
 from worker.collectors.web_page import WEB_PAGE_PARSERS
+from worker.models import Beat
 from worker.pipeline.health import STALE_AFTER_DAYS
 from worker.pipeline.run import DEFAULT_REGISTRY_PATH, DEFAULT_SCORING_PATH, parse_body
 from worker.pipeline.score import ScoringConfig
@@ -35,13 +36,28 @@ def test_every_committed_frequency_has_a_staleness_threshold(source):
     assert source.expected_frequency in STALE_AFTER_DAYS
 
 
-@pytest.mark.parametrize(
-    "source", [s for s in ENABLED if s.category == "ai_security"], ids=lambda s: s.id
-)
+AI_SOURCES = [
+    s for s in ENABLED if s.category == "ai_security" or s.beat in (Beat.AI, Beat.BOTH)
+]
+
+
+@pytest.mark.parametrize("source", AI_SOURCES, ids=lambda s: s.id)
 def test_ai_sources_are_in_a_lane_the_worker_schedules(source):
-    """AI + CYBER is a core section (PLAN.md section 5 puts AI sources in NORMAL). DEEP has no
-    worker schedule, so an AI source left there is never read."""
+    """AI news is a core desk (docs/wiki/ai-news-beat.md; PLAN.md section 5 puts AI sources in
+    NORMAL). DEEP has no worker schedule, so an AI source left there is never read."""
     assert source.lane in SCHEDULE
+
+
+@pytest.mark.parametrize(
+    "source", [s for s in SOURCES if s.category == "ai_security"], ids=lambda s: s.id
+)
+def test_every_ai_security_source_names_its_beat(source):
+    """Without a beat its items would start on the cyber desk."""
+    assert source.beat in (Beat.AI, Beat.BOTH)
+
+
+def test_the_ai_beat_has_its_own_news_feeds():
+    assert sum(s.beat is Beat.AI and s.category != "ai_security" for s in ENABLED) >= 5
 
 
 def test_unsupported_type_raises_a_clear_error():

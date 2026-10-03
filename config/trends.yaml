@@ -6,7 +6,7 @@
 # Words that are also everyday English are left out ("progress", "play", "edge", "intel",
 # "exchange", "ios" which is Apple's and Cisco's): a topic must rise on news, not on prose.
 # A model may propose a topic; it lands here by review, never at run time.
-version: "1"
+version: "2"
 
 topics:
   # --- vendors and their flagship products ----------------------------------------------------
@@ -141,3 +141,16 @@ topics:
   - {key: cryptojacking, label: Cryptojacking, kind: threat, terms: [cryptojacking, cryptominer, cryptominers]}
   - {key: prompt-injection, label: Prompt injection, kind: threat, terms: [prompt injection, jailbreak, jailbreaks]}
   - {key: scam, label: Scams and fraud, kind: threat, terms: [scam, scams, scammers, fraud]}
+
+  # --- AI: models, agents and the rules on them (docs/wiki/ai-news-beat.md) -------------------
+  # The labs themselves are vendors above (openai, anthropic, google, nvidia). Prompt injection
+  # is a kind of threat above.
+  - {key: mcp, label: MCP, kind: ai, terms: [mcp, model context protocol]}
+  - {key: ai-agents, label: AI agents, kind: ai, terms: [ai agent, ai agents, agentic]}
+  - {key: gemini, label: Gemini, kind: ai, terms: [gemini]}
+  - {key: llama, label: Llama, kind: ai, terms: [llama]}
+  - {key: mistral, label: Mistral, kind: ai, terms: [mistral]}
+  - {key: deepseek, label: DeepSeek, kind: ai, terms: [deepseek]}
+  - {key: model-poisoning, label: Model poisoning, kind: ai, terms: [model poisoning, data poisoning, poisoned model, poisoned models]}
+  - {key: eu-ai-act, label: EU AI Act, kind: ai, terms: [ai act]}
+  - {key: ai-regulation, label: AI regulation, kind: ai, terms: [ai regulation, ai regulations, ai regulator, ai law, ai laws, ai bill, ai rules, ai guardrails]}

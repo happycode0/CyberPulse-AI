@@ -45,7 +45,8 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "date", "coverage", "stories", "reports", "kev_added", "critical_high", "au_stories"
+          "date", "coverage", "stories", "reports", "kev_added", "critical_high", "au_stories",
+          "ai_stories"
         ],
         "properties": {
           "date": { "type": "string", "format": "date" },
@@ -54,7 +55,11 @@
           "reports": { "$ref": "#/$defs/count" },
           "kev_added": { "$ref": "#/$defs/count" },
           "critical_high": { "$ref": "#/$defs/count" },
-          "au_stories": { "$ref": "#/$defs/count" }
+          "au_stories": { "$ref": "#/$defs/count" },
+          "ai_stories": {
+            "description": "Stories on the AI desk: their beat is `ai` or `both`.",
+            "$ref": "#/$defs/count"
+          }
         }
       }
     },
@@ -71,7 +76,7 @@
         "properties": {
           "key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
           "label": { "type": "string", "minLength": 1 },
-          "kind": { "enum": ["vendor", "actor", "malware", "threat"] },
+          "kind": { "enum": ["vendor", "actor", "malware", "threat", "ai"] },
           "recent": { "$ref": "#/$defs/count" },
           "baseline": { "$ref": "#/$defs/count" },
           "baseline_per_day": { "type": "number", "minimum": 0 },

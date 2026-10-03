@@ -27,6 +27,7 @@ from worker.ai.tasks import (
     sentences,
 )
 from worker.models import (
+    AiSignificance,
     AiSubdomain,
     AuRelevance,
     CveRef,
@@ -174,6 +175,7 @@ def triage_answer(**changes):
         "domains": ["cybersecurity"],
         "categories": ["vulnerability", "zero-day"],
         "ai_subdomain": None,
+        "ai_significance": None,
         "entities": {
             "actors": [],
             "organisations": ["Acme Corp", "Australian Cyber Security Centre"],
@@ -240,6 +242,57 @@ def test_an_ai_subdomain_needs_the_ai_domain():
     assert TRIAGE.parse(answer, subject()).ai_subdomain is None
     answer = triage_answer(domains=["cybersecurity", "ai"], ai_subdomain="AI_SECURITY")
     assert TRIAGE.parse(answer, subject()).ai_subdomain is AiSubdomain.AI_SECURITY
+
+
+# ─── The AI beat (docs/wiki/ai-news-beat.md) ──────────────────────────────────────────────────────
+
+
+def test_triage_offers_the_ai_desks_categories():
+    for slug in ("ai-industry", "model-release", "ai-governance", "ai-incident", "ai-research"):
+        assert slug in CATEGORIES
+    assert "AI" not in CATEGORIES["research"]  # research is the security kind now
+    assert "ai_significance" in TRIAGE.schema["required"]
+
+
+def test_ai_significance_is_kept_only_on_the_ai_desk():
+    ai = triage_answer(domains=["ai"], ai_subdomain="AI_INDUSTRY", ai_significance="major")
+    t = TRIAGE.parse(ai, subject())
+    assert t.ai_significance is AiSignificance.MAJOR and t.ai_only
+    cyber = triage_answer(domains=["cybersecurity"], ai_significance="major")
+    t = TRIAGE.parse(cyber, subject())
+    assert t.ai_significance is None and not t.ai_only
+
+
+def test_neither_domain_is_a_valid_answer():
+    t = TRIAGE.parse(triage_answer(domains=[], categories=[]), subject())
+    assert t.domains == () and not t.ai_only
+
+
+@pytest.mark.parametrize(
+    "subdomain", ["AI_SECURITY", "AI_THREAT_ACTIVITY", "AI_CYBER_CONVERGENCE"]
+)
+def test_an_ai_story_with_a_security_angle_is_on_the_cyber_desk_too(subdomain):
+    t = TRIAGE.parse(triage_answer(domains=["ai"], ai_subdomain=subdomain), subject())
+    assert set(t.domains) == {"cybersecurity", "ai"} and not t.ai_only
+
+
+def test_an_answer_from_before_ai_significance_still_parses():
+    answer = triage_answer(domains=["ai"], ai_subdomain="AI_INDUSTRY")
+    del answer["ai_significance"]
+    assert TRIAGE.parse(answer, subject()).ai_significance is None
+
+
+def test_an_ai_only_story_gets_no_severity_judgment():
+    assert not SEVERITY.applies(subject(domains=["ai"]))
+    assert SEVERITY.applies(subject(domains=["cybersecurity", "ai"]))
+    assert SEVERITY.applies(subject(domains=["cybersecurity"]))
+    # Not yet sorted, or found on neither desk: as before.
+    assert SEVERITY.applies(subject(domains=[]))
+    assert TRIAGE.applies(subject(domains=["ai"])) and BRIEF.applies(subject(domains=["ai"]))
+
+
+def test_the_brief_says_what_ai_news_means_for_people_who_follow_ai():
+    assert "build, buy or regulate AI" in BRIEF.instructions
 
 
 # ─── Brief ────────────────────────────────────────────────────────────────────────────────────────

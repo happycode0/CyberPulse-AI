@@ -15,6 +15,7 @@ carries counts and our own reasons, never model output.
 """
 
 import asyncio
+import dataclasses
 import functools
 import logging
 from collections import Counter
@@ -62,7 +63,7 @@ from worker.db.enrichment import (
 )
 from worker.db.ledger import record_to
 from worker.db.session import get_engine
-from worker.models import EventStatus
+from worker.models import AiSignificance, EventStatus, Severity, SeveritySource
 from worker.pipeline.run import DEFAULT_SCORING_PATH, rescore
 from worker.pipeline.score import ScoringConfig
 from worker.publish.build import LIVE_MIN_PROMINENCE
@@ -125,7 +126,22 @@ def _work(task: Task, subject: Subject) -> Work:
         e.severity,
         kev=any(c.kev.listed for c in e.cves),
         developing=e.status is EventStatus.DEVELOPING,
+        ai_major=e.ai_significance is AiSignificance.MAJOR,
     )
+
+
+def after_triage(subject: Subject, triage: Triage) -> Subject:
+    """The subject as triage left it (worker/db/enrichment.py `apply_triage`): on the beat it
+    found, and without a model's cyber rating once it is an AI-only story."""
+    e = subject.event
+    update: dict[str, object] = {
+        "domains": list(triage.domains),
+        "ai_subdomain": triage.ai_subdomain,
+        "ai_significance": triage.ai_significance,
+    }
+    if triage.ai_only and e.severity_source is SeveritySource.AI_ESTIMATE:
+        update |= {"severity": Severity.UNKNOWN, "severity_source": SeveritySource.UNKNOWN}
+    return dataclasses.replace(subject, event=e.model_copy(update=update))
 
 
 def _route(governor: Governor, task: Task, work: Work) -> Route | Waiting:
@@ -361,6 +377,9 @@ async def _enrich_event(
 ) -> None:
     event_id = subject.event.event_id
     for task in tasks:
+        # Triage may have just found an AI-only story, which gets no severity judgment.
+        if not task.applies(subject):
+            continue
         outcome = await run_task(client, governor, task, subject)
         await asyncio.to_thread(_write, engine, task, subject, outcome, now)
         match outcome:
@@ -369,6 +388,7 @@ async def _enrich_event(
                 touched.add(event_id)
                 if isinstance(result, Triage):
                     summary.dropped_names += result.dropped
+                    subject = after_triage(subject, result)
             case Failed(reason=reason):
                 summary.failed += 1
                 logger.info("enrichment %s %s failed: %s", event_id, task.name, reason)

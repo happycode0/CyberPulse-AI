@@ -1,22 +1,27 @@
+import dataclasses
 from datetime import UTC, date, datetime
 
 import pytest
 
 from worker.ai.golden import (
     GOLDEN_SIZE,
+    AiCandidate,
     GoldenEvent,
     au_desk_label,
     au_label_counts,
     blinded,
     digest,
     labels_for,
+    load_ai_candidates,
     pin,
     stratify,
     subject_from_record,
 )
 from worker.ai.tasks import SourceFacts, Subject, record
 from worker.models import (
+    AiSignificance,
     AuRelevance,
+    Beat,
     CveRef,
     CvssScore,
     EpssScore,
@@ -25,8 +30,10 @@ from worker.models import (
     Severity,
     SeveritySource,
 )
+from worker.pipeline.run import DEFAULT_REGISTRY_PATH
+from worker.sources.registry import load_registry
 
-T0 = datetime(2026, 9, 20, 14, 30, tzinfo=UTC)
+T0 =datetime(2026, 9, 20, 14, 30, tzinfo=UTC)
 SOURCE_TEXT = (
     "A heap overflow in the Acme SecureGate management interface lets an unauthenticated "
     "attacker run code as root. Acme has released fixed builds."
@@ -153,6 +160,60 @@ def test_the_severity_task_is_shown_neither_the_severity_nor_the_scores():
     assert [c["cvss"] for c in rec["cves"]] == [None, None]
     # What the severity is judged from stays.
     assert rec["cves"][0]["kev_listed"] is True and rec["source_text"] == SOURCE_TEXT
+
+
+# ─── AI stories the owner labels (worker/ai/golden_ai.yaml) ───────────────────────────────────────
+
+
+def test_the_ai_stories_come_from_ai_sources_and_each_appears_once():
+    candidates = load_ai_candidates()
+    assert 8 <= len(candidates) <= 15
+    assert len({c.url for c in candidates}) == len(candidates)
+    beats = {s.id: s.beat for s in load_registry(DEFAULT_REGISTRY_PATH)}
+    assert {beats.get(c.source_id) for c in candidates} <= {Beat.AI, Beat.BOTH}
+    # Whatever the owner has done so far, nothing unchecked is used.
+    assert all(c.reviewed for c in candidates if c.labelled)
+
+
+def test_a_story_counts_once_labelled_and_reviewed():
+    blank = AiCandidate("https://news.example/a", "ars_ai", "A model launch")
+    assert not blank.labelled
+    assert not dataclasses.replace(blank, reviewed=True).labelled
+    ai = dataclasses.replace(blank, beat=Beat.AI, reviewed=True)
+    assert not ai.labelled  # an AI story needs its significance too
+    assert dataclasses.replace(ai, ai_significance=AiSignificance.MINOR).labelled
+    assert not dataclasses.replace(ai, ai_significance=AiSignificance.MINOR, reviewed=False).labelled
+    assert dataclasses.replace(blank, beat=Beat.OTHER, reviewed=True).labelled
+
+
+def test_significance_belongs_to_the_ai_desk():
+    with pytest.raises(ValueError, match="only for the ai or both beat"):
+        AiCandidate("https://news.example/a", "ars_ai", "A", Beat.CYBER, AiSignificance.MAJOR)
+
+
+def test_the_file_is_read_with_blanks_as_none(tmp_path):
+    path = tmp_path / "golden_ai.yaml"
+    path.write_text(
+        "candidates:\n"
+        "  - {url: 'https://news.example/a', source_id: ars_ai, headline: A,\n"
+        "     labels: {beat: null, ai_significance: null, au_desk: null}, reviewed: false}\n"
+        "  - {url: 'https://news.example/b', source_id: ars_ai, headline: B,\n"
+        "     labels: {beat: both, ai_significance: major, au_desk: true}, reviewed: true}\n",
+        encoding="utf-8",
+    )
+    a, b = load_ai_candidates(path)
+    assert (a.beat, a.ai_significance, a.au_desk, a.reviewed) == (None, None, None, False)
+    assert b.labelled and b.labels() == {
+        "triage": {"beat": "both", "ai_significance": "major"},
+        "au_desk": True,
+        "from": "owner",
+    }
+    path.write_text(
+        "candidates:\n  - {url: x, source_id: y, headline: z, labels: {au_desk: maybe}}\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="au_desk"):
+        load_ai_candidates(path)
 
 
 def test_the_digest_names_the_exact_set():

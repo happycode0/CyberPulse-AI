@@ -9,11 +9,18 @@
     "event_id", "schema_version", "pipeline_version", "scoring_version", "enrichment_version",
     "first_seen", "last_seen", "last_material_update", "last_independent_confirmation", "status",
     "title", "summary", "why_it_matters", "resolution",
-    "domains", "categories", "ai_subdomain",
+    "domains", "categories", "ai_subdomain", "ai_significance", "beat",
     "severity", "severity_source",
     "risk", "au", "entities",
     "cves", "mitre_techniques", "claims", "sources", "timeline", "relationships",
     "tags", "pending_enrichment"
+  ],
+  "allOf": [
+    {
+      "description": "ai_significance is only set on AI events (docs/wiki/ai-news-beat.md).",
+      "if": { "properties": { "beat": { "enum": ["cyber", "other"] } }, "required": ["beat"] },
+      "then": { "properties": { "ai_significance": { "type": "null" } } }
+    }
   ],
   "properties": {
     "event_id": { "type": "string", "pattern": "^evt-\\d{4}-\\d{6}$" },
@@ -42,6 +49,14 @@
         { "enum": ["AI_INDUSTRY", "AI_SECURITY", "AI_THREAT_ACTIVITY", "AI_CYBER_CONVERGENCE"] },
         { "type": "null" }
       ]
+    },
+    "ai_significance": {
+      "description": "The AI desk's scale. null unless beat is ai or both.",
+      "anyOf": [{ "enum": ["major", "notable", "minor"] }, { "type": "null" }]
+    },
+    "beat": {
+      "description": "Derived from domains: both, ai only, cybersecurity only, or neither (other).",
+      "enum": ["cyber", "ai", "both", "other"]
     },
 
     "severity": { "enum": ["critical", "high", "medium", "low", "unknown"] },
