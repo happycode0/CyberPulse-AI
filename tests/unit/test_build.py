@@ -428,6 +428,16 @@ def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
     assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412}
 
 
+def test_seraph_stays_active_between_fast_runs_at_any_cadence(tmp_path, db):
+    # An enrichment pass publishes between runs, and a restart can cost one run. SERAPH's
+    # publish job is writing this file, so it reads active however old its last source check is.
+    db["crew"]["seraph"] = Activity(894, 4045, NOW - timedelta(hours=3))
+    build_all(None, tmp_path, now=NOW)
+    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
+    assert agents["SERAPH"]["status"] == "active"
+    assert agents["SERAPH"]["last_active_at"] == "2026-09-30T12:00:00Z"
+
+
 def test_crew_json_degrades_seraph_when_ground_truth_fails(tmp_path, db):
     db["crew"]["seraph"] = Activity(894, 4045, NOW - timedelta(minutes=5), failing=True)
     build_all(None, tmp_path, now=NOW)

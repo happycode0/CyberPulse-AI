@@ -283,7 +283,7 @@ the worker image. After a rotation, remove old worker images with `docker image 
 | I | `.env` or a key is committed | .gitignore keeps out `.env`, `.env.*` (except `.env.example`), key files, `master.key`, `secrets/`, dumps and `backup/` (.gitignore:1-33). A check of the whole history on 2026-10-03 found no such file ever committed. Nothing scans commits on GitHub's side yet |
 | E | A fork's pull request runs with this repo's rights | There is one workflow, pages.yml. It has no `pull_request_target` trigger, and its token is `contents: read`, `pages: write`, `id-token: write` (pages.yml:34-37) |
 | T | A third-party action changes under its tag | Actions are pinned to major tags, not commit SHAs (pages.yml:6-8, 49, 57, 73, 76, 82). A moved tag could deploy a different site |
-| D | GitHub turns the schedule off | GitHub can disable scheduled workflows in a public repository after 60 days without activity. The data pushes every 15 minutes should count; `site-stale` says if not |
+| D | GitHub turns the schedule off | GitHub can disable scheduled workflows in a public repository after 60 days without activity. The data pushes every hour should count; `site-stale` says if not |
 
 **Residual risk: low likelihood, high impact** for a committed `.env`. **You:** turn on **Secret
 scanning** and **Push protection** (Settings → Code security; free for public repositories). Never

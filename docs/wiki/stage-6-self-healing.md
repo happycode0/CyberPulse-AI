@@ -48,18 +48,18 @@ signature seen opens an **incident**.
 
 | Signature | Seen when | Severity |
 |---|---|---|
-| `no-collection` | A lane has finished no run for 35 minutes (fast) or 4 h 35 min (normal) | critical (fast), high (normal) |
-| `zero-volume` | A lane's last 3 fast or 2 normal runs, over at least 30 minutes, fetched nothing | high |
-| `feed-failing` | A feed's last 5 checks failed. The evidence lists its same-host siblings, so a publisher that is down shows as one | high for a priority-1 source, else medium |
+| `no-collection` | A lane has finished no run for 2 h 5 min (fast) or 4 h 35 min (normal): two missed runs for fast, one for normal | critical (fast), high (normal) |
+| `zero-volume` | A lane's last 2 runs, over at least 30 minutes, fetched nothing | high |
+| `feed-failing` | A feed's last checks failed: 3 for a fast feed (2 hours), 5 for a normal or deep one. The evidence lists its same-host siblings, so a publisher that is down shows as one | high for a priority-1 source, else medium |
 | `parser-drift` | A feed answers, but its last 3 checks found no items | high |
 | `stale-feed` | A feed's newest item has been older than expected for 3 checks | low |
 | `volume-collapse` | Fresh events in 24 hours are under a quarter of a usual day (the median of up to 7 days) | high |
 | `duplicate-explosion` | Fresh events in 6 hours are over 5 times a usual quarter-day, and over 100 | high |
 | `job-failing` | A scheduled job has not completed a pass within its limit (13 h for ground truth, 75 min for enrichment …) | high for ground truth and enrichment, else medium |
-| `publish-failure` | Building the site's data has failed for 30 minutes | high |
+| `publish-failure` | Building the site's data has failed for 2 hours: two hourly runs | high |
 | `schema-drift` | The site's data fails its schemas or the secret scan, so nothing publishes | high |
-| `push-failure` | Pushing the data branch has failed for 45 minutes | high |
-| `site-stale` | The public site's data is over 3 hours old, or could not be read 3 times in a row | high |
+| `push-failure` | Pushing the data branch has failed for 2 h 15 min: two hourly runs, and time for the second push | high |
+| `site-stale` | The public site's data is over 3 hours old (an hourly publish, an hourly Pages build and an hour of slack), or could not be read 3 times in a row | high |
 | `cost-anomaly` | AI spend in 24 hours is over 3 times a usual day and over US$1, or the month has reached 90% of the budget | high |
 | `paperclip-down` | Paperclip's health endpoint has not answered 3 checks in a row | high |
 
@@ -188,7 +188,8 @@ cd ~/CyberPulse-AI
 
 `pin` is the fast way out; `revert` is the lasting fix, merged like any other. Migrations only
 ever add, so an earlier commit runs on the newer schema and the database is never rolled back.
-Each restart comes between collection runs: keep clear of :00, :15, :30 and :45 UTC.
+Each restart comes between :10 and :45 past the hour, clear of the hourly collection at :00 UTC,
+the alerts and enrichment just after it, and the gate at :50.
 
 ## Done when
 
