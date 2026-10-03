@@ -31,6 +31,7 @@ from worker.models import (
     SourceRef,
     TimelineEntry,
 )
+from worker.pipeline.resolve import is_generic_title
 
 SUMMARY_MAX_CHARS = 600
 
@@ -134,6 +135,9 @@ class EventUpdate:
     source: SourceRef
     new_cves: list[str] = field(default_factory=list)
     timeline: list[TimelineEntry] = field(default_factory=list)
+    # A headline for an event whose own is a generic notice ("CISA Adds Two Known Exploited
+    # Vulnerabilities to Catalog"); None keeps the event's title.
+    title: str | None = None
 
 
 def plan_update(
@@ -179,4 +183,7 @@ def plan_update(
         source=source_ref(item, source, independent=independent),
         new_cves=new_cves,
         timeline=timeline,
+        title=item.title
+        if is_generic_title(event.title) and not is_generic_title(item.title)
+        else None,
     )

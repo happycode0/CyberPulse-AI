@@ -2,7 +2,8 @@
 
 For each enabled source in the lane: fetch (conditional, concurrent, bounded) -> parse ->
 normalise -> resolve against stored events -> create/merge events -> record health. When every
-source is done, all live events are rescored and the run summary is persisted.
+source is done, stored events that turn out to be one story are merged (consolidation,
+worker/pipeline/correlate.py), all live events are rescored and the run summary is persisted.
 
 Failure model (PLAN.md section 11): a source that errors, hangs, returns garbage or whose
 items cannot be stored is recorded as failed and the run carries on. Each source is stored in
@@ -19,7 +20,7 @@ import logging
 import uuid
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
@@ -36,6 +37,7 @@ from worker.collectors.http import (
 from worker.collectors.json_api import parse_json_api
 from worker.db.au import load_au_facts, save_au
 from worker.db.events import find_candidates, load_events, next_event_id
+from worker.db.groundtruth import set_event_severity
 from worker.db.ingest import (
     add_relationship,
     apply_update,
@@ -46,6 +48,7 @@ from worker.db.ingest import (
     save_scores,
     touch_last_seen,
 )
+from worker.db.merge import load_story_records, load_token_weights, merge_events
 from worker.db.runs import finish_run, start_run
 from worker.db.session import get_engine
 from worker.db.sources import (
@@ -70,8 +73,9 @@ from worker.models import (
     SourceConfig,
     SourceHealth,
 )
-from worker.pipeline.assemble import build_new_event, plan_update
+from worker.pipeline.assemble import build_new_event, evidence_class_for, plan_update
 from worker.pipeline.au import assess_au
+from worker.pipeline.correlate import plan_merges
 from worker.pipeline.health import assess, next_lifecycle_state
 from worker.pipeline.normalise import normalise
 from worker.pipeline.resolve import Decision, resolve
@@ -91,6 +95,11 @@ SOURCE_DEADLINE_SECONDS = 120.0
 # decays with time, so it cannot have risen.
 RESCORE_FLOOR = 0.001
 RESCORE_BATCH = 200
+
+# Consolidation compares the events seen this recently, weighting headline words by how rare
+# they are among this longer window's headlines.
+CONSOLIDATE_LOOKBACK = timedelta(days=30)
+WORD_WEIGHT_LOOKBACK = timedelta(days=180)
 
 MAX_RUN_ERRORS = 100
 ERROR_MAX_CHARS = 300
@@ -231,7 +240,7 @@ def _ingest(
             continue
 
         candidates = find_candidates(conn, item)
-        resolution = resolve(item, candidates)
+        resolution = resolve(item, candidates, evidence_class=evidence_class_for(source))
 
         if resolution.decision is Decision.DUPLICATE:
             assert resolution.event_id is not None
@@ -248,8 +257,8 @@ def _ingest(
             tally.touched.add(target.event_id)
             tally.updated_events += 1
         else:
-            # NEW_EVENT, plus AMBIGUOUS / RELATED_BUT_DISTINCT: Stage 1 never merges on a
-            # doubt. The similar event is linked so Stage 2 can adjudicate.
+            # NEW_EVENT, plus AMBIGUOUS / RELATED_BUT_DISTINCT: ingest never merges on a
+            # doubt. The similar event is linked; consolidation may join them later.
             event = build_new_event(item, source, next_event_id(conn, now.year), now=now)
             insert_new_event(conn, event, item, payload_hash=p.payload_hash)
             if resolution.decision in _RELATED_DECISIONS and resolution.event_id:
@@ -361,6 +370,46 @@ def rescore(
     return errors
 
 
+@dataclass
+class Consolidation:
+    touched: set[str] = field(default_factory=set)
+    archived: int = 0
+    errors: list[str] = field(default_factory=list)
+
+
+def consolidate(engine: Engine, *, now: datetime) -> Consolidation:
+    """Merge the recent events that are one story (worker/pipeline/correlate.py).
+
+    One transaction under the ingest lock, so no source is being stored meanwhile. A failure
+    rolls the whole pass back and is reported, never raised: the run's own work is already
+    stored and must still be scored.
+    """
+    try:
+        with engine.begin() as conn:
+            lock_ingest(conn)
+            records = load_story_records(conn, since=now - CONSOLIDATE_LOOKBACK)
+            weights = load_token_weights(conn, since=now - WORD_WEIGHT_LOOKBACK)
+            groups = plan_merges(records, weights)
+            for g in groups:
+                merge_events(conn, g)
+                logger.info(
+                    "correlation: merged %s into %s (%s)",
+                    ", ".join(g.losers),
+                    g.winner,
+                    ", ".join(g.methods),
+                )
+            done = Consolidation(
+                touched={g.winner for g in groups}, archived=sum(len(g.losers) for g in groups)
+            )
+            if groups:
+                # A winner with a loser's CVEs may now band higher.
+                done.touched |= set(set_event_severity(conn))
+    except Exception as exc:
+        logger.exception("correlation failed")
+        return Consolidation(errors=[_short(f"correlation: {exc!r}")])
+    return done
+
+
 def _prepare(
     engine: Engine, sources: Sequence[SourceConfig], run_id: str, lane: Lane, started: datetime
 ) -> tuple[dict[str, LifecycleState], dict[str, FetchState]]:
@@ -437,6 +486,9 @@ async def run_lane(
             touched |= outcome.tally.touched
             errors.extend(outcome.errors)
 
+    merged = await asyncio.to_thread(consolidate, engine, now=started)
+    errors.extend(merged.errors)
+    touched |= merged.touched
     errors.extend(await asyncio.to_thread(rescore, engine, scoring, touched, now=started))
 
     try:
@@ -456,13 +508,13 @@ async def run_lane(
         new_events=new,
         updated_events=updated,
         duplicates=duplicates,
-        archived_events=0,
+        archived_events=merged.archived,
         errors=errors[:MAX_RUN_ERRORS],
     )
     with engine.begin() as conn:
         finish_run(conn, summary)
     logger.info(
-        "run %s done: ok=%d failed=%d stale=%d items=%d new=%d updated=%d dup=%d",
-        run_id, ok, failed, stale, items_fetched, new, updated, duplicates,
+        "run %s done: ok=%d failed=%d stale=%d items=%d new=%d updated=%d dup=%d merged=%d",
+        run_id, ok, failed, stale, items_fetched, new, updated, duplicates, merged.archived,
     )
     return summary

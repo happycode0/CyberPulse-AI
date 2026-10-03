@@ -22,6 +22,12 @@
           "event_count": { "type": "integer", "minimum": 0 }
         }
       }
+    },
+    "merged": {
+      "description": "Events merged into another: merged event id -> the event it joined.",
+      "type": "object",
+      "propertyNames": { "pattern": "^evt-\\d{4}-\\d{6}$" },
+      "additionalProperties": { "type": "string", "pattern": "^evt-\\d{4}-\\d{6}$" }
     }
   }
 }

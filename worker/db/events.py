@@ -79,7 +79,8 @@ def find_candidates(conn: Connection, item: NormalisedItem) -> list[Event]:
     just because the first sighting is old. Fuzzy signals (identical normalised title,
     shared CVE, trigram title similarity above 0.4 via the pg_trgm GIN index) are limited
     to events whose `last_seen` is within 30 days of the item. Deciding what actually
-    matches is `resolve`'s job; this only has to be a superset.
+    matches is `resolve`'s job; this only has to be a superset. An event merged into another
+    is never a candidate: its sources now belong to the event it joined.
     """
     when = item.published or item.fetched_at
     params: dict[str, Any] = {
@@ -101,7 +102,7 @@ def find_candidates(conn: Connection, item: NormalisedItem) -> list[Event]:
     sql = f"""
         select e.event_id
         from events e
-        where exists (
+        where e.merged_into is null and (exists (
                 select 1 from event_sources es
                 where es.event_id = e.event_id
                   and (es.url_hash = :url_hash
@@ -124,7 +125,7 @@ def find_candidates(conn: Connection, item: NormalisedItem) -> list[Event]:
                     or (e.normalised_title % :nt
                         and similarity(e.normalised_title, :nt) > :threshold)
                 )
-              )
+              ))
         order by e.last_seen desc, e.event_id
         limit :limit
     """
@@ -136,14 +137,15 @@ def load_live_events(conn: Connection, *, min_prominence: float, limit: int) -> 
     """Events with `prominence > min_prominence`, most prominent first.
 
     The comparison is strict (the publisher's rule is "prominence > 0.05") and unscored
-    events (NULL prominence) are excluded. Status is not filtered: prominence already
-    decays for stale events, and the publisher decides what else to hide.
+    events (NULL prominence) are excluded, and so are events merged into another (their score
+    is left as it was). Status is not filtered otherwise: prominence already decays for stale
+    events, and the publisher decides what else to hide.
     """
     ids = [
         r[0]
         for r in conn.execute(
             text(
-                "select event_id from events where prominence > :min "
+                "select event_id from events where prominence > :min and merged_into is null "
                 "order by prominence desc, last_material_update desc nulls last, event_id "
                 "limit :limit"
             ),
@@ -163,7 +165,7 @@ def load_event_dates(conn: Connection) -> list[date]:
     rows = conn.execute(
         text(
             "select distinct (first_seen at time zone 'UTC')::date as d "
-            "from events order by d desc"
+            "from events where merged_into is null order by d desc"
         )
     )
     return [r[0] for r in rows]

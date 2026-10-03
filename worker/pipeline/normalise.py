@@ -1,6 +1,7 @@
 """Normalisation of RawItem to NormalisedItem: canonical URLs, titles, CVE extraction, and tokenisation."""
 
 import hashlib
+import html
 import re
 import string
 from datetime import datetime
@@ -63,6 +64,20 @@ def canonical_url(url: str) -> str:
     return urlunparse((scheme, netloc, path, parsed.params, query, ""))
 
 
+_TAG = re.compile(r"<[^>]*>")
+
+
+def clean_title(title: str) -> str:
+    """The headline as plain text: tags stripped, entities decoded, whitespace collapsed.
+
+    Some feeds put markup in the title (DTA's is a whole `<a href=...>` element) or escape it
+    twice (`&amp;amp;`, which a feed parser turns into a literal `&amp;`). A title that is
+    nothing but markup is kept as it came, rather than becoming empty.
+    """
+    text = " ".join(html.unescape(_TAG.sub(" ", title)).split())
+    return text or title.strip()
+
+
 def normalise_title(title: str) -> str:
     """
     Normalise a title by:
@@ -122,7 +137,7 @@ def normalise(item: RawItem, *, now: datetime) -> NormalisedItem:
     """
     Normalise a RawItem to NormalisedItem:
     - Canonical and hashed URLs
-    - Normalised and hashed titles
+    - Plain-text, normalised and hashed titles
     - Extracted CVEs
     - Tokenised title
     - Handle missing/future published dates
@@ -131,19 +146,20 @@ def normalise(item: RawItem, *, now: datetime) -> NormalisedItem:
     canonical = canonical_url(item.url)
     url_hash = hashlib.sha256(canonical.encode()).hexdigest()
     
-    # Normalised title and hash
-    norm_title = normalise_title(item.title)
+    # Plain-text, normalised and hashed titles
+    title = clean_title(item.title)
+    norm_title = normalise_title(title)
     title_hash = hashlib.sha256(norm_title.encode()).hexdigest()
     
     # Extract CVEs
-    cves = extract_cves(item.title)
+    cves = extract_cves(title)
     if item.raw_summary:
         cves_from_summary = extract_cves(item.raw_summary)
         # Merge, dedup, sort
         cves = sorted(set(cves) | set(cves_from_summary))
     
     # Tokenise title
-    tokens = tokenise(item.title)
+    tokens = tokenise(title)
     
     # Handle published date: missing or future → fetched_at with estimated flag
     published = item.published
@@ -161,7 +177,7 @@ def normalise(item: RawItem, *, now: datetime) -> NormalisedItem:
         url=item.url,
         canonical_url=canonical,
         guid=item.guid,
-        title=item.title,
+        title=title,
         normalised_title=norm_title,
         summary=item.raw_summary,
         published=published,
