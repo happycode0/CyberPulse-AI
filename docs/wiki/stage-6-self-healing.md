@@ -112,7 +112,23 @@ Paperclip.
 
 2. **Add trigger → Webhook**, signing mode **bearer**. Paperclip shows the webhook URL and its
    secret **once**. Leave the banner open.
-3. On the VM, add both to `~/CyberPulse-AI/.env`:
+3. **Let Paperclip accept the hostname `server`.** Today it refuses it: since 2026-10-03 the
+   watchdog's health probe to `http://server:3100` gets `403 Forbidden`, and a fire would too.
+   Add it to the allowed hostnames (this adds to the list, so your own address keeps working),
+   then restart the server between collection runs:
+
+   ```bash
+   cd ~/CyberPulse-AI
+   docker compose exec server pnpm paperclipai allowed-hostname server
+   docker compose restart server
+   ```
+
+   If that command is not in the image, add `PAPERCLIP_ALLOWED_HOSTNAMES` to the server's
+   `environment:` list in `docker-compose.yml`, with `server` **and** every hostname you open
+   Paperclip with, comma-separated, then `docker compose up -d server`. The list is explicit, so
+   a line in `.env` alone does not reach it. It worked when the worker's log shows
+   `GET http://server:3100/api/health "HTTP/1.1 200 OK"` at the next watchdog pass.
+4. On the VM, add both to `~/CyberPulse-AI/.env`:
 
    ```bash
    PAPERCLIP_INCIDENT_WEBHOOK_URL=http://server:3100/api/routine-triggers/public/<the id in the URL>/fire
@@ -122,9 +138,9 @@ Paperclip.
    Keep the `/api/routine-triggers/public/…/fire` part of the URL Paperclip showed, and put
    `http://server:3100` in front of it: that is how the worker reaches Paperclip on the compose
    network.
-4. `docker compose up -d --force-recreate worker` (a restart keeps the old values).
-5. The worker's log says `incidents go to the Incident routine in Paperclip` when it starts.
-6. **Keep the routine active.** Paperclip refuses a fire for a paused routine. With TELETRAAN
+5. `docker compose up -d --force-recreate worker` (a restart keeps the old values).
+6. The worker's log says `incidents go to the Incident routine in Paperclip` when it starts.
+7. **Keep the routine active.** Paperclip refuses a fire for a paused routine. With TELETRAAN
    paused, the issue simply waits for it.
 
 If a fire fails, the worker logs `paperclip:incident:<n>: failed on attempt <k>: <reason>` and
@@ -133,9 +149,9 @@ tries twice more on later passes:
 | Reason | Meaning | Fix |
 |---|---|---|
 | `HTTP 401` | The secret is wrong | **Rotate secret** on the trigger card, and put the new one in `.env` |
-| `HTTP 403` | The routine or trigger is paused, or Paperclip refused the hostname `server` | Turn the routine on. If it is on, add `server` to Paperclip's allowed hostnames (`PAPERCLIP_ALLOWED_HOSTNAMES`, comma-separated) in the server's environment, then recreate the server |
+| `HTTP 403` | Paperclip refused the hostname `server`, or the routine or trigger is paused | Step 3; then turn the routine and the trigger on |
 | `HTTP 404` | The trigger id is wrong | Copy the URL again |
-| `ConnectError` | The worker cannot reach that address | Use `http://server:3100` as in step 3 |
+| `ConnectError` | The worker cannot reach that address | Use `http://server:3100` as in step 4 |
 
 The watchdog probes Paperclip's health endpoint (`WATCHDOG_PAPERCLIP_URL`, by default
 `http://server:3100/api/health`) with no credentials. Any answer below 500, a 403 included,
