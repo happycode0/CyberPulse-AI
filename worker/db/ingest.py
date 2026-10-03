@@ -143,12 +143,12 @@ def insert_new_event(
             "enrichment_version, first_seen, last_seen, last_material_update, "
             "last_independent_confirmation, status, title, normalised_title, summary, "
             "source_summary, severity, severity_source, au_directly_reported, au_reasons, "
-            "categories, pending_enrichment) values (:event_id, :schema_version, "
+            "domains, categories, pending_enrichment) values (:event_id, :schema_version, "
             ":pipeline_version, :scoring_version, :enrichment_version, :first_seen, :last_seen, "
             ":last_material_update, :last_independent_confirmation, :status, :title, "
             ":normalised_title, :summary, :summary, :severity, :severity_source, "
-            ":au_directly_reported, cast(:au_reasons as text[]), cast(:categories as text[]), "
-            ":pending_enrichment)"
+            ":au_directly_reported, cast(:au_reasons as text[]), cast(:domains as text[]), "
+            "cast(:categories as text[]), :pending_enrichment)"
         ),
         {
             "event_id": event.event_id,
@@ -168,6 +168,7 @@ def insert_new_event(
             "severity_source": event.severity_source.value,
             "au_directly_reported": event.au.directly_reported_in_au,
             "au_reasons": event.au.reasons,
+            "domains": event.domains,
             "categories": event.categories,
             "pending_enrichment": event.pending_enrichment,
         },

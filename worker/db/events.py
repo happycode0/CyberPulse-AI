@@ -225,6 +225,7 @@ def _hydrate(conn: Connection, event_ids: Sequence[str], *, candidates: bool) ->
             domains=r["domains"],
             categories=r["categories"],
             ai_subdomain=r["ai_subdomain"],
+            ai_significance=r["ai_significance"],
             severity=r["severity"],
             severity_source=r["severity_source"],
             risk={k: r[k] for k in ("urgency", "confidence", "novelty", "prominence")},

@@ -9,6 +9,9 @@ other outlets (`last_seen`) never refreshes prominence.
     novelty    = 0.5 ** (hours since first_seen / novelty half-life)
     freshness  = 0.5 ** (hours since last_material_update / severity half-life)
     prominence = freshness * (w_sev*urgency + w_corr*corroboration + w_au*au + w_nov*novelty)
+
+An AI story's weight and half-life come from its AI significance instead (`ranking`,
+docs/wiki/ai-news-beat.md).
 """
 
 from datetime import datetime
@@ -18,7 +21,7 @@ from typing import Self
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, model_validator
 
-from worker.models import Event, EvidenceClass, Risk, Severity
+from worker.models import AiSignificance, Beat, Event, EvidenceClass, Risk, Severity
 from worker.pipeline.au import AuConfig
 from worker.version import SCORING_VERSION
 
@@ -53,6 +56,31 @@ class ArchiveRule(BaseModel):
     idle_days: PositiveFloat
 
 
+# The AI desk's levels: each AiSignificance, and `unknown` for a story triage has not judged.
+AI_LEVELS: tuple[str, ...] = (*(s.value for s in AiSignificance), Severity.UNKNOWN.value)
+
+
+class AiBeatScale(BaseModel):
+    """What an AI story is ranked on in place of severity (docs/wiki/ai-news-beat.md)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    weights: dict[str, float]
+    half_life_hours: dict[str, PositiveFloat]
+
+    @model_validator(mode="after")
+    def _every_level(self) -> Self:
+        for name in ("weights", "half_life_hours"):
+            levels = set(getattr(self, name))
+            if levels != set(AI_LEVELS):
+                raise ValueError(
+                    f"ai_beat.{name} must name exactly {list(AI_LEVELS)}, got {sorted(levels)}"
+                )
+        if any(w <= 0 for w in self.weights.values()):
+            raise ValueError("ai_beat weights must be positive")
+        return self
+
+
 class ScoringConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -60,6 +88,7 @@ class ScoringConfig(BaseModel):
     severity_weights: dict[Severity, float]
     kev_bonus: float
     half_life_hours: dict[Severity, PositiveFloat]
+    ai_beat: AiBeatScale
     evidence_class_weights: dict[EvidenceClass, float]
     corroboration_gain: float
     corroboration_cap: PositiveFloat
@@ -108,6 +137,26 @@ def base_weight(severity: Severity, config: ScoringConfig) -> float:
     return config.severity_weights[severity]
 
 
+def ranking(event: Event, config: ScoringConfig) -> tuple[float, float]:
+    """The (weight, half-life in hours) an event is ranked on.
+
+    A cyber story, or one triage found on neither desk, is ranked on its severity. An AI-only
+    story is ranked on its AI significance instead (unknown until triage judges it), so it is
+    never treated as an unrated cyber threat. If it also carries a severity, which only an
+    official score gives it, the stronger of the two stands. A story on both desks with an AI
+    significance takes the stronger weight and the longer half-life of the two scales.
+    """
+    cyber = (config.severity_weights[event.severity], config.half_life_hours[event.severity])
+    beat = event.beat
+    if beat is Beat.AI or (beat is Beat.BOTH and event.ai_significance is not None):
+        level = event.ai_significance.value if event.ai_significance else Severity.UNKNOWN.value
+        ai = (config.ai_beat.weights[level], config.ai_beat.half_life_hours[level])
+        if beat is Beat.AI and event.severity is Severity.UNKNOWN:
+            return ai
+        return max(cyber[0], ai[0]), max(cyber[1], ai[1])
+    return cyber
+
+
 def independent_confirmations(event: Event) -> int:
     """Distinct lineages among independent sources; syndicated copies share one lineage.
 
@@ -123,15 +172,16 @@ def freshness(event: Event, config: ScoringConfig, now: datetime) -> float:
     An event with no material update yet decays from `first_seen`.
     """
     anchor = event.last_material_update or event.first_seen
-    half_life = config.half_life_hours[event.severity]
+    _, half_life = ranking(event, config)
     return 0.5 ** (_hours_since(anchor, now) / half_life)
 
 
 def _urgency(event: Event, config: ScoringConfig) -> float:
     kev = any(c.kev.listed for c in event.cves)
     bonus = config.kev_bonus if kev else 0.0
-    ceiling = max(config.severity_weights.values()) + config.kev_bonus
-    return _clamp((base_weight(event.severity, config) + bonus) / ceiling)
+    top = max(*config.severity_weights.values(), *config.ai_beat.weights.values())
+    weight, _ = ranking(event, config)
+    return _clamp((weight + bonus) / (top + config.kev_bonus))
 
 
 def _confidence(event: Event, config: ScoringConfig) -> float:

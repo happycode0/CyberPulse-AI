@@ -19,7 +19,7 @@ from sqlalchemy import Connection, text
 
 from worker.ai.tasks import Brief, SeverityJudgment, SourceFacts, Subject, TaskName, Triage
 from worker.db.events import load_events
-from worker.models import EvidenceClass, Severity, SeveritySource
+from worker.models import AI_DOMAIN, CYBER_DOMAIN, EvidenceClass, Severity, SeveritySource
 
 # How long a task waits after its first, second and third failed pass in a row. After the
 # fourth it gives up, and the event stays `pending_enrichment` until the version changes.
@@ -29,6 +29,10 @@ _LAST_ERROR_CHARS = 300
 
 # The severity sources a judgment may replace. Anything else is an official score (§2.5).
 _REPLACEABLE = (SeveritySource.UNKNOWN.value, SeveritySource.AI_ESTIMATE.value)
+
+# An AI-only story (beat `ai`), which gets no cyber rating. `{e}` is the events table's alias.
+_AI_ONLY = "(:ai_domain = any({e}.domains) and not :cyber_domain = any({e}.domains))"
+_DESKS = {"ai_domain": AI_DOMAIN, "cyber_domain": CYBER_DOMAIN}
 
 
 @dataclass(frozen=True)
@@ -125,12 +129,21 @@ def load_subjects(conn: Connection, event_ids: Sequence[str]) -> list[Subject]:
 
 def apply_triage(conn: Connection, subject: Subject, t: Triage) -> None:
     """Categories put the model's first (the radar reads `categories[0]`) and keep each source's
-    registry category behind them, which the site's sections also read."""
+    registry category behind them, which the site's sections also read.
+
+    The domains set the event's beat (docs/wiki/ai-news-beat.md). A story triage finds to be
+    AI-only loses a model's severity estimate, which is a cyber rating; an official one stays.
+    """
     categories = list(dict.fromkeys([*t.categories, *(s.category for s in subject.sources)]))
     conn.execute(
         text(
             "update events set domains = cast(:domains as text[]), "
             "categories = cast(:categories as text[]), ai_subdomain = :ai_subdomain, "
+            "ai_significance = :ai_significance, "
+            "severity = case when cast(:ai_only as boolean) and severity_source = :ai "
+            "  then :unknown else severity end, "
+            "severity_source = case when cast(:ai_only as boolean) and severity_source = :ai "
+            "  then :unknown else severity_source end, "
             "entity_actors = cast(:actors as text[]), "
             "entity_organisations = cast(:organisations as text[]), "
             "entity_products = cast(:products as text[]), "
@@ -143,6 +156,10 @@ def apply_triage(conn: Connection, subject: Subject, t: Triage) -> None:
             "domains": list(t.domains),
             "categories": categories,
             "ai_subdomain": t.ai_subdomain.value if t.ai_subdomain else None,
+            "ai_significance": t.ai_significance.value if t.ai_significance else None,
+            "ai_only": t.ai_only,
+            "ai": SeveritySource.AI_ESTIMATE.value,
+            "unknown": Severity.UNKNOWN.value,
             "actors": list(t.actors),
             "organisations": list(t.organisations),
             "products": list(t.products),
@@ -181,7 +198,8 @@ def apply_severity(
     """Publish the judgment as an `ai_estimate` if it is firm enough. Returns whether it was.
 
     The update re-checks the stored source, so an official score that arrived while the model
-    was thinking is never overwritten. A judgment too weak to publish takes back an earlier
+    was thinking is never overwritten. It re-checks the beat too: a story triage has found to
+    be AI-only gets no cyber rating. A judgment too weak to publish takes back an earlier
     estimate rather than leaving it standing. Either way the judgment is kept as evidence.
     """
     event_id = subject.event.event_id
@@ -191,13 +209,15 @@ def apply_severity(
             text(
                 "update events set severity = :severity, severity_source = :ai, "
                 "updated_at = now() where event_id = :event_id "
-                "and severity_source = any(cast(:replaceable as text[]))"
+                "and severity_source = any(cast(:replaceable as text[])) "
+                f"and not {_AI_ONLY.format(e='events')}"
             ),
             {
                 "event_id": event_id,
                 "severity": j.severity.value,
                 "ai": ai,
                 "replaceable": list(_REPLACEABLE),
+                **_DESKS,
             },
         )
         applied = result.rowcount == 1
@@ -307,8 +327,9 @@ def mark_failed(
 def maybe_complete(conn: Connection, event_id: str, *, version: str) -> bool:
     """Clear `pending_enrichment` if every task that applies is done at `version`.
 
-    Severity applies only while no official score exists, which is re-read here rather than
-    trusted from when the pass began.
+    Severity applies only while no official score exists, and never to an AI-only story
+    (worker/ai/tasks.py `Task.applies`). Both are re-read here rather than trusted from when
+    the pass began.
     """
     done = (
         "exists (select 1 from event_enrichment x where x.event_id = e.event_id "
@@ -320,8 +341,14 @@ def maybe_complete(conn: Connection, event_id: str, *, version: str) -> bool:
             "updated_at = now() where e.event_id = :event_id and e.pending_enrichment "
             f"and {done.format(task=TaskName.TRIAGE)} and {done.format(task=TaskName.BRIEF)} "
             "and (e.severity_source <> all(cast(:replaceable as text[])) "
+            f"or {_AI_ONLY.format(e='e')} "
             f"or {done.format(task=TaskName.SEVERITY)})"
         ),
-        {"event_id": event_id, "version": version, "replaceable": list(_REPLACEABLE)},
+        {
+            "event_id": event_id,
+            "version": version,
+            "replaceable": list(_REPLACEABLE),
+            **_DESKS,
+        },
     )
     return result.rowcount == 1
