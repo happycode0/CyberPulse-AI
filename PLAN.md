@@ -40,7 +40,7 @@ Eight decisions were confirmed with the project owner on 2026-09-29.
 | 2 | **OpenCode CLI via OpenRouter** as the engineer runtime | Owner requires OpenRouter as the single provider; see §2.2 |
 | 3 | **Hybrid scheduling** — worker owns FAST/NORMAL, Paperclip owns DEEP + judgment | See §2.3 — protects the failure model and the token budget |
 | 4 | **`CyberPulse-AI` becomes public**; data on a force-pushed orphan branch | GitHub Free requires a public repo for Pages; orphan branch prevents history bloat |
-| 5 | **NetBird VPN** (owner's existing mesh) for private dashboard access | Nothing exposed to the internet; Paperclip binds to `127.0.0.1` |
+| 5 | **NetBird VPN** (owner's existing mesh) for private dashboard access | Nothing exposed to the internet; Paperclip listens only on the VM's LAN address, login required |
 | 6 | **Telegram** as the first notification channel | Other channels added in Stage 7 behind the same interface |
 | 7 | **US$20/month** hard AI cap | Drives the model tiering and rationing in §2.4 |
 | 8 | Write docs, then **build Stage 1** | |
@@ -100,8 +100,10 @@ before the hardware was known and does not fit it:
 **Resolution:** use `opencode_local`, which supports `provider/model` selection, so the
 engineer bills to the same OpenRouter key as everything else and is covered by the same
 hard limit. Additionally: explicit sandbox/filesystem scope, `heartbeat.maxDailyRuns` as a
-second cap, no OpenRouter/Tavily/Postgres credentials in the engineer's environment, and a
-GitHub token scoped to branch+PR only. Codex remains a documented alternative in
+second cap, no OpenRouter/Tavily/Postgres credentials given to the engineer, and a
+GitHub token scoped to branch+PR only. As built, a local adapter still runs with the server
+container's own environment, its database URL included: see
+[the threat model, risk 1](docs/threat-model.md#open-risks-ranked). Codex remains a documented alternative in
 `.env.example` for anyone with a ChatGPT plan who wants `@codex review`.
 
 ### 2.3 Scheduling: the original design had a single point of failure
@@ -262,7 +264,7 @@ Neither appeared in the source prompts.
                                │
                      ┌─────────┴──────────┐
                      │     PAPERCLIP      │  control plane: agents, goals,
-                     │   127.0.0.1:3100   │  issues, delegation, heartbeats,
+                     │ 192.168.128.39:3100│  issues, delegation, heartbeats,
                      └─────────┬──────────┘  budgets, approvals, audit
                                │ agent API key / http+process adapters
         ┌──────────────────────┼──────────────────────┐
@@ -575,7 +577,7 @@ Least privilege, per the source prompts' §60, made concrete:
 | VOIGHT | Ops API token (read + verdict) | Edit event facts |
 | TELETRAAN | Ops API token, health endpoints | Disable security controls |
 | WHEELJACK | Branch-scoped `GITHUB_TOKEN` **only** | Push to `main`; read any other secret |
-| TRON | Read-only repo token | Approve as final gate |
+| TRON | No repo token: the repository is public | Approve as final gate |
 | LINK | Publish `GITHUB_TOKEN`, Telegram token | Read OpenRouter or Tavily keys |
 
 ---
@@ -1329,6 +1331,28 @@ Backups (PBS + `pg_dump` + `master.key`), observability and OpenTelemetry, cost 
 further notification channels, failure-injection test suite, threat model review, runbooks.
 **Exit:** restore from backup rehearsed successfully; every failure-injection test passes.
 
+**As built** (`ops/backup.sh`, `ops/restore.sh`, `tests/failure/`, `docs/threat-model.md`,
+`docs/runbooks/`), where it differs from the above:
+
+- `ops/backup.sh` dumps both databases (`pg_dump -Fc`) from one snapshot, with Paperclip's
+  secrets folder, `.env`, a manifest of every table's row count, `SHA256SUMS` and a `COMPLETE`
+  marker written last. PBS and `vzdump` are the owner's, on the Proxmox host, with a target off
+  the single disk.
+- `ops/restore.sh rehearse` restores into a throwaway Postgres of the same image, with no
+  network, and compares every row count with the manifest. Rehearsed on VM 200 on 2026-10-03:
+  `cyber_intel` 43 tables and 44,084 rows, `paperclip` 215 tables and 2,153 rows, all matched.
+  `restore.sh fresh` rebuilds a new VM, and refuses unless both databases are empty and the
+  Paperclip server is stopped.
+- `tests/failure/` injects each failure in §11; `tests/failure/README.md` maps each one to its
+  tests and lists what is not handled yet.
+- The threat model was reviewed against what was built, boundary by boundary, with the open
+  risks ranked. Its first: Paperclip's local-adapter agents inherit the server's environment.
+  Runbooks cover each watchdog incident, a service down, the AI budget, token rotation, deploy
+  and rollback, and backup and restore.
+- **Not built:** OpenTelemetry (on one VM the watchdog, `job_runs` and the logs already answer
+  "is it working, and since when"), and further notification channels (Telegram only, behind
+  `worker/notify/`). Cost tuning is the budget modes of §7.4, as built in Stage 2.
+
 ---
 
 ## 10. Acceptance criteria
@@ -1415,9 +1439,9 @@ CyberPulse-AI/                      # public
 | 2 | Whether embeddings/pgvector are needed at all, from measured duplicate rate | Stage 3 |
 | 3 | SecurityWeek access (Cloudflare 403) — accept the gap or find a lawful route | Stage 3 |
 | 4 | Whether an `http`-adapter run satisfies Paperclip's mandatory issue-comment backstop. The worker never writes to Paperclip: a wake's answer is the run's status and JSON body, and the Paperclip token in the wake's body is discarded. Comments on issues come from the AI agents. What the backstop does with an `http` run on an issue is seen on the first real wake | Stage 4, first wake |
-| 5 | Custom domain for the public site | Stage 7 |
-| 6 | Additional notification channels beyond Telegram | Stage 7 |
-| 7 | Whether ROGUE's monthly LLM review earns its cost | Stage 7 |
+| 5 | Custom domain for the public site | Deferred: the owner's choice, whenever wanted |
+| 6 | Additional notification channels beyond Telegram | Deferred: Telegram only for now; `worker/notify/` takes another channel |
+| 7 | Whether ROGUE's monthly LLM review earns its cost | Open: the 8-agent crew chosen on 2026-10-03 has no ROGUE, so it is settled when that change lands |
 
 ---
 

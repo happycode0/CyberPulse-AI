@@ -1,0 +1,13 @@
+# The image never needs these: the compose file bind-mounts the checkout over /app and reads
+# .env at run time. Without this file `COPY . .` bakes .env, and every key in it, into the image.
+.env
+.env.*
+!.env.example
+.git
+.venv
+.claude
+**/__pycache__
+.pytest_cache
+.ruff_cache
+/data
+/backup

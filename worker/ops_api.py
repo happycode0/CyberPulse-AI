@@ -13,12 +13,14 @@ firewall, so none ever should be. There are two kinds of endpoint.
 - **Reads**, `GET /ops/...`, are for the AI agents: MORPHEUS's digest, ZION's escalations,
   DECKARD's follow-up queue. They need the bearer token in `CYBERPULSE_OPS_TOKEN`. Each runs in a
   read-only transaction with a statement timeout.
-- **Two writes**, which need the token too. `POST /ops/followup/<task>` is DECKARD's report on a
+- **Three writes**, which need the token too. `POST /ops/followup/<task>` is DECKARD's report on a
   follow-up task. The report is checked as if hostile (worker/pipeline/followup.py) and only what
   passes is stored, in one transaction under the ingest lock (worker/db/followup.py). The
   worker, not DECKARD, then decides the event's status. `POST /ops/candidates` is TACHIKOMA's
   proposal of a source, checked the same way (worker/discovery/gate.py). It only queues the
   site for SERAPH's gate: the worker fetches it, and decides whether it is ever collected.
+  `POST /ops/incidents/<id>/verdict` is TRON's verdict on a fix, which counts towards the
+  incident's circuit breaker (worker/db/incidents.py).
 
 Every response passes the publisher's secret scan, or is withheld. Paperclip's `http` adapter
 adds `paperclipRuntimeTools` to a wake's body, with a bearer token for Paperclip's own API in

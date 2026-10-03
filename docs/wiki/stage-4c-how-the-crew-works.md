@@ -150,8 +150,8 @@ The prompt asks nicely. These are the controls that actually enforce it:
 | Monthly budget per agent | Each agent | One agent spending everyone's money |
 | Wake on demand only, no heartbeat | Each agent | Agents waking (and paying) with nothing to do |
 | Max daily runs | Each agent | A loop of agents waking each other |
-| Ops API token scope | Worker (Stage 4) | A desk writing ground truth, or publishing |
-| WHEELJACK has only a branch token | Its environment | Pushing to `main`, or reading any other secret |
+| Ops API token scope | Worker (Stage 4) | A desk writing ground truth, or publishing, through the ops API. Not through the server's own database URL, which `opencode_local` agents inherit: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
+| WHEELJACK is given only a branch token | Its environment | Pushing to `main`. Not reading other secrets: it runs with the server's environment ([risk 1](../threat-model.md#open-risks-ranked)) |
 | A human merges | GitHub branch protection | Any code reaching production unreviewed |
 | LINK fails closed | Worker | A secret, or unvalidated data, reaching the public site |
 
