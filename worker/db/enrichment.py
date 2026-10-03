@@ -20,7 +20,6 @@ from sqlalchemy import Connection, text
 from worker.ai.tasks import Brief, SeverityJudgment, SourceFacts, Subject, TaskName, Triage
 from worker.db.events import load_events
 from worker.models import EvidenceClass, Severity, SeveritySource
-from worker.pipeline.assemble import AU_SOURCE_REASON
 
 # How long a task waits after its first, second and third failed pass in a row. After the
 # fourth it gives up, and the event stays `pending_enrichment` until the version changes.
@@ -155,17 +154,14 @@ def apply_triage(conn: Connection, subject: Subject, t: Triage) -> None:
 
 
 def apply_brief(conn: Connection, subject: Subject, b: Brief) -> None:
-    """The fact that an Australian source reported the event stays the first AU reason; the
-    model's reasons follow it. Only the fact may give that reason: a model that claims it for
-    an event no Australian source reported is not repeated."""
-    fact = [AU_SOURCE_REASON] if subject.event.au.directly_reported_in_au else []
-    claimed = [r for r in b.au_reasons if r.casefold() != AU_SOURCE_REASON.casefold()]
-    reasons = list(dict.fromkeys([*fact, *claimed]))
+    """The summaries are published as written. The AU reading is kept as the model's
+    (migration 008): the AU engine (worker/pipeline/au.py) publishes AU relevance at the next
+    rescore, from the record's facts, with this reading able to lift it but never lower it."""
     conn.execute(
         text(
             "update events set summary = :summary, why_it_matters = :why, "
-            "au_relevance = :relevance, au_reasons = cast(:reasons as text[]), "
-            "au_sectors = cast(:sectors as text[]), updated_at = now() "
+            "au_model_relevance = :relevance, au_model_reasons = cast(:reasons as text[]), "
+            "au_model_sectors = cast(:sectors as text[]), updated_at = now() "
             "where event_id = :event_id"
         ),
         {
@@ -173,7 +169,7 @@ def apply_brief(conn: Connection, subject: Subject, b: Brief) -> None:
             "summary": b.summary,
             "why": b.why_it_matters,
             "relevance": b.au_relevance,
-            "reasons": reasons,
+            "reasons": list(b.au_reasons),
             "sectors": list(b.au_sectors),
         },
     )

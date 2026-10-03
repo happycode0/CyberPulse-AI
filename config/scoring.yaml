@@ -1,7 +1,7 @@
 # Versioned scoring configuration (PLAN.md section 5, "Scoring").
 # `version` must equal worker.version.SCORING_VERSION; bump both together whenever
 # any number below changes, so stored scores can be traced to the rules that made them.
-version: "1"
+version: "2"
 
 # Base severity weight. Severity and prominence stay separate: this is severity only.
 severity_weights:
@@ -49,3 +49,106 @@ prominence_weights:
   corroboration: 0.20
   au_relevance: 0.25
   novelty: 0.15
+
+# AU relevance (worker/pipeline/au.py). Facts in the record set a floor under the number, each
+# with a reason; the model's reading may lift it but never lower it. Matching is case-sensitive
+# on whole words, on what the sources said (titles, the feed's text, other headlines), never on
+# the model's summary. Names that are often not Australian at all stay off these lists:
+# Victoria, Darwin, Medicare, ASIC, ASD, ABC, ATO, AFP, and Australian vendors whose products
+# are used everywhere (Atlassian, Canva).
+au:
+  floors:
+    authority: 0.70     # an Australian government authority published it
+    organisation: 0.75  # the record names an Australian organisation
+    place: 0.55         # it names Australia, an Australian place, or a .au web address
+    outlet: 0.30        # an Australian outlet reported it
+  max_reasons: 6
+  # SOCI Act sectors are listed only for events at least this relevant to Australia.
+  soci_min_relevance: 0.5
+
+  # Source ids (config/sources.yaml) that are Australian government authorities.
+  authorities:
+    [acsc_alerts, acsc_advisories, acsc_news, acsc_publications, acsc_threats, acsc_advice,
+     asd, oaic, dta]
+
+  # Naming any of these is "names Australia"; naming a place is "names an Australian place".
+  country: [Australia, Australian, Australians, Aussie, Aussies]
+  places:
+    [New South Wales, NSW, Queensland, Qld, Tasmania, Tasmanian, Northern Territory, Victorian,
+     Canberra, Sydney, Melbourne, Brisbane, Adelaide, Hobart, Perth, Gold Coast]
+
+  # Australian organisations and the sectors (worker/ai/tasks.py SECTORS) they are in.
+  organisations:
+    Optus: [telecommunications]
+    Telstra: [telecommunications]
+    TPG Telecom: [telecommunications]
+    iiNet: [telecommunications]
+    Macquarie Telecom: [telecommunications]
+    Medibank: [health, insurance]
+    MediSecure: [health]
+    Genea: [health]
+    Monash IVF: [health]
+    Monash Health: [health]
+    Ambulance Victoria: [health]
+    Qantas: [transport]
+    Toll Group: [transport]
+    Latitude Financial: [finance]
+    Commonwealth Bank: [finance]
+    CommBank: [finance]
+    Westpac: [finance]
+    NAB: [finance]
+    ANZ: [finance]
+    Macquarie Bank: [finance]
+    Macquarie Group: [finance]
+    AustralianSuper: [finance]
+    Hostplus: [finance]
+    UniSuper: [finance]
+    Cbus: [finance]
+    Woolworths: [retail]
+    Coles: [retail]
+    Bunnings: [retail]
+    JB Hi-Fi: [retail]
+    Harvey Norman: [retail]
+    Dymocks: [retail]
+    MyDeal: [retail]
+    Ausgrid: [energy]
+    AGL: [energy]
+    Origin Energy: [energy]
+    EnergyAustralia: [energy]
+    AEMO: [energy]
+    Transgrid: [energy]
+    Endeavour Energy: [energy]
+    Jemena: [energy]
+    Woodside Energy: [energy]
+    Yarra Valley Water: [water]
+    SA Water: [water]
+    Centrelink: [government]
+    myGov: [government]
+    Victoria Police: [government]
+    ASIO: [government]
+    APRA: [government, finance]
+    OAIC: [government]
+    ACMA: [government, telecommunications]
+    ACSC: [government]
+    UNSW: [education]
+    Monash University: [education]
+    Deakin University: [education]
+    RMIT: [education]
+    La Trobe University: [education]
+    University of Melbourne: [education]
+    University of Sydney: [education]
+    HWL Ebsworth: [legal]
+    Crown Resorts: [hospitality]
+    Star Entertainment: [hospitality]
+
+  # Sectors (as above) and the SOCI Act sector each falls in. A sector not here has none.
+  soci_sectors:
+    telecommunications: communications
+    defence: defence industry
+    energy: energy
+    water: water and sewerage
+    health: health care and medical
+    finance: financial services and markets
+    insurance: financial services and markets
+    transport: transport
+    education: higher education and research
