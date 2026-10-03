@@ -1,7 +1,27 @@
+# Organisations that publish through more than one feed. Everything one of them says is one
+# voice: ACSC's alert and its news item on the same thing are one confirmation, not two
+# (worker/pipeline/lineage.py). `names` are how headlines name an agency when relaying it
+# ("ACSC warns ...", "... Added to CISA KEV"). Only agencies have them: "Microsoft" in a
+# headline is as often the product as the one speaking.
+publishers:
+  asd:
+    name: Australian Signals Directorate
+    names: [ASD, ACSC, Australian Cyber Security Centre, Australian Signals Directorate]
+  cisa:
+    name: CISA
+    names: [CISA, Cybersecurity and Infrastructure Security Agency]
+  google:
+    name: Google
+  microsoft:
+    name: Microsoft
+  mysecuritymedia:
+    name: MySecurity Media
+
 sources:
   # FAST Lane: Authoritative advisories & CVE feeds
   - id: acsc_alerts
     name: ACSC Alerts
+    publisher: asd
     type: rss
     region: au
     category: advisory
@@ -16,6 +36,7 @@ sources:
 
   - id: acsc_advisories
     name: ACSC Advisories
+    publisher: asd
     type: rss
     region: au
     category: advisory
@@ -30,6 +51,7 @@ sources:
 
   - id: acsc_news
     name: ACSC News
+    publisher: asd
     type: rss
     region: au
     category: news
@@ -44,6 +66,7 @@ sources:
 
   - id: acsc_publications
     name: ACSC Publications
+    publisher: asd
     type: rss
     region: au
     category: advisory
@@ -58,6 +81,7 @@ sources:
 
   - id: cisa_advisories
     name: CISA Advisories
+    publisher: cisa
     type: rss
     region: us
     category: advisory
@@ -72,6 +96,7 @@ sources:
 
   - id: cisa_ics
     name: CISA ICS Advisories
+    publisher: cisa
     type: rss
     region: us
     category: advisory
@@ -86,6 +111,7 @@ sources:
 
   - id: cisa_news
     name: CISA News
+    publisher: cisa
     type: rss
     region: us
     category: news
@@ -100,6 +126,7 @@ sources:
 
   - id: cisa_kev
     name: CISA Known Exploited Vulnerabilities
+    publisher: cisa
     type: json_api
     region: us
     category: advisory
@@ -172,6 +199,7 @@ sources:
 
   - id: acsm
     name: Australian Cybersecurity Magazine
+    publisher: mysecuritymedia
     type: rss
     region: au
     category: news
@@ -186,6 +214,7 @@ sources:
 
   - id: asm
     name: Australian Security Magazine
+    publisher: mysecuritymedia
     type: rss
     region: au
     category: news
@@ -355,6 +384,7 @@ sources:
   # NORMAL Lane: Vendor security blogs
   - id: microsoft_security
     name: Microsoft Security Blog
+    publisher: microsoft
     type: rss
     region: global
     category: vendor_advisory
@@ -454,6 +484,7 @@ sources:
 
   - id: deepmind
     name: DeepMind Blog
+    publisher: google
     type: rss
     region: global
     category: ai_security
@@ -468,6 +499,7 @@ sources:
 
   - id: google_security
     name: Google Security Blog
+    publisher: google
     type: rss
     region: global
     category: vendor_advisory
@@ -482,6 +514,7 @@ sources:
 
   - id: ms_ai_security
     name: Microsoft AI & Security Blog
+    publisher: microsoft
     type: rss
     region: global
     category: ai_security
@@ -639,6 +672,7 @@ sources:
 
   - id: asd
     name: ASD (Australian Signals Directorate)
+    publisher: asd
     type: web_page
     region: au
     category: advisory
@@ -653,6 +687,7 @@ sources:
 
   - id: msrc_blog
     name: Microsoft Security Response Center Blog
+    publisher: microsoft
     type: web_page
     region: global
     category: vendor_advisory
@@ -695,6 +730,7 @@ sources:
 
   - id: acsc_threats
     name: ACSC Threats
+    publisher: asd
     type: rss
     region: au
     category: advisory
@@ -709,6 +745,7 @@ sources:
 
   - id: acsc_advice
     name: ACSC Advice
+    publisher: asd
     type: rss
     region: au
     category: advisory

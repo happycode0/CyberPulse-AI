@@ -1,10 +1,10 @@
 """Command line: `python -m worker [--check-models] [--check-budget] [--check-duplicates]
-[--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
+[--check-lineage] [--migrate] [--lane LANE [--once]] [--groundtruth] [--enrich] [--publish]`.
 
 With no arguments the scheduler runs FAST, NORMAL, the ground-truth sync and AI enrichment until
 interrupted. Explicit actions run in a fixed order (check models, check budget, check duplicates,
-migrate, collect, ground truth, enrich, publish) and then exit, unless `--lane` is given without
-`--once`, which schedules that one lane instead.
+check lineage, migrate, collect, ground truth, enrich, publish) and then exit, unless `--lane` is
+given without `--once`, which schedules that one lane instead.
 
 The order is not arbitrary: the ground-truth sync writes the CVSS bands and KEV listings that
 `urgency` is computed from, so running it before the publish is what gets a freshly looked-up
@@ -16,6 +16,7 @@ import argparse
 import asyncio
 import logging
 import sys
+from collections import defaultdict
 from collections.abc import Sequence
 from datetime import UTC, datetime
 
@@ -30,18 +31,26 @@ from worker.ai.ladder import (
     verify_ladder,
 )
 from worker.ai.mitre import DEFAULT_MITRE_BATCH, suggest_techniques
+from worker.db.lineage import load_reports
 from worker.db.merge import load_live_ids, load_story_records, load_token_weights
 from worker.db.migrate import run_migrations
 from worker.db.session import get_engine
 from worker.groundtruth.sync import DEFAULT_ADVISORY_BATCH, DEFAULT_CVSS_BATCH, sync_groundtruth
 from worker.models import Lane
 from worker.pipeline.correlate import after_merges, plan_merges, possible_duplicates
-from worker.pipeline.run import CONSOLIDATE_LOOKBACK, WORD_WEIGHT_LOOKBACK, run_lane
+from worker.pipeline.lineage import Publishers, assign
+from worker.pipeline.run import (
+    CONSOLIDATE_LOOKBACK,
+    DEFAULT_REGISTRY_PATH,
+    WORD_WEIGHT_LOOKBACK,
+    run_lane,
+)
 from worker.publish.build import LIVE_MIN_PROMINENCE
 from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
 from worker.settings import get_settings
+from worker.sources.registry import load_publishers, load_registry
 
 logger = logging.getLogger("worker")
 
@@ -49,7 +58,8 @@ EXIT_OK = 0
 EXIT_FAILED = 1
 EXIT_USAGE = 2
 
-# How many of the groups consolidation would merge `--check-duplicates` lists.
+# How many of the groups consolidation would merge `--check-duplicates` lists, and how many
+# events `--check-lineage` does.
 SHOWN_GROUPS = 40
 
 
@@ -69,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--check-duplicates",
         action="store_true",
         help="report the duplicate rate on the site and what consolidation would merge; reads only",
+    )
+    p.add_argument(
+        "--check-lineage",
+        action="store_true",
+        help="count recent events' confirmations by outlet and by source lineage; reads only",
     )
     p.add_argument("--migrate", action="store_true", help="apply pending database migrations")
     p.add_argument("--lane", choices=[lane.value for lane in Lane], help="collection lane")
@@ -254,6 +269,58 @@ def _check_duplicates() -> int:
     return EXIT_OK
 
 
+def _check_lineage() -> int:
+    """Count each recent event's confirmations as one per outlet and as one per lineage
+    (worker/pipeline/lineage.py), and list the events where the two differ: a publisher's
+    several feeds, an outlet relaying an agency, a syndicated copy.
+
+    Reads only: it says what the run's lineage pass makes of the events, and changes nothing.
+    """
+    now = datetime.now(UTC)
+    with get_engine().connect() as conn:
+        reports = load_reports(conn, since=now - CONSOLIDATE_LOOKBACK)
+        conn.rollback()
+    publishers = Publishers.from_registry(
+        load_registry(DEFAULT_REGISTRY_PATH), load_publishers(DEFAULT_REGISTRY_PATH)
+    )
+
+    by_outlet = by_lineage = 0
+    differ = []
+    for event_id, rs in reports.items():
+        assigned = assign(rs, publishers)
+        outlets: dict[str, set[str]] = defaultdict(set)
+        for r in rs:
+            outlets[assigned[r.id].lineage].add(r.source_id)
+        n = len({r.source_id for r in rs})
+        by_outlet += n
+        by_lineage += len(outlets)
+        if n > len(outlets):
+            differ.append((n - len(outlets), event_id, n, outlets, min(rs, key=lambda r: r.at)))
+
+    logger.info(
+        "lineage: %d events seen in the last %d days; %d confirmations counted by outlet, %d by "
+        "lineage; %d events have fewer lineages than outlets",
+        len(reports),
+        CONSOLIDATE_LOOKBACK.days,
+        by_outlet,
+        by_lineage,
+        len(differ),
+    )
+    for _, event_id, n, outlets, first in sorted(differ, key=lambda d: (-d[0], d[1]))[
+        :SHOWN_GROUPS
+    ]:
+        shared = sorted((line, s) for line, s in outlets.items() if s != {line})
+        logger.info(
+            "  %s: %d outlets, %d lineages: %s | %s",
+            event_id,
+            n,
+            len(outlets),
+            "; ".join(f"{line} <- {', '.join(sorted(s))}" for line, s in shared),
+            (first.title or "")[:70],
+        )
+    return EXIT_OK
+
+
 def _groundtruth(cvss_batch: int, advisory_batch: int) -> int:
     """Run one sync. Only a failure the sync itself could not absorb is non-zero.
 
@@ -333,6 +400,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if code != EXIT_OK:
             return code
 
+    if args.check_lineage:
+        code = _check_lineage()
+        if code != EXIT_OK:
+            return code
+
     if args.migrate:
         applied = run_migrations(get_engine())
         logger.info("migrations applied: %s", ", ".join(applied) or "none")
@@ -360,6 +432,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.check_models
         or args.check_budget
         or args.check_duplicates
+        or args.check_lineage
         or args.migrate
         or args.publish
         or args.groundtruth
