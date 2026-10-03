@@ -42,6 +42,7 @@ from worker.collectors.json_api import parse_json_api
 from worker.collectors.web_page import parse_web_page
 from worker.db.archive import archive_faded
 from worker.db.au import load_au_facts, save_au
+from worker.db.discovery import load_discovered_sources
 from worker.db.events import find_candidates, load_events, next_event_id
 from worker.db.followup import schedule_followups, settle_statuses
 from worker.db.groundtruth import set_event_severity
@@ -69,6 +70,8 @@ from worker.db.sources import (
     set_lifecycle_state,
     upsert_registry,
 )
+from worker.discovery.gate import DISCOVERED_CLASS, host_of, same_site
+from worker.discovery.guard import fetch_guarded
 from worker.models import (
     Event,
     HealthStatus,
@@ -181,10 +184,14 @@ async def _collect(
 ) -> Collected:
     async with gate:
         try:
-            result = await asyncio.wait_for(
-                fetch(client, source, etag=state.etag, last_modified=state.last_modified),
-                SOURCE_DEADLINE_SECONDS,
-            )
+            if source.source_class == DISCOVERED_CLASS:
+                # The open web chose this URL, not the registry's author (worker/discovery/).
+                fetching = fetch_guarded(
+                    client, source.url, etag=state.etag, last_modified=state.last_modified
+                )
+            else:
+                fetching = fetch(client, source, etag=state.etag, last_modified=state.last_modified)
+            result = await asyncio.wait_for(fetching, SOURCE_DEADLINE_SECONDS)
         except TimeoutError:
             result = _failed_fetch(
                 FetchStatus.TIMEOUT,
@@ -468,6 +475,18 @@ def settle(
     return moved, []
 
 
+def _discovered(engine: Engine, registry: Sequence[SourceConfig]) -> list[SourceConfig]:
+    """The sources SERAPH's gate activated, less any on a site the YAML has since registered."""
+    with engine.connect() as conn:
+        found = load_discovered_sources(conn)
+    hosts = {host_of(s.url) for s in registry}
+    ids = {s.id for s in registry}
+    return [
+        s for s in found
+        if s.id not in ids and not any(same_site(host_of(s.url), h) for h in hosts)
+    ]
+
+
 def _prepare(
     engine: Engine, sources: Sequence[SourceConfig], run_id: str, lane: Lane, started: datetime
 ) -> tuple[dict[str, LifecycleState], dict[str, FetchState]]:
@@ -497,12 +516,14 @@ async def run_lane(
     started = clock()
     engine = engine or get_engine()
     registry = load_registry(registry_path or DEFAULT_REGISTRY_PATH)
+    # Already in source_registry, where the gate wrote them; only the YAML is synced below.
+    discovered = await asyncio.to_thread(_discovered, engine, registry)
     publishers = Publishers.from_registry(
-        registry, load_publishers(registry_path or DEFAULT_REGISTRY_PATH)
+        registry + discovered, load_publishers(registry_path or DEFAULT_REGISTRY_PATH)
     )
     scoring = ScoringConfig.load(scoring_path or DEFAULT_SCORING_PATH)
     followup = FollowupConfig.load(followup_path)
-    sources = sources_for_lane(registry, lane)
+    sources = sources_for_lane(registry + discovered, lane)
     run_id = f"run-{lane.value}-{started:%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}"
     logger.info("run %s: %d %s sources (once=%s)", run_id, len(sources), lane.value, once)
 

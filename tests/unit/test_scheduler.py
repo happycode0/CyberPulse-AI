@@ -1,4 +1,5 @@
 import logging
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -12,7 +13,9 @@ from worker.publish.push import PushResult
 from worker.scheduler import (
     ALERT_JOB_ID,
     DIGEST_JOB_ID,
+    DISCOVERY_JOB_ID,
     ENRICH_JOB_ID,
+    GATE_JOB_ID,
     GROUNDTRUTH_JOB_ID,
     build_scheduler,
     job_id,
@@ -27,7 +30,7 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     jobs = {j.id for j in build_scheduler().get_jobs()}
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
-        ALERT_JOB_ID,
+        ALERT_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID,
     }
 
 
@@ -71,6 +74,74 @@ def test_alerts_follow_each_fast_run():
 def test_asking_for_one_lane_does_not_bring_notifications_along():
     jobs = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
     assert DIGEST_JOB_ID not in jobs and ALERT_JOB_ID not in jobs
+
+
+def test_the_discovery_search_runs_nightly_sydney_time():
+    job = {j.id: j for j in build_scheduler().get_jobs()}[DISCOVERY_JOB_ID]
+    assert (fields(job.trigger)["minute"], fields(job.trigger)["hour"]) == ("0", "3")
+    assert str(job.trigger.timezone) == "Australia/Sydney"
+
+
+def test_the_gate_runs_ten_minutes_before_each_normal_run():
+    jobs = {j.id: j for j in build_scheduler().get_jobs()}
+    gate, normal = jobs[GATE_JOB_ID].trigger, jobs[job_id(Lane.NORMAL)].trigger
+    after = datetime(2026, 10, 3, 0, 0, tzinfo=UTC)
+    gate_at = gate.get_next_fire_time(None, after)
+    assert normal.get_next_fire_time(None, gate_at) - gate_at == timedelta(minutes=10)
+    assert str(gate.timezone) == "UTC"
+
+
+def test_asking_for_one_lane_does_not_bring_discovery_along():
+    jobs = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+    assert DISCOVERY_JOB_ID not in jobs and GATE_JOB_ID not in jobs
+
+
+@pytest.mark.parametrize("name, runner, job", [("_discovery_job", "run_search", "discovery"),
+                                               ("_gate_job", "run_gate", "source-gate")])
+async def test_a_discovery_pass_that_raises_is_recorded_and_not_fatal(
+    monkeypatch, caplog, name, runner, job
+):
+    async def boom():
+        raise RuntimeError("database unreachable")
+
+    recorded = []
+
+    async def record(run):
+        recorded.append(run)
+
+    async def no_notices(engine, settings, *, now):
+        return None
+
+    monkeypatch.setattr(scheduler, runner, boom)
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "send_source_activations", no_notices)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
+    await getattr(scheduler, name)()  # must not raise
+    assert "failed" in caplog.text
+    assert [(r.job, r.completed) for r in recorded] == [(job, False)]
+
+
+async def test_the_gate_sends_new_source_notices_even_after_a_failed_pass(monkeypatch):
+    async def boom():
+        raise RuntimeError("database unreachable")
+
+    sent = []
+
+    async def notices(engine, settings, *, now):
+        sent.append(now)
+
+    async def record(run):
+        return None
+
+    monkeypatch.setattr(scheduler, "run_gate", boom)
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "send_source_activations", notices)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
+    await scheduler._gate_job()
+    # An earlier pass's activation whose notice failed is retried here.
+    assert len(sent) == 1
 
 
 @pytest.mark.parametrize("name, sender", [("_digest_job", "send_daily_digest"),

@@ -11,6 +11,7 @@ from worker.notify.messages import (
     daily_digest,
     developing_update,
     event_url,
+    source_activated,
 )
 from worker.notify.telegram import SendResult
 from worker.settings import Settings
@@ -272,3 +273,48 @@ async def test_each_change_is_sent_once(db):
 async def test_with_no_bot_no_update_is_read(db):
     summary = await jobs.send_developing_updates(None, SETTINGS, now=NOW)
     assert summary.skipped and db["rows"] == {} and "updates" not in db
+
+
+# --- New sources ---------------------------------------------------------------------------------
+
+
+def activation(**overrides):
+    from worker.db.discovery import Activation
+
+    values = {
+        "source_id": "found_itnews_com_au", "name": "iTnews  Security\n", "host": "itnews.com.au",
+        "region": "au", "found_by": "tachikoma", "passes": 6,
+        "last_result": {"recent": 12, "on_beat": 7}, "activated_at": NOW,
+    }
+    return Activation(**{**values, **overrides})
+
+
+def test_a_new_source_says_who_found_it_and_what_it_counts_for():
+    text = source_activated(activation(), site_url=SITE)
+    assert text.split("\n") == [
+        "CyberPulse-AI · new source",
+        "",
+        "iTnews Security · itnews.com.au · Australia",
+        "Found by TACHIKOMA; passed SERAPH's gate with 6 healthy probes in a row.",
+        "Last probe: 12 recent items, 7 on the beat.",
+        ("Collected from the next normal run as community evidence, which never confirms an "
+         "event on its own."),
+        "",
+        SITE,
+    ]
+
+
+def test_a_new_source_without_a_last_probe_leaves_the_line_out():
+    text = source_activated(activation(found_by="search", region="global", last_result=None),
+                            site_url=SITE)
+    assert "Found by the nightly search" in text and "Australia" not in text
+    assert "Last probe" not in text
+
+
+async def test_each_new_source_is_announced_once(db, monkeypatch):
+    monkeypatch.setattr(jobs, "_read_activations", lambda engine, since: [activation()])
+    channel = Channel()
+    first = await jobs.send_source_activations(None, SETTINGS, now=NOW, channel=channel)
+    again = await jobs.send_source_activations(None, SETTINGS, now=NOW, channel=channel)
+    assert (first.sent, again.sent, len(channel.sent)) == (1, 0, 1)
+    assert list(db["rows"]) == ["source_activated:found_itnews_com_au"]
