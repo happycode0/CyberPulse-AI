@@ -118,7 +118,7 @@ of the split. Full task definitions in [`PLAN.md` §4](PLAN.md).
 | **4** | Proxmox VM + Paperclip + first agents | 🔴🟢 | ▶ in progress |
 | **5** | Full crew + follow-up + Telegram + public crew page | 🟢🔴 | ▶ built, live on the VM; agents wait for you to resume them |
 | **6** | Self-healing: watchdog → incident → fix → audit → your approval | 🟢🔴 | ▶ watchdog and breaker live on the VM; the crew's part waits for your token and routine |
-| **7** | Hardening: backups, observability, failure injection, runbooks | 🟢🔴 | |
+| **7** | Hardening: backups, observability, failure injection, runbooks | 🟢🔴 | ▶ built, restore rehearsed on the VM; the off-host backup target is yours |
 
 **Stages 1–3 run entirely on your laptop or WSL.** No Proxmox needed until Stage 4, so you
 get a working public intelligence site before touching hardware.
@@ -468,12 +468,13 @@ Non-negotiable, and enforced in code:
 ### Recovery
 
 ```bash
-gunzip -c /backup/cyber_intel.sql.gz | docker compose exec -T db psql -U cyberpulse cyber_intel
-gunzip -c /backup/paperclip.sql.gz  | docker compose exec -T db psql -U cyberpulse paperclip
-docker compose cp /backup/master.key server:/paperclip/instances/default/secrets/master.key
+./ops/backup.sh /mnt/backup                                     # databases, Paperclip's keys, .env
+./ops/restore.sh rehearse /mnt/backup/cyberpulse-<UTC time>     # restore into a throwaway, compare
+./ops/restore.sh fresh /mnt/backup/cyberpulse-<UTC time> --yes  # rebuild onto a new, empty VM
 ```
 
-Rehearse this in Stage 7. A backup you have never restored is a hypothesis.
+A backup you have never restored is a hypothesis. This one was rehearsed on the VM on
+2026-10-03: every table's row count matched ([Stage 7](docs/wiki/stage-7-hardening.md)).
 
 ---
 
