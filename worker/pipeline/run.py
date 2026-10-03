@@ -4,7 +4,9 @@ For each enabled source in the lane: fetch (conditional, concurrent, bounded) ->
 normalise -> resolve against stored events -> create/merge events -> record health. When every
 source is done, stored events that turn out to be one story are merged (consolidation,
 worker/pipeline/correlate.py), the recent events' independent reports are settled by lineage
-(worker/pipeline/lineage.py), all live events are rescored and the run summary is persisted.
+(worker/pipeline/lineage.py), all live events are rescored, faded ones archived, each standing
+event given the status its record says with DECKARD's follow-up tasks to match
+(worker/db/followup.py), and the run summary is persisted.
 
 Failure model (PLAN.md section 11): a source that errors, hangs, returns garbage or whose
 items cannot be stored is recorded as failed and the run carries on. Each source is stored in
@@ -19,6 +21,7 @@ stops two overlapping runs from each deciding the same story is new.
 import asyncio
 import logging
 import uuid
+from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
@@ -40,6 +43,7 @@ from worker.collectors.web_page import parse_web_page
 from worker.db.archive import archive_faded
 from worker.db.au import load_au_facts, save_au
 from worker.db.events import find_candidates, load_events, next_event_id
+from worker.db.followup import schedule_followups, settle_statuses
 from worker.db.groundtruth import set_event_severity
 from worker.db.ingest import (
     add_relationship,
@@ -85,6 +89,7 @@ from worker.pipeline.lineage import Publishers
 from worker.pipeline.normalise import normalise
 from worker.pipeline.resolve import Decision, resolve
 from worker.pipeline.score import DEFAULT_SCORING_PATH, ArchiveRule, ScoringConfig, score_event
+from worker.pipeline.status import FollowupConfig, Transition
 from worker.sources.registry import load_publishers, load_registry, sources_for_lane
 
 logger = logging.getLogger(__name__)
@@ -436,6 +441,33 @@ def archive(engine: Engine, rule: ArchiveRule, *, now: datetime) -> tuple[list[s
     return ids, []
 
 
+def settle(
+    engine: Engine, config: FollowupConfig, *, now: datetime
+) -> tuple[list[Transition], list[str]]:
+    """Give each standing event the status its record says, then open and cancel DECKARD's
+    follow-up tasks to match (worker/db/followup.py). Like archiving, a failure is reported,
+    never raised."""
+    try:
+        with engine.begin() as conn:
+            lock_ingest(conn)
+            moved = settle_statuses(conn, config.status, now=now)
+            scheduled = schedule_followups(conn, config.followup, now=now)
+    except Exception as exc:
+        logger.exception("status settling failed")
+        return [], [_short(f"status: {exc!r}")]
+    if moved:
+        counts = Counter(f"{t.was.value}->{t.now.value}" for t in moved)
+        logger.info(
+            "status: %d events moved (%s)",
+            len(moved), ", ".join(f"{k} {n}" for k, n in sorted(counts.items())),
+        )
+    if scheduled.opened or scheduled.cancelled:
+        logger.info(
+            "follow-up: %d tasks opened, %d cancelled", len(scheduled.opened), scheduled.cancelled
+        )
+    return moved, []
+
+
 def _prepare(
     engine: Engine, sources: Sequence[SourceConfig], run_id: str, lane: Lane, started: datetime
 ) -> tuple[dict[str, LifecycleState], dict[str, FetchState]]:
@@ -452,13 +484,14 @@ async def run_lane(
     engine: Engine | None = None,
     registry_path: Path | None = None,
     scoring_path: Path | None = None,
+    followup_path: Path | None = None,
     now: datetime | None = None,
 ) -> RunSummary:
     """Run one pass over every enabled source in `lane` and persist the summary.
 
     A run is always a single pass; repeating it is the scheduler's job. `once` exists so the
-    CLI's `--once` maps straight onto it. `engine`, the two config paths and `now` default to
-    the process database, `config/` and the wall clock; they exist so tests can substitute them.
+    CLI's `--once` maps straight onto it. `engine`, the config paths and `now` default to the
+    process database, `config/` and the wall clock; they exist so tests can substitute them.
     """
     clock = (lambda: now) if now is not None else (lambda: datetime.now(UTC))
     started = clock()
@@ -468,6 +501,7 @@ async def run_lane(
         registry, load_publishers(registry_path or DEFAULT_REGISTRY_PATH)
     )
     scoring = ScoringConfig.load(scoring_path or DEFAULT_SCORING_PATH)
+    followup = FollowupConfig.load(followup_path)
     sources = sources_for_lane(registry, lane)
     run_id = f"run-{lane.value}-{started:%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}"
     logger.info("run %s: %d %s sources (once=%s)", run_id, len(sources), lane.value, once)
@@ -523,6 +557,8 @@ async def run_lane(
         archive, engine, scoring.archive, now=started
     )
     errors.extend(archive_errors)
+    _, status_errors = await asyncio.to_thread(settle, engine, followup, now=started)
+    errors.extend(status_errors)
 
     try:
         prune_cache()

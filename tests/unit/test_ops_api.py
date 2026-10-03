@@ -485,3 +485,150 @@ def test_wake_freshness_windows_fit_the_schedules():
     """One missed collection, and one missed ground-truth pass, before a wake fails."""
     assert ops_api.COLLECTION_FRESH == timedelta(minutes=30)
     assert ops_api.GROUNDTRUTH_FRESH > timedelta(hours=6)
+
+
+# --- Follow-up ------------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def followup_db(monkeypatch):
+    """The follow-up queries and the report writer, stood in for; what they were asked."""
+    from worker.db.followup import DueTask, Submitted
+    from worker.models import Event, SourceRef, TimelineEntry
+
+    seen = {"writes": 0, "reports": []}
+    event = Event(
+        event_id="evt-2026-000042", first_seen=NOW - timedelta(days=2), last_seen=NOW,
+        last_material_update=NOW - timedelta(hours=36), status="developing", severity="high",
+        title="A developing story", summary="What it is.",
+        sources=[
+            SourceRef(source_id=f"s{i}", url=f"https://example.org/{i}",
+                      published=NOW - timedelta(hours=i), evidence_class="NEWS")
+            for i in range(12)
+        ],
+        timeline=[
+            TimelineEntry(timestamp=NOW - timedelta(hours=40 - i), type="NEW_FACT",
+                          summary=f"entry {i}")
+            for i in range(15)
+        ],
+    )
+    due = [DueTask(7, "check", event.event_id, NOW - timedelta(hours=1), 1, "a refusal")]
+
+    @contextmanager
+    def connection(self):
+        yield None
+
+    @contextmanager
+    def write(self):
+        seen["writes"] += 1
+        yield None
+
+    def submit(conn, task_id, body, *, rule, now):
+        seen["reports"].append((task_id, body, now))
+        return seen.get("result") or Submitted("recorded", "", task_id, event.event_id, None, 1,
+                                               "done")
+
+    monkeypatch.setattr(OpsApi, "_read", connection)
+    monkeypatch.setattr(OpsApi, "_write", write)
+    monkeypatch.setattr(ops_api, "load_due", lambda conn, *, now, limit: due[:limit])
+    monkeypatch.setattr(
+        ops_api, "load_queue_counts",
+        lambda conn, *, now, overdue_after: {"due": 1, "waiting": 3, "overdue": 0, "statuses": {}},
+    )
+    monkeypatch.setattr(ops_api, "load_events", lambda conn, ids: [event] if ids else [])
+    monkeypatch.setattr(ops_api, "submit_report", submit)
+    seen["Submitted"] = Submitted
+    return seen
+
+
+def test_the_queue_hands_out_tasks_with_their_events(api, followup_db):
+    response = api.handle("GET", "/ops/followup", AUTH)
+    assert response.status == 200
+    body = response.json()
+    [task] = body["tasks"]
+    assert task["task_id"] == 7 and task["report_to"] == "POST /ops/followup/7"
+    assert task["last_error"] == "a refusal"
+    event = task["event"]
+    assert event["quiet_days"] == 1.5
+    assert len(event["sources"]) == ops_api.FOLLOWUP_SOURCES
+    assert event["sources"][0]["source_id"] == "s0"  # the newest first
+    assert [t["summary"] for t in event["timeline"]][-1] == "entry 14"
+    assert len(event["timeline"]) == ops_api.FOLLOWUP_TIMELINE
+    assert set(body["ask"]) == {"check", "final_summary"}
+    assert body["queue"]["waiting"] == 3
+    assert followup_db["writes"] == 0
+
+
+def test_the_queue_needs_the_token(api, followup_db):
+    assert api.handle("GET", "/ops/followup", {}).status == 401
+    assert api.handle("POST", "/ops/followup/7", {}, b'{"outcome": "no_change"}').status == 401
+    assert followup_db["reports"] == []
+
+
+@pytest.mark.parametrize(
+    "method, target, status",
+    [
+        ("GET", "/ops/followup/7", 405),
+        ("PUT", "/ops/followup/7", 405),
+        ("POST", "/ops/followup", 405),
+        ("POST", "/ops/followup/x", 405),
+        ("POST", "/ops/followup/7?force=1", 400),
+        ("POST", "/ops/followup/1234567890123", 405),
+    ],
+)
+def test_reports_go_to_one_task_by_post(api, followup_db, method, target, status):
+    assert api.handle(method, target, AUTH, b'{"outcome": "no_change"}').status == status
+    assert followup_db["reports"] == []
+
+
+def test_a_report_is_handed_to_the_writer(api, followup_db):
+    response = api.handle("POST", "/ops/followup/7", AUTH, b'{"outcome": "no_change"}')
+    assert response.status == 200 and response.json()["result"] == "recorded"
+    assert followup_db["reports"] == [(7, {"outcome": "no_change"}, NOW)]
+    assert followup_db["writes"] == 1
+
+
+@pytest.mark.parametrize(
+    "body, status",
+    [(b"", 400), (b"not json", 400), (b"\xff\xfe", 400), (b"[" * 100_000, 413)],
+    ids=["empty", "not-json", "not-utf8", "too-big"],
+)
+def test_a_body_that_is_not_a_report_never_reaches_the_writer(api, followup_db, body, status):
+    response = api.handle("POST", "/ops/followup/7", AUTH, body)
+    assert response.status == status
+    assert followup_db["reports"] == []
+
+
+@pytest.mark.parametrize(
+    "result, status",
+    [("recorded", 200), ("rejected", 400), ("not_found", 404), ("closed", 409)],
+)
+def test_each_result_has_its_status(api, followup_db, result, status):
+    followup_db["result"] = followup_db["Submitted"](
+        result, "why", 7, "evt-2026-000042", attempts=2, task_status="pending"
+    )
+    response = api.handle("POST", "/ops/followup/7", AUTH, b'{"outcome": "no_change"}')
+    assert response.status == status
+    body = response.json()
+    assert body["result"] == result
+    if result != "recorded":
+        assert body["error"] == "why"
+    if result == "rejected":
+        assert body["attempts_left"] == 1
+
+
+def test_a_database_failure_on_a_report_asks_for_it_again(api, followup_db, monkeypatch):
+    from sqlalchemy.exc import OperationalError
+
+    def fail(conn, task_id, body, *, rule, now):
+        raise OperationalError("select", {}, Exception("canceling statement due to timeout"))
+
+    monkeypatch.setattr(ops_api, "submit_report", fail)
+    response = api.handle("POST", "/ops/followup/7", AUTH, b'{"outcome": "no_change"}')
+    assert response.status == 503 and "send it again" in response.json()["error"]
+
+
+def test_the_index_lists_the_followup_endpoints(api):
+    body = api.handle("GET", "/ops", AUTH).json()
+    assert "/ops/followup" in body["reads"]
+    assert "POST /ops/followup/<task_id>" in body["writes"]

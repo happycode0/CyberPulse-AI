@@ -451,7 +451,7 @@ Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it
 | AU desk digest | `[DIGEST] AU desk — {{date}}` | `Review the AU candidate events in the current desk digest.` |
 | Global / AI desk digest | `[DIGEST] Global desk` / `[DIGEST] AI desk` | `Review the candidate events for your beat in the current desk digest.` |
 | Daily QA sample | `[QA] Daily sample` | `QA a sample of yesterday's published events.` |
-| Follow-up | `[FOLLOW-UP] Sweep` | `Check every developing and monitoring event for material change.` |
+| Follow-up | `[FOLLOW-UP] Sweep` | `Work the follow-up queue: report on each task due.` |
 | Source discovery | `[DISCOVERY] Nightly` | `Run discovery searches, plus any open [GAP] topics.` |
 | Model scan / gauntlet | `[MODEL] Daily scan` / `[MODEL] Weekly gauntlet` | `Read the worker's results and report.` |
 | Monthly cost review | `[COST] Monthly review` | `Reconcile the month and report to MORPHEUS.` |

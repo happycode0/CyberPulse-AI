@@ -3,6 +3,8 @@
 - **The daily digest**, at 07:00 Sydney time, tried again at 08:00 and 09:00 if it failed.
 - **Critical alerts for Australia**, every 15 minutes: a new event that is critical or carries a
   KEV-listed CVE, and that matters to Australia.
+- **Developing updates**, in the same pass: a material change to such an event after its first
+  hour, or one that newly exposes a critical or high event in Australia.
 
 Each message is claimed in `notifications` before it is sent, so none is sent twice. With no
 Telegram bot configured, a pass claims nothing and returns, so the first pass after the token is
@@ -22,11 +24,13 @@ from worker.db.notifications import (
     AlertEvent,
     Kind,
     Outcome,
+    UpdateEntry,
     claim,
     load_alert_events,
+    load_update_entries,
     settle,
 )
-from worker.notify.messages import SYDNEY, critical_au_alert, daily_digest
+from worker.notify.messages import SYDNEY, critical_au_alert, daily_digest, developing_update
 from worker.notify.telegram import SendResult, Telegram
 from worker.settings import Settings
 
@@ -108,6 +112,11 @@ def _read_alerts(engine: Engine, since: datetime) -> list[AlertEvent]:
         return load_alert_events(conn, since=since)
 
 
+def _read_updates(engine: Engine, since: datetime) -> list[UpdateEntry]:
+    with engine.connect() as conn:
+        return load_update_entries(conn, since=since)
+
+
 async def send_daily_digest(
     engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
 ) -> NotifySummary:
@@ -149,6 +158,31 @@ async def send_critical_alerts(
             message=critical_au_alert(event, site_url=settings.site_url),
             now=now,
             event_id=event.event_id,
+        )
+        _count(summary, outcome)
+    return summary
+
+
+async def send_developing_updates(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """A message for each qualifying change not yet sent, at most `MAX_ALERTS_PER_PASS`."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    entries = await asyncio.to_thread(_read_updates, engine, now - ALERT_WINDOW)
+    summary = NotifySummary()
+    for entry in entries:
+        if summary.tried >= MAX_ALERTS_PER_PASS:
+            break
+        outcome = await _deliver(
+            engine,
+            channel,
+            kind="developing_update",
+            key=f"developing_update:{entry.entry_id}",
+            message=developing_update(entry, site_url=settings.site_url),
+            now=now,
+            event_id=entry.event_id,
         )
         _count(summary, outcome)
     return summary

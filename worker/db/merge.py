@@ -180,6 +180,12 @@ def merge_events(conn: Connection, group: MergeGroup) -> None:
         "where c." + losers + " and d.id <> c.id and lower(d.text) = lower(c.text) "
         "and (d.event_id = :w or (d.event_id = any(cast(:l as text[])) and d.id < c.id))"
     )
+    # A loser's open follow-up task is cancelled, not moved: an event has one open task of each
+    # kind (migration 012), and the next sweep gives the winner what it needs.
+    run(
+        "update followup_tasks set status = 'cancelled', updated_at = now() where " + losers
+        + " and status in ('pending', 'in_progress')"
+    )
     for table in ("claims", "evidence", "followup_tasks"):
         run(f"update {table} set event_id = :w where " + losers)
 

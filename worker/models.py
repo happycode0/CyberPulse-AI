@@ -257,6 +257,8 @@ class Event(_Model):
     title: str
     summary: str
     why_it_matters: str | None = None
+    # A resolved event's closing summary of the whole case (worker/db/followup.py).
+    resolution: str | None = None
 
     domains: list[str] = Field(default_factory=list)
     categories: list[str] = Field(default_factory=list)
