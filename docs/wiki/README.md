@@ -37,9 +37,10 @@ Stage 3  Correlation depth + trends ............... ✅ done
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ Paperclip Docker service ............ ✅ running, healthy, since 2026-10-02 20:15 Sydney
            ├─ open, claim, sign-up off ............ ✅ claimed 2026-10-02 20:21 Sydney
-           ├─ board-approval toggle, company ...... 🔴 you: 4a steps 4–5 (company exists, mission + budget empty)
-           ├─ 16 agents + routines ................ 🔴 you: 4a steps 6–7 (9 agents start paused)
-           └─ OpenCode, ops API, http agents ...... 🟢 Claude
+           ├─ board-approval toggle, company ...... ✅ mission and budgets set 2026-10-03
+           ├─ 16 agents + routines ................ ✅ imported, smoke-tested; all paused
+           ├─ OpenCode, ops API, http agents ...... ✅ 2026-10-03
+           └─ resume agents and routines .......... 🔴 you: MORPHEUS, ZION, ROGUE first
 Stage 5  Full crew + notifications ................ ⬜
 Stage 6  Self-healing ............................. ⬜
 Stage 7  Hardening + operations ................... ⬜
@@ -48,9 +49,9 @@ Stage 7  Hardening + operations ................... ⬜
 ## What is yours to do (🔴), in order
 
 1. ~~**Claim Paperclip.**~~ ✅ Done 2026-10-02; sign-up is now off.
-2. **Set it up:** [4a steps 4–8](stage-4a-paperclip-setup.md#4--harden-it--the-six-toggles-runbook-part-6):
-   turn on board approval for new hires, give the existing `CyberPulse` company its mission and
-   US$12 budget, then the 16 agents, the routines, a first test ticket.
+2. ~~**Set it up.**~~ ✅ Company, mission, budgets, 16 agents and their smoke tests, 2026-10-03.
+   **Then resume** MORPHEUS, ZION and ROGUE and their routines when you are ready for them to
+   spend ([Stage 4](stage-4-paperclip.md#whats-left-in-order)).
 3. ~~**Approve merging `stage-1-foundation` into `main`.**~~ ✅ Merged 2026-10-03 (PR #1).
    **Then commit the Pages timer**, so the site redeploys every 15 minutes on its own
    ([Stage 1, item 2](stage-1-foundation.md#whats-left)).
@@ -74,7 +75,7 @@ Stage 7  Hardening + operations ................... ⬜
 
 ```bash
 cd ~/CyberPulse-AI
-docker compose ps                         # db, worker, server: all "Up", db and server "(healthy)"
+docker compose ps                         # db, worker, server: all "Up … (healthy)"
 docker compose logs -f worker             # collection: "done: ok=" every 15 min
 docker compose logs -f server             # Paperclip
 docker compose up -d                      # start whatever is stopped

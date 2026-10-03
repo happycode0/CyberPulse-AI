@@ -94,15 +94,23 @@ def lane_job(monkeypatch):
             raise RuntimeError("git push failed: could not resolve host")
         return state["pushed"]
 
+    def fake_record_job(engine, run):
+        log.append(("record", run))
+        if state["record_raises"]:
+            raise RuntimeError("database unreachable")
+
     state = {
         "run_raises": False,
         "publish_raises": False,
         "push_raises": False,
+        "record_raises": False,
         "pushed": PushResult(pushed=True, commit_sha="a" * 40, reason=None),
     }
     monkeypatch.setattr(scheduler.pipeline_run, "run_lane", fake_run_lane)
     monkeypatch.setattr(scheduler, "publish_now", fake_publish_now)
     monkeypatch.setattr(scheduler, "push_now", fake_push_now)
+    monkeypatch.setattr(scheduler, "record_job", fake_record_job)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
     return log, state
 
 
@@ -167,6 +175,7 @@ async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_j
 
     class Changed:
         changed_anything = True
+        errors = ("kev: HTTP 503",)
 
     async def fake_sync():
         log.append(("sync",))
@@ -174,7 +183,41 @@ async def test_the_ground_truth_sync_publishes_and_pushes_what_it_changed(lane_j
 
     monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
     await scheduler._groundtruth_job()
-    assert log == [("sync",), ("publish",), ("push",)]
+    assert [entry[0] for entry in log] == ["sync", "record", "publish", "push"]
+    run = log[1][1]
+    assert (run.job, run.completed, run.errors, run.changed) == ("groundtruth", True, 1, True)
+    assert run.started_at <= run.finished_at
+
+
+async def test_a_ground_truth_sync_that_raised_is_recorded_as_not_completed(lane_job, monkeypatch):
+    """LIBRARIAN's wake reads the newest completed pass, so a raising one must not count."""
+    log, _ = lane_job
+
+    async def fake_sync():
+        raise RuntimeError("registry unreadable")
+
+    monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
+    await scheduler._groundtruth_job()  # must not raise
+    [(_, run)] = log
+    assert (run.job, run.completed, run.changed) == ("groundtruth", False, False)
+
+
+async def test_a_pass_whose_record_fails_still_publishes(lane_job, monkeypatch, caplog):
+    """The row is for the wakes; the pass's own work matters more and stands."""
+    log, state = lane_job
+    state["record_raises"] = True
+
+    class Changed:
+        changed_anything = True
+        errors = ()
+
+    async def fake_sync():
+        return Changed()
+
+    monkeypatch.setattr(scheduler, "sync_groundtruth", fake_sync)
+    await scheduler._groundtruth_job()
+    assert [entry[0] for entry in log] == ["record", "publish", "push"]
+    assert "could not record the groundtruth pass" in caplog.text
 
 
 async def test_a_failed_run_is_swallowed_so_the_next_tick_still_fires(lane_job):
@@ -213,6 +256,12 @@ def enrich_job(monkeypatch):
     async def fake_push_now():  # as on a host with no publish token
         log.append(("push",))
 
+    def fake_record_job(engine, run):
+        state["recorded"].append(run)
+
+    state["recorded"] = []
+    monkeypatch.setattr(scheduler, "record_job", fake_record_job)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
     monkeypatch.setattr(scheduler, "enrich_pending", fake_enrich_pending)
     monkeypatch.setattr(scheduler, "suggest_techniques", fake_suggest_techniques)
     monkeypatch.setattr(scheduler, "publish_now", fake_publish_now)
@@ -273,3 +322,22 @@ async def test_a_failed_enrichment_is_swallowed_and_not_published(enrich_job):
     state["raises"] = True
     await scheduler._enrich_job()  # must not raise
     assert log == [("enrich", "the layer"), ("mitre", "the layer")]
+
+
+async def test_an_enrichment_pass_is_recorded_with_what_it_absorbed(enrich_job):
+    _, state = enrich_job
+    state["summary"].done["brief"] = 2
+    state["summary"].failed = 1
+    state["summary"].errors.append("rescore evt-2026-000001: deadlock")
+    state["mitre"].failed = 2
+    await scheduler._enrich_job()
+    [run] = state["recorded"]
+    assert (run.job, run.completed, run.errors, run.changed) == ("enrichment", True, 4, True)
+
+
+async def test_an_enrichment_half_that_raised_is_recorded_as_not_completed(enrich_job):
+    _, state = enrich_job
+    state["mitre_raises"] = True
+    await scheduler._enrich_job()
+    [run] = state["recorded"]
+    assert (run.completed, run.changed) == (False, False)

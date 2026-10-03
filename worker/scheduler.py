@@ -5,17 +5,22 @@ DEEP is a Paperclip routine, so it has no schedule here and is only reachable th
 import asyncio
 import logging
 import signal
+from datetime import UTC, datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from worker import ops_api
 from worker.ai.enrich import AiLayer, enrich_pending
 from worker.ai.mitre import suggest_techniques
+from worker.db.jobs import JobRun, record_job
+from worker.db.session import get_engine
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
 from worker.publish.run import publish_now, push_now
+from worker.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +63,19 @@ _ai_layer: AiLayer | None = None
 
 def job_id(lane: Lane) -> str:
     return f"lane-{lane.value}"
+
+
+def _now() -> datetime:
+    return datetime.now(UTC)
+
+
+async def _record(run: JobRun) -> None:
+    """Leave a job_runs row for the ops API's wakes. Never fatal: a pass that worked is not
+    undone by its row failing to write, and the next pass writes another."""
+    try:
+        await asyncio.to_thread(record_job, get_engine(), run)
+    except Exception:
+        logger.exception("could not record the %s pass", run.job)
 
 
 async def _publish(after: str, *, stands: str) -> None:
@@ -122,11 +140,23 @@ async def _groundtruth_job() -> None:
     registers are read in full each time rather than as a delta, so a skipped pass is a delay and
     not a gap.
     """
+    started = _now()
     try:
         summary = await sync_groundtruth()
     except Exception:
         logger.exception("scheduled ground-truth sync failed")
+        await _record(JobRun("groundtruth", started, _now(), completed=False))
         return
+    await _record(
+        JobRun(
+            "groundtruth",
+            started,
+            _now(),
+            completed=True,
+            errors=len(summary.errors),
+            changed=summary.changed_anything,
+        )
+    )
 
     if not summary.changed_anything:
         logger.info("ground-truth sync changed nothing; not republishing")
@@ -145,15 +175,23 @@ async def _enrich_job() -> None:
     global _ai_layer
     if _ai_layer is None:
         _ai_layer = AiLayer()
-    changed = False
+    started = _now()
+    changed, completed, errors = False, True, 0
     try:
-        changed |= (await enrich_pending(layer=_ai_layer)).changed_anything
+        enriched = await enrich_pending(layer=_ai_layer)
+        changed |= enriched.changed_anything
+        errors += enriched.failed + len(enriched.errors)
     except Exception:
         logger.exception("scheduled enrichment failed")
+        completed = False
     try:
-        changed |= (await suggest_techniques(layer=_ai_layer)).changed_anything
+        suggested = await suggest_techniques(layer=_ai_layer)
+        changed |= suggested.changed_anything
+        errors += suggested.failed
     except Exception:
         logger.exception("scheduled MITRE suggestions failed")
+        completed = False
+    await _record(JobRun("enrichment", started, _now(), completed, errors, changed))
 
     if not changed:
         return
@@ -208,7 +246,11 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
 
 
 async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
-    """Run the scheduler until SIGINT / SIGTERM."""
+    """Run the scheduler until SIGINT / SIGTERM.
+
+    The ops API (worker/ops_api.py) starts with the default schedule only: the agents it answers
+    describe the whole worker, and a `--lane` process is a narrow one beside it.
+    """
     scheduler = build_scheduler(lanes)
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
@@ -220,8 +262,11 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
         logger.info("each publish is pushed to the data branch")
     else:
         logger.info("no publish token: data/ is written here and not pushed")
+    ops = ops_api.start(get_settings(), get_engine()) if lanes is None else None
     try:
         await stop.wait()
     finally:
         scheduler.shutdown(wait=False)
+        if ops is not None:
+            await asyncio.to_thread(ops_api.stop, ops)
         logger.info("scheduler stopped")

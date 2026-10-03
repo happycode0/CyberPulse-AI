@@ -1,0 +1,487 @@
+"""The ops API without a database: routing, the token, wakes, the secret scan, the socket.
+
+The SQL behind the verdicts and reads is exercised against Postgres in
+tests/integration/test_ops_db.py.
+"""
+
+import importlib.util
+import json
+import logging
+import socket
+from contextlib import contextmanager
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+from pydantic import SecretStr
+
+from worker import ops_api
+from worker.ai.budget import BudgetUnreadable, KeyStatus
+from worker.ops_api import WAKE_JOBS, OpsApi, Verdict
+from worker.settings import Settings
+
+NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
+TOKEN = "fake-ops-token-TESTONLY-0123456789abcdef"
+AUTH = {"Authorization": f"Bearer {TOKEN}"}
+REPO = Path(__file__).resolve().parents[2]
+
+
+def key_status(**overrides) -> KeyStatus:
+    values = {
+        "limit": Decimal(20),
+        "limit_remaining": Decimal("4.64"),
+        "limit_reset": "monthly",
+        "usage_daily": Decimal("0.5"),
+        "usage_monthly": Decimal("15.36"),
+        "free_requests_remaining": None,
+    }
+    return KeyStatus(**{**values, **overrides})
+
+
+@pytest.fixture(autouse=True)
+def no_env_file(tmp_path, monkeypatch):
+    """The secret scan reads `.env` from the working directory; keep this host's out of it."""
+    monkeypatch.chdir(tmp_path)
+
+
+@pytest.fixture
+def make_api(tmp_path):
+    def make(token: str | None = TOKEN, key=lambda: key_status(), **kwargs) -> OpsApi:
+        return OpsApi(
+            engine=None,
+            token=SecretStr(token) if token is not None else None,
+            data_dir=tmp_path,
+            key_status=key,
+            monthly_budget=Decimal(20),
+            clock=lambda: NOW,
+            **kwargs,
+        )
+
+    return make
+
+
+@pytest.fixture
+def api(make_api):
+    return make_api()
+
+
+def wake(api: OpsApi, slug: str, body: dict | bytes | None = None):
+    data = body if isinstance(body, bytes) else json.dumps(body or {}).encode()
+    return api.handle("POST", f"/ops/agents/{slug}/wake", {}, data)
+
+
+# --- Routing -------------------------------------------------------------------------------------
+
+
+def test_health_needs_no_token(make_api):
+    response = make_api(token=None).handle("GET", "/ops/health", {})
+    assert (response.status, response.json()) == (200, {"ok": True})
+
+
+@pytest.mark.parametrize(
+    "method, target, status",
+    [
+        ("GET", "/", 404),
+        ("GET", "/api/health", 404),
+        ("POST", "/ops/health", 405),
+        ("GET", "/ops/agents/link/wake", 405),
+        ("DELETE", "/ops/digest", 405),
+        ("GET", "/ops/nothing-here", 404),
+    ],
+)
+def test_unknown_paths_and_wrong_methods(api, method, target, status):
+    assert api.handle(method, target, AUTH).status == status
+
+
+def test_a_wrong_method_says_which_one_to_use(api):
+    response = api.handle("GET", "/ops/agents/link/wake", {})
+    assert ("Allow", "POST") in response.headers
+
+
+# --- The token ------------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("token", [None, "", "too-short-for-a-real-token"])
+def test_reads_are_closed_without_a_long_enough_token(make_api, token):
+    api = make_api(token=token)
+    response = api.handle("GET", "/ops", AUTH)
+    assert response.status == 503 and "closed" in response.json()["error"]
+    assert api.reads_open is False
+
+
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {},
+        {"Authorization": TOKEN},
+        {"Authorization": "Basic " + TOKEN},
+        {"Authorization": "Bearer " + TOKEN[:-1]},
+        {"Authorization": "Bearer " + TOKEN + "x"},
+        {"Authorization": "Bearer"},
+    ],
+)
+def test_a_missing_or_wrong_token_is_refused(api, headers):
+    response = api.handle("GET", "/ops", headers)
+    assert response.status == 401
+    assert ("WWW-Authenticate", 'Bearer realm="cyberpulse-ops"') in response.headers
+
+
+def test_the_right_token_opens_the_index(api):
+    response = api.handle("GET", "/ops", {"Authorization": f"bearer {TOKEN}"})
+    assert response.status == 200
+    assert set(response.json()["wakes"].values()) == set(WAKE_JOBS.values())
+
+
+def test_the_token_is_never_in_the_repr(api):
+    assert TOKEN not in repr(api) and TOKEN not in repr(Settings(
+        database_url="postgresql://u@db/x", cyberpulse_ops_token=TOKEN
+    ))
+
+
+def test_wakes_need_no_token(make_api, monkeypatch):
+    api = make_api(token=None)
+    monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {}))
+    assert wake(api, "link", {"job": "publish"}).status == 200
+
+
+# --- Wakes -----------------------------------------------------------------------------------------
+
+
+def test_wake_jobs_match_the_crew_page():
+    """The package's payload templates come from the crew page; a wake for the wrong job is a 400,
+    so the two must agree or every run of that agent fails."""
+    builder = REPO / "ops/build-paperclip-package.py"
+    spec = importlib.util.spec_from_file_location("build_paperclip_package", builder)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _, cards = module.read_crew()
+    http = {slug for slug, _, _, adapter, _ in module.CREW if adapter == "http"}
+    assert set(WAKE_JOBS) == http
+    assert {slug: cards[slug]["payload"]["job"] for slug in http} == WAKE_JOBS
+    assert module.OPS_WAKE_URL.format(slug="x") == f"http://worker:{ops_api.PORT}/ops/agents/x/wake"
+
+
+@pytest.mark.parametrize("ok, status", [(True, 200), (False, 503)])
+def test_a_wake_answers_with_the_jobs_health(api, monkeypatch, ok, status):
+    asked = []
+    monkeypatch.setattr(
+        api, "verdict", lambda job: asked.append(job) or Verdict(ok, {"reason": "checked"})
+    )
+    response = wake(api, "librarian", {"job": "groundtruth", "runId": "run-1"})
+    assert response.status == status and asked == ["groundtruth"]
+    assert response.json() == {
+        "agent": "librarian",
+        "job": "groundtruth",
+        "ok": ok,
+        "checked_at": "2026-10-03T08:00:00Z",
+        "summary": {"reason": "checked"},
+    }
+
+
+@pytest.mark.parametrize(
+    "body, says",
+    [
+        (b"not json", "not JSON"),
+        (b"[1, 2]", "not a JSON object"),
+        (b"\xff\xfe", "not JSON"),
+        (json.dumps({"job": "publish"}).encode(), 'send {"job": "groundtruth"}'),
+        (b"{}", 'send {"job": "groundtruth"}'),
+        (b"[" * 100_000 + b"]" * 100_000, "not JSON"),
+    ],
+)
+def test_a_wake_with_the_wrong_body_is_a_400(api, body, says):
+    response = wake(api, "librarian", body)
+    assert response.status == 400 and says in response.json()["error"]
+
+
+def test_a_wrong_job_is_not_echoed(api):
+    response = wake(api, "librarian", {"job": "<script>"})
+    assert response.status == 400 and "<script>" not in response.data.decode()
+
+
+def test_an_unknown_agent_is_a_404(api):
+    assert wake(api, "morpheus", {"job": "publish"}).status == 404
+
+
+def test_the_runtime_token_paperclip_adds_is_never_logged(api, monkeypatch, caplog):
+    """Paperclip adds a bearer token for its own API to the body. It must go nowhere."""
+    caplog.set_level(logging.DEBUG)
+    monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {}))
+    body = {
+        "job": "publish",
+        "agentId": "8c3b2e9a-1111-4222-8333-944455556666",
+        "runId": "run with spaces and a ; semicolon",
+        "context": {"issue": "CYB-1"},
+        "paperclipRuntimeTools": {"bearerToken": "runtime-bearer-TESTONLY-abcdef0123456789"},
+    }
+    response = wake(api, "link", body)
+    assert response.status == 200
+    assert "runtime-bearer" not in caplog.text and "runtime-bearer" not in response.data.decode()
+    assert "semicolon" not in caplog.text  # a run id that is not a plain id is not logged either
+    assert "8c3b2e9a" not in response.data.decode()
+
+
+# --- Verdicts that need no database ------------------------------------------------------------------
+
+
+def write_status(tmp_path: Path, generated_at: str, **extra) -> None:
+    status = {"generated_at": generated_at, "counts": {"events_published": 42}, **extra}
+    (tmp_path / "system-status.json").write_text(json.dumps(status), encoding="utf-8")
+
+
+def test_publish_is_ok_after_a_recent_publish(api, tmp_path):
+    write_status(tmp_path, "2026-10-03T07:45:00Z", last_completed_collection="2026-10-03T07:45:01Z")
+    verdict = api.verdict("publish")
+    assert verdict.ok is True
+    assert verdict.summary["events_published"] == 42 and verdict.summary["age_minutes"] == 15
+
+
+def test_publish_fails_when_the_last_publish_is_old(api, tmp_path):
+    write_status(tmp_path, "2026-10-03T07:00:00Z")
+    verdict = api.verdict("publish")
+    assert verdict.ok is False and "60 minutes ago" in verdict.summary["reason"]
+
+
+@pytest.mark.parametrize("content", [None, "{not json", '{"generated_at": "yesterday"}',
+                                     '{"generated_at": "2026-10-03T07:59:00"}', "[]"])
+def test_publish_fails_when_the_status_file_is_missing_or_unreadable(api, tmp_path, content):
+    if content is not None:
+        (tmp_path / "system-status.json").write_text(content, encoding="utf-8")
+    verdict = api.verdict("publish")
+    assert verdict.ok is False and verdict.summary["reason"]
+
+
+@pytest.fixture
+def no_db(monkeypatch):
+    """Stand in for the read transaction and the ledger query, for the money tests."""
+    ledger = {"calls": 10, "cost_usd": 0.0431, "unknown_cost_calls": 0}
+
+    @contextmanager
+    def read(self):
+        yield None
+
+    monkeypatch.setattr(OpsApi, "_read", read)
+    monkeypatch.setattr(OpsApi, "_ledger_totals", staticmethod(lambda conn, start, end: ledger))
+    return ledger
+
+
+def test_cost_reconcile_names_the_spend_the_ledger_never_saw(api, no_db):
+    verdict = api.verdict("cost-reconcile")
+    assert verdict.ok is True
+    key = verdict.summary["key"]
+    assert key["mode"] == "conserve" and key["remaining_usd"] == 4.64
+    assert key["outside_ledger_usd"] == pytest.approx(15.36 - 0.0431)
+    assert verdict.summary["month"] == "2026-10"
+
+
+def test_cost_reconcile_fails_on_calls_with_no_cost(api, no_db):
+    no_db["unknown_cost_calls"] = 3
+    verdict = api.verdict("cost-reconcile")
+    assert verdict.ok is False and "3 calls" in verdict.summary["reason"]
+
+
+def test_cost_reconcile_fails_when_the_key_cannot_be_read(make_api, no_db):
+    def unreadable():
+        raise BudgetUnreadable("HTTP 401: OpenRouter did not accept the key")
+
+    verdict = make_api(key=unreadable).verdict("cost-reconcile")
+    assert verdict.ok is False and "HTTP 401" in verdict.summary["reason"]
+
+
+def test_the_key_is_read_at_most_every_five_minutes(make_api, no_db, monkeypatch):
+    reads, clock = [], [1000.0]
+    monkeypatch.setattr(ops_api, "time", SimpleNamespace(monotonic=lambda: clock[0]))
+
+    def read():
+        reads.append(1)
+        raise BudgetUnreadable("HTTP 503")
+
+    api = make_api(key=read)
+    for _ in range(5):
+        api.verdict("cost-reconcile")
+    assert len(reads) == 1  # failures are cached too: a down OpenRouter is not hammered
+    clock[0] += ops_api.KEY_STATUS_TTL_SECONDS
+    api.verdict("cost-reconcile")
+    assert len(reads) == 2
+
+
+def test_no_openrouter_key_means_the_budget_cannot_be_read():
+    read = ops_api.openrouter_key_reader(Settings(database_url="postgresql://u@db/x",
+                                                  openrouter_api_key=None))
+    with pytest.raises(BudgetUnreadable, match="no OpenRouter key"):
+        read()
+
+
+# --- The secret scan ---------------------------------------------------------------------------------
+
+
+def test_a_response_with_a_secret_in_it_is_withheld(api, monkeypatch, caplog):
+    secret = "fake-key-TESTONLY-not-a-real-provider-key-77"
+    monkeypatch.setenv("OPENROUTER_API_KEY", secret)
+    monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {"leak": f"x {secret} y"}))
+    response = wake(api, "link", {"job": "publish"})
+    assert response.status == 500
+    assert response.json() == {"error": "response withheld: it failed the secret scan"}
+    assert secret not in caplog.text and "OPENROUTER_API_KEY" in caplog.text
+
+
+def test_the_ops_token_itself_is_withheld(api, monkeypatch):
+    monkeypatch.setenv("CYBERPULSE_OPS_TOKEN", TOKEN)
+    monkeypatch.setattr(api, "verdict", lambda job: Verdict(True, {"echo": TOKEN}))
+    assert wake(api, "link", {"job": "publish"}).status == 500
+
+
+def test_a_scan_that_cannot_run_withholds(api, monkeypatch):
+    def broken(_):
+        raise RuntimeError(".env unreadable")
+
+    monkeypatch.setattr(ops_api, "scan_for_secrets", broken)
+    response = api.handle("GET", "/ops/health", {})
+    assert response.status == 500 and "withheld" in response.json()["error"]
+
+
+# --- Query parameters ------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "target, says",
+    [
+        ("/ops/digest?hours=0", "between 1 and 168"),
+        ("/ops/digest?hours=169", "between 1 and 168"),
+        ("/ops/digest?hours=-1", "whole number"),
+        ("/ops/digest?hours=1e3", "whole number"),
+        ("/ops/digest?hours=1&hours=2", "more than once"),
+        ("/ops/digest?days=1", "unknown parameter 'days'"),
+        ("/ops/events?status=bogus", "status must be"),
+        ("/ops/events?severity=extreme", "severity must be"),
+        ("/ops/events?since=yesterday", "ISO 8601"),
+        ("/ops/events?since=2026-10-01T00:00:00", "time zone"),
+        ("/ops/events?limit=201", "between 1 and 200"),
+        ("/ops/events?q=" + "a" * 101, "at most 100"),
+        ("/ops/events/evt-1", "looks like evt-"),
+        ("/ops/events/evt-2026-000001?x=1", "unknown parameter"),
+        ("/ops/runs?limit=0", "between 1 and 100"),
+        ("/ops/cost?month=2026-13", "looks like 2026-10"),
+        ("/ops/cost?month=26-10", "looks like 2026-10"),
+        ("/ops/sources?verbose=1", "unknown parameter"),
+    ],
+)
+def test_bad_parameters_are_a_400_before_any_query(api, target, says):
+    """`engine=None`: reaching the database here would be a 500, not a 400."""
+    response = api.handle("GET", target, AUTH)
+    assert response.status == 400 and says in response.json()["error"]
+
+
+def test_like_escapes_wildcards():
+    assert ops_api._like(r"100%_\x") == r"%100\%\_\\x%"
+
+
+# --- The socket --------------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def server(tmp_path, monkeypatch):
+    settings = Settings(
+        database_url="postgresql://u@db/x",
+        cyberpulse_ops_token=TOKEN,
+        data_dir=tmp_path,
+        ops_api_host="127.0.0.1",
+        ops_api_port=0,
+    )
+    started = ops_api.start(settings, engine=None)
+    assert started is not None
+    yield started
+    ops_api.stop(started)
+
+
+def exchange(server, request: bytes, *, close_write: bool = False) -> tuple[int, dict, bytes]:
+    with socket.create_connection(server.server_address[:2], timeout=5) as conn:
+        conn.sendall(request)
+        if close_write:
+            conn.shutdown(socket.SHUT_WR)
+        chunks = []
+        while chunk := conn.recv(65536):
+            chunks.append(chunk)
+    head, _, body = b"".join(chunks).partition(b"\r\n\r\n")
+    lines = head.decode().split("\r\n")
+    headers = dict(line.split(": ", 1) for line in lines[1:])
+    return int(lines[0].split()[1]), headers, body
+
+
+def test_the_server_answers_with_safe_headers(server):
+    status, headers, body = exchange(server, b"GET /ops/health HTTP/1.1\r\nHost: x\r\n\r\n")
+    assert (status, json.loads(body)) == (200, {"ok": True})
+    assert headers["Content-Type"] == "application/json; charset=utf-8"
+    assert headers["Cache-Control"] == "no-store"
+    assert headers["X-Content-Type-Options"] == "nosniff"
+    assert headers["Server"] == "cyberpulse-ops"
+
+
+def test_a_wake_over_the_socket(server, monkeypatch):
+    monkeypatch.setattr(server.api, "verdict", lambda job: Verdict(False, {"reason": "stale"}))
+    body = json.dumps({"job": "publish"}).encode()
+    request = (
+        b"POST /ops/agents/link/wake HTTP/1.1\r\nHost: x\r\nContent-Type: application/json\r\n"
+        + f"Content-Length: {len(body)}\r\n\r\n".encode() + body
+    )
+    status, _, reply = exchange(server, request)
+    assert status == 503 and json.loads(reply)["summary"] == {"reason": "stale"}
+
+
+@pytest.mark.parametrize(
+    "headers, status",
+    [
+        (f"Content-Length: {ops_api.MAX_BODY_BYTES + 1}", 413),
+        ("Transfer-Encoding: chunked", 411),
+        ("Content-Length: ten", 400),
+        ("Content-Length: 50", 400),  # three bytes arrive, then the client closes
+    ],
+)
+def test_bodies_the_server_will_not_read(server, headers, status):
+    request = f"POST /ops/agents/link/wake HTTP/1.1\r\nHost: x\r\n{headers}\r\n\r\n{{}}x".encode()
+    assert exchange(server, request, close_write=True)[0] == status
+
+
+def test_too_many_requests_at_once_are_turned_away(server):
+    for _ in range(ops_api.MAX_CONCURRENT):
+        server.api.slots.acquire()
+    try:
+        status, _, body = exchange(server, b"GET /ops/health HTTP/1.1\r\nHost: x\r\n\r\n")
+    finally:
+        for _ in range(ops_api.MAX_CONCURRENT):
+            server.api.slots.release()
+    assert status == 503 and "busy" in json.loads(body)["error"]
+
+
+def test_a_passing_healthcheck_is_not_logged(server, caplog):
+    caplog.set_level(logging.INFO, logger="worker.ops_api")
+    exchange(server, b"GET /ops/health HTTP/1.1\r\nHost: x\r\n\r\n")
+    assert "/ops/health" not in caplog.text
+
+
+def test_the_query_string_is_never_logged(server, caplog):
+    caplog.set_level(logging.INFO, logger="worker.ops_api")
+    exchange(server, b"GET /ops/events?q=private-words HTTP/1.1\r\nHost: x\r\n\r\n")
+    assert "ops GET /ops/events 401" in caplog.text and "private-words" not in caplog.text
+
+
+def test_a_port_in_use_is_logged_and_survived(tmp_path, caplog):
+    with socket.socket() as taken:
+        taken.bind(("127.0.0.1", 0))
+        taken.listen()
+        settings = Settings(
+            database_url="postgresql://u@db/x",
+            data_dir=tmp_path,
+            ops_api_host="127.0.0.1",
+            ops_api_port=taken.getsockname()[1],
+        )
+        assert ops_api.start(settings, engine=None) is None
+    assert "ops API not started" in caplog.text
+
+
+def test_wake_freshness_windows_fit_the_schedules():
+    """One missed collection, and one missed ground-truth pass, before a wake fails."""
+    assert ops_api.COLLECTION_FRESH == timedelta(minutes=30)
+    assert ops_api.GROUNDTRUTH_FRESH > timedelta(hours=6)
