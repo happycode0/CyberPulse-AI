@@ -17,7 +17,7 @@ import os
 import shutil
 import tempfile
 from collections import Counter, defaultdict
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +25,7 @@ from pydantic import ValidationError
 from sqlalchemy import Connection
 
 from worker.db.events import load_event_dates, load_live_events
+from worker.db.merge import merged_redirects
 from worker.db.runs import load_last_completed_collection, load_latest_run
 from worker.db.sources import (
     load_health_history,
@@ -47,6 +48,9 @@ LIVE_LIMIT = 500
 ALL_SCORED = -1.0
 HISTORY_EVENT_LIMIT = 10_000
 HEALTH_HISTORY_LIMIT = 20
+# index.json's `merged` map covers events first seen this recently: a link to one of them that
+# was shared before it was merged still finds the story (site/assets/hud.js, `findEvent`).
+MERGED_REDIRECT_WINDOW = timedelta(days=90)
 HEALTH_ERROR_MAX_CHARS = 300
 
 STAGING_PREFIX = ".publish-"
@@ -216,6 +220,7 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
                 }
                 for d in days
             ],
+            "merged": merged_redirects(conn, since=now - MERGED_REDIRECT_WINDOW),
         },
     )
     out["live.json"] = (
