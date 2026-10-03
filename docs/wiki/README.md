@@ -17,7 +17,7 @@ layer on top of both.
 |---|---|---|---|
 | 0 | [Prerequisites](stage-0-prerequisites.md) | Accounts, keys, the VM, `.env` | ✅ done |
 | 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | ✅ done |
-| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | 🟡 registers and enrichment live; AU engine left |
+| 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | ✅ done |
 | 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ⬜ |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
@@ -32,7 +32,7 @@ layer on top of both.
 ```text
 Stage 0  Prerequisites ............................ ✅ done
 Stage 1  Foundation: pipeline + site .............. 🟡 real events on the site; redeploy timer is yours
-Stage 2  Ground truth + enrichment ................ 🟡 KEV / EPSS / CVSS and AI enrichment live
+Stage 2  Ground truth + enrichment ................ ✅ done
 Stage 3  Correlation depth + trends ............... ⬜
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ Paperclip Docker service ............ ✅ running, healthy, since 2026-10-02 20:15 Sydney
