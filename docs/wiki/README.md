@@ -18,7 +18,7 @@ layer on top of both.
 | 0 | [Prerequisites](stage-0-prerequisites.md) | Accounts, keys, the VM, `.env` | ✅ done |
 | 1 | [Foundation: pipeline + site](stage-1-foundation.md) | Collection every 15 min, the public site | ✅ done |
 | 2 | [Ground truth + enrichment](stage-2-ground-truth.md) | KEV / CVSS / EPSS / OSV / MITRE, then AI enrichment within budget | ✅ done |
-| 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ▶ consolidation, lineage, material change, archiving built |
+| 3 | [Correlation depth + trends](stage-3-correlation.md) | Smarter de-duplication, trends from real data | ▶ consolidation, lineage, material change, archiving, trends built; adapters next |
 | 4 | [Paperclip + first agents](stage-4-paperclip.md) | The control panel and the 16-agent crew | ▶ **you are here** |
 | 4a | ↳ [Paperclip setup](stage-4a-paperclip-setup.md) | Open it, claim it, harden it, create the company, agents and routines | ▶ claimed; step 4 next |
 | 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
@@ -33,7 +33,7 @@ layer on top of both.
 Stage 0  Prerequisites ............................ ✅ done
 Stage 1  Foundation: pipeline + site .............. 🟡 real events on the site; redeploy timer is yours
 Stage 2  Ground truth + enrichment ................ ✅ done
-Stage 3  Correlation depth + trends ............... ▶ archiving built; trends next
+Stage 3  Correlation depth + trends ............... ▶ trends built; adapters next
 Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
            ├─ Paperclip Docker service ............ ✅ running, healthy, since 2026-10-02 20:15 Sydney
            ├─ open, claim, sign-up off ............ ✅ claimed 2026-10-02 20:21 Sydney

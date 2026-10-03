@@ -141,8 +141,9 @@
                .subsection carries scroll-margin-top because .site-header is sticky and would
                otherwise cover whatever a jump lands on. -->
           <h3 class="subhead">SECTIONS</h3>
-          <p class="hint">An event appears under every section it matches, so the same event can be in more than one of these. Counts are events in this snapshot, after any filter set above.</p>
+          <p class="hint">TRENDS counts reports over time; the sections after it list events. An event appears under every section it matches, so the same event can be in more than one of these. Counts are events in this snapshot, after any filter set above.</p>
           <nav class="subnav" aria-label="Overview sections">
+            <a href="#sec-trends">TRENDS</a>
             <a href="#sec-active-exploitation">ACTIVE EXPLOITATION</a>
             <a href="#sec-developing-events">DEVELOPING EVENTS</a>
             <a href="#sec-emerging-threats">EMERGING THREATS</a>
@@ -151,6 +152,17 @@
             <a href="#sec-research">RESEARCH</a>
             <a href="#sec-policy-regulation">POLICY / REGULATION</a>
           </nav>
+
+          <!-- Not an event section: it reads trends.json, which is counted from stored reports
+               (worker/pipeline/trends.py), so it has its own host rather than a
+               data-section-body, and the tag filters above do not apply to it. -->
+          <section class="subsection" id="sec-trends" aria-labelledby="h-trends">
+            <header class="subsection__head">
+              <h3 class="subhead" id="h-trends">TRENDS</h3>
+              <span class="panel-status"><span class="led" data-state="idle" id="trends-led"></span><span class="panel-count mono" id="trends-count">AWAITING DATA</span></span>
+            </header>
+            <div id="trends"></div>
+          </section>
 
           <section class="subsection" id="sec-active-exploitation" aria-labelledby="h-active-exploitation">
             <header class="subsection__head">

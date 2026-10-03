@@ -178,3 +178,74 @@ def test_build_is_atomic_on_schema_failure(tmp_path, conn):
         build_all(conn, tmp_path, now=NOW)  # conn contains an invalid event
     assert json.loads((tmp_path / "live.json").read_text()) == {"previous": True}
     assert [p.name for p in tmp_path.iterdir()] == ["live.json"]
+
+
+def insert_report(conn, event_id, title, at, *, independent=True):
+    n = conn.execute(text("select count(*) from event_sources")).scalar_one()
+    conn.execute(
+        text(
+            "insert into event_sources (event_id, source_id, url, title, published, fetched_at, "
+            "evidence_class, independent, url_hash) values (:e, :s, :url, :title, :at, :at, "
+            "'NEWS', :ind, :hash)"
+        ),
+        {
+            "e": event_id,
+            "s": SOURCE,
+            "url": f"https://example.test/{n}",
+            "title": title,
+            "at": at,
+            "ind": independent,
+            "hash": f"h{n}",
+        },
+    )
+
+
+def test_trends_count_independent_reports_since_collection_began(tmp_path, conn):
+    conn.execute(
+        text(
+            "insert into runs (run_id, lane, started_at, finished_at) "
+            "values ('run-0', 'fast', :s, :s)"
+        ),
+        {"s": NOW - timedelta(days=10)},
+    )
+    insert_event(conn, "evt-2026-000001", first_seen=NOW - timedelta(hours=2))
+    insert_event(conn, "evt-2026-000002", first_seen=NOW - timedelta(hours=1))
+    conn.execute(
+        text(
+            "update events set status = 'archived', merged_into = 'evt-2026-000001' "
+            "where event_id = 'evt-2026-000002'"
+        )
+    )
+    conn.execute(
+        text(
+            "insert into cves (cve_id, kev_listed, kev_date_added) "
+            "values ('CVE-2026-88772', true, '2026-09-29')"
+        )
+    )
+    conn.execute(text("insert into event_cves values ('evt-2026-000001', 'CVE-2026-88772')"))
+    for hours in (1, 2, 3):
+        insert_report(conn, "evt-2026-000001", "Akira ransomware hits Acme",
+                      NOW - timedelta(hours=hours))
+    insert_report(conn, "evt-2026-000001", "Akira ransomware hits Acme (copy)",
+                  NOW - timedelta(hours=1), independent=False)
+    insert_report(conn, "evt-2026-000001", None, NOW - timedelta(hours=4))  # the event's title
+    insert_report(conn, "evt-2026-000001", "Akira backlog item", NOW - timedelta(days=12))
+    insert_report(conn, "evt-2026-000002", "Akira strikes again", NOW - timedelta(hours=1))
+
+    build_all(conn, tmp_path, now=NOW)
+    trends = read(tmp_path, "trends.json")
+    assert trends["coverage"]["collecting_since"] == (NOW - timedelta(days=10)).isoformat()
+    assert trends["coverage"]["warming_up"] is False
+    topics = {t["key"]: (t["recent"], t["baseline"], t["state"]) for t in trends["topics"]}
+    assert topics == {
+        "akira": (3, 0, "new"), "ransomware": (3, 0, "new"), "zero-day": (1, 0, "steady"),
+    }
+    (cve,) = trends["cves"]
+    assert (cve["cve_id"], cve["recent"], cve["kev"], cve["event_ids"]) == (
+        "CVE-2026-88772", 4, True, ["evt-2026-000001"],
+    )
+    today = trends["activity"][-1]
+    assert (today["date"], today["stories"], today["reports"], today["critical_high"]) == (
+        "2026-09-30", 1, 4, 1,
+    )
+    assert trends["activity"][-2]["kev_added"] >= 1
