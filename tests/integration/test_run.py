@@ -293,7 +293,7 @@ async def test_a_bad_body_from_one_source_is_a_failure_not_a_crash(pg_engine, re
 
 
 async def test_unsupported_source_type_is_a_failure_not_a_crash(pg_engine, respx_mock, registry):
-    reg = registry(source_yaml("odd", URL_A, type="web_page"),
+    reg = registry(source_yaml("odd", URL_A, type="sitemap"),
                    source_yaml("good", URL_B))
     respx_mock.get(URL_A).respond(200, content=b"<html/>")
     respx_mock.get(URL_B).respond(200, content=fixture_bytes("acsc_alerts.xml"))
