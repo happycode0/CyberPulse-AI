@@ -8,8 +8,9 @@ Guarantees:
 
 * **no empty commits** — the local content tree is compared against the remote
   branch tip's tree first; identical content returns `reason="no changes"`;
-* **main is never touched** — only `refs/heads/<branch>` is written, and all
-  index work happens in a temporary `GIT_INDEX_FILE`;
+* **main is never touched** — only `refs/heads/<branch>` is written, the branch
+  must be `data` or `data-<name>`, and all index work happens in a temporary
+  `GIT_INDEX_FILE`;
 * **the token never lands in `.git/config`** — credentials travel as an
   `http.extraheader` command-line argument, which is not persisted anywhere,
   and are redacted from error output;
@@ -36,8 +37,10 @@ DEFAULT_BRANCH = "data"
 # would hold back every publish after it. A whole push takes seconds; three minutes is a hang.
 GIT_TIMEOUT_SECONDS = 180
 
-# Refuse anything that could smuggle options or pathspecs into git commands.
-_BRANCH_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*")
+# Refuse anything that could smuggle options or pathspecs into git commands, and any branch but
+# `data` or `data-<name>`: the publish token can force-push every unprotected branch, so this
+# code is what keeps a mistyped --branch from replacing main.
+_BRANCH_RE = re.compile(r"data(-[A-Za-z0-9._-]+)?")
 
 # Commit identity is set via the environment so the push never depends on
 # (or fails because of) git configuration on the host or in the container.
