@@ -145,22 +145,41 @@ function makeResolver(names) {
 
 // ------------------------------------------------------------------ render
 
+// The basemap is the same file on every render, and the dashboard re-renders the map whenever
+// the scope, beat or a tag changes, so it is fetched once per page and the promise is kept.
+// A failed read is not kept: the next render tries again.
+const topologies = new Map();
+
+function loadTopology(url, fetchImpl) {
+  if (!topologies.has(url)) {
+    const pending = (async () => {
+      try {
+        const res = await fetchImpl(url, { cache: 'force-cache' });
+        return res.ok ? await res.json() : null;
+      } catch {
+        return null;
+      }
+    })();
+    topologies.set(url, pending);
+    pending.then((t) => {
+      if (!t) topologies.delete(url);
+    });
+  }
+  return topologies.get(url);
+}
+
 // Draw the world map for `events` and pair it with the #map-country select.
 // onCountryClick(tokensOrNull) fires from both the map and the select; tokens is a
-// Set of every raw country token that resolves to the chosen ISO id.
+// Set of every raw country token that resolves to the chosen ISO id. `opts.selected` is the
+// country selection already in force (from the URL, or kept across a re-render), so the
+// picture and the dropdown open showing it instead of ALL COUNTRIES.
 export async function renderMap(events, onCountryClick, opts = {}) {
   const fetchImpl = opts.fetchImpl || globalThis.fetch;
   const host = opts.host || document.getElementById('world-map');
   const select = opts.select || document.getElementById('map-country');
   const url = opts.url || ATLAS_URL;
 
-  let topology = null;
-  try {
-    const res = await fetchImpl(url, { cache: 'force-cache' });
-    if (res.ok) topology = await res.json();
-  } catch {
-    topology = null;
-  }
+  const topology = await loadTopology(url, fetchImpl);
   if (!topology || !topology.objects || !topology.objects.countries) {
     if (host) clear(host).append(h('p', { class: 'empty', text: 'THE BASEMAP COULD NOT BE READ, SO THE MAP IS NOT SHOWN. THE COUNTRY DROPDOWN BELOW STILL WORKS.' }));
     return null;
@@ -296,6 +315,17 @@ export async function renderMap(events, onCountryClick, opts = {}) {
         count: tokenCounts.get(token),
       })),
     ].sort((a, b) => b.count - a.count || a.text.localeCompare(b.text));
+    // A country chosen earlier can fall out of these events when the scope or a tag changes
+    // (choose the United States, then switch to AUSTRALIA). It stays selected, so it stays
+    // listed, at its honest count of zero; otherwise the dropdown would read ALL COUNTRIES
+    // while the filter was still in force.
+    const kept = opts.selected ? [...opts.selected].map(String) : [];
+    if (kept.length) {
+      const keptN3 = kept.map(n3Of).find(Boolean);
+      const value = keptN3 || kept[0];
+      if (!options.some((o) => o.value === value)) options.push({ value, text: `${kept.join(' · ')} (0)`, count: 0 });
+      if (keptN3 && !n3Tokens.has(keptN3)) n3Tokens.set(keptN3, kept);
+    }
     for (const option of options) {
       select.append(h('option', { value: option.value, text: option.text }));
     }
@@ -310,7 +340,7 @@ export async function renderMap(events, onCountryClick, opts = {}) {
   }
 
   current = { paths, n3Of, select };
-  applySelection(null);
+  applySelection(opts.selected || null);
 
   const countOut = document.getElementById('map-count');
   if (countOut) {

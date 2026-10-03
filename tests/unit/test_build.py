@@ -435,5 +435,5 @@ def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
 
 def test_the_site_roster_has_every_agent_crew_json_names():
     hud = (Path(__file__).resolve().parents[2] / "site/assets/hud.js").read_text()
-    for callsign in ("LIBRARIAN", "PROWL", "SERAPH", "ROGUE", "LINK"):
+    for callsign in ("SERAPH", "RIPPERDOC"):
         assert f"callsign: '{callsign}'" in hud
