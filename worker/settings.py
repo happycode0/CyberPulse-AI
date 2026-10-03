@@ -54,6 +54,14 @@ class Settings(BaseSettings):
     # reach it: docker-compose.yml publishes no port for the worker.
     ops_api_host: str = "0.0.0.0"
     ops_api_port: int = 8700
+    # The watchdog (worker/watchdog/). The Incident routine's webhook trigger in Paperclip: the
+    # URL and bearer secret Paperclip shows once when the owner adds the trigger. With either
+    # unset, incidents go to Telegram only.
+    paperclip_incident_webhook_url: str | None = None
+    paperclip_incident_webhook_secret: SecretStr | None = None
+    # Paperclip's health endpoint on the compose network, probed with no credentials. Empty:
+    # not probed.
+    watchdog_paperclip_url: str = "http://server:3100/api/health"
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -63,6 +71,8 @@ class Settings(BaseSettings):
             "***:***"
         ) if "@" in self.database_url else self.database_url
         
+        # The webhook URL carries the trigger's public id, so only whether it is set.
+        webhook = "<set>" if self.paperclip_incident_webhook_url else None
         fields_repr = [
             f"database_url={safe_db_url!r}",
             f"openrouter_api_key={self.openrouter_api_key!r}",
@@ -82,6 +92,9 @@ class Settings(BaseSettings):
             f"cyberpulse_ops_token={self.cyberpulse_ops_token!r}",
             f"ops_api_host={self.ops_api_host!r}",
             f"ops_api_port={self.ops_api_port!r}",
+            f"paperclip_incident_webhook_url={webhook!r}",
+            f"paperclip_incident_webhook_secret={self.paperclip_incident_webhook_secret!r}",
+            f"watchdog_paperclip_url={self.watchdog_paperclip_url!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 

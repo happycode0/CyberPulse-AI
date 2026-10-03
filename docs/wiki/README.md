@@ -24,7 +24,7 @@ layer on top of both.
 | 4b | ↳ [The crew](stage-4b-the-crew.md) | All 16 agents: settings and the prompt to paste | reference |
 | 4c | ↳ [How the crew works together](stage-4c-how-the-crew-works.md) | Who wakes whom, hand-offs, where money and code are stopped | reference |
 | 5 | [Full crew + notifications](stage-5-full-crew.md) | Six more agents switched on, source discovery, Telegram | ▶ Telegram, THE CREW, follow-up and source discovery built |
-| 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ⬜ |
+| 6 | [Self-healing](stage-6-self-healing.md) | Agents that fix broken sources, behind your approval | ▶ watchdog, incidents, breaker and rollback built; the crew's part waits for you |
 | 7 | [Hardening + operations](stage-7-hardening.md) | Backups, restore rehearsal, failure testing | ⬜ |
 
 ## You are here
@@ -44,7 +44,12 @@ Stage 4  Paperclip + first agents ................. ▶ YOU ARE HERE
 Stage 5  Full crew + notifications ................ ▶ building
            ├─ Telegram digest + critical alerts ... ✅ built; 🔴 you: the bot token
            └─ THE CREW workload (crew.json) ....... ✅ built
-Stage 6  Self-healing ............................. ⬜
+Stage 6  Self-healing ............................. ▶ built
+           ├─ watchdog, 14 signatures, every 5 min  ✅ built
+           ├─ incidents, verdicts, circuit breaker  ✅ built
+           ├─ rollback (ops/rollback.sh) .......... ✅ built
+           └─ engineer token, branch protection,
+              Incident routine, un-pause ........... 🔴 you
 Stage 7  Hardening + operations ................... ⬜
 ```
 

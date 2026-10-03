@@ -1306,6 +1306,24 @@ Circuit breakers and the human approval gate. Rollback.
 independently verified, and merged after your approval — with the circuit breaker proven
 to stop after 3 failures.
 
+**As built** (`worker/watchdog/`, `worker/db/incidents.py`, `ops/rollback.sh`), where it
+differs from the above:
+
+- The detection suite is the worker's, not TELETRAAN's: a deterministic pass every 5 minutes
+  over 14 signatures (TELETRAAN's eleven in §8, plus job failure, push failure and Paperclip
+  down). It
+  spends nothing. TELETRAAN's model is woken only by the Incident routine, which the watchdog
+  fires through a Paperclip webhook trigger for each high or critical incident.
+- The watchdog alone opens, resolves (after 15 minutes clear) and reopens (within 6 hours)
+  incidents. Agents read them over the ops API; TRON's only write is its verdict.
+- The circuit breaker counts TRON's FAIL verdicts per incident, across reopens. At 3 the
+  incident needs a human and the API refuses further verdicts.
+- WHEELJACK works in a new worktree and branch with a branch-and-PR token only; branch
+  protection and a human merge are the gate. Its sandbox is the Paperclip server's container,
+  whose environment the agents still inherit, so WHEELJACK stays paused until they don't.
+- Rollback pins the VM's checkout to an earlier commit of main, or opens a revert PR.
+  Migrations only add, so the database is never rolled back.
+
 ### Stage 7 — Hardening + operations 🟢🔴
 Backups (PBS + `pg_dump` + `master.key`), observability and OpenTelemetry, cost tuning,
 further notification channels, failure-injection test suite, threat model review, runbooks.

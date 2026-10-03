@@ -10,7 +10,9 @@ from zoneinfo import ZoneInfo
 
 from worker.db.digest import ESCALATE_AU_RELEVANCE
 from worker.db.discovery import Activation
+from worker.db.incidents import Incident
 from worker.db.notifications import AlertEvent, UpdateEntry
+from worker.watchdog.checks import KIND_GUIDE, span
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 DIGEST_TOP = 5
@@ -213,3 +215,95 @@ def source_activated(source: Activation, *, site_url: str) -> str:
         site_url,
     ]
     return "\n".join(lines)
+
+
+# ─── The watchdog (Stage 6) ───────────────────────────────────────────────────────────────────────
+
+
+def _incident_head(incident: Incident) -> list[str]:
+    subject = f" · {incident.subject}" if incident.subject else ""
+    return [f"INC-{incident.id} · {incident.kind}{subject}", _title(incident.title)]
+
+
+def incident_opened(incident: Incident, *, crew: bool) -> str:
+    """An incident the watchdog opened, or opened again, at high or critical."""
+    again = ""
+    if incident.reopened:
+        again = f" · reopened ({_plural(incident.reopened, 'time')})"
+    opened = _sydney(incident.last_seen or incident.opened_at)
+    lines = [
+        f"CyberPulse-AI · incident · {incident.severity.upper()}",
+        "",
+        *_incident_head(incident),
+        f"Seen {opened:%H:%M} Sydney time, {_day(opened)}{again}",
+        "",
+        KIND_GUIDE.get(incident.kind, ""),
+    ]
+    if crew:
+        lines += ["", "The crew has been told: TELETRAAN reads it from GET /ops/incidents."]
+    if incident.fix_failures:
+        lines.append(f"Fixes that failed TRON's tests so far: {incident.fix_failures}.")
+    return "\n".join(lines)
+
+
+def incident_breaker(incident: Incident) -> str:
+    """The breaker tripped: the crew stops, and a person decides."""
+    return "\n".join(
+        [
+            "CyberPulse-AI · incident · needs a human",
+            "",
+            *_incident_head(incident),
+            "",
+            (
+                f"{incident.fix_failures} fix{'' if incident.fix_failures == 1 else 'es'} "
+                "failed TRON's tests, so the crew has "
+                "stopped work on it and the ops API takes no more verdicts. A person decides "
+                "what happens next."
+            ),
+        ]
+    )
+
+
+def incident_resolved(incident: Incident) -> str:
+    """A high or critical incident the watchdog no longer sees."""
+    opened = incident.opened_at
+    resolved = incident.resolved_at or incident.last_seen or opened
+    return "\n".join(
+        [
+            "CyberPulse-AI · incident resolved",
+            "",
+            *_incident_head(incident),
+            (
+                f"Open from {_sydney(opened):%H:%M} {_day(opened)} to "
+                f"{_sydney(resolved):%H:%M} {_day(resolved)} Sydney time "
+                f"({span(resolved - opened)})."
+            ),
+        ]
+    )
+
+
+def database_unreachable(since: datetime) -> str:
+    return "\n".join(
+        [
+            "CyberPulse-AI · system failure",
+            "",
+            (
+                f"The worker has not reached its database since {_sydney(since):%H:%M} Sydney "
+                f"time, {_day(since)}. Nothing is collected or published until it does, and "
+                "the watchdog cannot record incidents."
+            ),
+        ]
+    )
+
+
+def database_back(since: datetime, now: datetime) -> str:
+    return "\n".join(
+        [
+            "CyberPulse-AI · system recovered",
+            "",
+            (
+                f"The worker reaches its database again, after {span(now - since)} without it "
+                f"(from {_sydney(since):%H:%M} Sydney time)."
+            ),
+        ]
+    )

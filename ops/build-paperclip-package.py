@@ -76,8 +76,10 @@ ROUTINE_TEXT = {
     "Follow-up": ("[FOLLOW-UP] Sweep", "Work the follow-up queue: report on each task due."),
     "Source discovery": ("[DISCOVERY] Nightly",
                          "Read the worker's discovery finds and propose sources, plus any open [GAP] topics."),
-    "Model scan": ("[MODEL] Daily scan", "Read the worker's results and report."),
-    "Model gauntlet": ("[MODEL] Weekly gauntlet", "Read the worker's results and report."),
+    "Model scan": ("[MODEL] Daily scan",
+                   "Do the daily model scan: read /ops/models and report what changed."),
+    "Model gauntlet": ("[MODEL] Weekly gauntlet",
+                       "Do the weekly gauntlet: report the results and raise each new proposal."),
     "Monthly cost review": ("[COST] Monthly review", "Reconcile the month and report to MORPHEUS."),
 }
 
@@ -155,7 +157,7 @@ def read_setup() -> tuple[str, list[dict]]:
         fail("routines step not found")
     routines = []
     for name, assignee, cron, switch_on in re.findall(
-        r"^\| ([A-Za-z -]+) \| ([A-Z]+) \| `([^`]+)` \| (now|Stage \d) \|$", step, flags=re.M
+        r"^\| ([A-Za-z -]+) \| ([A-Z]+) \| `([^`]+)`[^|]* \| (now|Stage \d) \|$", step, flags=re.M
     ):
         if name not in ROUTINE_TEXT:
             fail(f"routine {name!r} has no issue text")
