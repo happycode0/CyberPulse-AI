@@ -18,12 +18,13 @@ from worker.ai.enrich import (
     EnrichSummary,
     Failed,
     Waiting,
+    after_triage,
     enrich_pending,
     run_task,
 )
 from worker.ai.ladder import Breach, Ladder, LadderUnusable, Tier, VerifiedLadder
 from worker.ai.tasks import BRIEF, SEVERITY, TRIAGE, Brief, Subject, Triage
-from worker.models import Event, Severity, SeveritySource
+from worker.models import AiSignificance, AiSubdomain, Event, Severity, SeveritySource
 from worker.settings import Settings
 
 KEY = "fake-key-TESTONLY"
@@ -47,6 +48,7 @@ TRIAGE_ANSWER = {
     "domains": ["cybersecurity"],
     "categories": ["vulnerability"],
     "ai_subdomain": None,
+    "ai_significance": None,
     "entities": {
         "actors": [],
         "organisations": ["Acme"],
@@ -459,3 +461,82 @@ def test_severity_is_skipped_for_an_event_with_an_official_score():
     official = subject(severity=Severity.HIGH, severity_source=SeveritySource.NVD)
     assert enrich_mod._due_tasks(official, {}) == [TRIAGE, BRIEF]
     assert enrich_mod._due_tasks(subject(), {}) == [TRIAGE, BRIEF, SEVERITY]
+
+
+# ─── The AI beat (docs/wiki/ai-news-beat.md) ──────────────────────────────────────────────────────
+
+AI_TRIAGE = {
+    **TRIAGE_ANSWER,
+    "domains": ["ai"],
+    "categories": ["model-release"],
+    "ai_subdomain": "AI_INDUSTRY",
+    "ai_significance": "major",
+    "entities": {**TRIAGE_ANSWER["entities"], "organisations": [], "products": []},
+}
+
+
+def ai_triage(*domains, significance=AiSignificance.MAJOR) -> Triage:
+    return Triage(
+        domains=domains,
+        categories=("model-release",),
+        ai_subdomain=AiSubdomain.AI_INDUSTRY if "ai" in domains else None,
+        actors=(),
+        organisations=(),
+        products=(),
+        countries=(),
+        industries=(),
+        tags=(),
+        ai_significance=significance if "ai" in domains else None,
+    )
+
+
+def test_an_ai_only_story_is_not_given_a_severity_task():
+    assert enrich_mod._due_tasks(subject(domains=["ai"]), {}) == [TRIAGE, BRIEF]
+    assert enrich_mod._due_tasks(subject(domains=["cybersecurity", "ai"]), {}) == [
+        TRIAGE,
+        BRIEF,
+        SEVERITY,
+    ]
+
+
+def test_after_triage_an_ai_only_story_drops_a_models_cyber_rating():
+    s = subject(severity=Severity.HIGH, severity_source=SeveritySource.AI_ESTIMATE)
+    after = after_triage(s, ai_triage("ai"))
+    e = after.event
+    assert e.domains == ["ai"] and e.ai_significance is AiSignificance.MAJOR
+    assert (e.severity, e.severity_source) == (Severity.UNKNOWN, SeveritySource.UNKNOWN)
+    assert not SEVERITY.applies(after)
+    assert s.event.severity is Severity.HIGH  # the original is untouched
+
+
+def test_after_triage_an_official_score_and_a_story_on_both_desks_keep_theirs():
+    official = subject(severity=Severity.LOW, severity_source=SeveritySource.NVD)
+    assert after_triage(official, ai_triage("ai")).event.severity is Severity.LOW
+    estimate = subject(severity=Severity.HIGH, severity_source=SeveritySource.AI_ESTIMATE)
+    both = after_triage(estimate, ai_triage("cybersecurity", "ai")).event
+    assert (both.severity, both.beat.value) == (Severity.HIGH, "both")
+
+
+async def test_an_ai_industry_story_seeded_as_cyber_gets_no_severity_call(pass_):
+    state, log = pass_
+    state["client"] = client = FakeClient(completion(AI_TRIAGE))
+    seeded = subject("evt-2026-000050", domains=["cybersecurity"])
+    state["candidates"] = [(seeded, [TRIAGE, BRIEF, SEVERITY])]
+    summary = await enrich_pending(engine="engine", layer=FakeLayer(governor()), now=T0)
+    assert [e for e in log if e[0] == "write"] == [
+        ("write", "evt-2026-000050", "triage", "Done"),
+        ("write", "evt-2026-000050", "brief", "Done"),
+    ]
+    assert [tier for tier, _, _ in client.calls] == [Tier.FREE, Tier.CHEAP]
+    assert summary.done == Counter(triage=1, brief=1)
+
+
+async def test_a_major_ai_story_matters_most_when_money_is_short(pass_):
+    state, log = pass_
+    minor = subject("evt-2026-000060", domains=["ai"], ai_significance=AiSignificance.MINOR)
+    major = subject("evt-2026-000070", domains=["ai"], ai_significance=AiSignificance.MAJOR)
+    state["candidates"] = [(minor, [TRIAGE]), (major, [TRIAGE])]
+    g = governor(usage_monthly="17")  # MINIMAL
+    summary = await enrich_pending(engine="engine", layer=FakeLayer(g), batch=1, now=T0)
+    assert summary.mode == "minimal" and summary.blocked == 1
+    assert [e for e in log if e[0] == "write"] == [("write", "evt-2026-000070", "triage", "Done")]

@@ -394,8 +394,8 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 | Role / adapter | `researcher` · `opencode_local` (fast tier) |
 | Wakes on | 4-hourly desk digest; any AI-security escalation |
 | Owns | AI as a first-class domain **and** the cyber↔AI convergence: frontier models, agent frameworks, MCP, AI infra/chips, open-weight models, AI security/safety, red teaming, prompt injection, model poisoning/theft, training-data attacks, agent hijacking, AI supply chain, AI-enabled attacks, AI-generated malware, AI regulation |
-| Specialised tasks | Separate `AI_INDUSTRY` / `AI_SECURITY` / `AI_THREAT_ACTIVITY` / `AI_CYBER_CONVERGENCE` — the distinction the source prompts insisted on and most feeds collapse. Ruthlessly de-prioritise product-launch marketing with no security relevance. Map AI incidents to MITRE ATLAS where it applies. Track the MCP ecosystem specifically, as a fast-moving and under-covered attack surface. Flag when an AI capability materially changes attacker economics. |
-| Never | Lets general AI industry news crowd out security intelligence |
+| Specialised tasks | Separate `AI_INDUSTRY` / `AI_SECURITY` / `AI_THREAT_ACTIVITY` / `AI_CYBER_CONVERGENCE` — the distinction the source prompts insisted on and most feeds collapse. Ruthlessly de-prioritise product-launch marketing with no news in it. Map AI incidents to MITRE ATLAS where it applies. Track the MCP ecosystem specifically, as a fast-moving and under-covered attack surface. Flag when an AI capability materially changes attacker economics. |
+| Never | Rates AI news on the cyber severity scale: AI news is news in its own right, ranked on `ai_significance` ([docs/wiki/ai-news-beat.md](docs/wiki/ai-news-beat.md)) |
 | KPI | AI-security recall vs. a curated watchlist; marketing-noise rate |
 
 #### TACHIKOMA — Source Discovery
@@ -619,8 +619,10 @@ Canonical unit is the **event**. Article-shaped records exist only as `event_sou
   "why_it_matters": "Evidence-based, at most three sentences.",
 
   "domains": ["cybersecurity"],
+  "beat": "cyber",
   "categories": ["vulnerability", "active-exploitation"],
   "ai_subdomain": null,
+  "ai_significance": null,
 
   "severity": "critical",
   "severity_source": "cna",
@@ -681,6 +683,16 @@ NEW_AU_EXPOSURE, NEW_IMPACT, NEW_PATCH, NEW_MITIGATION, NEW_EVIDENCE, CORRECTION
 NO_MATERIAL_CHANGE`. `relationships`: `related_event, follow_up_to, caused_by, exploits,
 affects, targets, uses, attributed_to, mitigated_by, resolves`.
 `ai_subdomain`: `AI_INDUSTRY, AI_SECURITY, AI_THREAT_ACTIVITY, AI_CYBER_CONVERGENCE`.
+`beat`: `cyber, ai, both, other`. `ai_significance`: `major, notable, minor`, or null.
+
+**The beat** ([docs/wiki/ai-news-beat.md](docs/wiki/ai-news-beat.md)) says which desk a story is
+on. It is derived from `domains`, never stored: `cybersecurity` is cyber, `ai` is AI, both is
+both, and neither is other. A new event's `domains` are seeded at assembly from its source's
+`beat` in `config/sources.yaml` (cyber when unset), and triage then sets them. A source cannot
+start a story on `other`, so `other` means triage found neither, never "not read yet". A merge
+unites the domains of the stories it joins, and what triage found beats a seed.
+`ai_significance` is set by triage and is null unless `ai` is in `domains` (a database check,
+migration 016). The site's Events feed filters on `beat`.
 
 **Tables** (`cyber_intel`): `events, event_sources, event_timeline, event_relationships,
 claims, evidence, cves, cve_scores, mitre_techniques, mitre_dataset_versions,
@@ -693,6 +705,12 @@ medium=2, low=1`; KEV adds a bonus. Corroboration uses `independent_confirmation
 raw source count. Recency half-life: low/medium 24 h, high 72 h, critical 168 h. **The
 decay timer resets only on material update.** Archive at `prominence < 0.05` or age > 30
 days — archive, never delete. All of it lives in versioned `config/scoring.yaml`.
+
+AI news has its own scale (scoring version 4). An AI-only story is ranked on its
+`ai_significance` in place of severity: `major=4, notable=3, minor=1`, not judged yet 1.5, with
+half-lives of 168 h, 72 h and 24 h. A major AI story stays live at least as long as a critical
+cyber one. A story on both desks takes the stronger weight and the longer half-life of the two
+scales. An official severity on an AI-only story still counts.
 
 ---
 
@@ -707,7 +725,8 @@ days — archive, never delete. All of it lives in versioned `config/scoring.yam
 Registry is data-driven in `config/sources.yaml` — never hardcoded logic. Every source
 carries: `id, name, type, region, category, priority, enabled, url/query, parser,
 reliability, class, discovery_date, validation_date, last_success, last_failure,
-failure_count, expected_frequency, notes`. Source classes: `authoritative, primary,
+failure_count, expected_frequency, notes`, and optionally a `beat` (`cyber`, `ai` or `both`;
+cyber when unset) that seeds its events' domains (§5). Source classes: `authoritative, primary,
 vendor, specialist, news, community, social, discovery`. Quality profile: `reliability,
 freshness, relevance, parser_stability, duplicate_rate, independent_reporting_value`.
 
@@ -896,6 +915,15 @@ CVE: extract ID by regex → retrieve CNA record → Vulnrichment ADP → KEV �
 **AI SUGGESTED** — never official attribution. Trends: computed from data; a model may
 interpret but never generate a statistic.
 
+**AI news is not rated as a cyber threat** ([docs/wiki/ai-news-beat.md](docs/wiki/ai-news-beat.md)).
+Triage sets `domains` and, for a story on the AI desk, `ai_significance` (major, notable or
+minor) and the AI categories (`ai-industry`, `model-release`, `ai-governance`, `ai-incident`,
+`ai-research`). The tier 2 severity task is never run on an AI-only story, and a model's
+severity estimate is dropped if triage moves a story there. An official score stays. For AI
+news with no security angle, the brief's `why_it_matters` says what it means for people who
+build, buy or regulate AI, not for defenders. Under the `minimal` budget mode (§7.4) a major AI story
+counts with critical, high, KEV-linked and developing ones.
+
 ### 7.4 Degradation (mandatory)
 
 | Budget remaining | Behaviour |
@@ -1024,6 +1052,12 @@ from the above:
   The labels come from the registers and the source registry, so they are **not yet
   human-verified**; `golden_events.reviewed` records which ones a person has checked, and
   every proposal gives the count.
+- About 10 AI stories join the set once the owner labels them (`worker/ai/golden_ai.yaml`,
+  steps in [docs/wiki/ai-news-beat.md](docs/wiki/ai-news-beat.md#labelling-the-ai-test-stories)).
+  No register labels AI news. Each is pinned by its link to the event it ended up in, and is
+  `reviewed`. Triage is judged on the beat and `ai_significance`, the brief on the AU desk if
+  the owner set it. They have no severity, so tier 2 is never tried on them. A story left
+  blank is never looked up and changes nothing.
 
 **Attribution.** Benchmark data carries a required citation in `meta.citation`. Both
 datasets are CC BY 4.0 requiring *"Source: OpenRouter (openrouter.ai/rankings), as of

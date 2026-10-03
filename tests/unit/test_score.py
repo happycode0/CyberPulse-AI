@@ -5,6 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from worker.models import (
+    AiSignificance,
     AuRelevance,
     CveRef,
     Event,
@@ -18,6 +19,7 @@ from worker.pipeline.score import (
     base_weight,
     freshness,
     independent_confirmations,
+    ranking,
     score_event,
 )
 from worker.version import SCORING_VERSION
@@ -308,3 +310,64 @@ def test_config_rejects_a_bad_archive_rule(rule):
 def test_the_committed_archive_rule_matches_the_plan():
     rule = ScoringConfig.model_validate(_config_dict()).archive
     assert (rule.prominence_below, rule.idle_days) == (0.05, 30)
+
+
+# ─── The AI desk's scale (docs/wiki/ai-news-beat.md) ─────────────────────────────────────────────
+
+
+def _hours_live(e, *, limit=24 * 60):
+    """Whole hours after its last material update until the event drops below the archive line."""
+    floor = cfg.archive.prominence_below
+    for h in range(limit):
+        if score_event(e, cfg, now=e.last_material_update + timedelta(hours=h)).risk.prominence < floor:
+            return h
+    return limit
+
+
+def _ai(significance=None, **overrides):
+    return event(**{"domains": ["ai"], "ai_significance": significance, "severity": UNKNOWN,
+                    **overrides})
+
+
+def test_a_major_ai_event_stays_live_at_least_as_long_as_a_critical_cyber_one():
+    shared = {"sources": [src("wire", lineage="L1", independent=True)]}
+    ai = _ai(AiSignificance.MAJOR, **shared)
+    cyber = event(domains=["cybersecurity"], severity=CRITICAL, **shared)
+    assert score_event(ai, cfg, now=NOW).risk.urgency == score_event(cyber, cfg, now=NOW).risk.urgency
+    assert _hours_live(ai) >= _hours_live(cyber) > 0
+
+
+def test_an_ai_only_event_is_ranked_on_its_significance():
+    ranked = [
+        score_event(_ai(level), cfg, now=NOW).risk.prominence
+        for level in (AiSignificance.MINOR, None, AiSignificance.NOTABLE, AiSignificance.MAJOR)
+    ]
+    assert ranked == sorted(ranked) and len(set(ranked)) == 4
+    assert ranking(_ai(AiSignificance.MAJOR), cfg) == (4, 168)
+
+
+def test_a_cyber_event_is_ranked_on_severity_whatever_its_significance_says():
+    cyber = event(domains=["cybersecurity"], severity=LOW, ai_significance=AiSignificance.MAJOR)
+    assert cyber.ai_significance is None
+    assert ranking(cyber, cfg) == ranking(event(severity=LOW), cfg) == (1, 24)
+
+
+def test_a_story_on_both_desks_takes_the_stronger_of_each_scale():
+    both = event(domains=["cybersecurity", "ai"], severity=HIGH, ai_significance=AiSignificance.MAJOR)
+    assert ranking(both, cfg) == (4, 168)
+    low = event(domains=["cybersecurity", "ai"], severity=HIGH, ai_significance=AiSignificance.MINOR)
+    assert ranking(low, cfg) == (3, 72)
+    # Not judged on the AI scale yet: severity alone, as before.
+    assert ranking(event(domains=["cybersecurity", "ai"], severity=HIGH), cfg) == (3, 72)
+
+
+def test_an_official_severity_on_an_ai_only_event_still_counts():
+    official = _ai(AiSignificance.MINOR, severity=CRITICAL)
+    assert ranking(official, cfg) == (4, 168)
+
+
+def test_config_rejects_an_ai_scale_missing_a_level():
+    scale = _config_dict()["ai_beat"]
+    del scale["half_life_hours"]["major"]
+    with pytest.raises(ValidationError, match="ai_beat.half_life_hours"):
+        ScoringConfig.model_validate(_config_dict(ai_beat=scale))

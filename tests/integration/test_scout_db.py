@@ -222,6 +222,28 @@ def test_replacing_the_golden_set_keeps_the_records_as_they_were_pinned(conn):
     assert db.load_golden(conn) == []
 
 
+def test_an_ai_story_is_found_by_its_link_as_the_event_it_ended_up_in(conn):
+    kept = insert_event(conn, 21, cve=False)
+    merged = insert_event(conn, 22, cve=False, merged_into=kept)
+    for event_id in (kept, merged):  # any source will do: each gets https://example.test/<id>
+        carried_by_an_australian_advisory(conn, event_id)
+    conn.execute(
+        text("update event_sources set canonical_url = :c where event_id = :e"),
+        {"c": "https://example.test/canonical", "e": merged},
+    )
+    urls = [f"https://example.test/{kept}", f"https://example.test/{merged}"]
+    got = db.events_for_urls(conn, [*urls, "https://example.test/canonical", "https://x.test/"])
+    assert got == {urls[0]: kept, urls[1]: kept, "https://example.test/canonical": kept}
+    assert db.events_for_urls(conn, []) == {}
+
+
+def test_an_ai_story_the_owner_labelled_is_pinned_as_reviewed(conn):
+    owner = GoldenEvent("evt-2026-000003", {"title": "Model 9"}, {"triage": {}, "from": "owner"})
+    registers = GoldenEvent("evt-2026-000004", {"title": "Acme"}, {"from": "registers"})
+    db.replace_golden(conn, [owner, registers], NOW)
+    assert db.load_golden(conn) == [owner, registers] and db.golden_reviewed(conn) == 1
+
+
 # ─── Gauntlet runs ────────────────────────────────────────────────────────────────────────────────
 
 

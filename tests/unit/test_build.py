@@ -18,6 +18,7 @@ from worker.db.crew import Activity, PipelineAi
 from worker.db.sources import RegistryRow
 from worker.db.trends import TrendInputs
 from worker.models import (
+    AiSignificance,
     Event,
     HealthStatus,
     Lane,
@@ -130,7 +131,7 @@ def test_trends_are_counted_from_the_stored_reports(tmp_path, db):
     assert (akira["recent"], akira["state"], akira["event_ids"]) == (3, "new", ["evt-2026-000001"])
     assert trends["activity"][-1] | {"coverage": "-"} == {
         "date": "2026-09-30", "coverage": "-", "stories": 1, "reports": 3, "kev_added": 2,
-        "critical_high": 1, "au_stories": 0,
+        "critical_high": 1, "au_stories": 0, "ai_stories": 0,
     }
     assert trends["generated_at"] == read(tmp_path, "live.json")["generated_at"]
 
@@ -144,6 +145,23 @@ def test_live_filters_by_strict_prominence_and_keeps_order(tmp_path, db):
     ids = [e["event_id"] for e in read(tmp_path, "live.json")["events"]]
     assert ids == ["evt-2026-000001", "evt-2026-000002"]
     assert read(tmp_path, "live.json")["counts"]["events"] == 2
+
+
+def test_every_published_event_names_its_beat(tmp_path, db):
+    """The site's Events filter reads `beat` and `ai_significance` (docs/wiki/ai-news-beat.md);
+    build_all checks every file against its schema before it writes."""
+    db["events"] = [
+        make_event(1, domains=["ai"], ai_significance=AiSignificance.MAJOR),
+        make_event(2, domains=["cybersecurity", "ai"], ai_significance=AiSignificance.MINOR),
+        make_event(3, domains=["cybersecurity"]),
+        make_event(4, domains=[]),
+    ]
+    build_all(None, tmp_path, now=NOW)
+    for name in ("live.json", "history/2026-09-30.json"):
+        events = {e["event_id"]: e for e in read(tmp_path, name)["events"]}
+        assert [(e["beat"], e["ai_significance"]) for e in events.values()] == [
+            ("ai", "major"), ("both", "minor"), ("cyber", None), ("other", None),
+        ]
 
 
 def test_history_groups_by_first_seen_utc_date_and_index_links_to_it(tmp_path, db):

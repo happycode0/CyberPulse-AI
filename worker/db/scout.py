@@ -16,7 +16,13 @@ from sqlalchemy import Connection, text
 
 from worker.ai.catalogue import Change, Known, ListedModel
 from worker.ai.gauntlet import AGENT, STAGE, Listed, Measured
-from worker.ai.golden import AU_PER_STRATUM, MIN_SOURCE_CHARS, OFFICIAL_SOURCES, GoldenEvent
+from worker.ai.golden import (
+    AU_PER_STRATUM,
+    MIN_SOURCE_CHARS,
+    OFFICIAL_SOURCES,
+    OWNER,
+    GoldenEvent,
+)
 from worker.db.digest import truncate, usd
 
 PROPOSAL_KIND = "model-promotion"
@@ -197,6 +203,23 @@ def golden_candidates(conn: Connection, limit: int = 1000) -> list[tuple[str, st
     return [(r.event_id, r.severity) for r in rows]
 
 
+def events_for_urls(conn: Connection, urls: Sequence[str]) -> dict[str, str]:
+    """`url -> event_id` for stories the worker collected, by the item's link or its canonical
+    one, as the event they ended up in."""
+    if not urls:
+        return {}
+    rows = conn.execute(
+        text(
+            "select u.url, min(coalesce(e.merged_into, e.event_id)) as event_id "
+            "from unnest(cast(:urls as text[])) as u(url) "
+            "join event_sources es on es.url = u.url or es.canonical_url = u.url "
+            "join events e on e.event_id = es.event_id group by u.url"
+        ),
+        {"urls": list(urls)},
+    )
+    return {r.url: r.event_id for r in rows}
+
+
 def load_golden(conn: Connection) -> list[GoldenEvent]:
     rows = conn.execute(
         text("select event_id, record, labels from golden_events order by event_id")
@@ -214,8 +237,8 @@ def replace_golden(conn: Connection, golden: Sequence[GoldenEvent], now: datetim
         return
     conn.execute(
         text(
-            "insert into golden_events (event_id, pinned_at, record, labels) "
-            "values (:event_id, :now, cast(:record as jsonb), cast(:labels as jsonb))"
+            "insert into golden_events (event_id, pinned_at, record, labels, reviewed) "
+            "values (:event_id, :now, cast(:record as jsonb), cast(:labels as jsonb), :reviewed)"
         ),
         [
             {
@@ -223,6 +246,8 @@ def replace_golden(conn: Connection, golden: Sequence[GoldenEvent], now: datetim
                 "now": now,
                 "record": json.dumps(g.record, ensure_ascii=False),
                 "labels": json.dumps(g.labels),
+                # An AI story's labels are the owner's, who reviewed them (worker/ai/golden.py).
+                "reviewed": g.labels.get("from") == OWNER,
             }
             for g in golden
         ],

@@ -1,10 +1,18 @@
 """Domain models for CyberPulse-AI: the event schema (PLAN.md section 5) and pipeline items."""
 
+from collections.abc import Iterable
 from datetime import date
 from enum import StrEnum
 from typing import Annotated, Any, ClassVar
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import (
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    model_validator,
+)
 
 from worker.version import (
     PIPELINE_VERSION,
@@ -93,6 +101,54 @@ class AiSubdomain(StrEnum):
     AI_SECURITY = "AI_SECURITY"
     AI_THREAT_ACTIVITY = "AI_THREAT_ACTIVITY"
     AI_CYBER_CONVERGENCE = "AI_CYBER_CONVERGENCE"
+
+
+class Beat(StrEnum):
+    """Which desk an event belongs to (docs/wiki/ai-news-beat.md).
+
+    A source's beat seeds an event's `domains`; triage then sets them. An event's beat is
+    always derived from its domains, never stored. OTHER only appears once triage has found
+    neither domain; no source is on it.
+    """
+
+    CYBER = "cyber"
+    AI = "ai"
+    BOTH = "both"
+    OTHER = "other"
+
+
+class AiSignificance(StrEnum):
+    """How much an AI story matters, on its own scale (the AI desk's "severity")."""
+
+    MAJOR = "major"
+    NOTABLE = "notable"
+    MINOR = "minor"
+
+
+CYBER_DOMAIN = "cybersecurity"
+AI_DOMAIN = "ai"
+
+_SEED_DOMAINS: dict[Beat | None, list[str]] = {
+    None: [CYBER_DOMAIN],
+    Beat.CYBER: [CYBER_DOMAIN],
+    Beat.AI: [AI_DOMAIN],
+    Beat.BOTH: [CYBER_DOMAIN, AI_DOMAIN],
+}
+
+
+def seed_domains(beat: Beat | None) -> list[str]:
+    """The `domains` a new event starts with, from its source's beat (None means cyber)."""
+    return list(_SEED_DOMAINS[beat])
+
+
+def beat_of(domains: Iterable[str]) -> Beat:
+    present = set(domains)
+    cyber, ai = CYBER_DOMAIN in present, AI_DOMAIN in present
+    if cyber and ai:
+        return Beat.BOTH
+    if ai:
+        return Beat.AI
+    return Beat.CYBER if cyber else Beat.OTHER
 
 
 class Lane(StrEnum):
@@ -263,6 +319,8 @@ class Event(_Model):
     domains: list[str] = Field(default_factory=list)
     categories: list[str] = Field(default_factory=list)
     ai_subdomain: AiSubdomain | None = None
+    # The AI desk's scale; None unless "ai" is in `domains` (docs/wiki/ai-news-beat.md).
+    ai_significance: AiSignificance | None = None
 
     severity: Severity = Severity.UNKNOWN
     severity_source: SeveritySource = SeveritySource.UNKNOWN
@@ -279,6 +337,25 @@ class Event(_Model):
     relationships: list[Relationship] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     pending_enrichment: bool = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def _drop_derived(cls, data: Any) -> Any:
+        # `beat` is derived from `domains`, so a dumped event read back carries it; drop it.
+        if isinstance(data, dict) and "beat" in data:
+            data = {k: v for k, v in data.items() if k != "beat"}
+        return data
+
+    @model_validator(mode="after")
+    def _significance_needs_ai(self) -> "Event":
+        if self.ai_significance is not None and AI_DOMAIN not in self.domains:
+            self.ai_significance = None
+        return self
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def beat(self) -> Beat:
+        return beat_of(self.domains)
 
     def model_dump_public(self) -> dict[str, Any]:
         """The publication shape: JSON-safe, nulls kept, internal-only fields excluded."""
@@ -333,6 +410,14 @@ class SourceConfig(_Model):
     # `publishers` in the registry); None means the source speaks for itself.
     publisher: str | None = None
     lifecycle_state: LifecycleState | None = None
+    # The desk its items start on (seed_domains); None means cyber. Never OTHER.
+    beat: Beat | None = None
+
+    @model_validator(mode="after")
+    def _no_other_beat(self) -> "SourceConfig":
+        if self.beat is Beat.OTHER:
+            raise ValueError(f"source {self.id}: beat 'other' is for triage, not for sources")
+        return self
 
 
 class PublisherConfig(_Model):
