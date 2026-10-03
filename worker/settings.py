@@ -43,6 +43,13 @@ class Settings(BaseSettings):
     # What the AI layer may spend in a calendar month (UTC, as OpenRouter counts it). The
     # degradation modes in worker/ai/budget.py are shares of this.
     ai_monthly_budget_usd: Decimal = Decimal("20")
+    # The ops API (worker/ops_api.py). The token guards its read endpoints; the AI agents get
+    # it from the Paperclip server's environment. Unset or short, the reads stay closed.
+    cyberpulse_ops_token: SecretStr | None = None
+    # Every interface inside the worker's container. Nothing outside the compose network can
+    # reach it: docker-compose.yml publishes no port for the worker.
+    ops_api_host: str = "0.0.0.0"
+    ops_api_port: int = 8700
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -67,6 +74,9 @@ class Settings(BaseSettings):
             f"openrouter_app_title={self.openrouter_app_title!r}",
             f"openrouter_app_url={self.openrouter_app_url!r}",
             f"ai_monthly_budget_usd={self.ai_monthly_budget_usd!r}",
+            f"cyberpulse_ops_token={self.cyberpulse_ops_token!r}",
+            f"ops_api_host={self.ops_api_host!r}",
+            f"ops_api_port={self.ops_api_port!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 

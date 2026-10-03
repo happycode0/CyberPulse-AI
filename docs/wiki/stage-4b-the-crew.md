@@ -405,14 +405,15 @@ The `http` agents below spend **zero tokens, permanently** — Paperclip just ca
 which does the job in Python. They are in Paperclip so the whole crew is on one org chart, with
 one audit log and one place to pause anything.
 
-**Shared `http` settings** — the worker's ops API is part of the Stage 4 build:
+**Shared `http` settings**. The worker's ops API answers them
+([Stage 4](stage-4-paperclip.md#the-workers-ops-api)):
 
 | Field | Value |
 |---|---|
 | Adapter | `http` |
 | URL | `http://worker:8700/ops/agents/<callsign>/wake` (lower-case callsign) |
 | Method | `POST` |
-| Headers | `{"authorization": "Bearer <ops token>"}` — the value comes from `.env`; Claude sets it, never type it into a ticket |
+| Headers | None. A wake runs nothing and answers only whether the job is healthy (200 or 503), so it needs no token. The ops token opens the read endpoints for the AI agents, through the server's environment; never type it into a ticket |
 | Timeout | `timeoutMs`: `120000` — this adapter reads **`timeoutMs`**, even though its own help text says `timeoutSec` |
 | Budget | US$0 |
 

@@ -375,10 +375,10 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
    marked "now", following the crew page and step 7.
 
 What the import cannot set:
-- **The `http` agents' auth header.** It waits for the ops API in the Stage 4 build. Paperclip
-  also refuses to call a private address such as `http://worker:8700` unless that address is
-  listed in the server's `PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST`, which is part of the
-  same build.
+- **Nothing for the `http` agents.** Their wakes need no auth header
+  ([Stage 4](stage-4-paperclip.md#the-workers-ops-api)). Paperclip refuses to call a private
+  address such as `http://worker:8700` unless the server's
+  `PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST` lists it. `docker-compose.yml` sets that.
 - **Connection requests → Human only** (step 4). Set it by hand.
 
 The import gives every AI agent **one run at a time** (`maxConcurrentRuns: 1`), so a burst of
