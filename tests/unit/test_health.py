@@ -186,6 +186,28 @@ def test_not_modified_ages_out_a_feed_that_stops_publishing():
     assert h.newest_item_age_days == pytest.approx(9.0)
 
 
+def test_not_modified_judges_the_age_against_the_threshold_the_source_has_now():
+    """VM 200, 2026-10-03: ACSC alerts moved from hourly to monthly and kept answering 304. The
+    newest item (5.8 days old) is within 90 days, so the old STALE verdict does not stand."""
+    prev = health(
+        HealthStatus.STALE, at=NOW - timedelta(minutes=15), age=5.8,
+        error="newest item is 5.8 days old; expected one within 2 days",
+    )
+    monthly = src.model_copy(update={"expected_frequency": "monthly"})
+    h = assess(monthly, not_modified_fetch, [], now=NOW, history=[prev])
+    assert h.status is HealthStatus.OK and h.error is None
+
+
+def test_not_modified_states_a_stale_feed_against_the_current_threshold():
+    prev = health(
+        HealthStatus.STALE, at=NOW - timedelta(minutes=15), age=120.0,
+        error="newest item is 120 days old; expected one within 2 days",
+    )
+    monthly = src.model_copy(update={"expected_frequency": "monthly"})
+    h = assess(monthly, not_modified_fetch, [], now=NOW, history=[prev])
+    assert h.status is HealthStatus.STALE and h.error and "within 90 days" in h.error
+
+
 def test_not_modified_with_no_history_is_ok():
     assert assess(src, not_modified_fetch, [], now=NOW, history=[]).status is HealthStatus.OK
 

@@ -234,6 +234,11 @@ year (alerts: median 8 days apart, longest 41, now `monthly`; news: median 5, lo
 `weekly`). ASD's own news page posts months apart (231 days in 2025), so it has a new
 `quarterly` threshold of 270 days.
 
+The new thresholds did not take at first. A feed that answers 304 Not Modified has no items to
+judge, so its last verdict was carried forward, and a STALE verdict was carried as it was, error
+text and all. The feeds kept reading STALE "within 2 days" under a 90-day threshold. A 304 now
+judges the newest item's age, still counting, against the threshold the source has today.
+
 ### The AI sources were never read (found 2026-10-03)
 
 The runs table had fast and normal runs and no deep run, ever. DEEP is a Paperclip routine with
