@@ -3,8 +3,9 @@
 [← Stage 1 — Foundation](stage-1-foundation.md) · [Wiki home](README.md) ·
 [Stage 3 — Correlation →](stage-3-correlation.md)
 
-**Status: 🟡 half.** The ground-truth half runs on the VM. The AI half is built (money controls
-and enrichment) but not deployed yet: it goes live on the VM with the next push. Plan:
+**Status: 🟡 most of it running.** Ground truth, the money controls and AI enrichment all run on
+the VM (enrichment since 2026-10-03). The extra registers (item 5) and the AU relevance and
+evidence engines (item 7) are left. Plan:
 [PLAN.md §9, Stage 2](../../PLAN.md#9-stages) and §2.5 (the severity chain) · §7 (models and money)
 
 ---
@@ -70,7 +71,7 @@ makes it safe to switch the AI agents on.
 **Then the rest of the ground truth and the enrichment:**
 
 5. More registers: OSV, GitHub Advisories, MITRE ATT&CK and ATLAS.
-6. ✅ **AI enrichment** (2026-10-03, built, not yet deployed; `worker/ai/tasks.py`,
+6. ✅ **AI enrichment** (2026-10-03, running on the VM; `worker/ai/tasks.py`,
    `worker/ai/enrich.py`, migration 006). Each pending event gets up to three separate calls:
    - **Triage** (free tier): categories, entities, tags.
    - **Brief** (cheap tier): an original summary, why it matters, and AU relevance with reasons.
@@ -85,6 +86,9 @@ makes it safe to switch the AI agents on.
    - anything shaped like a secret;
    - 12 or more words copied in a row from the source.
 
+   Models often write CVE ids with non-breaking hyphens. Those are published as plain hyphens,
+   and the CVE check catches an id written with any dash.
+
    An entity name that doesn't appear in the record is dropped. Only an Australian source makes
    an event "reported by an Australian source"; a model can't claim it. A failed task backs off
    1 h, 6 h, then 24 h, then gives up. A later official score always beats the AI estimate.
@@ -92,6 +96,10 @@ makes it safe to switch the AI agents on.
    :05 and :35 past each hour, inside the budget mode above. Free models never write editorial
    text: when only the free tier is open, briefs and judgments wait. Every call is a ledger row
    against its event. The MITRE suggestion waits for ATT&CK and ATLAS (item 5).
+
+   The first live pass (2026-10-03 00:35 UTC, conserve mode) took 10 events: 9 finished and 1
+   brief failed the copy check. It made 21 billed calls for US$0.00068 in all, about US$0.00007
+   an event. Triage ran on a free model and briefs on `openai/gpt-oss-20b`.
 7. AU relevance engine with its reasons, and the evidence engine (claims linked to sources).
 
 ## How to check it
@@ -109,8 +117,9 @@ and collection and publishing carry on.
 
 ## Done when
 
-- [ ] Events carry real KEV / CVSS / EPSS **and** AI enrichment
-- [ ] The ledger shows per-event cost under budget
+- [x] Events carry real KEV / CVSS / EPSS **and** AI enrichment (live on the site 2026-10-03)
+- [x] The ledger shows per-event cost under budget (`cost_ledger.event_id`, about US$0.00007 an
+  event)
 - [x] Degradation demonstrably works when the tier is forced (`tests/unit/test_budget.py`)
 - [x] The ceiling guard rejects an over-priced model in a test (`tests/unit/test_ladder.py`)
 

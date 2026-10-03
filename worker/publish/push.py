@@ -32,6 +32,10 @@ from worker.settings import get_settings
 
 DEFAULT_BRANCH = "data"
 
+# The scheduler pushes while holding the publish lock, so a git command stalled on the network
+# would hold back every publish after it. A whole push takes seconds; three minutes is a hang.
+GIT_TIMEOUT_SECONDS = 180
+
 # Refuse anything that could smuggle options or pathspecs into git commands.
 _BRANCH_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*")
 
@@ -137,6 +141,15 @@ def _publish_token() -> str:
     return raw
 
 
+def publish_token_configured() -> bool:
+    """Whether this host can push at all. A host without a token builds `data/` and stops."""
+    try:
+        _publish_token()
+    except RuntimeError:
+        return False
+    return True
+
+
 def _auth_header(token: str) -> list[str]:
     """Credentials as a transient `http.extraheader` argument.
 
@@ -218,13 +231,27 @@ def _git(
     Failures raise `RuntimeError`; `secrets` are redacted from everything the
     error message repeats (command echo included), so a token can never leak
     through a traceback or a stray `GIT_TRACE`.
+
+    Git never prompts (there is no one to answer), and a command still running
+    after `GIT_TIMEOUT_SECONDS` is killed and raised as a failure.
     """
     cmd = ["git", "-C", str(repo), *args]
-    env = {**os.environ, **extra_env} if extra_env else None
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", **(extra_env or {})}
+    echo = _redact(" ".join(args), secrets)
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=GIT_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        # `from None`: the original exception repeats the command, auth header and all.
+        raise RuntimeError(f"git {echo} timed out after {GIT_TIMEOUT_SECONDS}s") from None
     if proc.returncode != 0:
         detail = _redact(proc.stderr.strip() or proc.stdout.strip(), secrets)
-        echo = _redact(" ".join(args), secrets)
         raise RuntimeError(f"git {echo} failed: {detail}")
     return proc.stdout.strip()
 
