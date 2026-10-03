@@ -101,15 +101,10 @@ def base_weight(severity: Severity, config: ScoringConfig) -> float:
 def independent_confirmations(event: Event) -> int:
     """Distinct lineages among independent sources; syndicated copies share one lineage.
 
-    A source with no `lineage_id` is its own lineage (keyed by `source_id`).
+    A source with no `lineage_id` yet is its own lineage, whose id is the source's
+    (worker/pipeline/lineage.py).
     """
-    return len(
-        {
-            s.lineage_id if s.lineage_id is not None else f"source:{s.source_id}"
-            for s in event.sources
-            if s.independent
-        }
-    )
+    return len({s.lineage_id or s.source_id for s in event.sources if s.independent})
 
 
 def freshness(event: Event, config: ScoringConfig, now: datetime) -> float:

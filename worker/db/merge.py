@@ -3,7 +3,9 @@
 `merge_events` folds each loser into the winner: sources, CVEs, timeline, claims, evidence,
 follow-ups and MITRE techniques move across, relationships are repointed, and the loser is
 archived with `merged_into` set (migration 009). It is never deleted. Its enrichment rows and
-ledger costs stay with it, because that is the event they were spent on.
+ledger costs stay with it, because that is the event they were spent on. Which of the
+winner's sources are independent is settled after, in the same transaction, by the lineage
+pass (worker/db/lineage.py).
 
 Like every writer here it takes the caller's connection and never commits.
 """
@@ -142,21 +144,8 @@ def merge_events(conn: Connection, group: MergeGroup) -> None:
         "where s." + losers + " and t.url_hash = s.url_hash and t.id <> s.id "
         "and (t.event_id = :w or (t.event_id = any(cast(:l as text[])) and t.id < s.id))"
     )
+    # Which of them are independent now is the lineage pass's to say (worker/db/lineage.py).
     run("update event_sources set event_id = :w where " + losers)
-    # Each outlet counts once: its earliest report is the independent one.
-    run(
-        "update event_sources s set independent = (x.rn = 1) from ("
-        "  select id, row_number() over (partition by source_id "
-        "    order by coalesce(published, fetched_at, created_at), id) rn "
-        "  from event_sources where event_id = :w"
-        ") x where s.id = x.id and s.independent is distinct from (x.rn = 1)"
-    )
-    run(
-        "update events set last_independent_confirmation = ("
-        "  select case when count(*) > 1 then max(coalesce(published, fetched_at)) end "
-        "  from event_sources where event_id = :w and independent"
-        ") where event_id = :w"
-    )
 
     run(
         "insert into event_cves (event_id, cve_id) select distinct :w, cve_id from event_cves "

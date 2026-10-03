@@ -1,4 +1,5 @@
-"""Consolidation against a real Postgres (migration 009, worker/db/merge.py, the run's pass).
+"""Consolidation against a real Postgres (migration 009, worker/db/merge.py and lineage.py,
+the run's pass).
 
 A fake connection would let the parts that matter be wrong: the conflict handling when a
 loser's rows collide with the winner's (a shared article, CVE, claim, technique or link),
@@ -14,6 +15,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
 from worker.db.events import find_candidates, load_event_dates, load_live_events
+from worker.db.lineage import refresh_lineage
 from worker.db.merge import (
     load_story_records,
     load_token_weights,
@@ -23,6 +25,7 @@ from worker.db.merge import (
 from worker.db.migrate import MIGRATIONS_DIR, run_migrations
 from worker.models import RawItem
 from worker.pipeline.correlate import MergeGroup
+from worker.pipeline.lineage import Publishers
 from worker.pipeline.normalise import clean_title, normalise, normalise_title
 from worker.pipeline.resolve import WEIGHTED_MIN_HEADLINES
 from worker.pipeline.run import consolidate
@@ -193,10 +196,14 @@ def test_merging_moves_everything_and_keeps_one_of_each(conn):
     insert_event(conn, L2, "Gateway flaw exploited", at=NOW + timedelta(hours=2))
     insert_event(conn, OTHER, "Unrelated", at=NOW)
 
-    add_source(conn, W, "wire", "h-shared", at=NOW)
-    add_source(conn, L1, "wire", "h-shared", at=NOW - timedelta(hours=5))  # same article
-    add_source(conn, L1, "itnews", "h-l1", at=NOW - timedelta(hours=5))
-    add_source(conn, L2, "wire", "h-l2", at=NOW + timedelta(hours=2))  # wire again: not independent
+    add_source(conn, W, "wire", "h-shared", title="Acme gateway flaw", at=NOW)
+    # The same article
+    add_source(conn, L1, "wire", "h-shared", title="Acme gateway flaw", at=NOW - timedelta(hours=5))
+    add_source(conn, L1, "itnews", "h-l1", title="Acme fixes gateway", at=NOW - timedelta(hours=5))
+    # wire again: not independent
+    add_source(
+        conn, L2, "wire", "h-l2", title="Gateway flaw exploited", at=NOW + timedelta(hours=2)
+    )
     add_cve(conn, W, "CVE-2026-1001")
     add_cve(conn, L1, "CVE-2026-1001")
     add_cve(conn, L2, "CVE-2026-1002")
@@ -224,6 +231,7 @@ def test_merging_moves_everything_and_keeps_one_of_each(conn):
     )
 
     merge_events(conn, MergeGroup(W, (L1, L2), "Acme gateway flaw exploited", ("cve_set",)))
+    assert refresh_lineage(conn, Publishers.none(), since=NOW - timedelta(days=30)) >= {W}
 
     w = event(conn, W)
     assert w["first_seen"] == NOW - timedelta(hours=5)
@@ -235,14 +243,14 @@ def test_merging_moves_everything_and_keeps_one_of_each(conn):
 
     sources = rows(
         conn,
-        "select source_id, url_hash, independent from event_sources where event_id = :w "
-        "order by url_hash",
+        "select source_id, url_hash, lineage_id, independent from event_sources "
+        "where event_id = :w order by url_hash",
         w=W,
     )
     assert sources == [
-        ("itnews", "h-l1", True),
-        ("wire", "h-l2", False),
-        ("wire", "h-shared", True),
+        ("itnews", "h-l1", "itnews", True),
+        ("wire", "h-l2", "wire", False),
+        ("wire", "h-shared", "wire", True),
     ]
     assert w["last_independent_confirmation"] == NOW
     assert rows(conn, "select cve_id from event_cves where event_id = :w order by 1", w=W) == [
@@ -396,7 +404,7 @@ def test_the_runs_pass_merges_a_split_story_and_reports_it(pg_engine):
                 at=NOW - timedelta(days=40 + n),
             )
 
-    done = consolidate(pg_engine, now=NOW + timedelta(days=1))
+    done = consolidate(pg_engine, now=NOW + timedelta(days=1), publishers=Publishers.none())
     assert done.errors == []
     assert done.archived == 1
     assert W in done.touched
@@ -406,5 +414,46 @@ def test_the_runs_pass_merges_a_split_story_and_reports_it(pg_engine):
         # Another outlet's report brought no new CVE: not a material update.
         assert event(c, W)["last_material_update"] == NOW
 
-    again = consolidate(pg_engine, now=NOW + timedelta(days=1))
+    again = consolidate(pg_engine, now=NOW + timedelta(days=1), publishers=Publishers.none())
     assert (again.archived, again.errors) == (0, [])
+
+
+def test_the_lineage_pass_counts_one_publisher_once_and_settles(conn):
+    """wire and itnews are one publisher here; ics speaks for itself."""
+    publishers = Publishers({"wire": "group", "itnews": "group"}, {"group": "Wire Group"}, {})
+    insert_event(conn, W, "Acme gateway flaw")
+    add_source(conn, W, "ics", "h1", title="Acme advisory", at=NOW - timedelta(hours=2))
+    add_source(conn, W, "wire", "h2", title="Acme gateway flaw", at=NOW - timedelta(hours=1))
+    add_source(conn, W, "itnews", "h3", title="Acme flaw exploited", at=NOW)
+    # Ingest's guess: one confirmation per outlet.
+    conn.execute(
+        text("update events set last_independent_confirmation = :t where event_id = :w"),
+        {"t": NOW, "w": W},
+    )
+    insert_event(conn, OTHER, "Unrelated", at=NOW - timedelta(days=40))
+    add_source(conn, OTHER, "wire", "h9", at=NOW - timedelta(days=40), independent=False)
+
+    since = NOW - timedelta(days=30)
+    assert refresh_lineage(conn, publishers, since=since) == {W}
+    assert rows(
+        conn,
+        "select source_id, lineage_id, independent from event_sources where event_id = :w "
+        "order by id",
+        w=W,
+    ) == [("ics", "ics", True), ("wire", "group", True), ("itnews", "group", False)]
+    assert event(conn, W)["last_independent_confirmation"] == NOW - timedelta(hours=1)
+    assert rows(
+        conn,
+        "select lineage_id, description from source_lineage where lineage_id = any(:l) order by 1",
+        l=["group", "ics"],
+    ) == [("group", "Wire Group"), ("ics", None)]
+    # Outside the window: left as it was.
+    assert rows(
+        conn, "select lineage_id, independent from event_sources where url_hash = 'h9'"
+    ) == [(None, False)]
+    assert refresh_lineage(conn, publishers, since=since) == set()
+
+    # One voice left: no independent confirmation at all.
+    conn.execute(text("delete from event_sources where url_hash = 'h1'"))
+    assert refresh_lineage(conn, publishers, since=since) == {W}
+    assert event(conn, W)["last_independent_confirmation"] is None

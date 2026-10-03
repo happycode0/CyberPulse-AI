@@ -46,3 +46,15 @@ def test_known_blocked_sources_are_disabled_with_a_reason():
     by_id = {s.id: s for s in load_registry(Path("config/sources.yaml"))}
     for sid in ("securityweek", "x_security_search"):
         assert by_id[sid].enabled is False and by_id[sid].notes
+
+
+def test_a_source_naming_an_unknown_publisher_is_rejected(tmp_path):
+    path = tmp_path / "sources.yaml"
+    path.write_text(
+        "publishers:\n  cisa:\n    name: CISA\n"
+        "sources:\n  - {id: a, name: A, publisher: nobody, type: rss, region: au, "
+        "category: news, class: feed, priority: 1, lane: fast, enabled: true, "
+        "url: 'https://example.test/feed', parser: rss, expected_frequency: daily}\n"
+    )
+    with pytest.raises(ValueError, match="'a': unknown publisher 'nobody'"):
+        load_registry(path)
