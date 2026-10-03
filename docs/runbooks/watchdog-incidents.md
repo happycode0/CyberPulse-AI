@@ -47,8 +47,8 @@ docker compose logs worker --since 1h | grep -E "incident|watchdog"
 ## no-collection
 
 **Symptom.** `no-collection · fast` (critical) or `no-collection · normal` (high): "The fast lane
-has not finished a run for 47 minutes". A lane has finished no run for 35 minutes (fast) or
-4 h 35 min (normal).
+has not finished a run for 2 hours". A lane has finished no run for 2 h 5 min (fast) or
+4 h 35 min (normal). The fast lane runs every hour, so that is two missed runs.
 
 **Check.**
 
@@ -73,7 +73,7 @@ free -h
   `done: ok=`:
 
   ```bash
-  date -u +%M                        # restart at about :10 or :40
+  date -u +%M                        # restart between :10 and :45
   docker compose restart worker
   docker compose logs -f worker      # Ctrl-c stops watching, not the worker
   ```
@@ -84,8 +84,8 @@ restarts.
 
 ## zero-volume
 
-**Symptom.** `zero-volume · fast` or `· normal` (high): "The fast lane's last 3 runs fetched
-nothing". Runs finish, but no source returns anything.
+**Symptom.** `zero-volume · fast` or `· normal` (high): "The fast lane's last 2 runs fetched
+nothing". Runs finish, but no source returns anything. Either lane needs 2 runs in a row.
 
 **Check.** The network and DNS, from the VM and from inside the worker:
 
@@ -114,8 +114,9 @@ a collector fault.
 
 ## feed-failing
 
-**Symptom.** `feed-failing · <source id>`: "<name> has failed its last 5 checks". High for a
-priority-1 source, otherwise medium (not sent).
+**Symptom.** `feed-failing · <source id>`: "<name> has failed its last 3 checks". High for a
+priority-1 source, otherwise medium (not sent). A fast source opens it after 3 failed checks,
+about 2 hours. A normal or deep source opens it after 5, about 16 hours for a normal one.
 
 **Check.**
 
@@ -240,7 +241,7 @@ for `groundtruth` and `enrichment`, otherwise medium (not sent).
 | `groundtruth` | 13 h | every 6 h at :25 UTC | `python -m worker --groundtruth` |
 | `enrichment` | 75 min | :05 and :35 | `python -m worker --enrich` (spends, within the budget mode) |
 | `source-gate` | 9 h | 03:50 UTC and every 4 h after | runs with the scheduler only |
-| `discovery` | 50 h | 03:00 Sydney | runs with the scheduler only |
+| `discovery` | 50 h | 03:10 Sydney | runs with the scheduler only |
 | `model-scan` | 50 h | 03:20 Sydney | `python -m worker --scan-models` |
 | `model-gauntlet` | 15 days | Sundays 03:40 Sydney | `python -m worker --gauntlet` (spends, within its monthly cap) |
 
@@ -278,7 +279,8 @@ budget is already tight.
 
 ## publish-failure
 
-**Symptom.** `publish-failure` (high): "Building the site's data has failed for 30 minutes".
+**Symptom.** `publish-failure` (high): "Building the site's data has failed for 2 hours". It opens
+once nothing has built for 2 hours: two hourly runs in a row.
 
 **Check.**
 
@@ -338,7 +340,8 @@ database is a repair: backup first, and your decision.
 
 ## push-failure
 
-**Symptom.** `push-failure` (high): "Pushing the site's data has failed for 45 minutes".
+**Symptom.** `push-failure` (high): "Pushing the site's data has failed for 2 hours". It opens
+once nothing has pushed for 2 h 15 min: two hourly runs, and time for the second push to finish.
 
 **Check.** A dry run does every check, reaches GitHub, and pushes nothing. Its errors are
 redacted:
@@ -369,7 +372,8 @@ token's permissions on GitHub before anything else, and never add permissions to
 ## site-stale
 
 **Symptom.** `site-stale` (high): "The public site's data is 4 hours old", or it "could not be read
-3 times in a row". The worker publishes, but the site does not change. Only the host that pushes
+3 times in a row". The worker publishes, but the site does not change. It opens once the live
+data is over 3 hours old: an hourly publish, an hourly Pages build and an hour of slack. Only the host that pushes
 runs this check.
 
 **Check.**
@@ -391,7 +395,8 @@ workflow was disabled.
   after a long quiet spell. Enable it from the banner.
 - **To rebuild now:** **Actions → pages → Run workflow** on `main`.
 
-Pushes to `data` do not start the workflow; only its 15-minute schedule does.
+Pushes to `data` do not start the workflow; only its schedule does. That should be hourly, at
+:12 past (`- cron: "12 * * * *"`); until the owner changes it, it is every 15 minutes.
 
 **Stop and decide yourself** if the deploy fails on a permissions error. Do not widen the
 workflow's `permissions:` block without a review.
