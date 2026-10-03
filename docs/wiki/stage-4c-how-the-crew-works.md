@@ -14,7 +14,7 @@ between them — who starts it, who hands it to whom, and where it stops.
 
 The worker container collects, de-duplicates, scores, fetches ground truth and publishes **on
 its own schedule, with no AI and no Paperclip**. That is already running on the VM today. If
-Paperclip is stopped, upgraded or broken, the site keeps updating every 15 minutes (PLAN.md
+Paperclip is stopped, upgraded or broken, the site keeps updating every hour (PLAN.md
 §2.3). Agents add judgment on top: Australian relevance, campaign links, follow-ups, quality
 checks.
 
@@ -25,7 +25,7 @@ checks.
          run summaries │ digests, incidents        verdicts │ comments, tasks
                        │                                   ▼
 ┌──────────────────────┴──────── WORKER (no AI) ───────────────────────────┐
-│ FAST every 15 min · NORMAL every 4 h · ground truth every 6 h · publish  │
+│ FAST every hour · NORMAL every 4 h · ground truth every 6 h · publish    │
 └──────────────────────┬───────────────────────────────────────────────────┘
                        ▼
           Postgres ──► data/*.json ──► GitHub Pages (the public site)
@@ -47,42 +47,46 @@ So the whole history of every decision is in the issue log. You read it the same
 
 | Prefix | Created by | Assigned to |
 |---|---|---|
-| `[DIGEST]` | a routine | ZION · BLASTER · WINTERMUTE |
+| `[DIGEST]` | a routine | DECKARD |
 | `[EDITORIAL]` | a routine | MORPHEUS |
 | `[FOLLOW-UP]` | MORPHEUS | DECKARD |
 | `[GAP]` | MORPHEUS | TACHIKOMA |
-| `[QA]` | a desk, or the daily sample | VOIGHT |
+| `[QA]` | DECKARD, or the daily sample | VOIGHT |
 | `[INCIDENT]` | worker health checks | TELETRAAN |
-| `[ENGINEERING]` | TELETRAAN · SERAPH · MORPHEUS | WHEELJACK |
-| `[MODEL]` | RIPPERDOC | ROGUE + MORPHEUS |
+| `[ENGINEERING]` | TELETRAAN · MORPHEUS | WHEELJACK |
+| `[MODEL]` | RIPPERDOC | MORPHEUS |
 
 ---
 
 ## The six loops
 
-### 1. Collection loop — every 15 minutes, no AI *(running today)*
+### 1. Collection loop — every hour, no AI *(running today)*
 
 ```text
-worker FAST lane ──► PROWL: one event or a new one? ──► LIBRARIAN: CVSS / KEV / EPSS
-                                                               │
-                                       LINK: validate, secret-scan, publish ◄┘
+worker FAST lane ──► correlate: one event or a new one? ──► ground truth: CVSS / KEV / EPSS
+                                                                     │
+                                       validate, secret-scan, publish ◄┘
 ```
 
 Nobody in Paperclip has to wake for this. The worker posts a run summary so you can see it.
+SERAPH is the one face of it all in Paperclip. Its wake answers 200 when the sources,
+correlation, ground truth and publishing all check out, and 503 naming any that do not. It runs
+nothing itself.
 
-### 2. Desk loop — every 4 hours
+### 2. Desk loop — 06:00, 14:00 and 22:00 Sydney
 
 ```text
-routine "[DIGEST] AU desk" ──► ZION
-                                ├─ AU relevance + reasons, "Why this matters to Australia"
-                                ├─ global story, no AU angle?  ──► BLASTER
-                                ├─ high / critical?            ──► VOIGHT ──► PASS ──► LINK publishes
-                                │                                         └─ FIX / REJECT ──► back to ZION
-                                └─ AU critical infrastructure?  ──► MORPHEUS (immediately)
+routine "[DIGEST] Desk" ──► DECKARD reads the last 8 hours: escalations first, then the rest
+                             ├─ loads the event's beat skill: AU desk · global desk · AI desk
+                             ├─ AU relevance + reasons, "Why this matters to Australia"
+                             ├─ high / critical?            ──► VOIGHT ──► PASS ──► the worker publishes
+                             │                                         └─ FIX / REJECT ──► back to DECKARD
+                             └─ AU critical infrastructure?  ──► MORPHEUS (immediately)
 ```
 
-BLASTER (global) and WINTERMUTE (AI) run the same loop for their own beat, 10 and 20 minutes
-after ZION, so three desks never wake on the same minute.
+One agent covers all three beats in one pass: Australia first, then global, then AI. Its own
+prompt is short. Each beat's steps are a skill it loads only for an event on that beat, so a run
+never carries all three. It may hand at most two events to subagents in a run, one beat each.
 
 ### 3. Editorial loop — every morning, 07:30 Sydney
 
@@ -91,15 +95,14 @@ after ZION, so three desks never wake on the same minute.
 07:30  MORPHEUS reads the overnight digest + VOIGHT's verdicts
          ├─ developing story needs watching  ──► [FOLLOW-UP] ──► DECKARD (beside the worker's own queue)
          ├─ topic has gone quiet             ──► [GAP]       ──► TACHIKOMA
-         ├─ two desks claim one story        ──► decides the owner
          └─ writes the daily intelligence report
 ```
 
-### 4. Source loop — nightly, 03:00 Sydney
+### 4. Source loop — nightly, from 03:10 Sydney
 
 ```text
-worker searches (Tavily) ──┐
-TACHIKOMA proposes ────────┴─► candidate ──► SERAPH's gate in the worker, every 4 h (deterministic)
+03:10 worker searches (Tavily) ──┐
+03:30 TACHIKOMA proposes ────────┴─► candidate ──► SERAPH's gate in the worker, every 4 h (deterministic)
                                                ├─ 6 healthy probes in a row ──► ACTIVE (community evidence)
                                                └─ 3 failures in a row       ──► rejected, with the reason
 ```
@@ -109,13 +112,17 @@ The agent that *finds* a source can never *activate* it. That split is the point
 ### 5. Money loop — always on
 
 ```text
-every AI call ──► ROGUE ledger (the real billed cost, from OpenRouter)
+every AI call ──► the worker's cost ledger (the real billed cost, from OpenRouter)
                     ├─ spend running ahead of plan ──► cheaper degradation tier, BEFORE spending more
-                    └─ monthly review ──► MORPHEUS
+                    └─ RIPPERDOC's monthly review, 09:00 on the 1st ──► MORPHEUS
 
-RIPPERDOC daily scan + weekly test ──► [MODEL] proposal ──► ROGUE (cost) + MORPHEUS (quality)
+RIPPERDOC daily scan + weekly test ──► [MODEL] proposal ──► MORPHEUS approves or declines
 model failing an agent             ──► RIPPERDOC drops that agent down its fallback chain at once
 ```
+
+A `[MODEL]` proposal carries the worker's own cost figures: every call went through the price
+guard, and the cost per event is what OpenRouter billed. RIPPERDOC passes them on unchanged and
+never approves its own proposal.
 
 Three stops are stacked on top of each other, so a runaway agent cannot run up a bill:
 
@@ -130,7 +137,7 @@ watchdog (every 5 min) sees a signature ──► incident INC-<n> ──► Tel
    └─► Incident routine ──► [INCIDENT] ──► TELETRAAN reads GET /ops/incidents, finds the cause
           └─► [ENGINEERING] INC-<n> (structured summary only, no raw content)
                  └─► WHEELJACK: fix/inc-<n>-… ► fix ► regression test ► PR
-                        └─► TRON (different model vendor): POST /ops/incidents/<n>/verdict, PASS / FAIL
+                        └─► TELETRAAN (AUDIT model, not WHEELJACK's vendor): POST /ops/incidents/<n>/verdict, PASS / FAIL
                                └─► YOU approve and merge ──► the fault clears ──► resolved after 15 min
 3 FAIL verdicts ──► circuit breaker: needs_human, verdicts refused (409), everything waits for you
 ```
@@ -150,14 +157,15 @@ The prompt asks nicely. These are the controls that actually enforce it:
 | Monthly budget per agent | Each agent | One agent spending everyone's money |
 | Wake on demand only, no heartbeat | Each agent | Agents waking (and paying) with nothing to do |
 | Max daily runs | Each agent | A loop of agents waking each other |
-| Ops API token scope | Worker (Stage 4) | A desk writing ground truth, or publishing, through the ops API. Not through the server's own database URL, which `opencode_local` agents inherit: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
+| Ops API token scope | Worker (Stage 4) | An agent writing ground truth, or publishing, through the ops API. Not through the server's own database URL, which `opencode_local` agents inherit: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
 | WHEELJACK is given only a branch token | Its environment | Pushing to `main`. Not reading other secrets: it runs with the server's environment ([risk 1](../threat-model.md#open-risks-ranked)) |
 | A human merges | GitHub branch protection | Any code reaching production unreviewed |
-| LINK fails closed | Worker | A secret, or unvalidated data, reaching the public site |
+| The publisher fails closed | Worker | A secret, or unvalidated data, reaching the public site |
 
 ## What you (the board) do
 
-- **Approvals inbox** — new hires, budget changes, and `[MODEL]` proposals that change quality.
+- **Approvals inbox** — new hires, budget changes, and `[MODEL]` proposals MORPHEUS has approved.
+  Approving one changes nothing by itself: the change is a reviewed edit to `config/models.yaml`.
 - **The daily report** — MORPHEUS's 07:30 comment is the one thing to read each day.
 - **`needs human`** — the circuit breaker or VOIGHT is asking you something.
 - **Pause** — any agent, any time, from its page. Collection and publishing carry on without it.

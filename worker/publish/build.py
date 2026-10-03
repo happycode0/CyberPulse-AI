@@ -24,7 +24,6 @@ from typing import Any
 from pydantic import ValidationError
 from sqlalchemy import Connection
 
-from worker.cadence import FAST_INTERVAL
 from worker.db.crew import load_crew_activity, load_pipeline_ai
 from worker.db.events import load_event_dates, load_live_events
 from worker.db.merge import merged_redirects
@@ -57,15 +56,11 @@ HEALTH_HISTORY_LIMIT = 20
 MERGED_REDIRECT_WINDOW = timedelta(days=90)
 HEALTH_ERROR_MAX_CHARS = 300
 
-# crew.json: how recent an agent's last piece of work must be for it to read ACTIVE. The jobs'
-# own cadences, with slack: collection and source checks with every FAST run (worker/cadence.py),
-# ground truth every 6 hours, and the ledger whenever the pipeline calls a model. Two FAST
-# intervals, so an enrichment pass's publish between runs still reads PROWL and SERAPH as active.
+# crew.json: how recent an agent's last piece of work must be for it to read ACTIVE: the
+# ledger takes a row whenever the pipeline calls a model. SERAPH needs none, because writing
+# crew.json is its publish job, so it is active whenever the file is written, at any cadence.
 CREW_FRESH = {
-    "librarian": timedelta(hours=7),
-    "prowl": 2 * FAST_INTERVAL,
-    "seraph": 2 * FAST_INTERVAL,
-    "rogue": timedelta(hours=24),
+    "ripperdoc": timedelta(hours=24),
 }
 
 STAGING_PREFIX = ".publish-"
@@ -198,14 +193,23 @@ def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[
 
 
 def _crew_payload(conn: Connection, generated_at: str, now: datetime) -> dict[str, Any]:
-    """The deterministic agents' work this month (worker/db/crew.py). LINK is doing its job by
-    writing this file, so it is active and its last piece of work is now."""
+    """The work the worker does for the crew this month (worker/db/crew.py).
+
+    SERAPH is doing its job by writing this file, so its last piece of work is now, and it is
+    active unless the newest ground-truth pass failed. It spends no tokens. RIPPERDOC's own
+    model runs are in Paperclip, which the worker never reads, so its cost is null, not 0.
+    """
     month_start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     agents = []
     for callsign, activity in load_crew_activity(conn, since=month_start).items():
+        last_active = _iso_or_none(activity.last_active)
+        if callsign == "seraph":
+            last_active = generated_at
         if activity.failing:
             status = "degraded"
-        elif activity.last_active and now - activity.last_active <= CREW_FRESH[callsign]:
+        elif callsign == "seraph" or (
+            activity.last_active and now - activity.last_active <= CREW_FRESH[callsign]
+        ):
             status = "active"
         else:
             status = "idle"
@@ -215,20 +219,10 @@ def _crew_payload(conn: Connection, generated_at: str, now: datetime) -> dict[st
                 "status": status,
                 "tasks_completed": activity.tasks,
                 "items_processed": activity.items,
-                "cost_usd": 0.0,
-                "last_active_at": _iso_or_none(activity.last_active),
+                "cost_usd": 0.0 if callsign == "seraph" else None,
+                "last_active_at": last_active,
             }
         )
-    agents.append(
-        {
-            "callsign": "LINK",
-            "status": "active",
-            "tasks_completed": None,
-            "items_processed": None,
-            "cost_usd": 0.0,
-            "last_active_at": generated_at,
-        }
-    )
     ai = load_pipeline_ai(conn, since=month_start)
     return {
         "generated_at": generated_at,

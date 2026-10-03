@@ -46,7 +46,7 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
    pipeline stage and the event, the model asked for and the model that answered (they differ
    when a fallback served), and the cost OpenRouter billed. An unusable answer still gets a row,
    because it was still paid for. A cost OpenRouter did not report is stored as unknown, never
-   as $0. This is ROGUE's source of truth.
+   as $0. This is the source of truth for every cost figure, RIPPERDOC's included.
 3. ✅ **Price-ceiling guard** (2026-10-03). The ladder is now in `config/models.yaml`, not
    `.env`. When the worker starts, it checks every model there against OpenRouter's live list of
    routes (the providers serving it). A model passes only if at least one route offers tools and
@@ -56,7 +56,7 @@ The chain starts at the CNA, not NVD, on purpose. In a sample of 300 recent CVEs
    Its first run caught two models the plan had picked. `minimax/minimax-m2.7` has no route with
    structured outputs. `xiaomi/mimo-v2.5` is listed at $0.28, but every route that can do the
    job costs $2.00 or more. Both are out of the ladder.
-4. ✅ **ROGUE's degradation tiers** (2026-10-03, `worker/ai/budget.py`). Before spending, the
+4. ✅ **The degradation tiers** (2026-10-03, `worker/ai/budget.py`). Before spending, the
    worker asks OpenRouter how much the key has spent this month and picks a mode. With over half
    the budget (`AI_MONTHLY_BUDGET_USD`) left, every task gets its own tier. With 20–50% left,
    only critical and KEV-linked events get the strong tier. Under 20%, only critical, high,

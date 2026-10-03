@@ -17,7 +17,7 @@
 # Changed on 2026-10-03 from the PLAN.md 7.1 picks, by the guard and by the Paperclip smoke tests:
 #   tier2_strong  minimax/minimax-m2.7 out: no route has structured outputs.
 #   code          xiaomi/mimo-v2.5 out: listed at $0.28, but every capable route is $2.00 or more.
-#   audit         qwen/qwen3.8-flash first: it is the model TRON passed its smoke test on.
+#   audit         qwen/qwen3.8-flash first: it passed TRON's smoke test; TELETRAAN runs it now.
 
 tiers:
   # Classification, entity extraction, tagging, source relevance. :free variants are withdrawn
@@ -44,7 +44,8 @@ tiers:
     - xiaomi/mimo-v2.6-flash                  # $0.14 / $0.27
     - mistralai/codestral-2508                # $0.30 / $0.90
 
-  # TRON. No vendor here may appear under `code` (two-person rule; the loader enforces it).
+  # TELETRAAN, which took over TRON's PR checks. No vendor here may appear under `code`
+  # (two-person rule; the loader enforces it).
   audit:
     - qwen/qwen3.8-flash                      # $0.15 / $0.47
     - deepseek/deepseek-v4-flash-0731         # from $0.18 out

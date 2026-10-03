@@ -11,21 +11,22 @@ DECKARD's follow-up queue, source discovery and RIPPERDOC's model scout are buil
 
 ## What this stage gives you
 
-The rest of the newsroom. Global and AI desks join the Australian one, an editor checks quality,
-developing stories get followed up, new sources are found and tested without you, the model
-ladder is reviewed with evidence, and a daily digest lands in Telegram.
+The rest of the newsroom. An editor checks quality, developing stories get followed up, new
+sources are found and tested without you, the model ladder is reviewed with evidence, and a
+daily digest lands in Telegram. DECKARD already covers all three beats, Australian, global and
+AI, from its desk digest in Stage 4.
 
 ## Switched on in this stage
 
-The six agents you created **paused** in [4a step 6](stage-4a-paperclip-setup.md#6--create-the-16-agents),
-and their routines from [4a step 7](stage-4a-paperclip-setup.md#7--create-the-routines):
+VOIGHT and TACHIKOMA, which wait for this stage, and the routines marked "Stage 5" in
+[4a step 7](stage-4a-paperclip-setup.md#7--create-the-routines). Everything is created
+**paused** in [4a step 6](stage-4a-paperclip-setup.md#6--create-the-8-agents), and stays
+paused until you choose to resume it:
 
 | Agent | Does | Routine (Sydney time) |
 |---|---|---|
-| BLASTER | Global cyber desk | `[DIGEST] Global desk`, every 4 h at :10 |
-| WINTERMUTE | AI intelligence desk | `[DIGEST] AI desk`, every 4 h at :20 |
-| TACHIKOMA | Finds new sources | `[DISCOVERY] Nightly`, 03:00 |
-| DECKARD | Follows developing events | `[FOLLOW-UP] Sweep`, every 6 h at :45 |
+| TACHIKOMA | Finds new sources | `[DISCOVERY] Nightly`, 03:30, after the worker's 03:10 search |
+| DECKARD | Follows developing events | `[FOLLOW-UP] Sweep`, 03:00, 09:00, 15:00 and 21:00 |
 | VOIGHT | Editorial QA | `[QA] Daily sample`, 07:00 |
 | RIPPERDOC | Model scout | `[MODEL] Daily scan` 04:00 · `[MODEL] Weekly gauntlet` Sunday 05:00 |
 
@@ -34,10 +35,10 @@ and their routines from [4a step 7](stage-4a-paperclip-setup.md#7--create-the-ro
 | Who | Step |
 |---|---|
 | 🔴 | **A Telegram bot**: [the steps below](#telegram) |
-| 🔴 | **Paste DECKARD's new instructions**: [the steps below](#follow-up-and-status) |
-| 🔴 | **A Tavily key, and TACHIKOMA's new instructions**: [the steps below](#source-discovery) |
-| 🔴 | **Paste RIPPERDOC's new instructions, and move its gauntlet routine to 05:00**: [the steps below](#model-scout) |
-| 🔴 | **Approve each un-pause**, as the board: agent page → **Resume agent**, then resume its routine |
+| 🔴 | **Check DECKARD's instructions and follow-up skill**: [the steps below](#follow-up-and-status) |
+| 🔴 | **A Tavily key, and check TACHIKOMA's instructions**: [the steps below](#source-discovery) |
+| 🔴 | **Check RIPPERDOC's instructions and its gauntlet routine at 05:00**: [the steps below](#model-scout) |
+| 🔴 | **Approve each un-pause**, as the board, when you choose: agent page → **Resume agent**, then resume its routine |
 | ✅ | RIPPERDOC's daily model scan, weekly gauntlet and golden set: [below](#model-scout) |
 | ✅ | Source discovery with Tavily, behind SERAPH's gate (the finder can never activate): [below](#source-discovery) |
 | ✅ | Event status from the record, and DECKARD's follow-up queue: [below](#follow-up-and-status) |
@@ -116,14 +117,17 @@ What passes goes on the event's timeline with DECKARD and the link as its source
 moves the status. A task refused three times is given up, and the next check comes round on
 its cadence. A resolved event's closing summary appears on the site under **RESOLUTION**.
 
-🔴 **To switch DECKARD on:**
+🔴 **To switch DECKARD's follow-up on:**
 
-1. In Paperclip, open **DECKARD** → **Instructions**. Replace everything with the house rules
-   and then DECKARD's text, both from [4b §12](stage-4b-the-crew.md#12-deckard--follow-up--developing-events-paused-until-stage-5).
-2. Open the **Follow-up** routine. Change the issue text to
-   `Work the follow-up queue: report on each task due.`
-3. Resume DECKARD, then the routine. To see the queue it will get, run this on the VM:
-   `docker compose logs worker | grep follow-up`.
+1. The crew package carries DECKARD's instructions and its follow-up skill
+   ([4a, Moving from 16 agents to 8](stage-4a-paperclip-setup.md#moving-from-16-agents-to-8)).
+   Check them in Paperclip: **DECKARD** → **Instructions** has the house rules and then
+   DECKARD's text from [4b §4](stage-4b-the-crew.md#4-deckard--researcher), and **Skills** lists
+   `cyberpulse-follow-up`.
+2. Open the **Follow-up** routine. Check the issue text is
+   `Work the follow-up queue: report on each task due.` and the cron is `0 3-21/6 * * *`.
+3. When you choose to, resume DECKARD if it is still paused, then the routine. To see the queue
+   it will get, run this on the VM: `docker compose logs worker | grep follow-up`.
 
 ## Source discovery
 
@@ -150,11 +154,12 @@ instructions. Each activation sends one Telegram message, if Telegram is on.
 2. On the VM, put it in `~/CyberPulse-AI/.env` as `TAVILY_API_KEY=` (with `nano .env`; don't
    paste it into a chat or a terminal history). Then
    `docker compose up -d --force-recreate worker`.
-3. In Paperclip, open **TACHIKOMA** → **Instructions**. Replace everything with the house rules
-   and then TACHIKOMA's text, both from [4b §11](stage-4b-the-crew.md#11-tachikoma--source-discovery-paused-until-stage-5).
-4. Open the **Source discovery** routine. Change the issue text to
+3. In Paperclip, open **TACHIKOMA** → **Instructions**. Check it has the house rules and then
+   TACHIKOMA's text, both from [4b §6](stage-4b-the-crew.md#6-tachikoma--finder-works-from-stage-5).
+   The crew package puts them there.
+4. Open the **Source discovery** routine. Check the issue text is
    `Read the worker's discovery finds and propose sources, plus any open [GAP] topics.`
-5. Resume TACHIKOMA, then the routine.
+5. When you choose to, resume TACHIKOMA, then the routine.
 
 After the next 03:10, `docker compose logs worker | grep discovery` shows the night's searches,
 and `grep "source gate"` shows each gate pass. Without a key the search is skipped and says so;
@@ -169,7 +174,7 @@ The worker holds the OpenRouter key and makes every call; RIPPERDOC only reads `
 |---|---|---|
 | **Scan** | 03:20 Sydney time, daily | The worker reads OpenRouter's model list (no key needed) and records what changed since yesterday: new models, withdrawn ones, price changes and withdrawal dates. New `:free` models are logged loudly. Then every ladder model goes through the price guard again. One that no longer passes leaves its chain from the next enrichment pass, so a price rise goes unnoticed for a day at most. If what is left is not a usable ladder, the AI layer stays off until it is |
 | **Gauntlet** | 03:40 Sydney time, Sundays | Each tier's default and up to two challengers answer the golden set. Tier 0 is judged on triage, tier 1 on the brief and tier 2 on the severity judgment, each through the price guard and the tier's own request rules. Per model: schema compliance, refusals, agreement with the golden labels, production's checks, p95 latency and the cost OpenRouter billed. A challenger is proposed only when it clears every gate and is free, agrees clearly more, or costs at least 20% less per event while agreeing as well |
-| **Proposal** | RIPPERDOC's Sunday 05:00 routine | Each proposal is an `agent_proposals` row with a side-by-side table. RIPPERDOC opens it as a `[MODEL] Proposal` issue for ROGUE and MORPHEUS. Approving changes nothing by itself: promoting a model is a reviewed edit to `config/models.yaml` |
+| **Proposal** | RIPPERDOC's Sunday 05:00 routine | Each proposal is an `agent_proposals` row with a side-by-side table. RIPPERDOC opens it as a `[MODEL] Proposal` issue for MORPHEUS to approve. The cost figures in it are the worker's own: every call went through the price guard, and the cost per event is what the ledger recorded OpenRouter billing. Approving changes nothing by itself: promoting a model is a reviewed edit to `config/models.yaml` |
 
 **The golden set** is 30 events, pinned the first time the gauntlet runs, spread across
 severities: 9 critical, 9 high, 9 medium and 3 low. Each has a severity from a register (the CNA,
@@ -197,19 +202,20 @@ enrichment. An HTTP 402 from OpenRouter stops the run. The scan costs nothing.
   labelled Australian are ones an Australian advisory carried: 2 of the 538 that qualified
   when the set was first pinned. Up to 2 per severity are taken first, and every tier 1
   proposal says how many the score rests on.
-- **The `code` and `audit` tiers** (WHEELJACK and TRON) do no enrichment, so the gauntlet has
+- **The `code` and `audit` tiers** (WHEELJACK and TELETRAAN) do no enrichment, so the gauntlet has
   nothing to judge them on. Their models are still checked by the daily scan.
 
 🔴 **To switch it on:**
 
-1. In Paperclip, open **RIPPERDOC** → **Instructions**. Replace everything with the house rules
-   and then RIPPERDOC's text, both from [4b §14](stage-4b-the-crew.md#14-ripperdoc--model-scout-paused-until-stage-5).
-2. Open the **Model scan** routine. Change the issue text to
+1. In Paperclip, open **RIPPERDOC** → **Instructions**. Check it has the house rules and then
+   RIPPERDOC's text, both from [4b §7](stage-4b-the-crew.md#7-ripperdoc--cheap). The crew
+   package puts them there.
+2. Open the **Model scan** routine. Check the issue text is
    `Do the daily model scan: read /ops/models and report what changed.`
-3. Open the **Model gauntlet** routine. Change the cron expression to `0 5 * * 0`, so it runs
-   after the worker's 03:40 gauntlet, and the issue text to
+3. Open the **Model gauntlet** routine. Check the cron expression is `0 5 * * 0`, so it runs
+   after the worker's 03:40 gauntlet, and the issue text is
    `Do the weekly gauntlet: report the results and raise each new proposal.`
-4. Resume RIPPERDOC, then both routines.
+4. When you choose to, resume RIPPERDOC if it is still paused, then both routines.
 
 After the next 03:20, `docker compose logs worker | grep "model scan"` shows the night's scan, and
 after a Sunday, `grep gauntlet` shows the run or why it was skipped. The gauntlet follows the
@@ -219,10 +225,10 @@ is skipped and says so; the scan runs anyway.
 
 ## THE CREW page
 
-`data/crew.json` lists only what the worker itself does and can count from its own rows:
-LIBRARIAN (ground-truth passes), PROWL (collection runs and items), SERAPH (source checks), ROGUE
-(model calls on the ledger) and LINK (publishing), plus the pipeline's own AI calls and spend
-this month. The AI agents work in Paperclip, which the worker never reads, so their cards say
+`data/crew.json` lists only what the worker itself does and can count from its own rows, this
+month: SERAPH (source checks, collection runs, ground-truth passes and publishes, and the items
+collected) and RIPPERDOC (model calls on the cost ledger), plus the pipeline's own AI calls and
+spend. The other agents work in Paperclip, which the worker never reads, so their cards say
 **NOT PUBLISHED** rather than showing numbers nobody measured.
 
 ## Done when

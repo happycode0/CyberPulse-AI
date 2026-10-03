@@ -4,14 +4,15 @@ It listens on port 8700 inside the worker's container. Only the compose network 
 docker-compose.yml publishes no port for the worker, and Docker-published ports bypass the host
 firewall, so none ever should be. There are two kinds of endpoint.
 
-- **Wakes**, `POST /ops/agents/<callsign>/wake`, are called by the five `http` agents (ROGUE,
-  LIBRARIAN, SERAPH, PROWL, LINK). The worker already runs each of their jobs on its own
-  schedule, so a wake runs nothing. It answers 200 when that job is working and 503 when it is
-  not, and Paperclip records the agent's run as succeeded or failed. A wake changes nothing and
-  says only whether a job is healthy, so it needs no token, and the agents' configuration (a
-  package in a public repository) carries none.
-- **Reads**, `GET /ops/...`, are for the AI agents: MORPHEUS's digest, ZION's escalations,
-  DECKARD's follow-up queue. They need the bearer token in `CYBERPULSE_OPS_TOKEN`. Each runs in a
+- **Wakes**, `POST /ops/agents/<callsign>/wake`, are called by the one `http` agent, SERAPH (the
+  Collector). The worker already runs the jobs it answers for on its own schedule (ground truth,
+  source checks, correlation, publishing), so a wake runs nothing. It answers 200 when every one
+  is working and 503 when any is not, with each check in the body, and Paperclip records the
+  agent's run as succeeded or failed. A wake changes nothing and says only whether the jobs are
+  healthy, so it needs no token, and the agent's configuration (a package in a public
+  repository) carries none.
+- **Reads**, `GET /ops/...`, are for the AI agents: MORPHEUS's digest, DECKARD's desk digest and
+  follow-up queue. They need the bearer token in `CYBERPULSE_OPS_TOKEN`. Each runs in a
   read-only transaction with a statement timeout.
 - **Three writes**, which need the token too. `POST /ops/followup/<task>` is DECKARD's report on a
   follow-up task. The report is checked as if hostile (worker/pipeline/followup.py) and only what
@@ -19,7 +20,7 @@ firewall, so none ever should be. There are two kinds of endpoint.
   worker, not DECKARD, then decides the event's status. `POST /ops/candidates` is TACHIKOMA's
   proposal of a source, checked the same way (worker/discovery/gate.py). It only queues the
   site for SERAPH's gate: the worker fetches it, and decides whether it is ever collected.
-  `POST /ops/incidents/<id>/verdict` is TRON's verdict on a fix, which counts towards the
+  `POST /ops/incidents/<id>/verdict` is TELETRAAN's verdict on a fix, which counts towards the
   incident's circuit breaker (worker/db/incidents.py).
 
 Every response passes the publisher's secret scan, or is withheld. Paperclip's `http` adapter
@@ -114,13 +115,12 @@ logger = logging.getLogger(__name__)
 PORT = 8700
 
 # Each http agent's job, as its payload template names it (docs/wiki/stage-4b-the-crew.md).
-WAKE_JOBS: dict[str, str] = {
-    "rogue": "cost-reconcile",
-    "librarian": "groundtruth",
-    "seraph": "source-verify",
-    "prowl": "correlation-report",
-    "link": "publish",
-}
+# SERAPH, the Collector, is the only one. Its "pipeline" verdict is every check below.
+WAKE_JOBS: dict[str, str] = {"seraph": "pipeline"}
+PIPELINE_CHECKS: tuple[str, ...] = ("groundtruth", "source-verify", "correlation-report", "publish")
+# The http agents of the 16-agent crew. A wake from one still on Paperclip's org chart is a
+# 404 that says what happened, not a pass.
+RETIRED_WAKES = frozenset({"rogue", "librarian", "prowl", "link"})
 
 # A FAST collection runs every FAST_INTERVAL (worker/cadence.py) and publishes after it, so two
 # intervals is one missed run.
@@ -718,8 +718,14 @@ class OpsApi:
 
     def _wake(self, slug: str, body: bytes) -> Reply:
         job = WAKE_JOBS.get(slug)
+        if slug in RETIRED_WAKES:
+            return _error(
+                404,
+                f"{slug} was retired with the 16-agent crew; terminate it in Paperclip. "
+                "SERAPH's wake answers for its job now",
+            )
         if job is None:
-            return _error(404, f"no http agent is called {slug}; they are {', '.join(WAKE_JOBS)}")
+            return _error(404, f"no http agent is called {slug}; the only one is seraph")
         try:
             payload = json.loads(body) if body.strip() else {}
         except (ValueError, UnicodeDecodeError, RecursionError):
@@ -745,15 +751,43 @@ class OpsApi:
         )
 
     def verdict(self, job: str) -> Verdict:
-        """Whether `job` is working, and what was looked at to decide."""
-        checks: dict[str, Callable[[], Verdict]] = {
+        """Whether `job` is working, and what was looked at to decide. "pipeline" is SERAPH's
+        wake: every one of PIPELINE_CHECKS."""
+        if job == "pipeline":
+            return self._pipeline_verdict()
+        return self._checks()[job]()
+
+    def _checks(self) -> dict[str, Callable[[], Verdict]]:
+        return {
             "cost-reconcile": self._cost_verdict,
             "groundtruth": self._groundtruth_verdict,
             "source-verify": self._sources_verdict,
             "correlation-report": self._correlation_verdict,
             "publish": self._publish_verdict,
         }
-        return checks[job]()
+
+    def _pipeline_verdict(self) -> Verdict:
+        """Each check answers on its own, under "checks". One that cannot run fails alone: the
+        others still answer, so a broken query never hides the state of the rest."""
+        checks = self._checks()
+        results: dict[str, dict[str, Any]] = {}
+        for name in PIPELINE_CHECKS:
+            try:
+                verdict = checks[name]()
+            except SQLAlchemyError:
+                logger.exception("ops pipeline check %s: the database could not be read", name)
+                verdict = Verdict(False, {"reason": "the database could not be read"})
+            except Exception as exc:  # one broken check must not hide the rest
+                logger.exception("ops pipeline check %s failed", name)
+                verdict = Verdict(
+                    False, {"reason": f"the check could not run ({type(exc).__name__})"}
+                )
+            results[name] = {"ok": verdict.ok, **verdict.summary}
+        failing = [name for name, result in results.items() if not result["ok"]]
+        summary: dict[str, Any] = {"checks": results}
+        if failing:
+            summary["reason"] = f"failing: {', '.join(failing)}"
+        return Verdict(not failing, summary)
 
     def _fresh(self, at: datetime | None, within: timedelta, what: str) -> Verdict:
         if at is None:
@@ -929,7 +963,8 @@ class OpsApi:
                     "/ops/runs?limit=20": "the latest collection runs",
                     "/ops/cost?month=YYYY-MM": "the cost ledger by stage, model and agent, "
                     "and the key's own usage",
-                    "/ops/jobs": "every http agent's verdict, and the worker's latest passes",
+                    "/ops/jobs": "SERAPH's verdict, check by check, the cost reconcile "
+                    "check, and the worker's latest passes",
                     "/ops/followup": "DECKARD's due follow-up tasks, with each event's record",
                     "/ops/candidates": "source discovery: what was found and where each find "
                     "stands at SERAPH's gate",
@@ -938,18 +973,20 @@ class OpsApi:
                     "open model proposals",
                     "/ops/incidents?status=open": "the watchdog's incidents: open, or all with "
                     f"those resolved in the last {INCIDENTS_RESOLVED_DAYS} days",
-                    "/ops/incidents/<id>": "one incident, with its evidence and TRON's verdicts",
+                    "/ops/incidents/<id>": "one incident, with its evidence and TELETRAAN's "
+                    "verdicts",
                 },
                 "writes": {
                     "POST /ops/followup/<task_id>": "DECKARD's report on one follow-up task",
                     "POST /ops/candidates": "TACHIKOMA's proposal of a source for SERAPH's gate",
-                    "POST /ops/incidents/<id>/verdict": "TRON's verdict on a fix for an incident",
+                    "POST /ops/incidents/<id>/verdict": "TELETRAAN's verdict on a fix for an "
+                    "incident",
                 },
                 "wakes": {
                     f"POST /ops/agents/{slug}/wake": job for slug, job in WAKE_JOBS.items()
                 },
                 "note": "Everything here is read-only but DECKARD's follow-up reports, "
-                "TACHIKOMA's proposals and TRON's verdicts. Open escalations are Paperclip "
+                "TACHIKOMA's proposals and TELETRAAN's verdicts. Open escalations are Paperclip "
                 "issues, which this API does not see.",
             },
         )
@@ -1103,6 +1140,8 @@ class OpsApi:
         for slug, job in WAKE_JOBS.items():
             verdict = self.verdict(job)
             wakes[slug] = {"job": job, "ok": verdict.ok, "summary": verdict.summary}
+        # ROGUE's wake, retired with it. RIPPERDOC's monthly review reads it here.
+        cost = self.verdict("cost-reconcile")
         with self._read() as conn:
             passes = {
                 job: _job_row(load_latest_job(conn, job))
@@ -1118,7 +1157,15 @@ class OpsApi:
                     "push",
                 )
             }
-        return Reply(200, {"checked_at": self._clock(), "wakes": wakes, "passes": passes})
+        return Reply(
+            200,
+            {
+                "checked_at": self._clock(),
+                "wakes": wakes,
+                "cost_reconcile": {"ok": cost.ok, "summary": cost.summary},
+                "passes": passes,
+            },
+        )
 
     def _models(self, query: Mapping[str, list[str]]) -> Reply:
         """What RIPPERDOC reads (worker/ai/scout.py). Figures and the scout's own words only:

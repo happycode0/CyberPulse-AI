@@ -1,5 +1,5 @@
-"""§11 "One agent fails" and the circuit breaker, against a real Postgres: TRON's failed verdicts,
-sent through the ops API, trip the breaker in the SQL, and the API then turns work away.
+"""§11 "One agent fails" and the circuit breaker, against a real Postgres: TELETRAAN's failed
+verdicts, sent through the ops API, trip the breaker in the SQL, and the API then turns work away.
 
 Uses tests/integration/test_watchdog_db.py's `db` fixture, so it skips when DATABASE_URL is
 not set, as every integration test does.

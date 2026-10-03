@@ -1,4 +1,4 @@
-"""ROGUE's budget: how much AI the worker may use right now (PLAN.md §7.4, §2.8).
+"""The AI budget: how much AI the worker may use right now (PLAN.md §7.4, §2.8).
 
 The mode is set before the spend, from OpenRouter's own account of the key (`GET /api/v1/key`),
 and tightened at once by what a failed call says. Four things push it down and nothing else

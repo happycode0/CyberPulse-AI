@@ -1,4 +1,4 @@
-"""AU relevance from the record's facts (PLAN.md §4, ZION; §5, "Scoring").
+"""AU relevance from the record's facts (PLAN.md §4, DECKARD's AU desk; §5, "Scoring").
 
 Four facts each set a floor under an event's AU relevance and give a reason in fixed words: an
 Australian government authority published it, the record names an Australian organisation, it

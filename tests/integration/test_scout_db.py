@@ -269,7 +269,7 @@ def test_the_gauntlets_spend_is_read_from_the_ledger_for_the_month(conn):
     spend(conn, "0.02", ts=NOW - timedelta(days=1))
     spend(conn, None)  # not billed: counts as nothing, not as an error
     spend(conn, "0.50", ts=NOW - timedelta(days=40))
-    spend(conn, "0.50", agent="zion", stage="brief")
+    spend(conn, "0.50", agent="deckard", stage="brief")
     assert db.gauntlet_spend(conn, *month_bounds(NOW)) == Decimal("0.03")
 
 
