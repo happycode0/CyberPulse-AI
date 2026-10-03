@@ -46,7 +46,7 @@ plus one more: `weighted`, headline overlap weighted by
 how rare each word is, at 0.30 or more within 72 h. Rare words carry a story: "KillSec"
 and "Medibank" say more than "ransomware" and "attack". It needs `WEIGHTED_MIN_HEADLINES`
 headlines to weigh words by; on fewer, every word looks rare and it stays off. Nor does it
-join two events only one outlet reported: that is the outlet's house style, not a story.
+join two events one outlet reported both of: that is its house style, not one story.
 """
 
 import hashlib
@@ -310,9 +310,9 @@ def _tokens_date(a: StoryKeys, b: StoryKeys) -> float | None:
 def _weighted(a: StoryKeys, b: StoryKeys, weights: TokenWeights) -> float | None:
     if weights.documents < WEIGHTED_MIN_HEADLINES:
         return None
-    # One outlet's two articles share its house style ("Critical X Under Active
-    # Exploitation"); weighted words alone do not make them one story.
-    if a.registers & b.registers or len(a.outlets | b.outlets) == 1:
+    # An outlet that wrote both wrote two articles, in its house style ("Critical X Under
+    # Active Exploitation"); weighted words alone do not make them one story.
+    if a.registers & b.registers or a.outlets & b.outlets:
         return None
     if not _within(a.anchor, b.anchor, PROXIMITY) or not a.tokens & b.tokens:
         return None
