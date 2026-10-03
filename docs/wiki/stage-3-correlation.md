@@ -165,8 +165,9 @@ TRENDS, the first section under OVERVIEW.
 
 - **What is counted.** Independent reports (one per lineage, as above), each on the day it was
   published. A report counts toward a topic when its own headline names it: a vendor, actor,
-  malware family or kind of threat from the curated list in `config/trends.yaml` (126 topics,
-  whole words only). A CVE counts every report on an event that names it.
+  malware family, kind of threat or AI subject from the curated list in `config/trends.yaml`
+  (134 topics, whole words only). A CVE counts every report on an event that names it. Each
+  day also counts its AI stories ([the AI news beat](ai-news-beat.md#trends)).
 - **Only since collection began.** Feeds list years of items, so a report or story dated before
   the first run is not counted anywhere. CISA's KEV dates are the exception: they cover its whole
   catalogue, so KEV additions count on every day.
