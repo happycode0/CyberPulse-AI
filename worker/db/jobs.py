@@ -1,4 +1,5 @@
-"""job_runs rows: one per ground-truth or enrichment pass, written when it ends (migration 010)."""
+"""job_runs rows: one per ground-truth, enrichment, discovery search or source-gate pass, written
+when it ends (migrations 010 and 013)."""
 
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -6,7 +7,7 @@ from typing import Literal
 
 from sqlalchemy import Connection, Engine, text
 
-Job = Literal["groundtruth", "enrichment"]
+Job = Literal["groundtruth", "enrichment", "discovery", "source-gate"]
 
 
 @dataclass(frozen=True)

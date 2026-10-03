@@ -3,8 +3,9 @@
 [← 4c — How the crew works](stage-4c-how-the-crew-works.md) · [Wiki home](README.md) ·
 [Stage 6 — Self-healing →](stage-6-self-healing.md)
 
-**Status: ▶ in progress.** Telegram notifications, THE CREW's published workload, event status
-and DECKARD's follow-up queue are built. Plan: [PLAN.md §9, Stage 5](../../PLAN.md#9-stages)
+**Status: ▶ in progress.** Telegram notifications, THE CREW's published workload, event status,
+DECKARD's follow-up queue and source discovery are built. Plan:
+[PLAN.md §9, Stage 5](../../PLAN.md#9-stages)
 
 ---
 
@@ -34,9 +35,10 @@ and their routines from [4a step 7](stage-4a-paperclip-setup.md#7--create-the-ro
 |---|---|
 | 🔴 | **A Telegram bot**: [the steps below](#telegram) |
 | 🔴 | **Paste DECKARD's new instructions**: [the steps below](#follow-up-and-status) |
+| 🔴 | **A Tavily key, and TACHIKOMA's new instructions**: [the steps below](#source-discovery) |
 | 🔴 | **Approve each un-pause**, as the board: agent page → **Resume agent**, then resume its routine |
-| 🟢 | Source discovery with Tavily, behind SERAPH's test gate (the finder can never activate) |
 | 🟢 | RIPPERDOC's gauntlet and golden set (PLAN.md §7.6) |
+| ✅ | Source discovery with Tavily, behind SERAPH's gate (the finder can never activate): [below](#source-discovery) |
 | ✅ | Event status from the record, and DECKARD's follow-up queue: [below](#follow-up-and-status) |
 | ✅ | Telegram notifications: the daily digest, critical alerts and developing updates for Australia |
 | ✅ | The public **THE CREW** page shows the workload the worker can vouch for (`data/crew.json`) |
@@ -121,6 +123,41 @@ its cadence. A resolved event's closing summary appears on the site under **RESO
    `Work the follow-up queue: report on each task due.`
 3. Resume DECKARD, then the routine. To see the queue it will get, run this on the VM:
    `docker compose logs worker | grep follow-up`.
+
+## Source discovery
+
+New sites reach the collection in four steps. Only the worker fetches a found site, and nothing
+a site says can move it through the gate faster:
+
+| Step | When | What |
+|---|---|---|
+| **Search** | 03:00 Sydney time | The worker runs the queries in `config/discovery.yaml` through Tavily, up to 30 credits a day (the free tier is 1,000 a month). Each search is pinned to one credit. Only the links, titles and dates are kept. Each site the results name that isn't registered and isn't a platform (social media, video, a blog host) becomes a *find* |
+| **Proposals** | TACHIKOMA's nightly routine | TACHIKOMA reads the finds from `GET /ops/candidates` and proposes feeds and sites with `POST /ops/candidates`, at most 20 a day. The worker checks each one: `https` on port 443, a public host, a reason with no links, examples on the same site |
+| **The gate** | Every 4 hours, 10 minutes before each normal collection | For a find with no feed, the worker reads its home page for an advertised feed and then tries the usual places (`/feed/`, `/rss`, ...): three tries a week apart, then it is rejected. A candidate's feed is fetched once a pass and judged. It must have at least 3 items dated in the last 14 days, 2 of them on the beat, and at most 60% already collected from another source. 6 healthy probes in a row activate it; 3 failures in a row reject it. A probe stores nothing |
+| **Collection** | Each normal run | An activated site is collected as source class `discovered`. Its items are *community* evidence, which never confirms an event on its own. At most 25 at once. One with no healthy fetch in 21 days is retired. `rejected` and `retired` are final, so the site is never proposed again |
+
+Every request to a found site goes through the worker's URL guard. It allows only `https` on
+port 443, with no user name or password in the URL. The host must resolve to public addresses
+only, checked before every request and every redirect (at most 5). A reply is read up to a size
+cap, counted after decompression. The Tavily key stays in the worker's `.env` and never goes to
+Paperclip. Names and titles from the open web reach the agents as evidence, never as
+instructions. Each activation sends one Telegram message, if Telegram is on.
+
+🔴 **To switch it on:**
+
+1. Sign in at [app.tavily.com](https://app.tavily.com) (the free plan) and copy your API key.
+2. On the VM, put it in `~/CyberPulse-AI/.env` as `TAVILY_API_KEY=` (with `nano .env`; don't
+   paste it into a chat or a terminal history). Then
+   `docker compose up -d --force-recreate worker`.
+3. In Paperclip, open **TACHIKOMA** → **Instructions**. Replace everything with the house rules
+   and then TACHIKOMA's text, both from [4b §11](stage-4b-the-crew.md#11-tachikoma--source-discovery-paused-until-stage-5).
+4. Open the **Source discovery** routine. Change the issue text to
+   `Read the worker's discovery finds and propose sources, plus any open [GAP] topics.`
+5. Resume TACHIKOMA, then the routine.
+
+After the next 03:00, `docker compose logs worker | grep discovery` shows the night's searches,
+and `grep "source gate"` shows each gate pass. Without a key the search is skipped and says so;
+the gate still tests TACHIKOMA's proposals.
 
 ## THE CREW page
 

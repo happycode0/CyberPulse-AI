@@ -1,6 +1,6 @@
-"""Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment and the Telegram
-notifications run in the worker; DEEP is a Paperclip routine, so it has no schedule here and is
-only reachable through `--lane deep --once`."""
+"""Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery and
+the Telegram notifications run in the worker; DEEP is a Paperclip routine, so it has no schedule
+here and is only reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -15,9 +15,15 @@ from worker.ai.enrich import AiLayer, enrich_pending
 from worker.ai.mitre import suggest_techniques
 from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
+from worker.discovery.run import run_gate, run_search
 from worker.groundtruth.sync import sync_groundtruth
 from worker.models import Lane
-from worker.notify.jobs import send_critical_alerts, send_daily_digest, send_developing_updates
+from worker.notify.jobs import (
+    send_critical_alerts,
+    send_daily_digest,
+    send_developing_updates,
+    send_source_activations,
+)
 from worker.notify.telegram import Telegram
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
@@ -71,6 +77,19 @@ DIGEST_MISFIRE_GRACE_SECONDS = 1800
 ALERT_SCHEDULE = "3,18,33,48 * * * *"
 ALERT_JOB_ID = "critical-alerts"
 ALERT_MISFIRE_GRACE_SECONDS = 600
+
+# The nightly discovery search at 03:00 Sydney time. Tavily's credits are counted over the last 24
+# hours (worker/discovery/run.py), so a pass that runs late still keeps within the day's allowance.
+DISCOVERY_SCHEDULE = "0 3 * * *"
+DISCOVERY_JOB_ID = "source-discovery"
+DISCOVERY_MISFIRE_GRACE_SECONDS = 3600
+
+# SERAPH's gate every 4 hours, ten minutes before each NORMAL run, which then collects anything it
+# activated. A probe is one fetch per candidate per pass, so 6 healthy probes in a row
+# (config/discovery.yaml) take a day.
+GATE_SCHEDULE = "50 3-23/4 * * *"
+GATE_JOB_ID = "source-gate"
+GATE_MISFIRE_GRACE_SECONDS = 1800
 
 # Kept for the life of the process: the governor in it must remember a 402 from one pass to the
 # next (worker/ai/enrich.py).
@@ -234,13 +253,55 @@ async def _alert_job() -> None:
         logger.exception("developing update pass failed")
 
 
+async def _discovery_job() -> None:
+    """Never fatal to the schedule; tomorrow night searches again."""
+    started = _now()
+    try:
+        summary = await run_search()
+    except Exception:
+        logger.exception("scheduled discovery search failed")
+        await _record(JobRun("discovery", started, _now(), completed=False))
+        return
+    if summary.skipped:
+        logger.info("discovery search skipped: %s", summary.skipped)
+    await _record(
+        JobRun(
+            "discovery", started, _now(), completed=True, errors=len(summary.errors),
+            changed=summary.new_hosts > 0,
+        )
+    )
+
+
+async def _gate_job() -> None:
+    """Never fatal to the schedule; the next pass probes again. Nothing is published: an activated
+    source's first items arrive with the next NORMAL run, which publishes."""
+    started = _now()
+    try:
+        summary = await run_gate()
+    except Exception:
+        logger.exception("scheduled source-gate pass failed")
+        await _record(JobRun("source-gate", started, _now(), completed=False))
+    else:
+        await _record(
+            JobRun(
+                "source-gate", started, _now(), completed=True, errors=len(summary.errors),
+                changed=summary.changed_anything,
+            )
+        )
+    try:
+        await send_source_activations(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("new-source notification pass failed")
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync, enrichment and notifications are added only for the default schedule. `lanes` comes
+    The ground-truth sync, enrichment, discovery and notifications are added only for the default
+    schedule. `lanes` comes
     from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
     model calls along with it would make the narrow form impossible to ask for.
     """
@@ -284,6 +345,26 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
             max_instances=1,
             coalesce=True,
             misfire_grace_time=ALERT_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _discovery_job,
+            CronTrigger.from_crontab(DISCOVERY_SCHEDULE, timezone=DIGEST_TIMEZONE),
+            id=DISCOVERY_JOB_ID,
+            name="discovery search",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=DISCOVERY_MISFIRE_GRACE_SECONDS,
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _gate_job,
+            CronTrigger.from_crontab(GATE_SCHEDULE, timezone="UTC"),
+            id=GATE_JOB_ID,
+            name="source gate",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=GATE_MISFIRE_GRACE_SECONDS,
             replace_existing=True,
         )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):

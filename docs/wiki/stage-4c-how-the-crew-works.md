@@ -51,7 +51,6 @@ So the whole history of every decision is in the issue log. You read it the same
 | `[EDITORIAL]` | a routine | MORPHEUS |
 | `[FOLLOW-UP]` | MORPHEUS | DECKARD |
 | `[GAP]` | MORPHEUS | TACHIKOMA |
-| `[CANDIDATE]` | TACHIKOMA | SERAPH |
 | `[QA]` | a desk, or the daily sample | VOIGHT |
 | `[INCIDENT]` | worker health checks | TELETRAAN |
 | `[ENGINEERING]` | TELETRAAN · SERAPH · MORPHEUS | WHEELJACK |
@@ -99,9 +98,10 @@ after ZION, so three desks never wake on the same minute.
 ### 4. Source loop — nightly, 03:00 Sydney
 
 ```text
-TACHIKOMA searches ──► [CANDIDATE] ──► SERAPH tests it (deterministic)
-                                          ├─ real recent relevant items ──► TESTING ──► ACTIVE
-                                          └─ not good enough            ──► rejected, with the reason
+worker searches (Tavily) ──┐
+TACHIKOMA proposes ────────┴─► candidate ──► SERAPH's gate in the worker, every 4 h (deterministic)
+                                               ├─ 6 healthy probes in a row ──► ACTIVE (community evidence)
+                                               └─ 3 failures in a row       ──► rejected, with the reason
 ```
 
 The agent that *finds* a source can never *activate* it. That split is the point.

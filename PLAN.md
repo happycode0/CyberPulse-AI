@@ -388,10 +388,10 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 
 | | |
 |---|---|
-| Role / adapter | `researcher` · `opencode_local` (fast tier) + Tavily, ~30 searches/day |
+| Role / adapter | `researcher` · `opencode_local` (fast tier). The worker runs the Tavily searches (~30/day) and holds the key |
 | Wakes on | DEEP-lane routine 03:00 AEST; coverage-gap task from MORPHEUS |
 | Owns | Continuously finding sources the registry does not know about |
-| Specialised tasks | Run discovery queries (AU security, AU AI policy, AI red teaming, MCP security, prompt injection, named sectors) and mine citations in existing high-quality sources for unregistered outlets. Find new AU researchers, CERTs, regulators, vendor PSIRTs, newsletters, YouTube channels. Submit every find as a **candidate** with a proposed adapter type and a reason. Detect when a registered source has moved (the `blog.google/security` case). Propose retirement of sources with sustained poor value. |
+| Specialised tasks | Read the worker's nightly discovery finds (AU security, AU AI policy, AI red teaming, MCP security, prompt injection, named sectors) from `GET /ops/candidates`, and mine citations in existing high-quality sources for unregistered outlets. Find new AU researchers, CERTs, regulators, vendor PSIRTs, newsletters, YouTube channels. Submit every find to `POST /ops/candidates` with its feed or home page and a reason (at most 20 a day). Detect when a registered source has moved (the `blog.google/security` case). Propose retirement of sources with sustained poor value. |
 | Never | Activates a source — that is SERAPH's gate, always |
 | KPI | Candidates promoted to ACTIVE per month; % later degraded (over-eagerness signal) |
 
@@ -443,7 +443,7 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 | | |
 |---|---|
 | Role / adapter | `qa` · `http` adapter → worker (**deterministic, zero tokens**) |
-| Wakes on | New candidate from TACHIKOMA; a degraded source returning; post-repair validation |
+| Wakes on | Its heartbeat; the worker runs the discovery gate itself every 4 hours, before each normal run; a degraded source returning; post-repair validation |
 | Owns | The source lifecycle gate: `DISCOVERED → CANDIDATE → TESTING → VALIDATED → ACTIVE → DEGRADED → BROKEN → RETIRED` |
 | Specialised tasks | Probe connectivity, feed/API validity, auth, content type, parser correctness. Require **genuine recent relevant items** before promotion — the explicit anti-pattern from the source prompts is activating a source blind. Measure duplicate rate, freshness and relevance; record a baseline quality profile. Run the new-source feedback loop (validate day 0, precision over runs 1–3, reliability over runs 4–7, then a long-term score). Apply auto-degradation: 3 failures warn, 5 consecutive degrade, structural failure opens an engineering task. **Detect stale-but-200 feeds by age of newest item.** |
 | Never | Promotes on a single successful fetch |
@@ -568,7 +568,7 @@ Least privilege, per the source prompts' §60, made concrete:
 |---|---|---|
 | MORPHEUS | Ops API token (read + task create) | Merge code; raise budgets |
 | Desks (×3) | Ops API token (scoped to their desk) | Write ground truth; publish |
-| TACHIKOMA | Ops API token, Tavily key | Activate a source |
+| TACHIKOMA | Ops API token (the worker holds the Tavily key) | Activate a source |
 | SERAPH, LIBRARIAN, PROWL, LINK, ROGUE | Worker-internal only (no LLM) | — |
 | RIPPERDOC | Ops API token, OpenRouter key (read-only endpoints + gauntlet calls) | Change a tier default; exceed the price ceiling |
 | DECKARD | Ops API token, Tavily key | Publish |
@@ -1348,7 +1348,7 @@ CyberPulse-AI/                      # public
 │   └── history/YYYY-MM-DD.json
 ├── config/                         # versioned
 │   ├── sources.yaml  scoring.yaml  categories.yaml
-│   ├── models.yaml  discovery-queries.yaml
+│   ├── models.yaml  followup.yaml  discovery.yaml
 ├── worker/
 │   ├── main.py  scheduler.py  ops_api.py
 │   ├── collectors/  pipeline/  groundtruth/  ai/

@@ -1,0 +1,97 @@
+# Source discovery (worker/discovery/): the worker's nightly Tavily searches, and SERAPH's gate a
+# found feed must pass, probe after probe, before it is collected.
+
+search:
+  # Tavily's free tier is 1,000 credits a month. A basic search costs one, and the client pins
+  # it there (search_depth basic, auto_parameters off). Thirty a day stays under the month.
+  credits_per_day: 30
+  results_per_query: 10
+  time_range: week
+  # The searches. Each night runs them in order until the day's credits are spent.
+  queries:
+    - Australian cyber security incident
+    - Australian data breach notification OAIC
+    - Australian critical infrastructure cyber attack
+    - Australian Signals Directorate cyber advisory
+    - Australian health sector cyber attack
+    - Australian university cyber security research
+    - Australian AI policy regulation
+    - Australian government AI safety
+    - AI red teaming research
+    - MCP server security vulnerability
+    - prompt injection attack research
+    - LLM jailbreak vulnerability disclosure
+    - AI model supply chain attack
+    - ransomware group new victims
+    - vendor PSIRT security advisory
+    - zero-day exploited in the wild
+  # Hosts never proposed: platforms where one account is not a source, and search engines.
+  skip_hosts:
+    - x.com
+    - twitter.com
+    - facebook.com
+    - instagram.com
+    - linkedin.com
+    - reddit.com
+    - youtube.com
+    - tiktok.com
+    - medium.com
+    - substack.com
+    - github.com
+    - google.com
+    - news.google.com
+    - bing.com
+    - wikipedia.org
+    - en.wikipedia.org
+    - msn.com
+    - yahoo.com
+
+gate:
+  # One probe per candidate per gate pass (every 4 hours), so six in a row is a day of feeds.
+  probes_to_activate: 6
+  # Failed probes in a row before a candidate is rejected for good.
+  failures_to_reject: 3
+  # A healthy probe finds at least this many items dated in the last `recent_days` ...
+  recent_days: 14
+  min_recent_items: 3
+  # ... this many of them on the beat (`beat` below, or a CVE) ...
+  min_on_beat: 2
+  # ... and no more than this share of them already collected from another source.
+  max_already_collected: 0.6
+  # The most candidates one pass probes, and the most homes it searches for a feed.
+  probes_per_pass: 10
+  homes_per_pass: 5
+  # Candidates being tested at once; TACHIKOMA's proposals wait while it is full.
+  max_open: 20
+  # Discovered sources collected at once. Activation waits while it is full.
+  max_active: 25
+  # A host found by a search but never given a feed is forgotten after this long.
+  forget_after_days: 90
+  # Words that put an item on CyberPulse's beat, matched at the start of a word in its title or
+  # summary.
+  beat:
+    - cyber
+    - security
+    - vulnerab
+    - exploit
+    - ransomware
+    - malware
+    - breach
+    - phishing
+    - hack
+    - threat
+    - patch
+    - zero-day
+    - 0-day
+    - backdoor
+    - botnet
+    - espionage
+    - data leak
+    - privacy
+    - incident
+    - advisory
+    - attack
+    - prompt injection
+    - jailbreak
+    - AI safety
+    - LLM
