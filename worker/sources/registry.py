@@ -6,6 +6,10 @@ import yaml
 
 from worker.models import Lane, PublisherConfig, SourceConfig
 
+# The shipped registry: what the lanes collect, and what the publisher reads each source's
+# description and standing from (worker/publish/build.py).
+REGISTRY_PATH = Path(__file__).resolve().parents[2] / "config" / "sources.yaml"
+
 
 def load_registry(path: Path) -> list[SourceConfig]:
     """Load source registry from YAML file.

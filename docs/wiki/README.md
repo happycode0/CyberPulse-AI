@@ -29,6 +29,8 @@ layer on top of both.
 
 **Reference:** [The AI news beat](ai-news-beat.md): how a story lands on the cyber or AI desk, how
 AI news is ranked, the Events filter, and the AI test stories for you to label.
+[Importance and reputation](importance-and-reputation.md): how each event is rated key, notable
+or routine, how far each source is trusted, and how to change a source's standing.
 
 ## You are here
 

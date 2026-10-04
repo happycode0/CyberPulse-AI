@@ -13,11 +13,13 @@ the dynamically tracked state.
 """
 
 from collections.abc import Sequence
+from datetime import datetime
 from typing import NamedTuple
 
 from sqlalchemy import Connection, text
 
 from worker.models import LifecycleState, SourceConfig, SourceHealth
+from worker.pipeline.reputation import Corroboration
 
 DEFAULT_HISTORY_LIMIT = 20
 
@@ -153,11 +155,42 @@ class RegistryRow(NamedTuple):
     category: str
     lane: str
     enabled: bool
+    url: str = ""
+    priority: int = 0
+    expected_frequency: str | None = None
 
 
 def load_registry_rows(conn: Connection) -> list[RegistryRow]:
     """Every registered source, ordered by id, for the public source-health report."""
     rows = conn.execute(
-        text("select id, name, region, category, lane, enabled from source_registry order by id")
+        text(
+            "select id, name, region, category, lane, enabled, url, priority, expected_frequency "
+            "from source_registry order by id"
+        )
     )
     return [RegistryRow(*r) for r in rows]
+
+
+def load_corroboration(conn: Connection, *, since: datetime) -> dict[str, Corroboration]:
+    """Per source, its events first seen since `since` and how many of them another
+    independent lineage also reported (worker/pipeline/reputation.py). An event merged into
+    another is counted as the one it joined; a source with no events is absent.
+
+    A source's own lineages are every lineage its reports on that event carry, so a copy of its
+    own headline, or its second feed, never corroborates it."""
+    rows = conn.execute(
+        text(
+            "with mine as ("
+            "select s.source_id, s.event_id, "
+            "array_agg(distinct coalesce(s.lineage_id, s.source_id)) as lineages "
+            "from event_sources s join events e on e.event_id = s.event_id "
+            "where e.first_seen >= :since and e.merged_into is null "
+            "group by s.source_id, s.event_id) "
+            "select m.source_id, count(*) as events, count(*) filter (where exists ("
+            "select 1 from event_sources o where o.event_id = m.event_id and o.independent "
+            "and coalesce(o.lineage_id, o.source_id) <> all(m.lineages))) as corroborated "
+            "from mine m group by m.source_id"
+        ),
+        {"since": since},
+    )
+    return {r.source_id: Corroboration(r.events, r.corroborated) for r in rows}

@@ -9,6 +9,7 @@ import pytest
 
 import worker.publish.validate as validate_module
 from worker.models import Event
+from worker.pipeline.importance import with_importance
 from worker.settings import Settings
 from worker.publish.validate import ValidationFailure, scan_for_secrets, validate_payload
 
@@ -24,7 +25,8 @@ def _event(**overrides) -> dict:
         "last_seen": NOW,
     }
     fields.update(overrides)
-    return Event(**fields).model_dump_public()
+    # Rated as the publisher rates every event it writes (worker/publish/build.py).
+    return with_importance(Event(**fields), {}).model_dump_public()
 
 
 def _live(events=None) -> dict:

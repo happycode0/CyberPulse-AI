@@ -422,6 +422,19 @@ def load_activations(conn: Connection, *, since: datetime) -> list[Activation]:
 # --- What the ops API shows ----------------------------------------------------------------------
 
 
+def load_at_the_gate(conn: Connection, *, limit: int) -> list[Candidate]:
+    """Finds still at the gate, for source-health.json's `pipeline`: those furthest through it
+    first (testing, then candidate, then discovered), then the most healthy probes in a row,
+    then the newest."""
+    return _candidates(
+        conn,
+        "state in ('discovered', 'candidate', 'testing') order by "
+        "case state when 'testing' then 0 when 'candidate' then 1 else 2 end, "
+        "passes desc, created_at desc, id limit :limit",
+        {"limit": limit},
+    )
+
+
 def load_overview(conn: Connection, *, now: datetime, open_limit: int = 30) -> dict[str, Any]:
     """Where discovery stands, for GET /ops/candidates."""
     states = dict(

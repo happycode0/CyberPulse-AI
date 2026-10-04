@@ -119,6 +119,12 @@ leftover SOUL.md, HEARTBEAT.md or TOOLS.md.
 **Skills** tab. By hand: **Skills → New skill**, with the name, the description as its
 description and the text block as its body, then tick it on DECKARD's Skills tab.
 
+**A card's Summary row is not a Paperclip field.** It is the line the site's crew page shows.
+`python3 ops/build-paperclip-package.py --org-json site/assets/org.json` writes the public org
+chart from this page and 4a: callsigns, titles, teams, models, budgets, the summaries and the
+routines. It never carries a prompt, a payload template or an internal address. A unit test
+fails until the committed file matches the wiki again.
+
 ---
 
 ## House rules — paste this at the top of every AI agent's Instructions
@@ -165,6 +171,7 @@ database directly.
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-pro` |
 | Budget · Max daily runs | US$2.00 · 4 |
 | Wakes on | Routine *Daily editorial* 07:30 Sydney; escalations from DECKARD, VOIGHT or TELETRAAN; `[MODEL]` proposals from RIPPERDOC; budget or watchdog incident |
+| Summary | Decides what the crew covers and follows up, writes the daily intelligence report, and approves or refuses each model change. |
 
 ```text
 You are MORPHEUS, CEO and Chief Editor of CyberPulse.
@@ -209,6 +216,7 @@ NEVER: collect or research news yourself; edit code; raise any budget; publish a
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash` (MORPHEUS can move critical cases to STRONG) |
 | Budget · Max daily runs | US$2.00 · 12 |
 | Wakes on | Routine *Desk digest* 06:00, 14:00 and 22:00 Sydney; routine *Follow-up* 03:00, 09:00, 15:00 and 21:00; `[FOLLOW-UP]` issues from MORPHEUS |
+| Summary | Writes the desk notes on candidate events across three beats, Australia first, then global cyber and AI, and works the follow-up queue on developing stories. |
 
 DECKARD does the work of four old agents: the Australian, global and AI desks, and the
 follow-up queue. Its prompt stays short, because CHEAP-tier models follow long prompts worse.
@@ -400,6 +408,7 @@ prominence because another outlet repeated it; publish anything.
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-pro` |
 | Budget · Max daily runs | US$2.00 · 20 |
 | Wakes on | Every high or critical publish candidate; routine *Daily QA sample* 07:00 Sydney |
+| Summary | Holds the veto over what the crew wrote: checks every claim on a high or critical event against its evidence, and samples the day's published events. |
 
 The worker publishes facts on its own and fails closed. VOIGHT holds the veto over what the crew
 wrote: nothing high or critical goes out with a desk note it has not passed.
@@ -437,6 +446,7 @@ NEVER: rewrite facts yourself; lower a severity without recording the reason.
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash`. The worker runs the Tavily searches; TACHIKOMA has no Tavily key |
 | Budget · Max daily runs | US$1.00 · 2 |
 | Wakes on | Routine *Source discovery* 03:30 Sydney; `[GAP]` issues from MORPHEUS |
+| Summary | Reads the worker's nightly finds and proposes sources the registry does not know yet. The worker's gate tests each one before anything is collected. |
 
 The worker does the searching and the testing. Each night at 03:10 Sydney it runs up to 30
 Tavily searches (`config/discovery.yaml`) and records each unregistered site the results name.
@@ -498,6 +508,7 @@ the open web).
 | Budget · Max daily runs | US$1.00 · 12 |
 | Environment | No repository token: the repository is public, so it reads pull requests without one. The ops API token every agent inherits. Like every `opencode_local` agent it also runs with the server container's environment: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
 | Wakes on | Routine *Incident*, which the worker's watchdog fires when it opens a high or critical incident ([Stage 6](stage-6-self-healing.md#the-incident-routine)); a pull request opened by WHEELJACK. The checks cost nothing; the model only diagnoses and verifies |
+| Summary | Diagnoses each incident the worker's watchdog opens and hands the fix to its owner, then checks every code fix WHEELJACK writes, on another vendor's model. |
 
 TELETRAAN took over TRON's job of checking WHEELJACK's fixes. So it asks for a fix and then
 checks it. What keeps that honest: the agent that writes the code is never the one that passes
@@ -584,6 +595,7 @@ except GETs and POST /ops/incidents/<id>/verdict.
 | Adapter · Model | `opencode_local` · `openrouter/xiaomi/mimo-v2.6-flash`. The worker runs the scan and the gauntlet, keeps the cost ledger and holds the OpenRouter key; the model only reads the results and writes the issues |
 | Budget · Max daily runs | US$0.50 · 4 |
 | Wakes on | Routine *Model scan* 04:00 daily; *Model gauntlet* Sunday 05:00; *Monthly cost review* 09:00 on the 1st; within minutes when TELETRAAN reports a failing model |
+| Summary | Keeps each model tier on the cheapest model that does the job: reports the worker's daily model scan and weekly gauntlet, raises model proposals and reviews each month's costs. |
 
 RIPPERDOC keeps the crew cheap: the models and the money. The worker does the measuring. It
 records every AI call's real billed cost from OpenRouter in the cost ledger, by agent, event and
@@ -684,6 +696,7 @@ truth (LIBRARIAN), source checks (SERAPH), correlation (PROWL) and publishing (L
 | Wakes on | The worker's own schedule. Collection, the source gate, ground truth and publishing all run in the worker, **already on VM 200 today**. In Paperclip a wake (an issue assigned to SERAPH) only asks whether all four are healthy |
 | Does | One answer for four checks, each reported on its own in the reply. **Ground truth**: CISA KEV, EPSS and the CVE.org record (CVSS in the order CNA → CISA-ADP → NVD). **Source checks**: every registered source's health and lifecycle, stale-but-200 feeds caught by the age of their newest item, and the gate for discovered sites (6 healthy probes in a row to activate, 3 failures in a row to reject, retired after 21 days with no healthy fetch). **Correlation**: one event or many, by URL → GUID → title → trigram + entities → date. **Publishing**: builds `data/*.json`, validates against the schemas and **fails closed**, runs the secret scan before every push, pushes the `data` branch and checks Pages deployed |
 | Never | Lets a model author a CVSS score, KEV status or technique ID; promotes a source on a single successful fetch; treats title similarity alone as identity, or syndicated copies as independent confirmation; publishes unvalidated data, raw article bodies, or anything that trips the secret scan |
+| Summary | The worker's own jobs on the org chart: ground truth, source checks, correlation and publishing, all in code. It runs no model and spends nothing. |
 
 The wake answers **200** when all four checks pass and **503** when any fails. The reply names
 each check (`groundtruth`, `source-verify`, `correlation-report`, `publish`) with its own `ok`
@@ -706,6 +719,7 @@ exist. Until then a human fixes code.
 | Budget · Max daily runs | US$1.00 · 4 |
 | Environment | `CYBERPULSE_ENGINEER_TOKEN` (branch + PR scope) is the only key it is given. Like every `opencode_local` agent it also runs with the server container's environment, its database URL and auth secrets included: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
 | Wakes on | `[ENGINEERING]` issues from TELETRAAN or MORPHEUS. **Never on a timer** |
+| Summary | Writes the code fix for an engineering issue on its own branch, with a test that shows the fault. TELETRAAN checks it and a person always merges. |
 
 ```text
 You are WHEELJACK, the Coder of CyberPulse.
