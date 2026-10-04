@@ -29,14 +29,19 @@ def test_map_has_a_keyboard_accessible_equivalent():
     assert "<select" in read("site/index.html") and "country" in read("site/index.html")
 
 
-def test_pipeline_replay_is_labelled_as_a_replay():
-    assert "COLLECTION REPLAY" in read("site/index.html")
-
-
-def test_pipeline_stages_match_the_spec():
-    js = read("site/assets/hud.js")
-    for s in ("SOURCES", "COLLECT", "MATCH", "VERIFY", "ENRICH", "CROSS-REF", "SCORE", "PUBLISH"):
-        assert s in js
+# The pipeline left the dashboard for the System page, which pages.js draws. Wherever it is
+# drawn, it is a replay of the last collection labelled as one, over the stages the spec names;
+# hud.js no longer draws it, so a second copy cannot drift from the first.
+def test_a_drawn_pipeline_is_a_labelled_replay_of_the_spec_stages():
+    hud = read("site/assets/hud.js")
+    assert "export function renderPipeline" not in hud, "the dashboard draws the pipeline again"
+    for rel in ("site/index.html", "site/assets/hud.js", "site/assets/pages.js"):
+        text = read(rel)
+        if "pipe-pulse" not in text:
+            continue
+        assert "COLLECTION REPLAY" in text, rel
+        for s in ("SOURCES", "COLLECT", "MATCH", "VERIFY", "ENRICH", "CROSS-REF", "SCORE", "PUBLISH"):
+            assert s in text, (rel, s)
 
 
 def test_ai_suggested_mitre_is_labelled_in_event_detail():
@@ -88,18 +93,23 @@ def test_every_view_is_a_sibling_under_main():
 
     The panels used to be split: AUSTRALIA NOW above, the rest below the gauges, the world
     map and the filter panel. Selecting a tab swapped a panel ~1900px down the page, so the
-    viewport did not visibly change and the tab read as dead. Every view the sidebar links to
-    has to be a direct child of the one <main>, and the sidebar has to link to every view.
+    viewport did not visibly change and the tab read as dead. Every view the header tabs link to
+    has to be a direct child of the one <main>, and the tabs have to link to every view, in the
+    order VIEWS declares, each as a real ?view= address so it opens in a new tab too.
     """
     html = read("site/index.html")
     js = read("site/assets/hud.js")
     declared = re.findall(r"'([\w-]+)'", re.search(r"export const VIEWS = \[([^\]]*)\]", js).group(1))
-    sidebar = html.split('<nav class="sidebar"', 1)[1].split("</nav>", 1)[0]
-    assert re.findall(r'data-view-link="([\w-]+)"', sidebar) == declared
+    assert declared == ["dashboard", "events", "crew", "system", "sources"], declared
+    tabs = html.split('<nav class="tabs"', 1)[1].split("</nav>", 1)[0]
+    assert re.findall(r'data-view-link="([\w-]+)"', tabs) == declared
+    for name in declared:
+        assert f'data-view-link="{name}" href="?view={name}&amp;scope=au"' in tabs, name
+    assert html.count("data-view-link=") == len(declared), "a view link outside the tabs"
     main = html.split('<main id="main"', 1)[1].split("</main>", 1)[0]
     for name in declared:
         assert re.search(rf'\n    <section class="view" id="view-{name}"', main), name
-    assert main.count('class="view"') == len(declared), "a view the sidebar cannot reach"
+    assert main.count('class="view"') == len(declared), "a view the tabs cannot reach"
 
 
 def test_every_section_the_js_renders_has_a_home_in_the_markup():
@@ -107,9 +117,12 @@ def test_every_section_the_js_renders_has_a_home_in_the_markup():
 
     The three domain sections became the scope and the beat, and the other seven became feeds of
     that list. A feed nothing can turn on is as lost as a section that renders into no container,
-    so every feed has to be applied by a sidebar preset, every preset needs its link and count in
-    the sidebar, and the list renders into exactly one body: a second would be a container
-    nothing fills. Each is invisible in a diff, hence this.
+    so every feed has to be applied by a preset in the FEEDS menu, every feed preset needs its
+    link, count and widen link there, and the list renders into exactly one body: a second would
+    be a container nothing fills. Each is invisible in a diff, hence this.
+
+    AUSTRALIA NOW and GLOBAL CYBER are presets still, so their old links resolve, but not menu
+    items: each is exactly a SCOPE choice, and listing it twice made the menu read as two filters.
     """
     html = read("site/index.html")
     js = read("site/assets/hud.js")
@@ -120,12 +133,19 @@ def test_every_section_the_js_renders_has_a_home_in_the_markup():
     for feeds in re.findall(r"feedPreset\('[\w-]+', '[^']+', \[([^\]]*)\]\)", presets):
         fed.update(re.findall(r"'([\w-]+)'", feeds))
     assert set(ids) <= fed, f"no preset applies: {sorted(set(ids) - fed)}"
-    sidebar = html.split('<nav class="sidebar"', 1)[1].split("</nav>", 1)[0]
+    menu = html.split('id="feed-menu"', 1)[1].split("</details>", 1)[0]
     preset_ids = re.findall(r"(?:\{ id: |feedPreset\()'([\w-]+)'", presets)
     assert len(preset_ids) == 9, preset_ids
+    scoped = {"australia-now", "global-cyber"}
+    assert scoped <= set(preset_ids), "a scope preset went, and its old links with it"
     for preset in preset_ids:
-        assert f'data-preset="{preset}"' in sidebar, preset
-        assert f'data-preset-count="{preset}"' in sidebar, preset
+        if preset in scoped:
+            assert f'data-preset="{preset}"' not in html, f"{preset} is back in the markup"
+            continue
+        assert f'data-preset="{preset}"' in menu, preset
+        assert f'data-preset-count="{preset}"' in menu, preset
+        assert f'data-preset-widen="{preset}"' in menu, preset
+    assert html.count("data-preset=") == len(preset_ids) - len(scoped), "a preset outside the menu"
     assert html.count("data-section-body=") == 1 and 'data-section-body="events"' in html
     assert 'data-count-for="events"' in html
 
@@ -142,9 +162,15 @@ def test_every_old_anchor_opens_the_view_that_now_holds_it():
     block = js.split("export const LEGACY_ANCHORS = {", 1)[1].split("\n};", 1)[0]
     mapped = set(re.findall(r"'(sec-[\w-]+)':", block))
     old = {"sec-australia-now", "sec-global-cyber", "sec-ai-cyber", "sec-overview", "sec-trends",
-           "sec-the-crew", "sec-system"} | {f"sec-{i}" for i in _section_ids(js)}
+           "sec-the-crew", "sec-system", "sec-world-map", "sec-sources",
+           "sec-source-health"} | {f"sec-{i}" for i in _section_ids(js)}
     assert old <= mapped, f"unmapped: {sorted(old - mapped)}"
     assert "'sec-global-cyber': { view: 'events', scope: 'global' }" in block
+    # THE CREW & SYSTEM split three ways, so each half of the old view's anchors opens its own.
+    for anchor, view in (("sec-the-crew", "crew"), ("sec-system", "system"),
+                         ("sec-sources", "sources"), ("sec-source-health", "sources"),
+                         ("source-health", "sources")):
+        assert f"'{anchor}': {{ view: '{view}' }}" in block, anchor
     parse = js.split("export function parseLocation", 1)[1].split("\n}\n", 1)[0]
     assert "Object.hasOwn(LEGACY_ANCHORS, anchor)" in parse, "an old anchor is not looked up"
     views = js.split("export function initViews", 1)[1]
@@ -208,6 +234,8 @@ def test_the_crew_roster_renders_even_when_the_feed_cannot_be_read():
     a count that still read "16 AGENTS". 0 of 16 tiles, no portraits, no personas, no status. The
     roster, the stage list and the per-agent ownership table describe what the system *is* rather
     than what the last run found; all three ship with the site and have to render on both paths.
+    The org chart reads its own file and the System and Sources pages are handed null for what
+    could not be read, so they belong on the same side: each says what is missing itself.
 
     The converse matters just as much, hence the second loop. The index and the gauges compute
     "0 events, LOW" from an empty list and the headline list would claim this snapshot has no
@@ -218,7 +246,8 @@ def test_the_crew_roster_renders_even_when_the_feed_cannot_be_read():
     body = js.split("export async function main", 1)[1].split("\n}", 1)[0]
     unguarded, sep, guarded = body.partition("if (!data) {")
     assert sep, "main() no longer has a no-data guard, so this test cannot tell the halves apart"
-    for call in ("renderStrip(", "renderPipeline(", "renderCrew("):
+    for call in ("renderStrip(", "renderCrew(", "renderCrewRun(", "renderOrg(",
+                 "renderPage('system', renderSystemPage,", "renderPage('sources', renderSourcesPage,"):
         assert call in unguarded, f"{call} sits behind the no-data guard; it ships with the site"
     for call in ("renderIndex(", "renderGauges(", "renderHeadlines("):
         assert call not in unguarded, f"{call} on empty input publishes a figure nothing measured"
@@ -230,8 +259,8 @@ def test_a_deep_link_to_a_sub_section_is_finished_after_the_first_render():
 
     Measured on a cold load of #sec-vulnerabilities: the scroll settled at 960 against a final
     heading position of 3926 — the right tab open, several screens short of the section the link
-    named. main() has to come back to a block inside a view (#sec-trends, #sec-system) once the
-    views hold their content.
+    named. main() has to come back to a block inside a view (#sec-trends) once the views hold
+    their content.
     """
     js = read("site/assets/hud.js")
     assert "return { activate, rescrollToHash }" in js, "initViews does not expose the deep-link fix"
