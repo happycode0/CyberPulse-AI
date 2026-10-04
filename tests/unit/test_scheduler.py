@@ -13,6 +13,7 @@ from worker.ai.scout import GauntletSummary, ScanSummary
 from worker.cadence import FAST_INTERVAL_MINUTES, fast_minutes
 from worker.models import Lane
 from worker.publish.push import PushResult
+from worker.schedule import public_schedule
 from worker.scheduler import (
     ALERT_JOB_ID,
     DIGEST_JOB_ID,
@@ -728,3 +729,25 @@ async def test_the_watchdog_is_kept_between_passes(monkeypatch):
     await scheduler._watchdog_job()
     await scheduler._watchdog_job()
     assert made == ["settings"] and len(passes) == 2
+
+
+def test_the_published_schedule_is_the_one_that_runs():
+    # system-status.json's `schedule` (worker/schedule.py): every job the default scheduler adds,
+    # with its own cron line and timezone, and nothing it does not add.
+    scheduled = {j.id: j for j in build_scheduler().get_jobs()}
+    published = {entry["job"]: entry for entry in public_schedule()}
+    assert published.keys() == scheduled.keys()
+    for job, entry in published.items():
+        trigger = scheduled[job].trigger
+        expected = CronTrigger.from_crontab(entry["cron"], timezone=entry["timezone"])
+        assert fields(trigger) == fields(expected), job
+        assert str(trigger.timezone) == entry["timezone"] in ("UTC", "Australia/Sydney")
+        assert entry["kind"] in ("code", "ai", "mixed") and entry["label"] and entry["summary"]
+
+
+def test_only_the_jobs_that_call_a_model_are_ai():
+    kinds = {entry["job"]: entry["kind"] for entry in public_schedule()}
+    assert {job for job, kind in kinds.items() if kind != "code"} == {
+        ENRICH_JOB_ID, GAUNTLET_JOB_ID,
+    }
+    assert kinds[ENRICH_JOB_ID] == kinds[GAUNTLET_JOB_ID] == "ai"

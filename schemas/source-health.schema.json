@@ -4,7 +4,7 @@
   "title": "CyberPulse-AI source-health.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generated_at", "counts", "sources"],
+  "required": ["generated_at", "counts", "sources", "pipeline"],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
     "counts": {
@@ -17,29 +17,90 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "source_id", "name", "region", "category", "lane", "enabled",
-          "lifecycle_state", "latest", "history"
+          "source_id", "name", "description", "publisher", "url", "region", "category", "beat",
+          "lane", "priority", "expected_frequency", "enabled", "standing", "reputation",
+          "lifecycle_state", "attention", "latest", "history"
         ],
         "properties": {
           "source_id": { "type": "string" },
           "name": { "type": "string" },
+          "description": {
+            "description": "From config/sources.yaml; null only for a source the discovery gate added.",
+            "type": ["string", "null"]
+          },
+          "publisher": {
+            "description": "The organisation behind the feed, when the registry names one.",
+            "type": ["string", "null"]
+          },
+          "url": { "type": "string" },
           "region": { "type": "string" },
           "category": { "type": "string" },
+          "beat": { "anyOf": [{ "enum": ["cyber", "ai", "both"] }, { "type": "null" }] },
           "lane": { "enum": ["fast", "normal", "deep"] },
+          "priority": { "type": "integer" },
+          "expected_frequency": { "type": ["string", "null"] },
           "enabled": { "type": "boolean" },
+          "standing": { "$ref": "#/$defs/standing" },
+          "reputation": { "$ref": "#/$defs/reputation" },
           "lifecycle_state": {
             "enum": [
               "discovered", "candidate", "testing", "validated",
               "active", "degraded", "broken", "retired"
             ]
           },
+          "attention": { "anyOf": [{ "$ref": "#/$defs/attention" }, { "type": "null" }] },
           "latest": { "anyOf": [{ "$ref": "#/$defs/check" }, { "type": "null" }] },
           "history": { "type": "array", "items": { "$ref": "#/$defs/check" } }
+        }
+      }
+    },
+    "pipeline": {
+      "description": "Finds still at the discovery gate, furthest through first.",
+      "type": "array",
+      "maxItems": 25,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "host", "state", "found_at", "reason"],
+        "properties": {
+          "name": { "type": ["string", "null"] },
+          "host": { "type": "string" },
+          "state": { "enum": ["discovered", "candidate", "testing"] },
+          "found_at": { "type": "string", "format": "date-time" },
+          "reason": { "type": "string" }
         }
       }
     }
   },
   "$defs": {
+    "standing": { "enum": ["authoritative", "established", "specialist", "community"] },
+    "unit_share": { "anyOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+    "reputation": {
+      "description": "docs/wiki/importance-and-reputation.md",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version", "score", "standing", "uptime", "corroboration", "events_90d", "basis"
+      ],
+      "properties": {
+        "version": { "type": "string" },
+        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "standing": { "$ref": "#/$defs/standing" },
+        "uptime": { "$ref": "#/$defs/unit_share" },
+        "corroboration": { "$ref": "#/$defs/unit_share" },
+        "events_90d": { "type": "integer", "minimum": 0 },
+        "basis": { "type": "string" }
+      }
+    },
+    "attention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reason"],
+      "properties": {
+        "kind": { "enum": ["fix", "watch", "coming"] },
+        "reason": { "type": "string" }
+      }
+    },
     "check": {
       "type": "object",
       "additionalProperties": false,

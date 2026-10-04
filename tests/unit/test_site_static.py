@@ -158,24 +158,30 @@ def test_site_never_says_live():
         assert "live" not in p.read_text().lower().replace("live.json", "")
     for p in (SITE / "assets").glob("hud.*"):
         text = p.read_text().lower().replace("live.json", "")
+        # The one exemption is a property key: the page contract in pages.js names the feed
+        # argument `live`, after the file it comes from, and hud.js has to pass it by that name.
+        # A key followed by its value is code, not copy a visitor reads.
+        text = re.sub(r"\blive: (?=[a-z])", "", text)
         assert not re.search(r"\blive\b", text), p
 
 
 def test_index_declares_last_completed_collection():
     html = read("site/index.html")
     assert "LAST COMPLETED COLLECTION" in html
-    assert "COLLECTION REPLAY" in html or "COLLECTION REPLAY" in read("site/assets/hud.js")
 
 
-# Everything the page used to show by section is still named on it: the geographic presets and
-# intelligence feeds in the sidebar, the dashboard blocks, the crew view, and the scope and beat
-# controls in the header.
+# Everything the page used to show by section is still named on it: the intelligence feeds in
+# the FEEDS menu, the dashboard blocks, the five views, the crew view's company, chart and
+# routines, and the scope, beat and KEY ONLY controls in the header. AUSTRALIA NOW and GLOBAL
+# CYBER left the menu (the scope control is the same thing), so they are not required here; their
+# old links are held by test_site_behaviour instead.
 def test_index_lists_every_section():
     html = read("site/index.html")
     for name in (
-        "AUSTRALIA NOW", "GLOBAL CYBER", "AI + CYBER", "ACTIVE EXPLOITATION",
+        "AI + CYBER", "ACTIVE EXPLOITATION",
         "DEVELOPING EVENTS", "EMERGING THREATS", "THREAT ACTORS", "VULNERABILITIES",
-        "POLICY &amp; RESEARCH", "TRENDS", "THE CREW", "SYSTEM", "DASHBOARD", "EVENTS",
+        "POLICY &amp; RESEARCH", "TRENDS", "THE CREW", "DASHBOARD", "EVENTS", "CREW", "SYSTEM",
+        "SOURCES", "FEEDS", "TAG FILTERS", "KEY ONLY", "THE COMPANY", "ORG CHART", "ROUTINES",
         "WORLD MAP", "SEVERITY DISTRIBUTION", "TOP SIGNALS",
     ):
         assert name in html, name
@@ -280,8 +286,8 @@ def test_severity_is_conveyed_by_more_than_colour():
 
 def test_hud_js_exports_the_contract():
     js = read("site/assets/hud.js")
-    for fn in ("loadData", "renderSections", "applyFilters", "renderPipeline",
-               "renderIndex", "initFxToggle"):
+    for fn in ("loadData", "renderSections", "applyFilters", "renderOrg", "renderIndex",
+               "initFxToggle", "dropdownAfter", "describeCron", "orgModel", "importanceOf"):
         assert re.search(rf"export\s+(async\s+)?function\s+{fn}\b", js), fn
 
 
@@ -382,12 +388,22 @@ def test_event_cards_never_use_the_event_id_as_a_dom_id():
 # surface, so a visitor landing on the dashboard has to be able to find it.
 def test_history_page_is_reachable_from_the_dashboard():
     html = read("site/index.html")
-    # In the sticky header, so it is one click away from every view, not only from the one
-    # whose sidebar happens to be open.
+    # In the sticky header, so it is one click away from every view. The sidebar that once held
+    # the views is gone: the views are tabs in the header and the feeds are a menu beside the
+    # filters, so nothing is hidden behind a toggle.
     header = html.split('<header class="site-header"', 1)[1].split("</header>", 1)[0]
     assert 'href="history.html"' in header, "the header links to history.html"
-    sidebar = html.split('<nav class="sidebar"', 1)[1].split("</nav>", 1)[0]
-    assert "history.html" not in sidebar, "the sidebar holds views and presets, not pages"
+    assert 'class="sidebar"' not in html and "side-toggle" not in html, "the sidebar is back"
+    tabs = header.split('<nav class="tabs"', 1)[1].split("</nav>", 1)[0]
+    assert "history.html" not in tabs, "the tabs are views of this page; HISTORY is a page"
+    # The other two pages carry the same tabs back into the dashboard, so no page is a dead end.
+    for page in ("event.html", "history.html"):
+        other = read(f"site/{page}")
+        head = other.split('<header class="site-header"', 1)[1].split("</header>", 1)[0]
+        assert '<nav class="tabs"' in head, page
+        for view in ("dashboard", "events", "crew", "system", "sources"):
+            assert f'href="index.html?view={view}&amp;scope=au"' in head, (page, view)
+        assert 'href="history.html"' in head, page
 
 
 # The map counts events per ISO id in aria-label, so the click, the paired <select> and the

@@ -13,11 +13,18 @@ The package carries no secret values and declares no secret inputs. Things the i
 cannot carry are done after the import: agent budget policies, the company budget, and each
 agent's access to the OpenRouter connection (docs/wiki/stage-4a-paperclip-setup.md).
 
+With `--org-json PATH` it writes the public org chart for the site's crew page instead
+(site/assets/org.json): the same pages, with each card's Summary row and team, and no prompts,
+payload templates or internal addresses. tests/unit/test_paperclip_package.py fails until the
+committed file is rebuilt after a wiki change.
+
     python3 ops/build-paperclip-package.py [output.zip]
+    python3 ops/build-paperclip-package.py --org-json site/assets/org.json
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -116,8 +123,20 @@ def read_skills(section: str, owner: str) -> list[dict]:
     return skills
 
 
+def read_teams(page: str) -> dict[str, str]:
+    """Each card's team, from the `# <Name> team` heading above it."""
+    teams = {}
+    for heading, body in sections(page, "#").items():
+        team = re.match(r"([A-Z][a-z]+) team\b", heading)
+        if team:
+            for name in re.findall(r"^## \d+\. ([A-Z]+) — ", body, flags=re.M):
+                teams[name] = team.group(1)
+    return teams
+
+
 def read_crew() -> tuple[str, dict[str, dict]]:
     page = CREW_PAGE.read_text(encoding="utf-8")
+    teams = read_teams(page)
     cards = sections(page, "##")
     house = next((body for heading, body in cards.items() if heading.startswith("House rules")), None)
     if house is None or len(text_blocks(house)) != 1:
@@ -134,7 +153,10 @@ def read_crew() -> tuple[str, dict[str, dict]]:
         title = re.search(r"`[A-Z]+` / `([^`]+)`", title_cell or "")
         if not title:
             fail(f"{name}: no title row")
-        card = {"name": name, "title": title.group(1)}
+        summary = row(body, "Summary")
+        if not summary or name not in teams:
+            fail(f"{name}: needs a Summary row and a team heading above its card")
+        card = {"name": name, "title": title.group(1), "team": teams[name], "summary": summary}
         # The card's own text stops at its first sub-heading; any after it are its skills.
         own, _, rest = body.partition("\n### ")
         card["skills"] = read_skills("### " + rest, name) if rest else []
@@ -172,12 +194,14 @@ def read_setup() -> tuple[str, list[dict]]:
     if step is None:
         fail("routines step not found")
     routines = []
-    for name, assignee, cron, switch_on in re.findall(
-        r"^\| ([A-Za-z -]+) \| ([A-Z]+) \| `([^`]+)`[^|]* \| (now|Stage \d) \|$", step, flags=re.M
+    for name, assignee, cron, switch_on, summary in re.findall(
+        r"^\| ([A-Za-z -]+) \| ([A-Z]+) \| `([^`]+)`[^|]* \| (now|Stage \d) \| ([^|]+?) \|$", step,
+        flags=re.M,
     ):
         if name not in ROUTINE_TEXT:
             fail(f"routine {name!r} has no issue text")
-        routines.append({"name": name, "assignee": assignee.lower(), "cron": cron, "active": switch_on == "now"})
+        routines.append({"name": name, "assignee": assignee.lower(), "cron": cron,
+                         "active": switch_on == "now", "starts": switch_on, "summary": summary})
     if len(routines) != len(ROUTINE_TEXT):
         fail(f"found {len(routines)} routines, expected {len(ROUTINE_TEXT)}")
     return description, routines
@@ -230,7 +254,8 @@ def http_instructions(card: dict) -> str:
     ]).replace("**", "")
 
 
-def build(output: Path) -> None:
+def read_wiki() -> tuple[str, dict[str, dict], str, list[dict]]:
+    """Both pages, checked against CREW and each other."""
     house_rules, cards = read_crew()
     description, routines = read_setup()
     if sorted(cards) != sorted(slug for slug, *_ in CREW):
@@ -247,7 +272,11 @@ def build(output: Path) -> None:
     vendors = {slug: cards[slug]["model"].split("/")[1] for slug in ("teletraan", "wheeljack")}
     if vendors["teletraan"] == vendors["wheeljack"]:
         fail(f"TELETRAAN and WHEELJACK both run a {vendors['wheeljack']} model; they must differ")
+    return house_rules, cards, description, routines
 
+
+def build(output: Path) -> None:
+    house_rules, cards, description, routines = read_wiki()
     files: dict[str, str] = {}
     agents_ext: dict[str, dict] = {}
     for slug, role, manager, adapter, icon in CREW:
@@ -378,5 +407,73 @@ def readme(cards: dict[str, dict], routines: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+# Anything that looks like an address or an agent's working instructions; none belongs on the
+# public org chart.
+NOT_PUBLIC = re.compile(r"https?://|worker:|\$CYBERPULSE|/ops/|\{\{|AUTHORIZATION|YOU OWN", re.I)
+
+
+def org_chart() -> dict:
+    """The public org chart, for the site's crew page (site/assets/org.json): who each agent is,
+    what it costs and does, and the routines. Never a prompt, a payload template, an internal
+    address or a secret."""
+    _, cards, description, routines = read_wiki()
+    agents = []
+    for slug, role, manager, adapter, _ in CREW:
+        card = cards[slug]
+        agents.append({
+            "callsign": card["name"],
+            "title": card["title"],
+            "role": role,
+            "reports_to": cards[manager]["name"] if manager else None,
+            "team": card["team"],
+            "adapter": "model" if adapter == "opencode_local" else "http",
+            "model": card.get("model"),
+            "budget_usd": card.get("budget_cents", 0) / 100,
+            "max_daily_runs": card.get("max_daily_runs"),
+            "summary": card["summary"],
+        })
+    org = {
+        "company": {
+            "name": "CyberPulse",
+            "mission": description,
+            "budget_usd": COMPANY_BUDGET_CENTS / 100,
+        },
+        "agents": agents,
+        "routines": [
+            {
+                "name": routine["name"],
+                "assignee": cards[routine["assignee"]]["name"],
+                "cron": routine["cron"],
+                "timezone": TIMEZONE,
+                "summary": routine["summary"],
+                "starts": routine["starts"],
+            }
+            for routine in routines
+        ],
+    }
+    leak = NOT_PUBLIC.search(json.dumps(org))
+    if leak:
+        fail(f"the org chart would publish {leak.group(0)!r}; reword the wiki")
+    return org
+
+
+def org_json() -> str:
+    return json.dumps(org_chart(), indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+
+
+def write_org_json(output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(org_json(), encoding="utf-8")
+    print(f"wrote {output} ({len(CREW)} agents)")
+
+
 if __name__ == "__main__":
-    build(Path(sys.argv[1]) if len(sys.argv) > 1 else REPO / "build/cyberpulse-crew.zip")
+    parser = argparse.ArgumentParser(description="Build the Paperclip package from the wiki.")
+    parser.add_argument("output", nargs="?", type=Path, help="the zip (build/cyberpulse-crew.zip)")
+    parser.add_argument("--org-json", type=Path, metavar="PATH",
+                        help="write the public org chart here instead (site/assets/org.json)")
+    args = parser.parse_args()
+    if args.org_json:
+        write_org_json(args.org_json)
+    if args.output or not args.org_json:
+        build(args.output or REPO / "build/cyberpulse-crew.zip")

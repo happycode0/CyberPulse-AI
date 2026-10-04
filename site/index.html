@@ -12,19 +12,31 @@
 <meta name="description" content="Evidence-linked cybersecurity and AI intelligence with an Australian lens. A snapshot of the last completed collection, not a real-time feed.">
 <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/hud.css">
+<link rel="stylesheet" href="assets/pages.css">
 <script type="module" src="assets/hud.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<!-- The header holds everything that applies to every view: what this snapshot is, where to
-     look (the scope), which desk (the beat) and the tag filters. It is sticky on a wide screen
-     so those stay in reach while a long list scrolls; initViews() measures it for
-     scroll-margin-top. HISTORY is a header button so it is one click from every view. -->
+<!-- The header is the whole of the navigation, in two rows. The first says where you are: the
+     five views as tabs, the snapshot this is, HISTORY and FX. The second says what you are looking
+     at: the scope, the beat, a feed, the tag filters and KEY ONLY, which apply on every view. It is
+     sticky on a wide screen so all of that stays in reach while a long list scrolls; initViews()
+     measures it for scroll-margin-top. Under 720px it scrolls away with the page instead, the tabs
+     scroll sideways and the filters wrap: nothing is folded behind a menu button. -->
 <header class="site-header">
   <div class="site-header__row">
-    <button type="button" id="sidebar-toggle" class="btn sidebar-toggle" aria-controls="sidebar" aria-expanded="false">MENU</button>
     <h1 class="brand"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></h1>
+    <!-- Every tab is a real link to a state of the one page (?view=...&scope=...), so a new tab
+         or a copied link opens the same thing; initViews() rewrites each href from the current
+         state and marks the open one aria-current="page". -->
+    <nav class="tabs" aria-label="Views">
+      <a class="tab" data-view-link="dashboard" href="?view=dashboard&amp;scope=au">DASHBOARD</a>
+      <a class="tab" data-view-link="events" href="?view=events&amp;scope=au">EVENTS</a>
+      <a class="tab" data-view-link="crew" href="?view=crew&amp;scope=au">CREW</a>
+      <a class="tab" data-view-link="system" href="?view=system&amp;scope=au">SYSTEM</a>
+      <a class="tab" data-view-link="sources" href="?view=sources&amp;scope=au">SOURCES</a>
+    </nav>
     <div class="status-strip" id="status-strip" role="status">
       <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
       <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
@@ -51,10 +63,33 @@
       <button type="button" class="seg-btn" data-beat-toggle="cyber" aria-pressed="false">CYBER</button>
       <button type="button" class="seg-btn" data-beat-toggle="ai" aria-pressed="false">AI</button>
     </div>
-    <details class="filterbar__more" id="filter-more">
-      <summary>TAG FILTERS</summary>
+    <!-- Two menus that close themselves: after a choice, on a click anywhere else and on Escape,
+         and only one is open at a time (initDropdowns() in hud.js). The feeds are shortcuts into
+         the one Events list and keep the scope the reader chose; renderFeeds() fills in each
+         count and, when the scope hides some of a feed, a link to the same feed at ALL. The
+         summaries say what is chosen in them, so a closed menu still shows its state. -->
+    <details class="dropdown filterbar__feeds" id="feed-menu" data-dropdown>
+      <summary>FEEDS <span class="dropdown__now mono" id="feed-now"></span></summary>
+      <div class="dropdown__panel">
+        <ul class="feed-list" aria-label="Feeds">
+          <li class="feed-item"><a class="feed-link" data-preset="ai-cyber" href="?view=events&amp;scope=au&amp;beat=ai"><span class="feed-link__label">AI + CYBER</span><span class="feed-link__count mono" data-preset-count="ai-cyber"></span></a><a class="feed-widen mono" data-preset-widen="ai-cyber" href="?view=events&amp;scope=all&amp;beat=ai" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="active-exploitation" href="?view=events&amp;scope=au&amp;feed=active-exploitation"><span class="feed-link__label">ACTIVE EXPLOITATION</span><span class="feed-link__count mono" data-preset-count="active-exploitation"></span></a><a class="feed-widen mono" data-preset-widen="active-exploitation" href="?view=events&amp;scope=all&amp;feed=active-exploitation" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="vulnerabilities" href="?view=events&amp;scope=au&amp;feed=vulnerabilities"><span class="feed-link__label">VULNERABILITIES</span><span class="feed-link__count mono" data-preset-count="vulnerabilities"></span></a><a class="feed-widen mono" data-preset-widen="vulnerabilities" href="?view=events&amp;scope=all&amp;feed=vulnerabilities" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="threat-actors" href="?view=events&amp;scope=au&amp;feed=threat-actors"><span class="feed-link__label">THREAT ACTORS</span><span class="feed-link__count mono" data-preset-count="threat-actors"></span></a><a class="feed-widen mono" data-preset-widen="threat-actors" href="?view=events&amp;scope=all&amp;feed=threat-actors" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="policy-research" href="?view=events&amp;scope=au&amp;feed=research,policy-regulation"><span class="feed-link__label">POLICY &amp; RESEARCH</span><span class="feed-link__count mono" data-preset-count="policy-research"></span></a><a class="feed-widen mono" data-preset-widen="policy-research" href="?view=events&amp;scope=all&amp;feed=research,policy-regulation" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="developing-events" href="?view=events&amp;scope=au&amp;feed=developing-events"><span class="feed-link__label">DEVELOPING EVENTS</span><span class="feed-link__count mono" data-preset-count="developing-events"></span></a><a class="feed-widen mono" data-preset-widen="developing-events" href="?view=events&amp;scope=all&amp;feed=developing-events" hidden></a></li>
+          <li class="feed-item"><a class="feed-link" data-preset="emerging-threats" href="?view=events&amp;scope=au&amp;feed=emerging-threats"><span class="feed-link__label">EMERGING THREATS</span><span class="feed-link__count mono" data-preset-count="emerging-threats"></span></a><a class="feed-widen mono" data-preset-widen="emerging-threats" href="?view=events&amp;scope=all&amp;feed=emerging-threats" hidden></a></li>
+        </ul>
+        <p class="dropdown__note">Counts are events in this snapshot at the scope, beat and filters set here. An event is listed under every feed it matches. Choosing one opens the Events view.</p>
+      </div>
+    </details>
+    <details class="dropdown filterbar__more" id="filter-more" data-dropdown>
+      <summary>TAG FILTERS <span class="dropdown__now mono" id="tags-now"></span></summary>
       <div id="filter-facets" class="facets"></div>
     </details>
+    <!-- The importance tiers are also a facet under TAG FILTERS; "only what matters" is asked
+         often enough to be one press of its own (key=1 in the address). -->
+    <button type="button" class="seg-btn key-toggle" id="key-toggle" aria-pressed="false">KEY ONLY</button>
     <div class="filterbar__actions">
       <button type="button" class="btn btn--small" id="filter-clear">CLEAR FILTERS</button>
       <span class="filterbar__count mono" id="filter-count" role="status"></span>
@@ -66,43 +101,12 @@
   <p class="notice">This dashboard reads published JSON files with a small script. Enable JavaScript to see the events.</p>
 </noscript>
 
-<div class="layout">
-  <!-- Every entry here is a state of the one page, written as a real link (?view=...&scope=...)
-       so a new tab or a copied link opens the same thing. The presets are shortcuts into the one
-       Events list: the geographic ones set the scope, the feeds keep the scope the reader chose.
-       initViews() rewrites each href from the current state, and renderSidebar() fills in the
-       counts and, when the scope hides some of a feed, a link to the same feed at ALL. -->
-  <nav class="sidebar" id="sidebar" aria-label="Views and feeds">
-    <ul class="side-list">
-      <li class="side-item"><a class="side-link" data-view-link="dashboard" href="?view=dashboard&amp;scope=au"><span class="side-link__label">DASHBOARD</span></a></li>
-      <li class="side-item"><a class="side-link" data-view-link="events" href="?view=events&amp;scope=au"><span class="side-link__label">EVENTS</span></a></li>
-      <li class="side-item"><a class="side-link" data-view-link="crew" href="?view=crew&amp;scope=au"><span class="side-link__label">THE CREW &amp; SYSTEM</span></a></li>
-    </ul>
-
-    <h2 class="side-head" id="side-scope">GEOGRAPHIC SCOPE</h2>
-    <ul class="side-list" aria-labelledby="side-scope">
-      <li class="side-item"><a class="side-link" data-preset="australia-now" href="?view=events&amp;scope=au"><span class="side-link__label">AUSTRALIA NOW</span><span class="side-link__count mono" data-preset-count="australia-now"></span></a></li>
-      <li class="side-item"><a class="side-link" data-preset="global-cyber" href="?view=events&amp;scope=global"><span class="side-link__label">GLOBAL CYBER</span><span class="side-link__count mono" data-preset-count="global-cyber"></span></a></li>
-    </ul>
-
-    <h2 class="side-head" id="side-feeds">INTELLIGENCE FEEDS</h2>
-    <ul class="side-list" aria-labelledby="side-feeds">
-      <li class="side-item"><a class="side-link" data-preset="ai-cyber" href="?view=events&amp;scope=au&amp;beat=ai"><span class="side-link__label">AI + CYBER</span><span class="side-link__count mono" data-preset-count="ai-cyber"></span></a><a class="side-widen mono" data-preset-widen="ai-cyber" href="?view=events&amp;scope=all&amp;beat=ai" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="active-exploitation" href="?view=events&amp;scope=au&amp;feed=active-exploitation"><span class="side-link__label">ACTIVE EXPLOITATION</span><span class="side-link__count mono" data-preset-count="active-exploitation"></span></a><a class="side-widen mono" data-preset-widen="active-exploitation" href="?view=events&amp;scope=all&amp;feed=active-exploitation" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="vulnerabilities" href="?view=events&amp;scope=au&amp;feed=vulnerabilities"><span class="side-link__label">VULNERABILITIES</span><span class="side-link__count mono" data-preset-count="vulnerabilities"></span></a><a class="side-widen mono" data-preset-widen="vulnerabilities" href="?view=events&amp;scope=all&amp;feed=vulnerabilities" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="threat-actors" href="?view=events&amp;scope=au&amp;feed=threat-actors"><span class="side-link__label">THREAT ACTORS</span><span class="side-link__count mono" data-preset-count="threat-actors"></span></a><a class="side-widen mono" data-preset-widen="threat-actors" href="?view=events&amp;scope=all&amp;feed=threat-actors" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="policy-research" href="?view=events&amp;scope=au&amp;feed=research,policy-regulation"><span class="side-link__label">POLICY &amp; RESEARCH</span><span class="side-link__count mono" data-preset-count="policy-research"></span></a><a class="side-widen mono" data-preset-widen="policy-research" href="?view=events&amp;scope=all&amp;feed=research,policy-regulation" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="developing-events" href="?view=events&amp;scope=au&amp;feed=developing-events"><span class="side-link__label">DEVELOPING EVENTS</span><span class="side-link__count mono" data-preset-count="developing-events"></span></a><a class="side-widen mono" data-preset-widen="developing-events" href="?view=events&amp;scope=all&amp;feed=developing-events" hidden></a></li>
-      <li class="side-item"><a class="side-link" data-preset="emerging-threats" href="?view=events&amp;scope=au&amp;feed=emerging-threats"><span class="side-link__label">EMERGING THREATS</span><span class="side-link__count mono" data-preset-count="emerging-threats"></span></a><a class="side-widen mono" data-preset-widen="emerging-threats" href="?view=events&amp;scope=all&amp;feed=emerging-threats" hidden></a></li>
-    </ul>
-    <p class="side-note">Counts are events in this snapshot at the scope, beat and tags set above. An event is listed under every feed it matches.</p>
-  </nav>
-
+<!-- One column, full width up to a measure; the header above is all the navigation there is. -->
   <main id="main" class="main">
     <div class="load-error notice" id="load-error" hidden role="alert"></div>
 
-    <!-- Three views, one showing at a time. Each is a direct child of <main>, so switching a view
-         always swaps what sits at the top of the content column. -->
+    <!-- Five views, one showing at a time, each opened by its tab. Each is a direct child of
+         <main>, so switching a view always swaps what sits at the top of the page. -->
     <section class="view" id="view-dashboard" aria-labelledby="h-dashboard">
       <header class="view__head">
         <h2 class="view__title" id="h-dashboard">DASHBOARD</h2>
@@ -175,7 +179,7 @@
     </section>
 
     <!-- The one list of events. AUSTRALIA NOW, GLOBAL CYBER, AI + CYBER and the seven feeds that
-         used to be separate sections are all states of this view (see the sidebar). -->
+         used to be separate sections are all states of this view (the scope and the FEEDS menu). -->
     <section class="view" id="view-events" aria-labelledby="h-events" hidden>
       <header class="view__head">
         <h2 class="view__title" id="h-events">EVENTS</h2>
@@ -186,12 +190,30 @@
       <div class="events-body" data-section-body="events"></div>
     </section>
 
+    <!-- Who runs this: the company in Paperclip (the org chart, from assets/org.json), the crew's
+         personas and their last run, and the routines. Nothing here claims an agent is running:
+         a schedule is configuration, and whether it fires is Paperclip's decision. -->
     <section class="view" id="view-crew" aria-labelledby="h-crew" hidden>
       <header class="view__head">
-        <h2 class="view__title" id="h-crew">THE CREW &amp; SYSTEM</h2>
+        <h2 class="view__title" id="h-crew">CREW</h2>
         <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">8 AGENTS</span></span>
       </header>
-      <p class="view__desc">Who and what produced the page you are reading.</p>
+      <p class="view__desc">Who produced the page you are reading: the company, the agents in it and the schedules they are given.</p>
+
+      <section class="panel" aria-labelledby="h-company">
+        <header class="panel__head">
+          <h3 class="panel__title" id="h-company">THE COMPANY</h3>
+          <span class="panel-status"><span class="led" data-state="idle" id="org-led"></span><span class="panel-count mono" id="org-count">AWAITING DATA</span></span>
+        </header>
+        <div class="explain">
+          <p>CyberPulse is run as a small newsroom company in Paperclip, the control plane: a CEO, desks that report to it, a monthly budget and a set of routines. Paperclip holds the org chart, wakes the agents and enforces budgets and approvals.</p>
+          <p><strong>Collection is code.</strong> The worker fetches every source, matches and scores what comes back and publishes the snapshot on its own clock, with no model in that loop, so a snapshot is still written when every agent is stopped. The agents add judgment, review and housekeeping on top.</p>
+          <p>The names and faces are presentation. Authority comes from each agent's Paperclip role, permissions and budget.</p>
+        </div>
+        <dl class="kv mono org-facts" id="org-facts"></dl>
+        <h4 class="subhead">ORG CHART</h4>
+        <div id="org-chart" class="org-chart"></div>
+      </section>
 
       <section class="panel" aria-labelledby="h-the-crew">
         <header class="panel__head"><h3 class="panel__title" id="h-the-crew">THE CREW</h3></header>
@@ -203,34 +225,36 @@
         <div id="crew-run"></div>
       </section>
 
-      <section class="subsection panel" id="sec-system" aria-labelledby="h-system">
-        <header class="panel__head subsection__head">
-          <h3 class="panel__title" id="h-system">SYSTEM</h3>
-          <span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-state">AWAITING DATA</span></span>
+      <section class="panel" aria-labelledby="h-routines">
+        <header class="panel__head">
+          <h3 class="panel__title" id="h-routines">ROUTINES</h3>
+          <span class="panel-count mono" id="routines-count">AWAITING DATA</span>
         </header>
-        <h4 class="subhead">HOW THIS RUNS</h4>
-        <div class="explain">
-          <p>Nothing on this page was assembled to order. Eight agents each own one part of the job, a scheduler wakes them on a fixed cadence, and a monthly budget stops them. What you are reading is the output of the last run that finished.</p>
-          <p><strong>Collection is deterministic and owns the clock.</strong> A worker process fetches every source on a schedule, parses what comes back, matches it against what it already holds, and writes a snapshot. No model takes part in any of that, so a collection costs nothing per run and keeps going even when everything above it is stopped.</p>
-          <p><strong>Models are used for judgment and nowhere else.</strong> Severity, Australian relevance, impact and the editorial pass are model calls over evidence that has already been retrieved. CVSS scores, KEV status, EPSS and technique IDs are looked up from the authoritative register, never generated — which is why a field this site cannot source says <span class="mono">unknown</span> rather than a plausible number.</p>
-          <p><strong>Three collection lanes, two schedulers.</strong> A FAST lane every hour for advisories and exploitation reports; a NORMAL lane every 4 hours for news, vendor and research sources; a DEEP lane once a day at about 03:00 Sydney time for source discovery, trends and follow-ups on developing events. The worker owns the first two, which is what makes the snapshot survive the control plane going down.</p>
-          <p><strong>The control plane is kept separate from the pipeline.</strong> Paperclip holds the org chart, wakes the agents, records heartbeats, and enforces budgets and approvals — and holds none of the collection logic. If it stops, collection and publication carry on without it. That split is deliberate.</p>
-          <p><strong>Cost is a hard limit, not a target.</strong> US$20 a month, enforced at the provider key rather than by good intentions. Two of the eight agents — SERAPH and RIPPERDOC — are deterministic and spend nothing; TELETRAAN calls a model only to triage an incident. RIPPERDOC re-reads the model catalogue every morning, keeps each of the others on the cheapest model that can still do its job, prefers a free model wherever one passes the tests, and moves an agent off a model that starts failing it.</p>
-        </div>
-
-        <h4 class="subhead">COLLECTION REPLAY</h4>
-        <p class="hint">A replay of the last completed run through the pipeline stages. It is a picture of a past run, not a running process.</p>
-        <div id="pipeline"></div>
-
-        <h4 class="subhead">SOURCES</h4>
-        <div id="source-health"></div>
-
-        <h4 class="subhead">VERSIONS</h4>
-        <dl class="kv mono" id="system-versions"></dl>
+        <p class="hint">Schedules as configured; Paperclip decides whether they run. An agent or routine paused there does not run, and this page cannot see which are paused, so a schedule here is not a claim that anything ran. A routine marked FROM STAGE 5 is not switched on until that stage of the rollout.</p>
+        <div id="org-routines"></div>
       </section>
     </section>
+
+    <!-- SYSTEM and SOURCES are drawn by pages.js into their hosts; hud.js puts the label and the
+         status light each hands back in the view head. -->
+    <section class="view" id="view-system" aria-labelledby="h-system" hidden>
+      <header class="view__head">
+        <h2 class="view__title" id="h-system">SYSTEM</h2>
+        <span class="panel-status"><span class="led" data-state="idle" id="system-led"></span><span class="panel-count mono" id="system-count">AWAITING DATA</span></span>
+      </header>
+      <p class="view__desc">How a story gets from a source to this page, which steps are code and which are AI, and how the last completed collection went.</p>
+      <div id="system-page" class="page-host"></div>
+    </section>
+
+    <section class="view" id="view-sources" aria-labelledby="h-sources" hidden>
+      <header class="view__head">
+        <h2 class="view__title" id="h-sources">SOURCES</h2>
+        <span class="panel-status"><span class="led" data-state="idle" id="sources-led"></span><span class="panel-count mono" id="sources-count">AWAITING DATA</span></span>
+      </header>
+      <p class="view__desc">Every source the worker reads: whether it is healthy, where it stands in the pipeline, what it covers and how far its reports hold up.</p>
+      <div id="sources-page" class="page-host"></div>
+    </section>
   </main>
-</div>
 
 <footer class="site-footer">
   <p>CyberPulse-AI publishes canonical, evidence-linked events from public sources. Each page is a snapshot of the last completed collection, not a continuous feed. Times are shown in Australia/Sydney and stored in UTC. The CyberPulse Index is our own composite measure, not an official scale.</p>

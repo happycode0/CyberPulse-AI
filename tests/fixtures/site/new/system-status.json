@@ -1,0 +1,94 @@
+{
+ "generated_at": "2026-10-04T10:00:01.877051Z",
+ "last_completed_collection": "2026-10-04T10:00:01.872199Z",
+ "pipeline_version": "1.0.0",
+ "schema_version": "1",
+ "scoring_version": "4",
+ "last_run": {
+  "run_id": "run-fast-20261004T100000Z-61d3bd",
+  "lane": "fast",
+  "started_at": "2026-10-04T10:00:00.085037Z",
+  "finished_at": "2026-10-04T10:00:01.872199Z",
+  "sources_ok": 10,
+  "sources_failed": 0,
+  "sources_stale": 1,
+  "items_fetched": 90,
+  "new_events": 0,
+  "updated_events": 0,
+  "duplicates": 90,
+  "archived_events": 0,
+  "error_count": 1
+ },
+ "counts": {
+  "events_published": 194,
+  "events_total": 4907,
+  "sources_total": 60,
+  "sources_enabled": 54
+ },
+ "schedule": [
+  {
+   "job": "fast",
+   "label": "Fast lane",
+   "cron": "0 * * * *",
+   "timezone": "UTC",
+   "kind": "code",
+   "summary": "Checks advisories and busy news feeds."
+  },
+  {
+   "job": "normal",
+   "label": "Normal lane",
+   "cron": "0 */4 * * *",
+   "timezone": "UTC",
+   "kind": "code",
+   "summary": "Checks the rest of the regular sources."
+  },
+  {
+   "job": "ground_truth",
+   "label": "Ground truth",
+   "cron": "25 */6 * * *",
+   "timezone": "UTC",
+   "kind": "code",
+   "summary": "Refreshes KEV, EPSS, CVSS, OSV and MITRE."
+  },
+  {
+   "job": "enrich",
+   "label": "AI enrichment",
+   "cron": "5,35 * * * *",
+   "timezone": "UTC",
+   "kind": "ai",
+   "summary": "Adds summaries, topics and severity estimates."
+  },
+  {
+   "job": "digest",
+   "label": "Morning digest",
+   "cron": "10 7,8,9 * * *",
+   "timezone": "Australia/Sydney",
+   "kind": "mixed",
+   "summary": "Writes and sends the daily digest."
+  },
+  {
+   "job": "discovery",
+   "label": "Source discovery",
+   "cron": "10 3 * * *",
+   "timezone": "Australia/Sydney",
+   "kind": "mixed",
+   "summary": "Looks for new sources to test."
+  },
+  {
+   "job": "gauntlet",
+   "label": "Gauntlet",
+   "cron": "40 3 * * sun",
+   "timezone": "Australia/Sydney",
+   "kind": "ai",
+   "summary": "Weekly model check."
+  },
+  {
+   "job": "odd",
+   "label": "Odd job",
+   "cron": "0 9-17 * * *",
+   "timezone": "UTC",
+   "kind": "unknown",
+   "summary": null
+  }
+ ]
+}

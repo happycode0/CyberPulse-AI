@@ -1,0 +1,27 @@
+{
+  "company": {
+    "name": "CyberPulse",
+    "mission": "Produce the most accurate, evidence-based picture of cyber security, AI security and AI-related developments, with an Australia-first perspective and global coverage.",
+    "budget_usd": 12.0
+  },
+  "agents": [
+    {"callsign": "MORPHEUS", "title": "CEO", "role": "ceo", "reports_to": null, "team": "Leadership", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-pro", "budget_usd": 2.0, "max_daily_runs": 4, "summary": "Chief executive and chief editor: sets the day's priorities and signs off the daily report."},
+    {"callsign": "TELETRAAN", "title": "Operation", "role": "devops", "reports_to": "MORPHEUS", "team": "Operations", "adapter": "model", "model": "openrouter/qwen/qwen3.8-flash", "budget_usd": 1.0, "max_daily_runs": 12, "summary": "Watchdog and SRE: triages incidents and reviews code changes."},
+    {"callsign": "SERAPH", "title": "Collector", "role": "devops", "reports_to": "TELETRAAN", "team": "Operations", "adapter": "http", "model": null, "budget_usd": 0.0, "max_daily_runs": 24, "summary": "Wakes the worker's collection, the source gate and ground truth over HTTP; runs no model."},
+    {"callsign": "DECKARD", "title": "Researcher", "role": "researcher", "reports_to": "MORPHEUS", "team": "Editorial", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 2.0, "max_daily_runs": 12, "summary": "Research, context and developing events for the desk digest."},
+    {"callsign": "VOIGHT", "title": "Publisher", "role": "qa", "reports_to": "MORPHEUS", "team": "Editorial", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-pro", "budget_usd": 2.0, "max_daily_runs": 20, "summary": "Editorial check: samples what was published and says what does not hold up."},
+    {"callsign": "TACHIKOMA", "title": "Finder", "role": "researcher", "reports_to": "MORPHEUS", "team": "Sources", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 1.0, "max_daily_runs": 2, "summary": "Source discovery: proposes new sources from the worker's finds."},
+    {"callsign": "RIPPERDOC", "title": "Cheap", "role": "cfo", "reports_to": "MORPHEUS", "team": "Finance & models", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 0.5, "max_daily_runs": 4, "summary": "Cost ceiling and model scout: reads the scan and the gauntlet and proposes cheaper models."},
+    {"callsign": "WHEELJACK", "title": "Coder", "role": "engineer", "reports_to": "TELETRAAN", "team": "Operations", "adapter": "model", "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 1.0, "max_daily_runs": 4, "summary": "Collectors, parsers and the platform: fixes what TELETRAAN files."}
+  ],
+  "routines": [
+    {"name": "Daily editorial", "assignee": "MORPHEUS", "cron": "30 7 * * *", "timezone": "Australia/Sydney", "summary": "Overnight digest, follow-ups, gaps, VOIGHT verdicts and the daily report.", "starts": "now"},
+    {"name": "Desk digest", "assignee": "DECKARD", "cron": "0 6,14,22 * * *", "timezone": "Australia/Sydney", "summary": "Review the candidate events in the desk digest: Australia first, then global, then AI.", "starts": "now"},
+    {"name": "Daily QA sample", "assignee": "VOIGHT", "cron": "0 7 * * *", "timezone": "Australia/Sydney", "summary": "QA a sample of yesterday's published events.", "starts": "Stage 5"},
+    {"name": "Follow-up", "assignee": "DECKARD", "cron": "0 3-21/6 * * *", "timezone": "Australia/Sydney", "summary": "Work the follow-up queue and report on each task due.", "starts": "Stage 5"},
+    {"name": "Source discovery", "assignee": "TACHIKOMA", "cron": "30 3 * * *", "timezone": "Australia/Sydney", "summary": "Read the worker's discovery finds and propose sources, plus any open gap topics.", "starts": "Stage 5"},
+    {"name": "Model scan", "assignee": "RIPPERDOC", "cron": "0 4 * * *", "timezone": "Australia/Sydney", "summary": "Read the daily model scan and report what changed.", "starts": "Stage 5"},
+    {"name": "Model gauntlet", "assignee": "RIPPERDOC", "cron": "0 5 * * 0", "timezone": "Australia/Sydney", "summary": "Report the weekly gauntlet results and raise each new proposal.", "starts": "Stage 5"},
+    {"name": "Monthly cost review", "assignee": "RIPPERDOC", "cron": "0 9 1 * *", "timezone": "Australia/Sydney", "summary": "Reconcile last month's spend and report to MORPHEUS.", "starts": "now"}
+  ]
+}

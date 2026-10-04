@@ -13,7 +13,7 @@
     "severity", "severity_source",
     "risk", "au", "entities",
     "cves", "mitre_techniques", "claims", "sources", "timeline", "relationships",
-    "tags", "pending_enrichment"
+    "tags", "pending_enrichment", "importance"
   ],
   "allOf": [
     {
@@ -73,9 +73,30 @@
     "timeline": { "type": "array", "items": { "$ref": "#/$defs/timeline_entry" } },
     "relationships": { "type": "array", "items": { "$ref": "#/$defs/relationship" } },
     "tags": { "type": "array", "items": { "type": "string" } },
-    "pending_enrichment": { "type": "boolean" }
+    "pending_enrichment": { "type": "boolean" },
+    "importance": {
+      "description": "Set at publish time; null only on an event not yet published.",
+      "anyOf": [{ "$ref": "#/$defs/importance" }, { "type": "null" }]
+    }
   },
   "$defs": {
+    "published_event": {
+      "description": "An event as live.json and history/*.json carry it: always rated.",
+      "$ref": "#",
+      "properties": { "importance": { "$ref": "#/$defs/importance" } }
+    },
+    "importance": {
+      "description": "How much the event matters (docs/wiki/importance-and-reputation.md).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "score", "tier", "reasons"],
+      "properties": {
+        "version": { "type": "string" },
+        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "tier": { "enum": ["key", "notable", "routine"] },
+        "reasons": { "type": "array", "maxItems": 5, "items": { "type": "string" } }
+      }
+    },
     "unit_score": { "type": "number", "minimum": 0, "maximum": 1 },
     "nullable_unit_score": { "anyOf": [{ "$ref": "#/$defs/unit_score" }, { "type": "null" }] },
     "string_list": { "type": "array", "items": { "type": "string" } },

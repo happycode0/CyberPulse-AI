@@ -66,6 +66,7 @@ helper reads it inside the container, and every ops API answer passes the secret
 
 | Page | Covers |
 |---|---|
+| [Your checklist](owner-checklist.md) | What is left for you, in order: the 8-agent import, the agents' environment, turning the crew on |
 | [Watchdog incidents](watchdog-incidents.md) | One entry for each of the 14 incident kinds |
 | [Services](services.md) | The database down; Paperclip down |
 | [AI budget](ai-budget.md) | A budget exhausted, the OpenRouter limit hit, unexpected spend |
