@@ -2361,7 +2361,7 @@ function routineRow(r) {
     'tr',
     {},
     h('th', { scope: 'row' }, h('span', { class: 'routine__name', text: r.name }), later ? h('span', { class: 'chip routine__starts', text: `FROM ${String(r.starts).toUpperCase()}` }) : null),
-    h('td', { class: 'mono', text: r.assignee || '—' }),
+    h('td', { class: 'mono routine__agent', text: r.assignee || '—' }),
     h(
       'td',
       {},
@@ -2408,7 +2408,8 @@ export function renderOrg(org) {
   if (led) led.dataset.state = 'ok';
   const topCallsign = model.top?.callsign || null;
   if (chart) {
-    clear(chart).append(
+    // The helper, not Element.append, which would write an absent part as the text "null".
+    append(clear(chart), [
       model.top
         ? h(
           'div',
@@ -2432,7 +2433,7 @@ export function renderOrg(org) {
       model.unlisted.length
         ? h('p', { class: 'hint', text: `Not in the published org chart: ${listWords(model.unlisted)}.` })
         : null,
-    );
+    ]);
   }
   if (routineCount) routineCount.textContent = plural(model.routines.length, 'routine').toUpperCase();
   if (table) {
