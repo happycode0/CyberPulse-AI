@@ -115,6 +115,14 @@ a:hover { color: var(--text-head); }
   .site-header__row { grid-template-columns: minmax(0, 1fr) max-content; grid-template-areas: "brand controls" "tabs tabs" "status status"; }
   .tabs { overflow-x: auto; scrollbar-width: thin; margin: 0 -20px; padding: 0 20px; }
 }
+/* A phone: the brand and the two buttons beside it shrink to share the first line, and the brand
+   is cut short rather than run under HISTORY on the narrowest screens. */
+@media (max-width: 440px) {
+  .site-header__row { column-gap: 12px; }
+  .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 15px; letter-spacing: 0.05em; }
+  .site-header__controls { gap: 6px; }
+  .site-header__controls .btn { padding: 6px 9px; min-height: 30px; font-size: 11px; }
+}
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: 600 12px/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 12px; min-height: 34px; cursor: pointer; }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -281,7 +289,8 @@ a.btn { text-decoration: none; }
    than any severity hue, and its tier is the word: KEY filled, NOTABLE outlined, ROUTINE none. */
 .imp-badge { display: inline-flex; align-items: center; padding: 4px 8px; border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); background: transparent; font: 700 12px/1.1 var(--font-mono); letter-spacing: 0.08em; white-space: nowrap; }
 .imp-badge[data-tier="key"] { color: var(--bg-page); background: var(--accent); }
-.imp-badge__score { font-weight: 500; letter-spacing: 0.02em; }
+/* A margin, not the leading space in the text: a flex item drops that. */
+.imp-badge__score { margin-left: 0.6ch; font-weight: 500; letter-spacing: 0.02em; }
 
 /* ------------------------------------------------------------------ chips */
 
