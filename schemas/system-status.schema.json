@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": [
     "generated_at", "last_completed_collection", "pipeline_version", "schema_version",
-    "scoring_version", "last_run", "counts"
+    "scoring_version", "last_run", "counts", "schedule"
   ],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
@@ -47,6 +47,26 @@
     "counts": {
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "schedule": {
+      "description": "The worker's jobs, as its scheduler runs them (worker/schedule.py).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["job", "label", "cron", "timezone", "kind", "summary"],
+        "properties": {
+          "job": { "type": "string" },
+          "label": { "type": "string" },
+          "cron": { "type": "string" },
+          "timezone": { "enum": ["UTC", "Australia/Sydney"] },
+          "kind": {
+            "description": "code: no model call; ai: the job calls a model; mixed: both.",
+            "enum": ["code", "ai", "mixed"]
+          },
+          "summary": { "type": "string" }
+        }
+      }
     }
   }
 }

@@ -21,6 +21,7 @@ from worker.models import (
     Event,
     EventStatus,
     EvidenceClass,
+    ImportanceTier,
     KevEntry,
     Lane,
     MaterialChange,
@@ -40,6 +41,7 @@ from worker.models import (
     beat_of,
     seed_domains,
 )
+from worker.pipeline.importance import with_importance
 from worker.version import (
     PIPELINE_VERSION,
     SCHEMA_VERSION,
@@ -140,6 +142,11 @@ def _full_event() -> Event:
             Relationship(type=RelationshipType.EXPLOITS, event_id="evt-2026-000098")
         ],
     )
+
+
+def _published(event: Event) -> dict:
+    """The event as live.json carries it: rated at publish time (worker/publish/build.py)."""
+    return with_importance(event, {}).model_dump_public()
 
 
 def _schema_validator(name: str) -> jsonschema.Draft202012Validator:
@@ -376,11 +383,44 @@ def test_live_schema_validates_document_with_events():
         "last_completed_collection": "2026-09-29T11:55:00Z",
         "pipeline_version": PIPELINE_VERSION,
         "counts": {"total": 2, "critical": 1},
-        "events": [_minimal().model_dump_public(), _full_event().model_dump_public()],
+        "events": [_published(_minimal()), _published(_full_event())],
     }
     validator.validate(doc)
     doc["last_completed_collection"] = None
     validator.validate(doc)
+
+
+@pytest.mark.parametrize("name", ["live.schema.json", "history.schema.json"])
+def test_a_published_event_must_be_rated(name):
+    """An event straight from the database has no importance; a published one always has."""
+    validator = _schema_validator(name)
+    _schema_validator("event.schema.json").validate(_minimal().model_dump_public())
+    doc = {
+        "generated_at": "2026-09-29T12:00:00Z",
+        "pipeline_version": PIPELINE_VERSION,
+        "counts": {},
+        "events": [_minimal().model_dump_public()],
+        **(
+            {"last_completed_collection": None}
+            if name == "live.schema.json"
+            else {"date": "2026-09-29"}
+        ),
+    }
+    with pytest.raises(jsonschema.ValidationError, match="importance|None"):
+        validator.validate(doc)
+    doc["events"] = [_published(_minimal())]
+    validator.validate(doc)
+    for bad in ({"score": 101}, {"tier": "urgent"}, {"reasons": ["r"] * 6}):
+        rated = _published(_minimal())
+        rated["importance"] = {**rated["importance"], **bad}
+        with pytest.raises(jsonschema.ValidationError):
+            validator.validate({**doc, "events": [rated]})
+
+
+def test_event_schema_importance_tiers_match_python_enum():
+    schema = json.loads((SCHEMAS / "event.schema.json").read_text())
+    tiers = schema["$defs"]["importance"]["properties"]["tier"]["enum"]
+    assert set(tiers) == {m.value for m in ImportanceTier}
 
 
 @pytest.mark.parametrize(
@@ -428,11 +468,11 @@ def test_ai_significance_is_dropped_off_the_ai_beat():
 
 def test_live_schema_validates_ai_events_and_rejects_significance_on_cyber():
     validator = _schema_validator("live.schema.json")
-    ai = _minimal(domains=["ai"], ai_significance=AiSignificance.MAJOR).model_dump_public()
-    both = _minimal(
+    ai = _published(_minimal(domains=["ai"], ai_significance=AiSignificance.MAJOR))
+    both = _published(_minimal(
         event_id="evt-2026-000002", domains=["cybersecurity", "ai"],
         ai_significance=AiSignificance.MINOR,
-    ).model_dump_public()
+    ))
     doc = {
         "generated_at": "2026-09-29T12:00:00Z",
         "last_completed_collection": None,
@@ -442,7 +482,7 @@ def test_live_schema_validates_ai_events_and_rejects_significance_on_cyber():
     }
     validator.validate(doc)
     assert [e["beat"] for e in doc["events"]] == ["ai", "both"]
-    cyber = {**_full_event().model_dump_public(), "ai_significance": "major"}
+    cyber = {**_published(_full_event()), "ai_significance": "major"}
     with pytest.raises(jsonschema.ValidationError):
         validator.validate({**doc, "events": [cyber]})
     with pytest.raises(jsonschema.ValidationError):

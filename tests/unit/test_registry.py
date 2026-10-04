@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from worker.models import Lane
-from worker.sources.registry import load_registry, sources_for_lane
+from worker.models import Lane, Standing
+from worker.sources.registry import REGISTRY_PATH, load_registry, sources_for_lane
 
 
 def test_registry_loads_and_every_source_is_valid():
@@ -58,3 +58,54 @@ def test_a_source_naming_an_unknown_publisher_is_rejected(tmp_path):
     )
     with pytest.raises(ValueError, match="'a': unknown publisher 'nobody'"):
         load_registry(path)
+
+
+def test_every_shipped_source_has_a_description_and_a_standing():
+    """The Sources page shows both, and reputation starts from the standing
+    (docs/wiki/importance-and-reputation.md). Only a source the discovery gate adds goes
+    without, and it lives in the database, not here."""
+    for s in load_registry(REGISTRY_PATH):
+        assert s.description, f"{s.id} has no description"
+        assert isinstance(s.standing, Standing), f"{s.id} has no standing"
+
+
+def test_the_publisher_reads_the_shipped_registry():
+    assert REGISTRY_PATH == Path(__file__).resolve().parents[2] / "config" / "sources.yaml"
+
+
+def test_the_standings_where_it_matters():
+    by_id = {s.id: s.standing for s in load_registry(REGISTRY_PATH)}
+    assert {by_id[i] for i in ("acsc_alerts", "cisa_kev", "asd", "oaic")} == {
+        Standing.AUTHORITATIVE
+    }
+    assert by_id["abc_cyber"] is by_id["krebs"] is Standing.ESTABLISHED
+    assert by_id["x_security_search"] is Standing.COMMUNITY
+
+
+_SOURCE = (
+    "  - {id: a, name: A, type: rss, region: au, category: news, class: feed, priority: 1, "
+    "lane: fast, enabled: true, url: 'https://example.test/feed', parser: rss, "
+    "expected_frequency: daily"
+)
+
+
+@pytest.mark.parametrize(
+    ("extra", "error"),
+    [
+        (", standing: famous", "standing"),
+        (", description: ''", "description must be one non-empty line"),
+        (", description: \"two\\nlines\"", "description must be one non-empty line"),
+    ],
+)
+def test_a_bad_standing_or_description_is_rejected(tmp_path, extra, error):
+    path = tmp_path / "sources.yaml"
+    path.write_text("sources:\n" + _SOURCE + extra + "}\n")
+    with pytest.raises(ValueError, match=error):
+        load_registry(path)
+
+
+def test_standing_and_description_are_optional_to_the_model(tmp_path):
+    path = tmp_path / "sources.yaml"
+    path.write_text("sources:\n" + _SOURCE + "}\n")
+    [source] = load_registry(path)
+    assert source.description is None and source.standing is None
