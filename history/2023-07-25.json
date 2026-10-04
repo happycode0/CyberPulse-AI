@@ -1,0 +1,142 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2023-07-25",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 1,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000848",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-07-25T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-07-31T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2023-35081: Ivanti Endpoint Manager Mobile (EPMM) Ivanti Endpoint Manager Mobile (EPMM) Path Traversal Vulnerability",
+      "summary": "Ivanti Endpoint Manager Mobile (EPMM) contains a path traversal vulnerability that enables an authenticated administrator to perform malicious file writes to the EPMM server. This vulnerability can be used in conjunction with CVE-2023-35078 to bypass authentication and ACLs restrictions (if applicable).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.928108694131358e-176,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2023-35078",
+          "cvss": null,
+          "epss": {
+            "score": 0.99999,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-07-25",
+            "due_date": "2023-08-15"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2023-35081",
+          "cvss": null,
+          "epss": {
+            "score": 0.63577,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-07-31",
+            "due_date": "2023-08-21"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2023-35078 and CVE-2023-35081 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2023-35078 being exploited in the next 30 days at 100%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2023-35078"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2023-35078",
+          "published": "2023-07-25T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2023-35081",
+          "published": "2023-07-31T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-07-31T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    }
+  ]
+}

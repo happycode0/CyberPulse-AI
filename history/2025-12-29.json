@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-12-29",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000360",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-12-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-12-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-14847: MongoDB MongoDB and MongoDB Server MongoDB and MongoDB Server Improper Handling of Length Parameter Inconsistency Vulnerability",
+      "summary": "MongoDB Server contains an improper handling of length parameter inconsistency vulnerability in Zlib compressed protocol headers. This vulnerability may allow a read of uninitialized heap memory by an unauthenticated client.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.3301642424008197e-42,
+        "prominence": 5.03992938501831e-85
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-14847",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.83218,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-12-29",
+            "due_date": "2026-01-19"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-14847 as exploited in the wild, added 2025-12-29, with US federal agencies due to fix it by 2026-01-19.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-14847 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-14847"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-14847 being exploited in the next 30 days at 83%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-14847"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-14847",
+          "published": "2025-12-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-12-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    }
+  ]
+}

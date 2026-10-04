@@ -1,0 +1,750 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-11",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 7,
+    "critical": 2,
+    "high": 2,
+    "medium": 0,
+    "low": 0,
+    "unknown": 3,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 5
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000136",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-11T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-84869: ConnectWise ScreenConnect ConnectWise ScreenConnect Improper Privilege Management and Missing Authorization Vulnerability",
+      "summary": "A newly disclosed vulnerability (CVE-2026-84869) in ConnectWise ScreenConnect allows attackers to transfer and execute files during an active remote session without proper authorization or confirmation.",
+      "why_it_matters": "The flaw has a CVSS score of 9.9 and is classified as critical, meaning remote code execution could occur in legitimate remote support sessions.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.0003448516627828866,
+        "prominence": 0.05296707794991554
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Keen vulnerability is listed in the KEV database.",
+          "High CVSS score (9.9) indicates severe impact.",
+          "Remote file execution is possible during active sessions."
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "ConnectWise"
+        ],
+        "products": [
+          "ConnectWise ScreenConnect"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-84869",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00924,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "id": "T1570",
+          "name": "Lateral Tool Transfer",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-84869 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-14.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-84869 is rated 9.9 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-84869"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-84869 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-84869"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-84869",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "privilege-management",
+        "missing-authorization",
+        "remote-execution"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000139",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-11T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-85706: GitLab Community Edition and Enterprise Edition GitLab Community Edition and Enterprise Edition Path Traversal Vulnerability",
+      "summary": "A path traversal flaw in GitLab Community and Enterprise Editions lets unauthenticated users read any file on the server.",
+      "why_it_matters": "The flaw has a CVSS score of 10.0 and is listed in the KEV, indicating it is actively exploited. Attackers can read arbitrary files without authentication, potentially exposing sensitive data.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.0003448516627828866,
+        "prominence": 0.050404411392932856
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GitLab"
+        ],
+        "products": [
+          "GitLab Community Edition"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-85706",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.92956,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-85706 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-14.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-85706 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-85706"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-85706 being exploited in the next 30 days at 93%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-85706"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-85706",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "path-traversal",
+        "gitlab",
+        "kev",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000137",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-11T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-42016: JFrog Artifactory JFrog Artifactory Incorrect Authorization Vulnerability",
+      "summary": "JFrog Artifactory contains an incorrect authorization vulnerability that leads to a privilege escalation attack due to a validation check of the token signature/issuer and not the token’s scope.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 0.00045263143679774847,
+        "prominence": 0.0023227407099893054
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-42016",
+          "cvss": {
+            "score": 8.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.08643,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-42016 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-42016 is rated 8.1 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-42016"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-42016 being exploited in the next 30 days at 8.6%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-42016"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-42016",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000138",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-11T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-42018: JFrog Artifactory JFrog Artifactory Improper Authentication Vulnerability",
+      "summary": "JFrog Artifactory contains an improper authentication vulnerability that could return an internal anonymous-user token to an unauthenticated caller when anonymous access is disabled, potentially exposing sensitive resources.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 0.00045263143679774847,
+        "prominence": 0.0023227407099893054
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-42018",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.09805,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-42018 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-42018 is rated 7.5 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-42018"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-42018 being exploited in the next 30 days at 9.8%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-42018"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-42018",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001786",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-11T03:37:59Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-11T03:37:59Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Mathspace breach exposed data of more than 1 million students, parents and teachers",
+      "summary": "Mathspace, an online maths learning platform used in schools across Australia and New Zealand, said attackers breached its systems by exploiting a vulnerability in Metabase, an internal reporting tool the [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.000477011962173584,
+        "prominence": 7.129503879252377e-08
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/mathspace-breach-exposed-data-of-more-than-1-million-students-parents-and-teachers/?utm_source=rss&utm_medium=rss&utm_campaign=mathspace-breach-exposed-data-of-more-than-1-million-students-parents-and-teachers&utm_source=rss&utm_medium=rss&utm_campaign=mathspace-breach-exposed-data-of-more-than-1-million-students-parents-and-teachers",
+          "published": "2026-09-11T03:37:59Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T03:37:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002321",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-11T16:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-11T16:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Cognition helps Devin test its own work with GPT‑6 Astra",
+      "summary": "GPT‑6 Astra improves Devin’s ability to test software and show that it works, with the goal of helping engineers review less code and ship more.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0005480768737907076,
+        "prominence": 5.2820207669290974e-08
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/cognition-devin-testing-with-astra",
+          "published": "2026-09-11T16:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002320",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-11T10:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-11T10:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Rapidly scaling online storage to serve over 1 billion ChatGPT users",
+      "summary": "Learn how OpenAI evolved Habitat from a Python library into a globally distributed storage platform serving 1 billion ChatGPT users and 22M requests per second.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0005025887092530552,
+        "prominence": 4.441459976682325e-08
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/scaling-storage-one-billion-users-part-one",
+          "published": "2026-09-11T10:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T10:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

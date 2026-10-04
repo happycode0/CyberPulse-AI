@@ -1,0 +1,872 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-08-31",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 10,
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 8,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 10
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000158",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-08-31T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-82078: PaperCut NG/MF PaperCut NG/MF Unsafe Reflection Vulnerability",
+      "summary": "PaperCut NG/MF contains an unsafe reflection vulnerability that allows an attacker to manipulate system configuration parameters and execute arbitrary Java bytecode residing on the application classpath under the security context of the PaperCut server process. This vulnerability can be chained with CVE-2026-81578.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 1.0001836198059329e-05,
+        "prominence": 0.017396405842115322
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-81578",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:H/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.85169,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-31",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-82078",
+          "cvss": {
+            "score": 9.4,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.61394,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-31",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-81578 and CVE-2026-82078 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-82078 is rated 9.4 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-82078"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-81578 being exploited in the next 30 days at 85%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-81578"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-82078",
+          "published": "2026-08-31T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000159",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-08-31T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-81578: PaperCut NG/MF PaperCut NG/MF Missing Authentication for Critical Function Vulnerability",
+      "summary": "PaperCut NG/MF contains a missing authentication for critical function vulnerability which allows an unauthenticated remote attacker to modify certain system configurations. This vulnerability can be chained with CVE-2026-82078.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 1.0001836198059329e-05,
+        "prominence": 0.017396405842115322
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-81578",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:H/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.85169,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-31",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-82078",
+          "cvss": {
+            "score": 9.4,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.61394,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-31",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-81578 and CVE-2026-82078 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-82078 is rated 9.4 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-82078"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-81578 being exploited in the next 30 days at 85%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-81578"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-81578",
+          "published": "2026-08-31T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000141"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000084",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T23:18:15Z",
+      "last_seen": "2026-10-03T19:15:00.004209Z",
+      "last_material_update": "2026-08-31T23:18:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Multi-factor Authentication: Switch it on",
+      "summary": "This September, it is time to switch on multi-factor authentication (MFA) to help reduce the chances of cyber compromise.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 1.4003314601837999e-05,
+        "prominence": 6.878145400227833e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC News)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_news",
+          "url": "https://www.cyber.gov.au/about-us/view-all-content/news/multi-factor-authentication-switch-it-on",
+          "published": "2026-08-31T23:18:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T23:18:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC News",
+          "sources": [
+            "acsc_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002013",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T10:00:36Z",
+      "last_seen": "2026-10-02T00:00:00.044873Z",
+      "last_material_update": "2026-08-31T10:00:36Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Spring Ring: An Inside Look at Voice Phishing Campaigns in Microsoft Teams",
+      "summary": "Learn how the Spring Ring campaign abuses Microsoft Teams and voice phishing to deploy malware and target enterprise domain controllers. The post Spring Ring: An Inside Look at Voice Phishing Campaigns in Microsoft Teams appeared first on Unit 42 .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 1.155731724666109e-05,
+        "prominence": 2.347644899124564e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/spring-ring-voice-phishing-campaigns/",
+          "published": "2026-08-31T10:00:36Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T10:00:36Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002351",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OpenAI supports California’s bill to advance youth AI safety",
+      "summary": "OpenAI supports California SB 1119, advancing strong, age-appropriate AI safeguards for teens while preserving opportunities to learn, create, and explore.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.0634899177090689e-05,
+        "prominence": 1.9878552148240573e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/supporting-california-bill-advance-ai-youth-safety",
+          "published": "2026-08-31T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002352",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Polimill builds Japan's next-generation public AI infrastructure",
+      "summary": "Polimill uses OpenAI GPT models and Codex to help municipalities search and use administrative knowledge while accelerating development.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.0634899177090689e-05,
+        "prominence": 1.9878552148240573e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/polimill",
+          "published": "2026-08-31T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004801",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Improving our alignment and security efforts",
+      "summary": "Improving our alignment and security efforts",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.0634899177090689e-05,
+        "prominence": 1.9878552148240573e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/news/improving-alignment-security-efforts",
+          "published": "2026-08-31T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002353",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T04:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T04:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A milestone in expanding access to AI",
+      "summary": "ChatGPT Ads reaches $1 billion in annualized revenue run rate and expands globally, supporting broader access to AI through free and affordable options.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.0184014341880605e-05,
+        "prominence": 1.8228705678521022e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads",
+          "published": "2026-08-31T04:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T04:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004892",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T13:31:06Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T13:31:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Import AI 471: Why Hugging Face worries me; space mining; FIve Eyes on AI",
+      "summary": "Plus, a live event with Robin Sloan!",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 9.27405078594267e-06,
+        "prominence": 1.5116680382330658e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "import_ai",
+          "url": "https://importai.substack.com/p/import-ai-471-why-hugging-face-worries",
+          "published": "2026-08-31T13:31:06Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "import_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T13:31:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Import AI (Jack Clark)",
+          "sources": [
+            "import_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004965",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-31T09:10:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-31T09:10:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Commission designates ChatGPT, Reddit, Roblox under Digital Services Act",
+      "summary": "Commission designates ChatGPT, Reddit, Roblox under Digital Services Act Anonymous (not verified) Mon, 08/31/2026 - 11:10 The Commission has designated ChatGPT as a Very Large Online Search Engine (VLOSE), as well as Reddit and Roblox as Very Large Online Platforms (VLOPs), under the Digital Services Act (DSA). These services declared that they reach at least 45 million average monthly users in the EU and thus meet the threshold for designation. Following the notification of the designations, these services have four months, i.e. by January 2027, to comply with the additional DSA obligations…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 8.709198197834358e-06,
+        "prominence": 1.3331334629838237e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "eu_digital_strategy",
+          "url": "https://digital-strategy.ec.europa.eu/en/news/commission-designates-chatgpt-reddit-roblox-under-digital-services-act",
+          "published": "2026-08-31T09:10:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "eu_digital_strategy",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-31T09:10:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by European Commission Digital Strategy",
+          "sources": [
+            "eu_digital_strategy"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

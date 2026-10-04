@@ -1,0 +1,1679 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-10-03",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 19,
+    "critical": 1,
+    "high": 3,
+    "medium": 2,
+    "low": 1,
+    "unknown": 12,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 7
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004810",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:36:33Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:36:33Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Warlock Exploits SharePoint Flaws to Disable Security Tools and Deploy Ransomware",
+      "summary": "Warlock, a China-linked threat actor, is exploiting SharePoint vulnerabilities to disable security tools and deploy ransomware, targeting organizations in Portuguese- and Spanish-speaking countries, including critical infrastructure, government, and education sectors.",
+      "why_it_matters": "Defenders should be aware that Warlock is actively weaponizing SharePoint flaws to disable security tools and deploy ransomware, affecting critical infrastructure, government, and education organizations.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "vulnerability",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.8721336740398407,
+        "prominence": 0.517756310005432
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Targets critical infrastructure, government, and education organizations",
+          "Attacks observed by Symantec and Carbon Black Threat Hunter Team",
+          "Threat actor is China-linked"
+        ],
+        "sectors": [
+          "government",
+          "critical-infrastructure",
+          "education"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Warlock"
+        ],
+        "organisations": [
+          "Microsoft",
+          "Symantec",
+          "Carbon Black"
+        ],
+        "products": [
+          "SharePoint"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "critical-infrastructure",
+          "government",
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 0.75,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1685",
+          "name": "Disable or Modify Tools",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/warlock-exploits-sharepoint-flaws-to.html",
+          "published": "2026-10-03T14:36:33Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:36:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "sharepoint",
+        "vulnerability",
+        "china-linked",
+        "critical-infrastructure",
+        "government"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004813",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T23:12:34Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T23:12:34Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Google Gemini could soon get full access to your Mac’s files, apps and the web",
+      "summary": "Google Gemini may soon be able to access all files, apps, and the web on macOS devices without repeated permission prompts.",
+      "why_it_matters": "If Gemini can access all files and apps without permission, it could be used to exfiltrate data or execute malicious actions, increasing risk for macOS users.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.9874596045920437,
+        "prominence": 0.4789212040322438
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Google"
+        ],
+        "products": [
+          "Gemini",
+          "macos"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/google/google-gemini-could-soon-get-full-access-to-your-macs-files-apps-and-the-web/",
+          "published": "2026-10-03T23:12:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T23:12:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "gemini",
+        "macos",
+        "ai-security",
+        "privacy",
+        "ai"
+      ],
+      "pending_enrichment": false,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004857",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T16:49:10Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T16:49:10Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Capcom is preparing for a ‘future where we create games together with AI’",
+      "summary": "Capcom is exploring the use of AI in its REX Project and future game development, signalling a shift toward collaborative AI-driven creation.",
+      "why_it_matters": "This indicates a broader industry trend toward integrating AI into creative workflows, which may influence how developers approach game design and production.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.9004191442847678,
+        "prominence": 0.4381731425574448
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Capcom"
+        ],
+        "products": [
+          "Pragmata",
+          "REX Project",
+          "RE Engine"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/games/1004418/capcom-ai-game-development",
+          "published": "2026-10-03T16:49:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T16:49:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "game-development",
+        "capcom",
+        "rex-project",
+        "re-engine"
+      ],
+      "pending_enrichment": false,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004870",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T16:30:01Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T16:30:01Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenAI safety employee resigns, claiming the company’s ‘culture is broken’",
+      "summary": "David Robinson, a safety employee at OpenAI, resigned and publicly stated that the company’s culture is broken.",
+      "why_it_matters": "The resignation draws attention to internal safety concerns at a leading AI firm, potentially influencing future AI governance and safety standards.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.8962787086665244,
+        "prominence": 0.38977160080410467
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/",
+          "published": "2026-10-03T16:30:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T16:30:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "openai",
+        "resignation",
+        "safety",
+        "culture",
+        "ai-governance",
+        "ai-industry"
+      ],
+      "pending_enrichment": false,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004809",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:38:46Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:38:46Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "MI5 Says China’s MSS Funded Research Involving 100+ U.K.-Linked Academics",
+      "summary": "MI5 has warned that more than 100 academics linked to the U.K. are involved in research funded by China’s MSS through the China General Technology Research Institute, which is intended to support intelligence gathering.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "espionage",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.8725990803552162,
+        "prominence": 0.37963238393377163
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "China’s MSS"
+        ],
+        "organisations": [
+          "MI5",
+          "China General Technology Research Institute (CGTRI)"
+        ],
+        "products": [],
+        "countries": [
+          "GB",
+          "CN"
+        ],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/mi5-says-chinas-mss-funded-research.html",
+          "published": "2026-10-03T14:38:46Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:38:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "espionage",
+        "research-funding",
+        "china-mss",
+        "mi5",
+        "uk-academics"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004807",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:35:20Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:35:20Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Danish university DTU breach exposes data of up to 200,000 people",
+      "summary": "A data breach at Denmark’s Technical University of Denmark exposed information for up to 200,000 users when attackers accessed the university’s identity-and-access-management system and downloaded large volumes of data.",
+      "why_it_matters": "The scale of the breach—up to 200,000 individuals—means that a large number of credentials could be compromised, increasing the risk of phishing or credential-replay attacks against other targets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.8718783309823408,
+        "prominence": 0.37932464060102056
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "hackers"
+        ],
+        "organisations": [
+          "Technical University of Denmark"
+        ],
+        "products": [],
+        "countries": [
+          "DK"
+        ],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/danish-university-dtu-breach-exposes-data-of-up-to-200-000-people/",
+          "published": "2026-10-03T14:35:20Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:35:20Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "university",
+        "denmark"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004859",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T14:31:56Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:31:56Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "An OpenAI safety employee has quit and is sounding the alarm",
+      "summary": "David Robinson, a former OpenAI safety employee, resigned and is now publicly warning about safety concerns in an editorial.",
+      "why_it_matters": "His departure and public warnings highlight ongoing concerns about AI safety practices at OpenAI, prompting developers and regulators to scrutinize safety protocols and oversight.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.8711651658605976,
+        "prominence": 0.3790201859138208
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI",
+          "The Atlantic"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1004408/openai-safety-quits-sounding-the-alarm",
+          "published": "2026-10-03T14:31:56Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:31:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "openai",
+        "safety-resignation",
+        "ai-governance",
+        "ai-industry",
+        "editorial",
+        "alarm"
+      ],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004871",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "All the AI agents that can live in your text messages",
+      "summary": "A list of AI agents that can operate within text messages was compiled, covering general assistants and specialized agents for families, travel, and work.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.8644954106754962,
+        "prominence": 0.3761752463465
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/all-the-ai-agents-that-can-live-in-your-text-messages/",
+          "published": "2026-10-03T14:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "text-messaging",
+        "assistants",
+        "product-list"
+      ],
+      "pending_enrichment": false,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002272",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Play to win, pay to lose.",
+      "summary": "Play ransomware, also called PlayCrypt, is targeting organizations in various sectors by first exploiting a SonicWall VPN, then moving laterally with tools such as Mimikatz and PsExec, exfiltrating data, and using the victim’s own SentinelOne uninstallation utility to disable security controls before encrypting files.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "malware",
+        "data-breach",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.7591359663158215,
+        "prominence": 0.3318026465519964
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Play"
+        ],
+        "organisations": [
+          "GuidePoint Security",
+          "SonicWall",
+          "SentinelOne"
+        ],
+        "products": [
+          "Mimikatz",
+          "PsExec"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1003",
+          "name": "OS Credential Dumping",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1021",
+          "name": "Remote Services",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 1.0,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/research-saturday/444/notes",
+          "published": "2026-10-03T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "double-extortion",
+        "vpn-access",
+        "lateral-movement",
+        "data-exfiltration",
+        "tool-abuse"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004867",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T23:34:02Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T23:34:02Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "We're going to need default hard budget caps on pretty much everything",
+      "summary": "The article proposes that pay-by-usage services and APIs should implement hard budget caps that automatically cut off usage and return errors once a monthly threshold is reached, rather than merely issuing warnings.",
+      "why_it_matters": "Hard budget caps would give developers and businesses predictable cost limits for AI services, preventing unexpected charges. This could shape how cloud providers design pricing models and how regulators monitor AI usage.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.9925745299625857,
+        "prominence": 0.3198403903762819
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/",
+          "published": "2026-10-03T23:34:02Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T23:34:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "budget-cap",
+        "usage-limit",
+        "api",
+        "cost-control"
+      ],
+      "pending_enrichment": true,
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004909",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T22:56:48Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T22:56:48Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "The Agent Said It Was Done. The Database Disagreed.",
+      "summary": "An AI agent claimed to have completed a task, but a database record indicates otherwise.",
+      "why_it_matters": "This incident underscores the importance of verifying AI-generated claims against authoritative data sources, highlighting a potential risk of misinformation in AI systems.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-security",
+        "ai_security"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.9837196316661471,
+        "prominence": 0.31287382388947216
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/microsoft/thinkingbox",
+          "published": "2026-10-03T22:56:48Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:56:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-security",
+        "agent",
+        "database"
+      ],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004868",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T22:00:31Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T22:00:31Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "September sponsors-only newsletter",
+      "summary": "A content creator has released a sponsors-only September newsletter covering topics such as new Fable class models, pricing wars, 3D graphics, Blender, pixel art, LLMs applied to mathematics, accidental cyberattacks, and a vulnerability event called the \"vulnapocalypse\" for Datasette. The newsletter is available to sponsors for $10/month, with a free preview of the August edition.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "ai-industry",
+        "research"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.9704839609391868,
+        "prominence": 0.30264132394540355
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Datasette",
+          "Fable",
+          "Blender"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/newsletter/",
+          "published": "2026-10-03T22:00:31Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:00:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "newsletter",
+        "vulnerability",
+        "llm",
+        "cyberattack",
+        "datasette",
+        "blender"
+      ],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004869",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T18:43:57Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T18:43:57Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+      "summary": "Amazon Web Services announced it has stopped using non-disclosure agreements for its data center operations after facing criticism.",
+      "why_it_matters": "AWS’s decision to discontinue NDAs may increase transparency around its data center activities, potentially influencing how customers and regulators evaluate compliance and oversight.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.9256405425539304,
+        "prominence": 0.2695556897267531
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Amazon",
+          "Amazon Web Services"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/",
+          "published": "2026-10-03T18:43:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T18:43:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-center",
+        "nda",
+        "backlash"
+      ],
+      "pending_enrichment": true,
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004811",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T19:09:38Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T19:09:38Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "ShinyHunters hacker reportedly detained in Jordan, aiding FBI",
+      "summary": "A suspected ShinyHunters hacking group member known online as \"Rey\" has reportedly been detained in Jordan and is cooperating with the FBI to help locate other members of the extortion group. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "fraud",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.9313799847661727,
+        "prominence": 0.24211132039061603
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters",
+          "Rey"
+        ],
+        "organisations": [
+          "FBI"
+        ],
+        "products": [],
+        "countries": [
+          "JO"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/shinyhunters-hacker-reportedly-detained-in-jordan-aiding-fbi/",
+          "published": "2026-10-03T19:09:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:09:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "shinyhunters",
+        "extortion",
+        "jordan",
+        "fbi"
+      ],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004808",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:40:21Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T14:40:21Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "YARA-X 1.21.0 Release, (Sat, Oct 3rd)",
+      "summary": "YARA-X 1.21.0 was released, adding five improvements and fixing four bugs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.8729316654869866,
+        "prominence": 0.23370633478996472
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "YARA-X"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33392",
+          "published": "2026-10-03T14:40:21Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:40:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "yara-x",
+        "release",
+        "bugfix",
+        "improvement"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004858",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T15:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Splice CEO Kakul Srivastava thinks AI emails are killing conversations",
+      "summary": "Splice CEO Kakul Srivastava says that AI-generated emails are eroding genuine conversations among people.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.8770697859757233,
+        "prominence": 0.22766334494736432
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Splice"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/entertainment/1004162/splice-ceo-kakul-srivastava-ai-interview",
+          "published": "2026-10-03T15:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-emails",
+        "ceo-statement"
+      ],
+      "pending_enrichment": false,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004806",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T08:29:54Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-10-03T08:29:54Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "N0n ransomware: what you need to know",
+      "summary": "N0n is a new ransomware group that appeared in September 2026 and has already identified roughly a dozen victims, with the victim count growing over time.",
+      "why_it_matters": "The emergence of N0n represents a fresh ransomware threat that has already impacted multiple victims, signaling potential future attacks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "emerging-threat",
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.6,
+        "novelty": 0.7984711321585367,
+        "prominence": 0.22753861382314514
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "N0n"
+        ],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.fortra.com/blog/n0n-ransomware-what-you-need-know",
+          "published": "2026-10-03T08:29:54Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T08:29:54Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "extortion",
+        "emerging-threat",
+        "cyber-extortion"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004805",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T11:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T11:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations",
+      "summary": "A report titled \"The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations\" discusses how cloud expansion, AI, distributed systems, and complex digital environments are reshaping cybersecurity, highlighting a shift toward continuous visibility, control, and scalable risk response.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.8278436414117158,
+        "prominence": 0.20555238052014232
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/the-state-of-cybersecurity-in-2026key.html",
+          "published": "2026-10-03T11:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T11:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "cybersecurity",
+        "ai",
+        "cloud",
+        "distributed-systems",
+        "report",
+        "trend"
+      ],
+      "pending_enrichment": false,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004872",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T00:45:39Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T00:45:39Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Meta wants your next gadget to be Muse-infused",
+      "summary": "Meta wants Muse in your TV and your toaster, so it's giving the code away for free.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.7140585294246311,
+        "prominence": 0.1442277793450688
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/",
+          "published": "2026-10-03T00:45:39Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T00:45:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

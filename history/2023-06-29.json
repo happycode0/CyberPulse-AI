@@ -1,0 +1,919 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2023-06-29",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 9,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 9,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 9
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-003264",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2023-06-29T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Insights from global conversations",
+      "summary": "We are sharing what we learned from our conversations across 22 countries, and how we will be incorporating those insights moving forward.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 3.8005888482404216e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/insights-from-global-conversations",
+          "published": "2023-06-29T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000862",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-17621: D-Link DIR-859 Router D-Link DIR-859 Router Command Execution Vulnerability",
+      "summary": "D-Link DIR-859 router contains a command execution vulnerability in the UPnP endpoint URL, /gena.cgi. Exploitation allows an unauthenticated remote attacker to execute system commands as root by sending a specially crafted HTTP SUBSCRIBE request to the UPnP service when connecting to the local network.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-17621",
+          "cvss": null,
+          "epss": {
+            "score": 0.89624,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-17621 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-17621 being exploited in the next 30 days at 90%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-17621"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-17621",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000863",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-20500: D-Link DWL-2600AP Access Point D-Link DWL-2600AP Access Point Command Injection Vulnerability",
+      "summary": "D-Link DWL-2600AP access point contains an authenticated command injection vulnerability via the Save Configuration functionality in the Web interface, using shell metacharacters in the admin.cgi?action=config_save configBackup or downloadServerip parameter.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-20500",
+          "cvss": null,
+          "epss": {
+            "score": 0.97109,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-20500 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-20500 being exploited in the next 30 days at 97%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-20500"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-20500",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000864",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-25487: Samsung Mobile Devices Samsung Mobile Devices Out-of-Bounds Read Vulnerability",
+      "summary": "Samsung mobile devices contain an out-of-bounds read vulnerability within the modem interface driver due to a lack of boundary checking of a buffer in set_skb_priv(), leading to remote code execution by dereference of an invalid function pointer.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-25487",
+          "cvss": null,
+          "epss": {
+            "score": 0.00635,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-25487 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-25487 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-25487"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25487",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000865",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-25489: Samsung Mobile Devices Samsung Mobile Devices Improper Input Validation Vulnerability",
+      "summary": "Samsung mobile devices contain an improper input validation vulnerability within the modem interface driver that results in a format string bug leading to kernel panic.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-25489",
+          "cvss": null,
+          "epss": {
+            "score": 0.00531,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-25489 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-25489 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-25489"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25489",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000866",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-25394: Samsung Mobile Devices Samsung Mobile Devices Race Condition Vulnerability",
+      "summary": "Samsung mobile devices contain a race condition vulnerability within the MFC charger driver that leads to a use-after-free allowing for a write given a radio privilege is compromised.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-25394",
+          "cvss": null,
+          "epss": {
+            "score": 0.00401,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2021-25395",
+          "cvss": null,
+          "epss": {
+            "score": 0.00366,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-25394 and CVE-2021-25395 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-25394 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-25394"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25394",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25395",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Known Exploited Vulnerabilities added CVE-2021-25395",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000867",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-25371: Samsung Mobile Devices Samsung Mobile Devices Unspecified Vulnerability",
+      "summary": "Samsung mobile devices contain an unspecified vulnerability within DSP driver that allows attackers to load ELF libraries inside DSP.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-25371",
+          "cvss": null,
+          "epss": {
+            "score": 0.00802,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-25371 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-25371 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-25371"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25371",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000868",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-25372: Samsung Mobile Devices Samsung Mobile Devices Improper Boundary Check Vulnerability",
+      "summary": "Samsung mobile devices contain an improper boundary check vulnerability within DSP driver that allows for out-of-bounds memory access.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 3.5743514332658177e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-25372",
+          "cvss": null,
+          "epss": {
+            "score": 0.00804,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-06-29",
+            "due_date": "2023-07-20"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-25372 as exploited in the wild, added 2023-06-29, with US federal agencies due to fix it by 2023-07-20.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-25372 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-25372"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-25372",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000865"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004281",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-06-29T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2023-06-29T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Accelerating Vision-Language Models: BridgeTower on Habana Gaudi2",
+      "summary": "Accelerating Vision-Language Models: BridgeTower on Habana Gaudi2",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 3.4351893605716278e-180,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/bridgetower",
+          "published": "2023-06-29T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-06-29T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

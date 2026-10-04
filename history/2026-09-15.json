@@ -1,0 +1,1103 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-15",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 12,
+    "critical": 2,
+    "high": 0,
+    "medium": 1,
+    "low": 0,
+    "unknown": 9,
+    "directly_reported_in_au": 3,
+    "pending_enrichment": 10
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000065",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Wärtsilä FOS-Onboard (Update A)",
+      "summary": "Wärtsilä FOS-Onboard Update A contains two critical CVEs that could let attackers deliver unauthorized updates, execute code, or steal credentials, impacting transportation systems worldwide.",
+      "why_it_matters": "The vulnerabilities have CVSS scores of 9.5 and 9.3, indicating high risk. Exploitation could allow attackers to execute code or impersonate privileged clients, potentially compromising transportation infrastructure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0016404002040077113,
+        "prominence": 0.0652742411355712
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Affected transportation systems",
+          "No Australian source reported"
+        ],
+        "sectors": [
+          "transport"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Wärtsilä"
+        ],
+        "products": [
+          "Wärtsilä FOS-Onboard (Update A)",
+          "FOS-Onboard 5.07.0923.01"
+        ],
+        "countries": [],
+        "industries": [
+          "transport"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-78225",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00508,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-81855",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00589,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1212",
+          "name": "Exploitation for Credential Access",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-78225 is rated 9.5 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-78225"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-81855 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-81855"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-258-02",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "hardcoded-key",
+        "transportation",
+        "cisa",
+        "wartsila",
+        "fos-onboard"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000067",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "mySCADA myPRO Manager",
+      "summary": "Vulnerabilities in mySCADA myPRO Manager allow attackers to gain privileged management access or send arbitrary SMS via the connected GSM modem. Versions up to 2.1 are affected.",
+      "why_it_matters": "The high CVSS score of 9.3 indicates a severe risk, and the missing authentication could let attackers control critical manufacturing, energy, and transportation systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0016404002040077113,
+        "prominence": 0.06127284651189172
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "mySCADA Technologies"
+        ],
+        "products": [
+          "mySCADA myPRO Manager"
+        ],
+        "countries": [],
+        "industries": [
+          "manufacturing",
+          "energy",
+          "agriculture",
+          "transport"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-73807",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00778,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-82567",
+          "cvss": {
+            "score": 5.3,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00339,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-73807 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-73807"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-73807 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-73807"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-258-03",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "missing-authorization",
+        "missing-authentication",
+        "ics",
+        "scada",
+        "critical-infrastructure"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001784",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T04:05:21Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-15T04:05:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OneTrust research flags AI governance gaps as Australian adoption accelerates",
+      "summary": "OneTrust has released its 2026 AI-Ready Governance Report, reporting that Australian organisations are moving beyond AI experimentation into broader adoption, while governance and risk controls struggle to keep pace. The [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.001920656689544013,
+        "prominence": 1.1566455731264704e-06
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/onetrust-research-flags-ai-governance-gaps-as-australian-adoption-accelerates/?utm_source=rss&utm_medium=rss&utm_campaign=onetrust-research-flags-ai-governance-gaps-as-australian-adoption-accelerates&utm_source=rss&utm_medium=rss&utm_campaign=onetrust-research-flags-ai-governance-gaps-as-australian-adoption-accelerates",
+          "published": "2026-09-15T04:05:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T04:05:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002069",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T02:48:08Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-15T02:48:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AFP Commissioner calls for national debate on organised crime and illicit drug demand",
+      "summary": "Australian Federal Police Commissioner Krissy Barrett has called for a renewed national conversation about illicit drug use, arguing that Australia’s strong demand for illegal substances is helping finance organised crime, violence and wider threats to national security. In a statement published by the AFP, Commissioner Barrett linked Australia’s illicit drug market to recent organised crime-related [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0018852924350809261,
+        "prominence": 1.1144251787332234e-06
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/afp-commissioner-calls-for-national-debate-on-organised-crime-and-illicit-drug-demand/?utm_source=rss&utm_medium=rss&utm_campaign=afp-commissioner-calls-for-national-debate-on-organised-crime-and-illicit-drug-demand",
+          "published": "2026-09-15T02:48:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T02:48:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000066",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Schneider Electric SCADAPack x70 Products",
+      "summary": "View CSAF Summary Schneider Electric is aware of a vulnerability in its SCADAPack x70 products. The SCADAPack 47x, SCADAPack 47xi, SCADAPack 47xd, SCADAPack 470R and SCADAPack 57x products are Remote Terminal Units that provide communication capabilities for remote monitoring and control. Failure to apply the mitigations provided below may increase the risk of unauthorized access to RTU configuration through the Secure Lock functionality, potentially resulting in a loss of confidentiality. The following versions of Schneider Electric SCADAPack x70 Products are affected: SCADAPack 47x vers:all…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.85,
+        "novelty": 0.00215309010045515,
+        "prominence": 9.848480679772889e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-81861",
+          "cvss": {
+            "score": 5.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00543,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-81861 is rated 5.9 (medium) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-81861"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-81861 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-81861"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-258-04",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001785",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T02:51:25Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-15T02:51:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "KAIperShield and Cyber in Space form Indo-Pacific partnership on mission-focused cyber resilience",
+      "summary": "KAIperShield and Cyber in Space have signed a business development and customer engagement agreement aimed at expanding access to cyber resilience and mission assurance capabilities developed at NASA’s Jet Propulsion [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0018867828194232817,
+        "prominence": 8.936918109942258e-07
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/kaipershield-and-cyber-in-space-form-indo-pacific-partnership-on-mission-focused-cyber-resilience/?utm_source=rss&utm_medium=rss&utm_campaign=kaipershield-and-cyber-in-space-form-indo-pacific-partnership-on-mission-focused-cyber-resilience&utm_source=rss&utm_medium=rss&utm_campaign=kaipershield-and-cyber-in-space-form-indo-pacific-partnership-on-mission-focused-cyber-resilience",
+          "published": "2026-09-15T02:51:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T02:51:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003552",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T17:05:57Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-15T17:05:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing Gemini 3.8 Live and 3.8 Live Extended Thinking",
+      "summary": "Introducing Gemini 3.8 Live and 3.8 Live Extended Thinking",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0022273827221098177,
+        "prominence": 8.736320087932557e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "deepmind",
+          "url": "https://deepmind.google/blog/introducing-gemini-3-8-live-and-3-8-live-extended-thinking/",
+          "published": "2026-09-15T17:05:57Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T17:05:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DeepMind Blog",
+          "sources": [
+            "deepmind"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-003549"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003668",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T16:00:44Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-15T16:00:44Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Your Agent Aced the Task. Will It Do It Again?",
+      "summary": "Your Agent Aced the Task. Will It Do It Again?",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.002192694462397706,
+        "prominence": 8.466077725751051e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/ibm-research/altk-evolve-consistency",
+          "published": "2026-09-15T16:00:44Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T16:00:44Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000024",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA and NIST Release Guidelines to Protect Federal Cloud Identity Systems from Token Theft, Forgery, and Misuse",
+      "summary": "CISA and NIST Release Guidelines to Protect Federal Cloud Identity Systems from Token Theft, Forgery, and Misuse",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.00215309010045515,
+        "prominence": 8.162736323162717e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cisa_news",
+          "url": "https://www.cisa.gov/news-events/news/cisa-and-nist-release-guidelines-protect-federal-cloud-identity-systems-token-theft-forgery-and",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA News",
+          "sources": [
+            "cisa_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001986",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T09:43:54Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-15T09:43:54Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Former AT&T store worker jailed after moonlighting as a SIM-swap gang’s inside man",
+      "summary": "44-year-old Kenneth Carter from Portland, Oregon, used to work in an AT&T retail store. But now he has been sentenced to 16 months in a federal prison. That should be plenty of time for him to rue the day he agreed to increase his monthly income by helping a SIM swap gang in their attempt to steal over half a million dollars. Read more in my article on the Hot for Security blog.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.002083706019617549,
+        "prominence": 7.644667164115364e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/former-at-t-worker-jailed-sim-swap",
+          "published": "2026-09-15T09:43:54Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T09:43:54Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001957",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T05:00:00Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-15T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "PhantomRaven: An LLM-Generated Information Stealer Developed for Bug Bounty Hunting",
+      "summary": "PhantomRaven: An LLM-Generated Information Stealer Developed for Bug Bounty Hunting",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.0019460858568955996,
+        "prominence": 6.667434544291434e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/phantomraven-llm-generated-information-stealer-for-bug-bounty-hunting/",
+          "published": "2026-09-15T05:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004911",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-15T13:32:41Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-15T13:32:41Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AISN #81: Anthropic Researcher’s Resignation Propels AI Risk into the Public Eye",
+      "summary": "Also, OpenAI releases GPT-6 Astra.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0016794223715484722,
+        "prominence": 4.964276360219148e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cais_aisn",
+          "url": "https://newsletter.safe.ai/p/aisn-81-anthropic-researchers-resignation",
+          "published": "2026-09-15T13:32:41Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "cais_aisn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T13:32:41Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CAIS AI Safety Newsletter",
+          "sources": [
+            "cais_aisn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

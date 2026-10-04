@@ -1,0 +1,840 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-10-28",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 10,
+    "critical": 1,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 8,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 10
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-003840",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T20:42:35Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T20:42:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How to Build a Healthcare Robot from Simulation to Deployment with NVIDIA Isaac for Healthcare",
+      "summary": "How to Build a Healthcare Robot from Simulation to Deployment with NVIDIA Isaac for Healthcare",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 8.028030115768446e-52,
+        "prominence": 1.132744702212648e-103
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/nvidia/nvidia-isaac-for-healthcare",
+          "published": "2025-10-28T20:42:35Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T20:42:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-003839"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000393",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-10-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-6204: Dassault Systèmes DELMIA Apriso Dassault Systèmes DELMIA Apriso Code Injection Vulnerability",
+      "summary": "Dassault Systèmes DELMIA Apriso contains a code injection vulnerability that could allow an attacker to execute arbitrary code.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 6.1940599344708944e-52,
+        "prominence": 1.0928604776820767e-103
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-6204",
+          "cvss": {
+            "score": 8.0,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.77957,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-10-28",
+            "due_date": "2025-11-18"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-6204 as exploited in the wild, added 2025-10-28, with US federal agencies due to fix it by 2025-11-18.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-6204 is rated 8.0 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-6204"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-6204 being exploited in the next 30 days at 78%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-6204"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-6204",
+          "published": "2025-10-28T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000394",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-10-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-6205: Dassault Systèmes DELMIA Apriso Dassault Systèmes DELMIA Apriso Missing Authorization Vulnerability",
+      "summary": "Dassault Systèmes DELMIA Apriso contains a missing authorization vulnerability that could allow an attacker to gain privileged access to the application.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 6.1940599344708944e-52,
+        "prominence": 1.0928604776820767e-103
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-6205",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.73308,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-10-28",
+            "due_date": "2025-11-18"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-6205 as exploited in the wild, added 2025-10-28, with US federal agencies due to fix it by 2025-11-18.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-6205 is rated 9.1 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-6205"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-6205 being exploited in the next 30 days at 73%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-6205"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-6205",
+          "published": "2025-10-28T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000393"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002815",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T17:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T17:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Advancing organizational transformation for business innovation",
+      "summary": "DNP rolled out ChatGPT Enterprise across ten core departments, achieving 95% faster patent research, 10x processing volume, 87% automation, and 70% knowledge reuse in three months.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 7.609281047498573e-52,
+        "prominence": 1.0176567174150356e-103
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/dai-nippon-printing",
+          "published": "2025-10-28T17:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T17:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004550",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T15:36:30Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2025-10-28T15:36:30Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Claude Pirate: Abusing Anthropic's File API For Data Exfiltration",
+      "summary": "Recently, Anthropic added the capability for Claude’s Code Interpreter to perform network requests. This is obviously very dangerous as we will see in this post. At a high level, this post is about a data exfiltration attack chain, where an adversary (either the model or third-party attacker via indirect prompt injection) can exfiltrate data the user has access to. The interesting part is that this is not via hyperlink rendering as we often see, but by leveraging the built-in Anthropic Claude APIs!",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 7.457887804446431e-52,
+        "prominence": 9.775652270349171e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/claude-abusing-network-access-and-anthropic-api-for-data-exfiltration/",
+          "published": "2025-10-28T15:36:30Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T15:36:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-003841",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T14:59:38Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T14:59:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Granite 4.0 Nano: Just how small can you go?",
+      "summary": "Granite 4.0 Nano: Just how small can you go?",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 7.392007228924131e-52,
+        "prominence": 9.603705183645647e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/ibm-granite/granite-4-nano",
+          "published": "2025-10-28T14:59:38Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T14:59:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002816",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T10:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T10:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Doppel’s AI defense system stops attacks before they spread",
+      "summary": "Doppel uses GPT-5 and reinforcement fine-tuning to stop deepfake and impersonation attacks, cutting analyst workloads by 80% and reducing response times from hours to minutes.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 6.877702992805655e-52,
+        "prominence": 8.31382518339508e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/doppel",
+          "published": "2025-10-28T10:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T10:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002817",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T06:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T06:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The next chapter of the Microsoft–OpenAI partnership",
+      "summary": "Microsoft and OpenAI sign a new agreement that strengthens its long-term partnership, expands innovation, and ensures responsible AI progress.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 6.491687185163221e-52,
+        "prominence": 7.40677619872945e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/next-chapter-of-microsoft-openai-partnership",
+          "published": "2025-10-28T06:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T06:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002818",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T06:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T06:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Built to benefit everyone",
+      "summary": "OpenAI’s recapitalization strengthens mission-focused governance, expanding resources to ensure AI benefits everyone while advancing innovation responsibly.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 6.491687185163221e-52,
+        "prominence": 7.40677619872945e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/built-to-benefit-everyone",
+          "published": "2025-10-28T06:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T06:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003842",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-10-28T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-10-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Voice Cloning with Consent",
+      "summary": "Voice Cloning with Consent",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 5.952903396014625e-52,
+        "prominence": 6.228331554098129e-104
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/voice-consent-gate",
+          "published": "2025-10-28T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-10-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

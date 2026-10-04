@@ -1,0 +1,1633 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-27",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 17,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 16,
+    "directly_reported_in_au": 9,
+    "pending_enrichment": 16
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-002001",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-27T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:00:04Z",
+      "last_independent_confirmation": "2026-09-30T20:00:04Z",
+      "status": "monitoring",
+      "title": "Threat Brief: NetScaler Zero Days CVE-2026-88771 and CVE-2026-88772 Exploited in the Wild (Updated September 30)",
+      "summary": "Citrix NetScaler devices were compromised by two zero‑day vulnerabilities, CVE‑2026‑88771 and CVE‑2026‑88772, which have already been exploited in the wild.",
+      "why_it_matters": "Both vulnerabilities have a CVSS score of 9.5 and are listed on the KEV, underscoring their severity and the fact that they are actively exploited.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "zero-day",
+        "vulnerability",
+        "vendor_advisory",
+        "advisory",
+        "news",
+        "policy",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.990625,
+        "novelty": 0.088282025672419,
+        "prominence": 0.5850125432712792
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts)",
+          "names an Australian organisation (ACSC)"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Citrix"
+        ],
+        "products": [
+          "NetScaler"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-88771",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01063,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88772",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01301,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88773",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:H/SI:H/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00361,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88774",
+          "cvss": {
+            "score": 7.0,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:L/VA:N/SC:H/SI:H/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00241,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88775",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00384,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88776",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00384,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88777",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00384,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88778",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:H/VA:H/SC:L/SI:L/SA:L",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00379,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "unit42"
+          ]
+        },
+        {
+          "id": "T1588.005",
+          "name": "Obtain Capabilities: Exploits",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-88771 and CVE-2026-88772 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-88772 is rated 9.5 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 8 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-88772"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-88772 being exploited in the next 30 days at 1.3%, the highest of the 8 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-88772"
+          ]
+        },
+        {
+          "text": "5 independent sources report this event.",
+          "confidence": 0.990625,
+          "evidence": [
+            "cisa_kev",
+            "acsc_alerts",
+            "triskele",
+            "thn",
+            "unit42"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-88772",
+          "published": "2026-09-27T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-88771",
+          "published": "2026-09-27T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerabilities-in-citrix-netscaler-adc-and-citrix-netscaler-gateway-products",
+          "published": "2026-09-27T10:33:32Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/27/critical-zero-day-vulnerabilities-exploited-citrix-netscaler-adc-gateway",
+          "published": "2026-09-27T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/acsc-warns-of-actively-exploited-vulnerabilities-in-citrix-netscaler-products/?utm_source=rss&utm_medium=rss&utm_campaign=acsc-warns-of-actively-exploited-vulnerabilities-in-citrix-netscaler-products&utm_source=rss&utm_medium=rss&utm_campaign=acsc-warns-of-actively-exploited-vulnerabilities-in-citrix-netscaler-products",
+          "published": "2026-09-28T00:35:45Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "asd",
+          "independent": false
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/citrix-netscaler-adc-citrix-netscaler-gateway-remote-code-execution-vulnerabilities-cve-2026-88771-cve-2026-88772",
+          "published": "2026-09-28T06:16:19Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/cisa-says-attackers-are-exploiting-two.html",
+          "published": "2026-09-28T07:21:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/citrix-netscaler-cve-2026-88772-exploit.html",
+          "published": "2026-09-30T05:30:30Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/netscaler-zero-days-exploited/",
+          "published": "2026-09-30T20:00:04Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-27T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-27T10:33:32Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-27T12:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T00:35:45Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T06:16:19Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T07:21:49Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T05:30:30Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T20:00:04Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001770"
+        }
+      ],
+      "tags": [
+        "zero-day",
+        "vulnerability",
+        "citrix",
+        "netscaler"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004769",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T14:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Supporting information integrity on International Access to Information Day",
+      "summary": "28 September is International Access to Information Day (IAID). In a world of AI-generated content, misinformation and information disorder, trusted government information matters more than ever.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.13631339240839327,
+        "prominence": 0.00689747894896286
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (Office of the Australian Information Commissioner)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "oaic",
+          "url": "https://www.oaic.gov.au/news/media-centre/supporting-information-integrity-on-international-access-to-information-day",
+          "published": "2026-09-27T14:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "oaic",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Office of the Australian Information Commissioner",
+          "sources": [
+            "oaic"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000005",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T20:54:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-27T20:54:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Downer invests in security as contracts increasingly demand it",
+      "summary": "Turns up application control, limits privilege.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.15669608882118116,
+        "prominence": 0.006734136796934864
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/downer-invests-in-security-as-contracts-increasingly-demand-it-629089?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-27T20:54:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T20:54:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000006",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T20:20:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-27T20:20:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Teen researcher with AI hackbot cracks Microsoft's Titan analytics",
+      "summary": "Ten-day automated hunt stalled until \"admin\" login tried.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.15541907868237154,
+        "prominence": 0.006620196090663577
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/teen-researcher-with-ai-hackbot-cracks-microsofts-titan-analytics-629220?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-27T20:20:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T20:20:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003526",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T23:54:15Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T23:54:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "2026 in LLMs (so far)",
+      "summary": "On Friday I gave the closing keynote at the WeAreDevelopers World Congress North America in San Jose. I tied together the key trends from the past year into a chronological exploration of everything that happened in 2026. The video is on YouTube ; here are my annotated slides and notes to accompany the talk. And as an annotated presentation : # I'm going to give a lightning tour of everything that has happened so far in 2026. The year isn't over yet! # For me, 2026 started a couple of months earlier in November 2025. # November saw the release of two important models: Claude Opus 4.5 and GPT-…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.15727224775627377,
+        "prominence": 0.004930795263217652
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/27/2026-in-llms-so-far/",
+          "published": "2026-09-27T23:54:15Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T23:54:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003527",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T23:09:19Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T23:09:19Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "S3 Is the Future, S3 Is the Past",
+      "summary": "My comment on S3 Is the Future, S3 Is the Past — Hacker News. One thing I find notable about S3 today is that, while it used to drop in price reasonably often, there hasn't been a price drop in a full decade : 2006-03-14 $0.150/GB-month 2010-11-01 $0.140/GB-month 2012-02-01 $0.125/GB-month 2012-12-01 $0.095/GB-month 2014-02-01 $0.085/GB-month 2014-04-01 $0.030/GB-month 2016-12-01 $0.023/GB-month Today it's still $0.023/GB-month. Tags: amazon-web-services , s3",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.15558060946079608,
+        "prominence": 0.004819151331875568
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/27/hn-49871741/",
+          "published": "2026-09-27T23:09:19Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T23:09:19Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004846",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T20:02:10Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T20:02:10Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Get rules in place to hold data centres to account, experts tell Tasmania",
+      "summary": "An artificial intelligence institute warns there may not be much economic benefit from data centre developments if public authorities don't put binding conditions on proponents.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.11804575724620534,
+        "prominence": 0.004611923535416987
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Tasmania)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-28/questions-over-benefits-of-data-centres-after-construct-ends/107201000",
+          "published": "2026-09-27T20:02:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T20:02:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003528",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T18:41:44Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T18:41:44Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bluesky reply bot checker",
+      "summary": "Tool: Bluesky reply bot checker Automated reply bots on Twitter are a scourge - as someone with a decent number of followers I attract a swarm of these, such that anything I post there attracts dozens of mindless automated replies. They've started manifesting on Bluesky as well. Unlike Twitter, Bluesky still has a freely available and useful API. The lack of such a thing doesn't slow down the bots, but it does make investigating them a lot more frustrating. So I had Opus 5.5 vibe code this tool , which examines any Bluesky profile for evidence of a likely reply bot. It looks for signals like…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.14587689365246884,
+        "prominence": 0.004205773716218012
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/27/bluesky-bot-check/",
+          "published": "2026-09-27T18:41:44Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T18:41:44Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001868",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T15:04:49Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T15:04:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Wireshark 4.6.9 Released, (Sun, Sep 27th)",
+      "summary": "Wireshark release 4.6.9 fixes 19 vulnerabilities and 16 bugs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.1440655068785827,
+        "prominence": 0.0040963348200960415
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33372",
+          "published": "2026-09-27T15:04:49Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T15:04:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004847",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T19:03:06Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T19:03:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Migration cuts, AI and rising interest rates mean an era of long-term disinflation",
+      "summary": "The Reserve Bank will increase interest rates on Tuesday, but three new factors entirely outside the bank's control are pulling rates in different directions.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.116379498183849,
+        "prominence": 0.003632747510947243
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-28/interest-rate-hike-could-be-short-lived/107200848",
+          "published": "2026-09-27T19:03:06Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T19:03:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004848",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T18:48:49Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T18:48:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "'Something we've never seen before': The risk of AI bioweapons",
+      "summary": "AI companies say their tools could be used to make biological weaponry. These are the threats and what can be done to mitigate them.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.11598011225370805,
+        "prominence": 0.003607051050230927
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/science/2026-09-28/how-concerning-is-the-biological-weapon-threat-from-ai-systems/107161348",
+          "published": "2026-09-27T18:48:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T18:48:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004849",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T05:05:06Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T05:05:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A tradie tipped this suburb off on a new data centre build. Residents are furious",
+      "summary": "Electricity distributor Jemena has been replacing 7-metre wooden power poles with 15-metre industrial poles rated to carry up to 66,000 volts, but there's been one consistent complaint among the residents where this is happening.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0951229068646187,
+        "prominence": 0.00341599406162474
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian organisation (Jemena)",
+          "reported by an Australian source"
+        ],
+        "sectors": [
+          "energy"
+        ],
+        "soci_asset_classes": [
+          "energy"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-27/residents-protest-15m-power-poles-for-data-centre-expansion/107192574",
+          "published": "2026-09-27T05:05:06Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T05:05:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001907",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T07:47:57Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-27T07:47:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Warning: Two Unpatched Citrix NetScaler RCE Zero-Days Under Active Exploitation",
+      "summary": "Two critical vulnerabilities in Citrix NetScaler ADC and NetScaler Gateway that allow remote code execution have been exploited in the wild, Citrix confirmed on September 27. It released fixes for both, along with six other flaws. One of the two affects every deployment on an affected version, including those in the default configuration. The bulletin came a day after security firm watchTowr",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.12968711445672915,
+        "prominence": 0.0032831985431613603
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/warning-two-unpatched-citrix-netscaler.html",
+          "published": "2026-09-27T07:47:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T07:47:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001835",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Space cybersecurity is bigger than the satellite.",
+      "summary": "This week on T-Minus: Space-Cyber Briefing: we dive into how securing the ground components of space infrastructure represent as great of a challenge as securing the ones already in-orbit.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.12454949484131841,
+        "prominence": 0.00301626540653514
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/signals-and-space/10/20",
+          "published": "2026-09-27T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001836",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Insider You Built with author Camille Stewart Gloster.",
+      "summary": "On this special edition podcast, N2K CyberWire's Dave Bittner spoke with ⁠Camille Stewart Gloster⁠⁠. Camille is the author of The Insider You Built: How Organizations Stay in Control of Autonomous AI Agents, and founder of⁠⁠ CAS Strategies⁠⁠. Dave and Camille discuss her new book and the broader questions it raises about AI agents.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.12454949484131841,
+        "prominence": 0.00301626540653514
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/special-edition/107/notes",
+          "published": "2026-09-27T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001837",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Space cybersecurity starts on the ground.",
+      "summary": "Though spacecraft are important, space cybersecurity extends well beyond these assets touching ground stations, mission-control assets, and other critical components. Host Maria Varmazis speaks with ⁠Milenk Starcevic⁠, Head of Cybersecurity at ⁠Vision Space⁠, and ⁠Andrzej “Andy” Olchawa⁠, Senior Cybersecurity Engineer also at Vision Space, about the broader space cybersecurity attack surface. By considering all aspects of a space mission, both in orbit and on the ground, cybersecurity professionals can better understand where vulnerabilities exist and what measures can be taken to reduce risk.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.12454949484131841,
+        "prominence": 0.00301626540653514
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/tminus-space-cyber-briefing/726/notes",
+          "published": "2026-09-27T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004850",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-27T01:27:49Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-27T01:27:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OpenAI breach proves need for more data centres, major parties say",
+      "summary": "Labor, Coalition agree OpenAI's Medicare breach proves the need for Australia to secure \"a seat at the AI table\" by rolling out data centres nationally.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.09027629441878136,
+        "prominence": 0.002663349702884857
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-27/openai-medicare-breach-need-investment-data-centres-ai/107200652",
+          "published": "2026-09-27T01:27:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-27T01:27:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

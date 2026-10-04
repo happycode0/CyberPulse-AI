@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2023-08-07",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000847",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-08-07T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2023-08-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2017-18368: Zyxel P660HN-T1A Routers Zyxel P660HN-T1A Routers Command Injection Vulnerability",
+      "summary": "Zyxel P660HN-T1A routers contain a command injection vulnerability in the Remote System Log forwarding function, which is accessible by an unauthenticated user and exploited via the remote_host parameter of the ViewLog.asp page.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 2.650221457499609e-174,
+        "prominence": 1.1903065635136068e-50
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2017-18368",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.94425,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-08-07",
+            "due_date": "2023-08-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2017-18368 as exploited in the wild, added 2023-08-07, with US federal agencies due to fix it by 2023-08-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2017-18368 is rated 9.8 (critical) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2017-18368"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2017-18368 being exploited in the next 30 days at 94%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2017-18368"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2017-18368",
+          "published": "2023-08-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-08-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    }
+  ]
+}

@@ -1,0 +1,4472 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-22",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 47,
+    "critical": 8,
+    "high": 4,
+    "medium": 2,
+    "low": 0,
+    "unknown": 33,
+    "directly_reported_in_au": 8,
+    "pending_enrichment": 39
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000069",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-27T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "monitoring",
+      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA added two Citrix NetScaler vulnerabilities (CVE-2026-88771 and CVE-2026-88772) to its KEV catalog after evidence of active exploitation.",
+      "why_it_matters": "Both vulnerabilities have a CVSS score of 9.5 and are actively exploited, posing a high risk to federal systems that use Citrix NetScaler. Defenders should prioritize patching and monitoring these assets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.018559009729818388,
+        "prominence": 0.24655432172849398
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA"
+        ],
+        "products": [
+          "Citrix NetScaler"
+        ],
+        "countries": [],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-5430",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00588,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-24",
+            "due_date": "2026-09-27"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-65660",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02101,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-67279",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01027,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-71362",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.87507,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-24",
+            "due_date": "2026-09-27"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-85102",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.07546,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88771",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01063,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88772",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01301,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-93616",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.19654,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-93952",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01062,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-94127",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02226,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_advisories"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-5430, CVE-2026-65660, CVE-2026-67279, CVE-2026-71362 and 6 more as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-5430 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 10 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-5430"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-71362 being exploited in the next 30 days at 88%, the highest of the 10 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-71362"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/22/cisa-adds-four-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/24/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-24T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/25/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-25T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/27/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-27T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-85102, CVE-2026-93616, CVE-2026-93952, CVE-2026-94127",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-24T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-5430, CVE-2026-71362",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-25T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-65660, CVE-2026-67279",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-27T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        }
+      ],
+      "tags": [
+        "kev",
+        "cisa",
+        "citrix",
+        "vulnerability",
+        "exploited",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000124",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-93952: Arista VeloCloud Orchestrator Arista VeloCloud Orchestrator Improper Input Validation Vulnerability",
+      "summary": "Arista VeloCloud Orchestrator on-prem has a critical improper input validation flaw that could let a remote attacker gain privileged access and compromise the orchestrator and its data.",
+      "why_it_matters": "The flaw has a CVSS score of 9.5 and is listed in the KEV, indicating it is a high-risk vulnerability that could allow attackers to gain privileged access to the orchestrator and its data. Exploitation could lead to full compromise of the orchestrator host, affecting all managed services.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.015606204752463092,
+        "prominence": 0.15811495323713476
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "High CVSS score of 9.5",
+          "listed in KEV"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Arista"
+        ],
+        "products": [
+          "Arista VeloCloud Orchestrator"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-93952",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01062,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-93952 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-93952 is rated 9.5 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-93952"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-93952 being exploited in the next 30 days at 1.1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-93952"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-93952",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "input-validation",
+        "privileged-escalation"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000126",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-93616: Check Point Multiple Products Check Point Multiple Products Path Traversal Vulnerability",
+      "summary": "A critical path traversal flaw in Check Point Security Management Server and related products lets unauthenticated attackers upload and run arbitrary scripts.",
+      "why_it_matters": "The flaw has a CVSS score of 9.8 and is listed in the KEV, indicating it is actively exploited. It allows unauthenticated attackers to upload and run arbitrary scripts, giving them full control over affected systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.015606204752463092,
+        "prominence": 0.1504987374998577
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Check Point"
+        ],
+        "products": [
+          "Check Point Security Management Server",
+          "Multi-Domain Security Management Server",
+          "Log Server",
+          "Multi-Domain Log Server",
+          "SmartEvent"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-93616",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.19654,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-93616 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-93616 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-93616"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-93616 being exploited in the next 30 days at 20%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-93616"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-93616",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001920"
+        }
+      ],
+      "tags": [
+        "path-traversal",
+        "unauthenticated",
+        "arbitrary-execution",
+        "check-point",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000125",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-94127: F5 BIG-IP APM F5 BIG-IP APM Heap-based Buffer Overflow Vulnerability",
+      "summary": "F5 BIG-IP APM has a heap-based buffer overflow that can be triggered when an access policy and OAuth profile are configured on a virtual server, allowing unauthenticated remote code execution.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.3 and is listed on the KEV, indicating it is a high-risk, potentially exploited flaw. Defenders should prioritize patching F5 BIG-IP APM instances that use access policies and OAuth profiles on virtual servers.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.015606204752463092,
+        "prominence": 0.14288252176258065
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "F5"
+        ],
+        "products": [
+          "F5 BIG-IP APM"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-94127",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02226,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.92,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-94127 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-94127 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-94127"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-94127 being exploited in the next 30 days at 2.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-94127"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-94127",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "buffer-overflow",
+        "remote-code-execution",
+        "unauthenticated",
+        "f5-bigip",
+        "kev",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000127",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CVE-2026-85102: Check Point Multiple Products Check Point Multiple Products Improper Certificate Validation Vulnerability",
+      "summary": "Check Point Security Gateway and Spark Firewall have a critical vulnerability that allows unauthenticated remote attackers to execute arbitrary code via improper certificate validation in VPNs.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.8 and is listed in the KEV, indicating it is a high-risk flaw that could be exploited to gain remote code execution on affected gateways.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.015606204752463092,
+        "prominence": 0.14288252176258065
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Check Point"
+        ],
+        "products": [
+          "Check Point Security Gateway",
+          "Check Point Spark Firewall"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-85102",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.07546,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-85102 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-85102 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-85102"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-85102 being exploited in the next 30 days at 7.5%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-85102"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-85102",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "certificate-validation",
+        "vpn",
+        "remote-code-execution"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000053",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Siemens Industrial Edge Management",
+      "summary": "Siemens Industrial Edge Management software has an authentication bypass that lets attackers reset credentials and take over accounts without email verification. Siemens released patches for affected versions.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.1 and is rated critical, meaning attackers can fully compromise accounts. Defenders should update to the latest versions immediately to prevent account takeover.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.018559009729818388,
+        "prominence": 0.13136085866950292
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "CISA advisory is US-based",
+          "No Australian source reported",
+          "Global vulnerability with no Australian detail"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Siemens"
+        ],
+        "products": [
+          "Siemens Industrial Edge Management"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-18963",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.03177,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1078.004",
+          "name": "Valid Accounts: Cloud Accounts",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.92,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-18963 is rated 9.1 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-18963"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-18963 being exploited in the next 30 days at 3.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-18963"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-06",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "authentication-bypass",
+        "remote",
+        "account-takeover",
+        "critical",
+        "ics",
+        "patch"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000049",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "lwIP TCP/IP Stack MQTT Client Application",
+      "summary": "A vulnerability in the lwIP TCP/IP Stack MQTT Client Application (versions 2.0.1 through 2.2.1) permits attackers to gain full code execution on affected devices.",
+      "why_it_matters": "The flaw carries a CVSS v3 score of 9.3, indicating a high likelihood of exploitation. Successful exploitation can give attackers full code execution on the device, potentially compromising critical infrastructure sectors.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.018559009729818388,
+        "prominence": 0.11535528017478498
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "lwIP TCP/IP Stack MQTT Client Application",
+          "MQTT Client Application"
+        ],
+        "countries": [],
+        "industries": [
+          "energy",
+          "finance",
+          "health",
+          "transport",
+          "water",
+          "telecommunications",
+          "manufacturing",
+          "critical-infrastructure"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-87121",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00528,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1203",
+          "name": "Exploitation for Client Execution",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-87121 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-87121"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-87121 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-87121"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-01",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "out-of-bounds-write",
+        "critical-infrastructure",
+        "lwip",
+        "mqtt"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000054",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Siemens SIMOVE Fleetmanager and SIPLANT",
+      "summary": "Siemens SIMOVE Fleetmanager and SIPLANT software contain a path traversal flaw that could allow attackers to read files outside the intended scope. Siemens has released updated versions for the affected releases.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.2 and is classified as critical, indicating that attackers could potentially read sensitive files or compromise the system. No exploitation in the wild is reported in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.018559009729818388,
+        "prominence": 0.11535528017478498
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Siemens"
+        ],
+        "products": [
+          "SIMOVE Fleetmanager",
+          "SIPLANT"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-67367",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01106,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-67367 is rated 9.2 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-67367"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-67367 being exploited in the next 30 days at 1.1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-67367"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-07",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "path-traversal",
+        "vulnerability",
+        "critical",
+        "siemens"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000048",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens SIPLUS and SIMATIC Products",
+      "summary": "View CSAF Summary Multiple Siemens products are vulnerable to the \"Copy Fail\" vulnerability. Siemens has released new versions for several affected products and recommends to update to the latest versions. Siemens is preparing further fix versions and recommends specific countermeasures for products where fixes are not, or not yet available. The following versions of Siemens SIPLUS and SIMATIC Products are affected: SIMATIC AX Runtime Core Linux Common Debian vers:all/* (CVE-2026-31431) SIMATIC AX Runtime Core Linux Common Debian arm64 vers:all/* (CVE-2026-31431) SIMATIC AX Runtime Core Linux…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.033410568063893656
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-31431",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.03437,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-05-01",
+            "due_date": "2026-05-15"
+          },
+          "advisories": [
+            {
+              "id": "CVE-2026-31431",
+              "source": "osv",
+              "severity": null,
+              "reviewed": false,
+              "packages": [
+                {
+                  "ecosystem": "Linux",
+                  "name": "Kernel",
+                  "fixed": [
+                    "5.10.254",
+                    "5.15.204",
+                    "6.1.170",
+                    "6.6.137",
+                    "6.12.85"
+                  ]
+                }
+              ],
+              "url": "https://osv.dev/vulnerability/CVE-2026-31431"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-31431 as exploited in the wild, added 2026-05-01, with US federal agencies due to fix it by 2026-05-15.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-31431 is rated 7.8 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-31431"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-31431 being exploited in the next 30 days at 3.4%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-31431"
+          ]
+        },
+        {
+          "text": "A fix for Kernel (Linux) is published in 5.10.254, 5.15.204, 6.1.170, 6.6.137 and 6.12.85, per CVE-2026-31431.",
+          "confidence": 0.6,
+          "evidence": [
+            "CVE-2026-31431"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-04",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000050",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "lwIP (Lightweight IP)",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could result in a system crash, a DoS, or memory corruption, which could lead to code execution on the victim system. The following versions of lwIP (Lightweight IP) are affected: API >=2.0.1|<=2.2.1 (CVE-2026-91018) CVSS Vendor Equipment Vulnerabilities v3 8.8 lwIP lwIP (Lightweight IP) Double Free Background Critical Infrastructure Sectors: Chemical, Communications, Critical Manufacturing, Energy, Financial Services, Healthcare and Public Health, Transportation Systems, Water and Wastewater Systems Countries/Areas Deployed: Wor…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.024243438837151774
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-91018",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00241,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-91018 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-91018"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-91018 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-91018"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-02",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000051",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens Siveillance Control",
+      "summary": "View CSAF Summary A vulnerability has been identified in the Open Interface Services (OIS) web module affecting Siveillance Control and Siveillance Control Pro (versions OIS 3.x.y and OIS 4.x.y) . This vulnerability allows an attacker to upload arbitrary files, which can lead to unauthorized root-level access on the OIS server. Siemens has released patches and updates for Siveillance OIS to apply to the products that incorporate the OIS service, and recommends to update to the latest versions. The following versions of Siemens Siveillance Control are affected: Siveillance Control Pro V3.0 ver…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.024243438837151774
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-50093",
+          "cvss": {
+            "score": 8.9,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:P/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.0032,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-50093 is rated 8.9 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-50093"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-50093 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-50093"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-03",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000052",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens Desigo CC family",
+      "summary": "View CSAF Summary A Client Code Execution (CCE) vulnerability has been identified in Desigo CC, potentially allowing malicious actors to execute arbitrary code on client devices through specially crafted graphics documents. This vulnerability leverages user-defined graphics containing embedded scripts that are executed on client application instances. Successful exploitation could lead to compromise of the client operating system and potential lateral movement within the organization. The following versions of Siemens Desigo CC family are affected: Desigo CC family V6 vers:all/* (CVE-2026-342…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.024243438837151774
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-34223",
+          "cvss": {
+            "score": 8.6,
+            "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00194,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-34223 is rated 8.6 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-34223"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-34223 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-34223"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-05",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001738",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T16:33:30Z",
+      "last_seen": "2026-10-01T11:37:50.900325Z",
+      "last_material_update": "2026-09-22T16:33:30Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "First Knowledges, Future Systems: learning from First Nations digital leadership",
+      "summary": "During NAIDOC Week, DTA partnered with the Productivity Commission to host First Knowledges, Future Systems webinar.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02601684239711094,
+        "prominence": 0.00024006094260284317
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (DTA News and Blogs)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "dta",
+          "url": "https://www.dta.gov.au/articles/first-knowledges-future-systems-learning-first-nations-digital-leadership",
+          "published": "2026-09-22T16:33:30Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "dta",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T16:33:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DTA News and Blogs",
+          "sources": [
+            "dta"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000013",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T23:38:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T23:38:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New malware lets commercial AI models call the shots: Talos",
+      "summary": "Polls DeepSeek, Qwen, Gemini and Mistral AIs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.028815433214207428,
+        "prominence": 0.00021180027940051932
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/new-malware-lets-commercial-ai-models-call-the-shots-talos-629108?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-22T23:38:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T23:38:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002301",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T18:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T18:00:00Z",
+      "last_independent_confirmation": "2026-09-22T23:46:41Z",
+      "status": "archived",
+      "title": "Introducing GPT-6 Sol and Luna",
+      "summary": "Meet GPT-6 Sol and Luna, two models that bring frontier intelligence to everyday work with different balances of capability and cost.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.8,
+        "novelty": 0.025529915064820465,
+        "prominence": 0.00016050240961277008
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.8,
+          "evidence": [
+            "openai_news",
+            "simonwillison"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/introducing-gpt-6-sol-and-luna",
+          "published": "2026-09-22T18:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        },
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/",
+          "published": "2026-09-22T23:46:41Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T18:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        },
+        {
+          "timestamp": "2026-09-22T23:46:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002048",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T21:12:37Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T21:12:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Relays Are Masking Chinese Access to Frontier AI Models in the US",
+      "summary": "More than 80,000 AI relay servers are helping users in China mask their identities while they access cutting-edge large language models (LLMs), probably to clone them.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02782460843927994,
+        "prominence": 0.00013930437658619138
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/relays-masking-chinese-access-frontier-ai-models",
+          "published": "2026-09-22T21:12:37Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T21:12:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002049",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T20:55:53Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T20:55:53Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How the CISO-CMO Alliance Builds Trust Before Crisis Strikes",
+      "summary": "Cybersecurity and brand reputation are inextricably linked. Security and marketing leaders who establish regular touchpoints, develop joint crisis communications plans, and translate security risks into their brand impact position their organizations to significantly outperform those treating security as an operational IT concern.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02771277536322804,
+        "prominence": 0.00013817395538155412
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cybersecurity-operations/how-ciso-cmo-alliance-builds-trust-before-crisis",
+          "published": "2026-09-22T20:55:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T20:55:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001851",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T20:30:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T20:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Storm clouds over the waterworks.",
+      "summary": "CISA rides out a Cyber Storm. The EU struggles to share cyber threat information. Nightmare Eclipse drops another Defender zero-day. TASK#STOMP steals business documents. North Korean operatives fake their way through job interviews. A genetics lab pays $700,000 over a phishing breach. A zero-day in Meta’s Muse AI assistant opens the door to privilege hijacking. Marc Woolward, Senior Advisor to Humanix and former CTO for Goldman Sachs, discussing social engineering and vishing attacks. Infiltrating Team PCP.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.027540675239087757,
+        "prominence": 0.00013644354545756882
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/daily-podcast/2641/notes",
+          "published": "2026-09-22T20:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T20:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002050",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T20:02:02Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T20:02:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft Disrupts EvilTokens Device Code Phishing Service",
+      "summary": "Microsoft seized 50 websites and disabled more than 150 domains as part of a coordinated disruption effort against a phishing-as-a-service platform targeting Microsoft 365 accounts.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02735592394671028,
+        "prominence": 0.0001345983366432855
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/identity-access-management-security/microsoft-disrupts-eviltokens-device-code-phishing-service",
+          "published": "2026-09-22T20:02:02Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T20:02:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002051",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T19:59:24Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T19:59:24Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Deception by Design: CISA's Guide to Tricking Cybercriminals",
+      "summary": "The Cybersecurity and Infrastructure Security Agency (CISA) is going old school to help organizations with limited resources set traps for hackers.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.027338591791036506,
+        "prominence": 0.00013442589004608385
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cybersecurity-operations/deception-by-design-cisa-s-guide-to-tricking-cybercriminals",
+          "published": "2026-09-22T19:59:24Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T19:59:24Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002068",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:06:03Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T00:06:03Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australian Security Industry Awards 2026",
+      "summary": "Welcome to the 2026 Australian Security Industry Awards Recognising Excellence In Our Industry The security industry will come together on Wednesday 28th October 2026 to celebrate excellence and innovation. Award winners and finalists will be recognised at the prestigious 2026 #SecurityAwards Ceremony and Dinner in Melbourne, organised by ASIAL. 2026 will mark the 30th Anniversary of ASIAL’s Annual [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.020513608466708542,
+        "prominence": 0.00013311617938125265
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/australian-security-industry-awards-2026/?utm_source=rss&utm_medium=rss&utm_campaign=australian-security-industry-awards-2026",
+          "published": "2026-09-22T00:06:03Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:06:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000014",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T06:27:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T06:27:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "In Pictures: iTnews' latest Executive Retreat for Security Leaders",
+      "summary": "A selection of photos from the second iTnews Executive Retreat for Security Leaders at the Château Élan in the Hunter Valley.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.022483327971582246,
+        "prominence": 0.0001284627622098147
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/gallery/in-pictures-itnews-latest-executive-retreat-for-security-leaders-629093?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-22T06:27:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T06:27:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000055",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens WTV676 and WTV776",
+      "summary": "View CSAF Summary The products listed below contain a denial of service vulnerability that could allow an attacker to force the devices into protection mode under certain conditions. This disables remote connectivity functions (Web Access) to the devices. Siemens has released new versions for the affected products and recommends to update to the latest versions. The following versions of Siemens WTV676 and WTV776 are affected: WTV676-HB6035 Web Interface vers:intdot/<3.94 (CVE-2026-89207) WTV776-HB6035 Web Interface vers:intdot/<4.17 (CVE-2026-89207) CVSS Vendor Equipment Vulnerabilities v3 6…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.00012803707943892365
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-89207",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00433,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-89207 is rated 6.9 (medium) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-89207"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-89207 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-89207"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-08",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000056",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OpenPLC Runtime v3",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow an attacker to hijack session cookies and issue state-changing requests as an operator which would allow the attacker to control the programmable logic controller and the physical processes it drives. The following versions of OpenPLC Runtime v3 are affected: OpenPLC 3 (CVE-2026-88020) CVSS Vendor Equipment Vulnerabilities v3 6.1 Autonomy Logic OpenPLC Runtime v3 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') Background Critical Infrastructure Sectors: Critical Manufacturing, Ener…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.85,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.00012803707943892365
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-88020",
+          "cvss": {
+            "score": 5.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:L/VA:N/SC:L/SI:L/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00275,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-88020 is rated 5.3 (medium) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-88020"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-88020 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-88020"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-09",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002300",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T21:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T21:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Better prompt caching for GPT-6",
+      "summary": "Learn how GPT-6 improves prompt caching with higher cache hit rates, new diagnostics, explicit breakpoints, and controls that reduce latency and costs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.02666022096979068,
+        "prominence": 0.00012776513433562827
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/better-prompt-caching-for-gpt-6",
+          "published": "2026-09-22T21:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T21:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002052",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T17:12:26Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T17:12:26Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Amid Ongoing Rogue Incidents, Debate Over AI Safety Gets Real",
+      "summary": "As more reports of misalignment incidents underscore AI risks, large AI labs, regular businesses, and even nations are searching for better ways to keep control and be secure.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.026261774367413532,
+        "prominence": 0.00012393346041644985
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/rogue-incidents-debate-ai-safety-gets-real",
+          "published": "2026-09-22T17:12:26Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T17:12:26Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003540",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T18:48:37Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T18:48:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "llm 0.36",
+      "summary": "Release: llm 0.36 New OpenAI models: gpt-6-sol for GPT-6 Sol and gpt-6-luna for GPT-6 Luna . #1702 Model plugins can now declare supports_conversation = False for models that only accept single-turn prompts. LLM raises llm.ConversationNotSupported when these models receive assistant or tool history, and llm chat rejects them before starting a session. See Models that do not support conversations . The first plugin to use this is llm-typesafe . #1692 Reasoning traces in the Markdown output of llm logs are now wrapped in <details><summary> tags. #1701 Plus bug fixes from five new contributors .…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.025830391771826677,
+        "prominence": 0.00011985220182751393
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/22/llm/",
+          "published": "2026-09-22T18:48:37Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T18:48:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001852",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T16:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T16:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA’s tenth Cyber Storm exercise tests critical infrastructure cybersecurity.",
+      "summary": "Nightmare Eclipse publishes another Defender zero-day. Ireland fines Google $462 million over GDPR violations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02580792107732061,
+        "prominence": 0.00011964152091741537
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/daily-briefing/15/181",
+          "published": "2026-09-22T16:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003541",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T18:03:21Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T18:03:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Quoting @therealcornpop",
+      "summary": "Hey, you know it's like super obvious if you're using AI to write your scripts for TikTok and YouTube, right? [...] It's not just the general AI-isms of \"it's not X, it's Y\", or the rule of three, or the really weird broken staccato-like way of writing where you just say a lot of things with all these punctuation marks. and it sounds really deep, but it's not. It's the lack of anything . It's the lack of a definitive sort of spear of your voice. It's the fact I can tell you don't have opinions about the thing that you're talking about. — @therealcornpop , on TikTok Tags: tiktok , ai , ai-misu…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.025550507240763076,
+        "prominence": 0.00011724155512242121
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/22/therealcornpop/",
+          "published": "2026-09-22T18:03:21Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T18:03:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000015",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T02:52:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T02:52:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Security researcher says don't install Meta's Muse AI assistant",
+      "summary": "Expert \"not-a-mused\" by insecure AI agent.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.021349507960688657,
+        "prominence": 0.00011575534733150281
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/security-researcher-says-dont-install-metas-muse-ai-assistant-629088?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-22T02:52:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T02:52:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003542",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T17:14:55Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T17:14:55Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "llm-anthropic 0.29",
+      "summary": "Release: llm-anthropic 0.29 Adds support for Claude Opus 5.5 : llm -m claude-opus-5.5 \"prompt goes here\" Tags: llm , anthropic",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.025254400640606873,
+        "prominence": 0.00011451153256314854
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/22/llm-anthropic/",
+          "published": "2026-09-22T17:14:55Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T17:14:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000016",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T01:22:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-22T01:22:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Beware DPRK job scams, ASD warns, but won't confirm local impact",
+      "summary": "Fake \"WaterPlum\" employer infected at least 30,000 devices and stole cryptocurrency.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02089203202964887,
+        "prominence": 0.00011081774870459735
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/beware-dprk-job-scams-asd-warns-but-wont-confirm-local-impact-629081?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-22T01:22:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T01:22:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003543",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T15:54:16Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T15:54:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "llm-typesafe 0.1a0",
+      "summary": "Release: llm-typesafe 0.1a0 I built this new plugin for LLM to add support for TypeSafe AI's new Jev model . Install it like this: llm install llm-typesafe Then set an API key ( get one here , the waitlist seems to move pretty fast): llm keys set typesafe # Paste key And now you can ask yes/no \"noul\" questions like this: llm -m jev 'Please refund my last payment.' \\ -s 'Does this message explicitly request a refund?' Output: {\"type\": \"noul\", \"noul\": 0.99} Or choice questions like this: cat message.txt | llm -m jev \\ -s ' Which team should handle this message? If billing and technical issues b…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.02476892629366361,
+        "prominence": 0.00011010658107580769
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/22/llm-typesafe/",
+          "published": "2026-09-22T15:54:16Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T15:54:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001781",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:12:38Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-22T00:12:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CyberPath consultation proposes national model to assess cyber capability beyond certifications",
+      "summary": "A Department of Home Affairs-backed cyber workforce initiative is seeking feedback on a draft national framework that would shift how cyber professionals are assessed, placing more emphasis on demonstrated performance [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02054613703773381,
+        "prominence": 0.00010715675615426187
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/cyberpath-consultation-proposes-national-model-to-assess-cyber-capability-beyond-certifications/?utm_source=rss&utm_medium=rss&utm_campaign=cyberpath-consultation-proposes-national-model-to-assess-cyber-capability-beyond-certifications&utm_source=rss&utm_medium=rss&utm_campaign=cyberpath-consultation-proposes-national-model-to-assess-cyber-capability-beyond-certifications",
+          "published": "2026-09-22T00:12:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:12:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004827",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T18:48:33Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T18:48:33Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Quest tells customers to replace passports after security breach",
+      "summary": "Quest Apartment Hotels tells customers affected by a security breach in August to replace passports and driver's licences after personal information was exposed.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02050126514488456,
+        "prominence": 0.00010668638666419302
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_cyber",
+          "url": "https://www.abc.net.au/news/2026-09-23/quest-tells-customers-to-replace-passports-amid-security-breach/107177222",
+          "published": "2026-09-22T18:48:33Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T18:48:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Cyber Security",
+          "sources": [
+            "abc_cyber"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002053",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "More Than a Third of Industrial Orgs See Cybersecurity Risk as a Top Obstacle to Growth, Study Finds",
+      "summary": "Industrial companies are increasing cybersecurity investment as connected operations, AI adoption, and IT/OT convergence expand operational risk.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.024359433768599385,
+        "prominence": 0.00010645955167431344
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/third-industrial-orgs-see-cybersecurity-risk-top-obstacle",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001810",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T11:02:45Z",
+      "last_seen": "2026-10-02T12:00:00.142001Z",
+      "last_material_update": "2026-09-22T11:02:45Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "GPT-6 Astra Breaks an Old Enigma Message",
+      "summary": "This is pretty amazing: However, the most astonishing thing about this break is that the GPT­6 Astra did it entirely on its own. Carter Leffer only directed GPT­6 Astra to see if it could break any of the unbroken Enigma messages published on the Crypto Cellar Research web page. After analysing the unbroken messages on the website, it decided that the most promising message was Nr. 172, MVUEH and it also quickly suspected that the plaintext of Nr. 173, SIPVX, might be related to the plaintext of the unbroken MVUEH message. After trying many different approaches, GPT­6 Astra focused on using t…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.024026094037643324,
+        "prominence": 0.0001035369930307155
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "schneier",
+          "url": "https://www.schneier.com/blog/archives/2026/09/gpt-6-astra-breaks-an-old-enigma-message.html",
+          "published": "2026-09-22T11:02:45Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "schneier",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T11:02:45Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bruce Schneier Blog",
+          "sources": [
+            "schneier"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001853",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T11:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T11:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How the CIA captured Carlos the Jackal",
+      "summary": "Before he became one of the world's most notorious terrorists in the 1970s and '80s, inspiring movies, books, and future terrorists, Carlos the Jackal was born Ilich Ramírez Sánchez to a privileged family in Venezuela. Over time, his crimes grew bolder, from an attempted assassination to abductions, murder, hijackings, and bombings. Some state leaders tolerated him out of fear he would target their countries, yet his alliances with militants and dictators soured as the years passed. In his new book, The Jackal: The Rise and Fall of Carlos, the World's First Super Terrorist, journalist Joby Wa…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.024010197405421475,
+        "prominence": 0.00010339865522386798
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/spycast/751/notes",
+          "published": "2026-09-22T11:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T11:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002054",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T10:22:37Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T10:22:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Shai-Hulud Attack Nips Cyber-Firm CrowdSec's GitHub Data",
+      "summary": "Threat actors stole the contents of 170 private repositories using an OAuth token stolen from a former employee's computer through the TanStack npm supply chain attack.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.02379513997192302,
+        "prominence": 0.00010153641831556853
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/shai-hulud-attack-cyber-firm-crowdsec-github-data",
+          "published": "2026-09-22T10:22:37Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T10:22:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002302",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Parallel cut research time and cost in half with GPT‑6 Astra",
+      "summary": "GPT‑6 Astra allowed Parallel’s agents to research and synthesize labor-market data in half the time and at half the cost vs. prior models.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.023411035337112213,
+        "prominence": 9.825326626081747e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/parallel-cuts-time-and-cost-with-astra",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004791",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing Claude Opus 5.5",
+      "summary": "Opus 5.5 performs at the level of Claude Fable 5.1 on most work and costs 40% less to run than Opus 5.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.021780273514681717,
+        "prominence": 8.492575399110979e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/claude-opus-5-5",
+          "published": "2026-09-22T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-004790"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004792",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Situation Report",
+      "summary": "A rare strain of Ebola, with no confirmed vaccine, is spreading through the east of the Democratic Republic of Congo. World health organizations are using Claude to move as fast as possible to combat it.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.021780273514681717,
+        "prominence": 8.492575399110979e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/features/ebola-response",
+          "published": "2026-09-22T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002303",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Priorities and principles for effective third party assessments",
+      "summary": "OpenAI outlines priorities and principles for rigorous, secure, and independent third-party AI safety assessments of frontier models and safeguards.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.019686255692355697,
+        "prominence": 6.925902084095394e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/priorities-principles-third-party-assessments",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003664",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How UK AISI and EvalEval Are Making Benchmark Results Reproducible",
+      "summary": "How UK AISI and EvalEval Are Making Benchmark Results Reproducible",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.019686255692355697,
+        "prominence": 6.925902084095394e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/evaleval-aisi",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003665",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Transformers now runs llama.cpp quants",
+      "summary": "Transformers now runs llama.cpp quants",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.019686255692355697,
+        "prominence": 6.925902084095394e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/transformers-llama-cpp-quants",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003666",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community",
+      "summary": "Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.019686255692355697,
+        "prominence": 6.925902084095394e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/omlx",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004939",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-22T11:04:51Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-22T11:04:51Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Don’t be fooled by this summer of AI hype",
+      "summary": "It’s been a busy few months for AI hype. At the end of April, Anthropic claimed that its model Claude Mythos is better at finding software vulnerabilities than most security experts. Then we had the OpenAI–Hugging Face hacking incident, after which Anthropic (proudly) and Meta (reluctantly) disclosed similar incidents involving their models. This was followed…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.018336343775721436,
+        "prominence": 6.001823725538538e-05
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "mit_tr_ai",
+          "url": "https://www.technologyreview.com/2026/09/22/1144867/dont-be-fooled-summer-ai-hype/",
+          "published": "2026-09-22T11:04:51Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mit_tr_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T11:04:51Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by MIT Technology Review AI",
+          "sources": [
+            "mit_tr_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

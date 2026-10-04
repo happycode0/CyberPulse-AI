@@ -1,0 +1,2259 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-17",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 24,
+    "critical": 2,
+    "high": 5,
+    "medium": 1,
+    "low": 0,
+    "unknown": 16,
+    "directly_reported_in_au": 2,
+    "pending_enrichment": 22
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Hitachi Energy FACTS Control Platform (FCP)",
+      "summary": "Hitachi Energy has identified vulnerabilities in its FACTS Control Platform’s GWS component that could allow attackers to compromise confidentiality, integrity, and availability of affected power-grid control systems deployed from 2020 onward.",
+      "why_it_matters": "The vulnerabilities carry CVSS scores of 9.9 and 8.3, and the advisory lists the issue as critical, indicating a high likelihood of severe impact if exploited. Attackers could disrupt the operation of FACTS control equipment, potentially affecting power distribution and grid stability.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0032808004080154226,
+        "prominence": 0.074740445348625
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Hitachi Energy"
+        ],
+        "products": [
+          "FACTS Control systems",
+          "SVC Light (STATCOM)",
+          "Fixed Series Capacitor",
+          "Thyristor Controlled Series Capacitor",
+          "Static Var Compensator",
+          "Static Watt Compensator"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-3980",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00611,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-3982",
+          "cvss": {
+            "score": 8.2,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00217,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-4872",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00496,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-7940",
+          "cvss": {
+            "score": 8.3,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00579,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-7941",
+          "cvss": {
+            "score": 4.3,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00335,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2024-4872 is rated 9.9 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 5 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2024-4872"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2024-3980 being exploited in the next 30 days at under 1%, the highest of the 5 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2024-3980"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-03",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "hitachi-energy",
+        "facts-control",
+        "gws-component",
+        "cisa-advisory",
+        "critical-severity"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000063",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Mitsubishi Electric GX Works3 and Motion Control Setting",
+      "summary": "A local attacker can authenticate with an invalid block password and modify executable modules in memory on Mitsubishi Electric GX Works3 and Motion Control Setting software, potentially allowing tampering with control programs. The vulnerability is identified as CVE-2026-15688 and is rated critical with a CVSS score of 9.2.",
+      "why_it_matters": "Defenders should be aware that the vulnerability has a high severity score of 9.2, indicating a significant risk if exploited. The advisory is new and has not been listed in KEV. No evidence of exploitation in the wild is provided.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0032808004080154226,
+        "prominence": 0.06986269066649933
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Mitsubishi Electric"
+        ],
+        "products": [
+          "Mitsubishi Electric GX Works3",
+          "Mitsubishi Electric Motion Control Setting"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-15688",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00121,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1212",
+          "name": "Exploitation for Credential Access",
+          "confidence": 0.55,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-15688 is rated 9.2 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-15688"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-15688 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-15688"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-02",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "local-authentication",
+        "memory-modification",
+        "control-program",
+        "ics-advisory",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000059",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ABB Ability Edgenius",
+      "summary": "View CSAF Summary ABB is aware of public reports of a vulnerability CVE‑2026‑31431 (Copy Fail) in the product versions listed as affected in the advisory. An update is available that resolves a publicly reported vulnerability. CVE‑2026‑31431 (Copy Fail) is a Linux kernel vulnerability that may allow a locally authenticated user or compromised container workload to gain elevated (root) privileges on affected systems. Once root access is obtained, the attacker can effectively gain complete control of the system The following versions of ABB Ability Edgenius are affected: Ability Edgenius >=3.2.…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 0.010444052786261296
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-31431",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.03437,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-05-01",
+            "due_date": "2026-05-15"
+          },
+          "advisories": [
+            {
+              "id": "CVE-2026-31431",
+              "source": "osv",
+              "severity": null,
+              "reviewed": false,
+              "packages": [
+                {
+                  "ecosystem": "Linux",
+                  "name": "Kernel",
+                  "fixed": [
+                    "5.10.254",
+                    "5.15.204",
+                    "6.1.170",
+                    "6.6.137",
+                    "6.12.85"
+                  ]
+                }
+              ],
+              "url": "https://osv.dev/vulnerability/CVE-2026-31431"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-31431 as exploited in the wild, added 2026-05-01, with US federal agencies due to fix it by 2026-05-15.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-31431 is rated 7.8 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-31431"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-31431 being exploited in the next 30 days at 3.4%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-31431"
+          ]
+        },
+        {
+          "text": "A fix for Kernel (Linux) is published in 5.10.254, 5.15.204, 6.1.170, 6.6.137 and 6.12.85, per CVE-2026-31431.",
+          "confidence": 0.6,
+          "evidence": [
+            "CVE-2026-31431"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-06",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000048"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Mitsubishi Electric CC-Link IE TSN Communication Protocol (Update A)",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow an attacker with access to the same network segment to tamper with communication data in the affected product by sending specially crafted packets under specific timing conditions. This could allow the attacker to cause a denial-of-service (DoS) condition in the affected product by interfering with its control function or causing it to operate incorrectly. The following versions of Mitsubishi Electric CC-Link IE TSN Communication Protocol (Update A) are affected: Mitsubishi Electric MELSEC MX Controller MX-R model MXR…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 0.007556588016291644
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-13584",
+          "cvss": {
+            "score": 7.1,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00191,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-13584 is rated 7.1 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-13584"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-13584 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-13584"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-211-07",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000060",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Schneider Electric NetBotz 5 750/755",
+      "summary": "View CSAF Summary Schneider Electric is aware of multiple vulnerabilities in its NetBotz 5 – 750/755 products.The NetBotz 5 – 750/755 products are security and environmental monitors providing temperature, humidity, leak, smoke, vibration, door contact, and video monitoring capabilities. Failure to apply the remediation provided below may risk arbitrary or remote code execution over the local network, which could result in device manipulation and unauthorized data access. The following versions of Schneider Electric NetBotz 5 750/755 are affected: NetBotz 5 750 vers:intdot/<=5.5.2 (CVE-2026-1…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 0.007556588016291644
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-13336",
+          "cvss": {
+            "score": 7.3,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:P/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00602,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-13337",
+          "cvss": {
+            "score": 5.1,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00179,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-13336 is rated 7.3 (high) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-13336"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-13336 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-13336"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-05",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000061",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Schneider Electric Modicon M340 Controller and Communication Modules",
+      "summary": "View CSAF Summary Schneider Electric is aware of a vulnerability in its Modicon M340 https://www.se.com/ww/en/product-range/1468-modicon-m340-pac/ , BMXNOR0200H https://www.se.com/us/en/product/BMXNOR0200H/communication-module-modicon-m340-iec-608705101-104-dnp3-for-severe-environments/ : Modicon M340 X80 Ethernet Communication Modules, BMXNGD0100 https://www.se.com/us/en/product/BMXNGD0100/communication-module-modicon-m580-global-data-service/ : M580 Global Data module, BMXNOC0401 https://www.se.com/us/en/product/BMXNOC0401/network-module-modicon-m340-ethernet-ip-and-modbus-tcp-4-x-rj45/?pag…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 0.007556588016291644
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-6625",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00476,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2025-6625 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-6625"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-6625 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-6625"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-04",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000064",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bransys ELD",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow unauthorized access to telemetry data and firmware. The following versions of Bransys ELD are affected: Android <11.00.00 (CVE-2026-86520, CVE-2026-86689, CVE-2026-77960) iOS <1.1.54 (CVE-2026-86520, CVE-2026-86689, CVE-2026-77960) CVSS Vendor Equipment Vulnerabilities v3 7.5 Bransys Bransys ELD Use of Hard-coded Credentials, Cleartext Transmission of Sensitive Information Background Critical Infrastructure Sectors: Transportation Systems Countries/Areas Deployed: United States Company Headquarters Location: United…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 0.007556588016291644
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-77960",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00325,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-86520",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00409,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-86689",
+          "cvss": {
+            "score": 8.2,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.0023,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-86520 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it, the highest of the 3 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-86520"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-86520 being exploited in the next 30 days at under 1%, the highest of the 3 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-86520"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-01",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000095",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T01:13:58Z",
+      "last_seen": "2026-10-03T19:30:00.058535Z",
+      "last_material_update": "2026-09-17T01:13:58Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Network segmentation and segregation – Anti-patterns",
+      "summary": "Spot hidden network security gaps and learn how to strengthen segmentation to reduce risk and limit cyber threats.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.003686090682832755,
+        "prominence": 4.773348548310938e-06
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Publications)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_publications",
+          "url": "https://www.cyber.gov.au/business-government/protecting-devices-systems/hardening-systems-applications/network-hardening/network-segmentation-and-segregation-anti-patterns",
+          "published": "2026-09-17T01:13:58Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T01:13:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Publications",
+          "sources": [
+            "acsc_publications"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000096",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T00:56:38Z",
+      "last_seen": "2026-10-03T19:30:00.058535Z",
+      "last_material_update": "2026-09-17T00:56:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Network segmentation and segregation – Overview",
+      "summary": "Strengthen cyber resilience by learning how network segmentation and segregation reduce risk, help contain threats and protect critical services.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.0036707453781764992,
+        "prominence": 4.733657076396434e-06
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Publications)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_publications",
+          "url": "https://www.cyber.gov.au/business-government/protecting-devices-systems/hardening-systems-applications/network-hardening/network-segmentation-and-segregation-overview",
+          "published": "2026-09-17T00:56:38Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T00:56:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Publications",
+          "sources": [
+            "acsc_publications"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000095"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002006",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T22:00:33Z",
+      "last_seen": "2026-10-02T00:00:00.044873Z",
+      "last_material_update": "2026-09-17T22:00:33Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Inside the Modern SOC: Defending the Cross-Environment Pivot",
+      "summary": "Cross-environment attacks demand a new approach to security operations. Learn how Unit 42 Managed XSIAM helps SOC teams investigate complete attack paths. The post Inside the Modern SOC: Defending the Cross-Environment Pivot appeared first on Unit 42 .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.0049758155226905494,
+        "prominence": 4.370015380081929e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/soc-cross-environment-pivot/",
+          "published": "2026-09-17T22:00:33Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T22:00:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002064",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T21:23:50Z",
+      "last_seen": "2026-10-01T20:00:00.076942Z",
+      "last_material_update": "2026-09-17T21:23:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA Ditches Weekly Vulnerability Roundups for Risk-Based Focus",
+      "summary": "The move is consistent with the agency's advice on the need for organizations to prioritize the vulnerabilities that actually matter.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.004932038823548877,
+        "prominence": 4.293300034851571e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/cisa-ditches-weekly-vuln-roundups-risk-based-focus",
+          "published": "2026-09-17T21:23:50Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T21:23:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001962",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T20:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T20:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A unified view of Android security updates for enterprises and OEMs",
+      "summary": "Security State Library",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.004833523848703045,
+        "prominence": 4.123154754387638e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "google_security",
+          "url": "https://blog.google/security/android-security-state-libraries/",
+          "published": "2026-09-17T20:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T20:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Google Security Blog",
+          "sources": [
+            "google_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002065",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T19:15:38Z",
+      "last_seen": "2026-10-01T12:00:00.178361Z",
+      "last_material_update": "2026-09-17T19:15:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "China's FamousSparrow APT Spies on US Politics in Latin America",
+      "summary": "Amid the US and China's fight for eco-colonial influence in Latin America, a stealthy backdoor has taken flight.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.004782186078038732,
+        "prominence": 4.035858164791708e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/china-famoussparrow-spies-latin-america",
+          "published": "2026-09-17T19:15:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T19:15:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000058",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Schneider Electric PowerChute Serial Shutdown",
+      "summary": "View CSAF Summary Schneider Electric is aware of vulnerabilities in its PowerChute Serial Shutdown product. The PowerChute Serial Shutdown product is a UPS management software enabling graceful system shutdown and energy management capabilities for desktops, servers and workstations. Failure to apply the remediation provided below may risk improper authentication validation which could result in disruption of operations and access to system data. The following versions of Schneider Electric PowerChute Serial Shutdown are affected: PowerChute Serial Shutdown vers:intdot/<=1.5, 1.6 (CVE-2026-13…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.85,
+        "novelty": 0.0043061802009103,
+        "prominence": 3.9453810450612465e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-13348",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00311,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-13348 is rated 6.9 (medium) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-13348"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-13348 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-13348"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-07",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001984",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T14:43:48Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-17T14:43:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "US Coast Guard and FBI board oil tanker to investigate cyber attack",
+      "summary": "An oil tanker bound for Texas was boarded mid-voyage by the US Coast Guard and FBI last month, after its network may have been compromised by malicious hackers. According to the US Coast Guard, the supertanker was boarded after indications that the network \"may have been compromised by a foreign actor.\" Read more in my article on the Hot for Security blog.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0044793322893164605,
+        "prominence": 3.5399547033027386e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/us-coast-guard-fbi-board-oil-tanker-investigate-cyber-attack",
+          "published": "2026-09-17T14:43:48Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T14:43:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004528",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T17:00:00Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-17T17:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From guidance to action: Security fundamentals that materially reduce risk",
+      "summary": "AI has made fundamental changes to the operating environment for cybersecurity. Explore exposure management guidance on recommended controls and take action and stay ahead of cyberthreats. The post From guidance to action: Security fundamentals that materially reduce risk appeared first on Microsoft Security Blog .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.004448390683932033,
+        "prominence": 3.491126321785096e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ms_ai_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/17/from-guidance-to-action-security-fundamentals-that-materially-reduce-risk/",
+          "published": "2026-09-17T17:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T17:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft AI & Security Blog",
+          "sources": [
+            "ms_ai_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004529",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T16:00:00Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-17T16:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Improving email security outcomes with real-world Microsoft Defender insights",
+      "summary": "The latest email security benchmarking reports show strong Microsoft Defender performance across pre-delivery and post-delivery scenarios and reveal where threats and defenses continue to evolve. The post Improving email security outcomes with real-world Microsoft Defender insights appeared first on Microsoft Security Blog .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0043846149903256585,
+        "prominence": 3.3915568205081e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ms_ai_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/17/improving-email-security-outcomes-with-real-world-microsoft-defender-insights/",
+          "published": "2026-09-17T16:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft AI & Security Blog",
+          "sources": [
+            "ms_ai_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-002310",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How Cooley is accelerating IPO work with ChatGPT",
+      "summary": "Cooley built GO Public with ChatGPT Work to bring intelligence to the IPO process, helping lawyers surface issues earlier and focus judgment where it matters most.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.004138525460367482,
+        "prominence": 3.020901393077388e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/cooley-gopublic",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001954",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T05:00:00Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-17T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CrowdStrike Named a Leader in The Forrester Wave&trade;: External Threat Intelligence Service Providers, Q3 2026",
+      "summary": "CrowdStrike Named a Leader in The Forrester Wave&trade;: External Threat Intelligence Service Providers, Q3 2026",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.003892171713791199,
+        "prominence": 2.6713960061031276e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-named-leader-forrester-wave-external-threat-intelligence-q3-2026/",
+          "published": "2026-09-17T05:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001955",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T05:00:00Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-17T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CrowdStrike SafeMind: When the Best Offense Builds the Best Defense",
+      "summary": "CrowdStrike SafeMind: When the Best Offense Builds the Best Defense",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.003892171713791199,
+        "prominence": 2.6713960061031276e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-safemind-best-offense-builds-best-defense/",
+          "published": "2026-09-17T05:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004799",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing the Life Sciences Verification Program",
+      "summary": "Introducing the Life Sciences Verification Program",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0038502447745822977,
+        "prominence": 2.614059565329352e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/news/life-sciences-verification-program",
+          "published": "2026-09-17T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002311",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing Astra for Law",
+      "summary": "OpenAI for Law brings frontier intelligence for law, custom firm workflows, connected legal data sources, and legal-grade controls for confidential client work.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.003480071224059244,
+        "prominence": 2.1349036897516145e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/astra-for-law",
+          "published": "2026-09-17T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004962",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T07:36:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T07:36:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "EU KIDS Act to restrict social media platforms’ access to children in the EU",
+      "summary": "EU KIDS Act to restrict social media platforms’ access to children in the EU Anonymous (not verified) Thu, 09/17/2026 - 09:36 The European Commission has adopted the EU KIDS Act to enhance the online safety of children throughout the Union. The proposal prohibits social media platforms from accessing children under the age of 13 and sets an EU-wide minimum age for minors to open an account of their own at the age of 15, thereby ensuring a gradual approach. The KIDS Act also reverses the burden of proof. Now, service providers will have to show that their services are age-appropriate and safe…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.003082533837344435,
+        "prominence": 1.6744446386687572e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "eu_digital_strategy",
+          "url": "https://digital-strategy.ec.europa.eu/en/news/eu-kids-act-restrict-social-media-platforms-access-children-eu",
+          "published": "2026-09-17T07:36:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "eu_digital_strategy",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T07:36:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by European Commission Digital Strategy",
+          "sources": [
+            "eu_digital_strategy"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004963",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-17T07:21:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-17T07:21:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Proposal for EU KIDS Act - 'EU Keeping Internet Digital Spaces Accountable and Trustworthy'",
+      "summary": "Proposal for EU KIDS Act - 'EU Keeping Internet Digital Spaces Accountable and Trustworthy' Anonymous (not verified) Thu, 09/17/2026 - 09:21 This proposal seeks to protect minors from risky digital services and AI systems, uphold the digital single market and maintain a coherent regulatory framework and enforcement structure for the protection of minors online. The proposal recognises the risks that minors face on certain online social networking services and video-sharing platforms and therefore limits autonomous account creation on those specific platforms and systems by children below the…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.003071425517180279,
+        "prominence": 1.662382497107755e-06
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "eu_digital_strategy",
+          "url": "https://digital-strategy.ec.europa.eu/en/library/proposal-eu-kids-act-eu-keeping-internet-digital-spaces-accountable-and-trustworthy",
+          "published": "2026-09-17T07:21:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "eu_digital_strategy",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T07:21:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by European Commission Digital Strategy",
+          "sources": [
+            "eu_digital_strategy"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

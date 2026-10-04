@@ -1,0 +1,525 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-02-12",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 6,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 6,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 6
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004767",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T12:00:00Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2025-02-12T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Further cyber sanctions in response to Medibank Private cyberattack",
+      "summary": "Today Australia has imposed targeted financial and travel sanctions on a cyber infrastructure entity – ZServers – and five of its Russian employees for their roles in providing infrastructure to host and disseminate data stolen from Medibank Private in 2022",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 1.0402001046250789e-90,
+        "prominence": 3.9305060268859166e-181
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ASD (Australian Signals Directorate))",
+          "names an Australian organisation (Medibank)",
+          "names Australia"
+        ],
+        "sectors": [
+          "health",
+          "insurance"
+        ],
+        "soci_asset_classes": [
+          "health care and medical",
+          "financial services and markets"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asd",
+          "url": "https://www.asd.gov.au/news/2025-02-12-further-cyber-sanctions-response-medibank-private-cyberattack",
+          "published": "2025-02-12T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ASD (Australian Signals Directorate)",
+          "sources": [
+            "asd"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000565",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-02-12T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-24200: Apple iOS and iPadOS Apple iOS and iPadOS Incorrect Authorization Vulnerability",
+      "summary": "Apple iOS and iPadOS contains an incorrect authorization vulnerability that allows a physical attacker to disable USB Restricted Mode on a locked device.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 9.101353077031865e-91,
+        "prominence": 2.3595318231160467e-181
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-24200",
+          "cvss": null,
+          "epss": {
+            "score": 0.0442,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-02-12",
+            "due_date": "2025-03-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-24200 as exploited in the wild, added 2025-02-12, with US federal agencies due to fix it by 2025-03-05.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-24200 being exploited in the next 30 days at 4.4%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-24200"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-24200",
+          "published": "2025-02-12T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000566",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-02-12T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2024-41710: Mitel SIP Phones Mitel SIP Phones Argument Injection Vulnerability",
+      "summary": "Mitel 6800 Series, 6900 Series, and 6900w Series SIP Phones, including the 6970 Conference Unit, contain an argument injection vulnerability due to insufficient parameter sanitization during the boot process. Successful exploitation may allow an attacker to execute arbitrary commands within the context of the system.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 9.101353077031865e-91,
+        "prominence": 2.3595318231160467e-181
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-41710",
+          "cvss": null,
+          "epss": {
+            "score": 0.41646,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-02-12",
+            "due_date": "2025-03-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2024-41710 as exploited in the wild, added 2025-02-12, with US federal agencies due to fix it by 2025-03-05.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2024-41710 being exploited in the next 30 days at 42%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2024-41710"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2024-41710",
+          "published": "2025-02-12T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003035",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T13:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-02-12T13:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Sharing the latest Model Spec",
+      "summary": "Sharing the latest Model Spec",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.0553301635488839e-90,
+        "prominence": 1.957450355684079e-181
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/sharing-the-latest-model-spec",
+          "published": "2025-02-12T13:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T13:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003997",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-02-12T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From Chunks to Blocks: Accelerating Uploads and Downloads on the Hub",
+      "summary": "From Chunks to Blocks: Accelerating Uploads and Downloads on the Hub",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 8.747005391257675e-91,
+        "prominence": 1.3447230279551723e-181
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/from-chunks-to-blocks",
+          "published": "2025-02-12T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003998",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-02-12T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-02-12T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Build awesome datasets for video generation",
+      "summary": "Build awesome datasets for video generation",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 8.747005391257675e-91,
+        "prominence": 1.3447230279551723e-181
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/vid_ds_scripts",
+          "published": "2025-02-12T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-02-12T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

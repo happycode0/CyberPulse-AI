@@ -1,0 +1,282 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-02-24",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 3,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 2,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 3
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004762",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-02-24T12:00:00Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-02-24T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ASD has open-sourced Azul to help uplift cyber defences globally against malware",
+      "summary": "ASD’s open‑source malware analysis tool is now available on ASD’s ACSC GitHub. Deploy Azul to explore, analyse and correlate malware at scale and enhance threat investigations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.7712657900610985e-34,
+        "prominence": 1.209920490830638e-67
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ASD (Australian Signals Directorate))",
+          "names an Australian organisation (ACSC)"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asd",
+          "url": "https://www.asd.gov.au/news/2026-02-24-asd-has-open-sourced-azul-help-uplift-cyber-defences-globally-against-malware",
+          "published": "2026-02-24T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-02-24T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ASD (Australian Signals Directorate)",
+          "sources": [
+            "asd"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000317",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-02-24T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-02-24T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-25108: Soliton Systems K.K FileZen Soliton Systems K.K FileZen OS Command Injection Vulnerability",
+      "summary": "Soliton Systems K.K FileZen contains an OS command injection vulnerability when an user logs-in to the affected product and sends a specially crafted HTTP request.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 5.049636836526941e-34,
+        "prominence": 7.263303712109463e-68
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-25108",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.05177,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-02-24",
+            "due_date": "2026-03-17"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-25108 as exploited in the wild, added 2026-02-24, with US federal agencies due to fix it by 2026-03-17.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-25108 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-25108"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-25108 being exploited in the next 30 days at 5.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-25108"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-25108",
+          "published": "2026-02-24T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-02-24T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002665",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-02-24T13:40:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-02-24T13:40:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Arvind KC appointed Chief People Officer",
+      "summary": "OpenAI appoints Arvind KC as Chief People Officer to help scale the company, strengthen its culture, and lead how work evolves in the age of AI.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 5.91185136006979e-34,
+        "prominence": 6.142724900625527e-68
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/arvind-kc-chief-people-officer",
+          "published": "2026-02-24T13:40:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-02-24T13:40:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

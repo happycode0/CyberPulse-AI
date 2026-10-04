@@ -1,0 +1,919 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-26",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 11,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 10,
+    "directly_reported_in_au": 5,
+    "pending_enrichment": 10
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001909",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-26T11:46:40Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-26T11:46:40Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Attackers Bypass WAFs to Exploit Oracle PeopleSoft Flaw and Deploy Web Shells",
+      "summary": "Attackers are exploiting a critical Oracle PeopleSoft vulnerability (CVE-2026-35273) to deploy web shells, bypassing WAFs in a global campaign.",
+      "why_it_matters": "The flaw has a CVSS score of 9.8 and is classified as critical, enabling unauthenticated remote code execution. Attackers are actively exploiting it in a mass campaign, deploying web shells across affected systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "zero-day",
+        "malware",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.45,
+        "novelty": 0.07399819620176522,
+        "prominence": 0.25081993919279305
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "global campaign targeting multiple sectors",
+          "no Australian source reported"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters"
+        ],
+        "organisations": [
+          "Oracle",
+          "Google"
+        ],
+        "products": [
+          "Oracle PeopleSoft"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-35273",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.09444,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-06-12",
+            "due_date": "2026-06-15"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1505.003",
+          "name": "Server Software Component: Web Shell",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-35273 as exploited in the wild, added 2026-06-12, with US federal agencies due to fix it by 2026-06-15.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-35273 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-35273"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-35273 being exploited in the next 30 days at 9.4%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-35273"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-bypass-wafs-to-exploit-oracle.html",
+          "published": "2026-09-26T11:46:40Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T11:46:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000225"
+        }
+      ],
+      "tags": [
+        "waf-bypass",
+        "oracle-peoplesoft",
+        "web-shell",
+        "zero-day",
+        "shinyhunters"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003529",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T23:39:06Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T23:39:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Kākāpō Party",
+      "summary": "Tool: Kākāpō Party I presented a closing keynote for the WeAreDevelopers World Congress North America yesterday. As a STAR moment I decided to weave in references to the record breaking kākāpō breeding season we had in 2026. For my closing slide I wanted to celebrate, and I had seen some buzz around how good Claude Opus 5.5 was at creating pixel art animations. So I rounded up three Kakapo photos from Google image search and dropped them into Claude with this prompt: Here are some photos of kakapo parrots just to remind you what they look like I need you to make an animation in animated pixel…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.11080351886067226,
+        "prominence": 0.0023619067365046663
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/26/kakapo-party/",
+          "published": "2026-09-26T23:39:06Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T23:39:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004852",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T19:09:38Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T19:09:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Ghost Bats and Maven Smart: How AI is transforming Defence",
+      "summary": "Militaries across the world, including Australia, are rapidly adopting artificial intelligence to pilot drones and analyse intelligence. But experts worry \"automation bias\" could be creeping in.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.08242223265349305,
+        "prominence": 0.002212081051185691
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-27/defence-force-ai-transformation/107139794",
+          "published": "2026-09-26T19:09:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T19:09:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004853",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T19:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A gloomy outlook is why Australia can't afford to write off AI",
+      "summary": "Australia may want AI to live up to its promise, but has just experienced how easily things can go wrong. The challenge now is figuring out how to harness one without getting blindsided by the other.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.08223135698354539,
+        "prominence": 0.0022016537135247484
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-27/open-ai-medicare-hack-australia-cant-ignore-potential/107197378",
+          "published": "2026-09-26T19:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001908",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T18:22:52Z",
+      "last_seen": "2026-10-03T12:00:00.111184Z",
+      "last_material_update": "2026-09-26T18:22:52Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Lunex Stealer Abuses AMD Driver to Disable Security Monitoring and Steal Browser Credentials",
+      "summary": "The Psychedelic Stealer malware distributed via compromised Ukrainian websites using ClickFix-style Cloudflare verification checks is part of a wider malware-as-a-service (MaaS) platform called Lunex. The new findings come from Ontinue, which described the activity as a four-stage attack chain aimed at targeting Ukrainian-speaking users. \"The attack chain begins with a fake CAPTCHA page and",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.10684299465630624,
+        "prominence": 0.0021892962503425443
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/lunex-stealer-abuses-amd-driver-to.html",
+          "published": "2026-09-26T18:22:52Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T18:22:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004851",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T20:33:49Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T20:33:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "China, US agree to AI dialogue, $42b in tariff cuts during state visit",
+      "summary": "The tariff reductions are set to apply to US exports such as agricultural goods, wood and cosmetics, as well as US imports including small appliances, toys, decorations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.08410921483872205,
+        "prominence": 0.0018632021988739032
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-27/president-donald-trump-xi-jinping-washington-summit-tariffs-ai/107200436",
+          "published": "2026-09-26T20:33:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T20:33:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001910",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T10:30:00Z",
+      "last_seen": "2026-10-02T16:00:00.066724Z",
+      "last_material_update": "2026-09-26T10:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Zero Trust for AI Agents Starts With Fixing Zero Visibility",
+      "summary": "The way we talk about AI agents is shifting, and the way we implement them requires an even more fundamental shift. While earlier discourse focused on how quickly organizations could stand up agents and how much productivity they could promise, a string of recent incidents, including a widely discussed intrusion at Hugging Face during an evaluation of OpenAI agents, has spurred organizations to",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.09534984533690823,
+        "prominence": 0.0017279486445140504
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/zero-trust-for-ai-agents-starts-with.html",
+          "published": "2026-09-26T10:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T10:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001911",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T09:55:22Z",
+      "last_seen": "2026-10-02T16:00:00.066724Z",
+      "last_material_update": "2026-09-26T09:55:22Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Elementor CSRF Flaw Lets Attackers Take Over Sites After Admin Clicks Crafted Link",
+      "summary": "Details have emerged about a high-severity security flaw in the Elementor Website Builder WordPress plugin that could be exploited by an unauthenticated attacker to create rogue administrator accounts and take control of a site. The cross-site request forgery (CSRF) vulnerability, which has yet to be assigned a CVE identifier, carries a CVSS score of 8.8 out of 10.0. It only affects versions",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.09455836796361927,
+        "prominence": 0.0016983195641942454
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/elementor-csrf-flaw-lets-attackers-take.html",
+          "published": "2026-09-26T09:55:22Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T09:55:22Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001838",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "An apple a day, a phish away.",
+      "summary": "Today we are joined by ⁠Ensar Seker⁠, VP of Research and CISO at ⁠SOCRadar⁠, discussing their work on \"Exposing AnonyMousKIT: AI-Powered PhaaS Supply Chain.\" An investigation into AnonyMousKIT reveals an AI-powered Phishing-as-a-Service platform designed to steal Apple credentials and disable Activation Lock on stolen devices. The platform uses email, SMS, WhatsApp, and AI-driven voice calls to impersonate Apple Support, with researchers uncovering a broader ecosystem spanning 506 domains, 168 storefront brands, and 30 backend installations. Despite its sophisticated social-engineering capabi…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.08806979239565517,
+        "prominence": 0.0014656906396990918
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/research-saturday/443/notes",
+          "published": "2026-09-26T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004820",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T02:05:48Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T02:05:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australia not alone as OpenAI agents hacked other websites",
+      "summary": "OpenAI says dozens more third parties were affected by rogue agents bypassing website security controls, as new traces reveal days of attempts to access Australian health data.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0644212144697512,
+        "prominence": 0.0013401511362655816
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_cyber",
+          "url": "https://www.abc.net.au/news/2026-09-26/openai-review-rogue-agents-australia-medicare-hack/107199074",
+          "published": "2026-09-26T02:05:48Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T02:05:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Cyber Security",
+          "sources": [
+            "abc_cyber"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004854",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-26T04:10:47Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-26T04:10:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Who is Jensen Huang, the AI boss Trump calls at night?",
+      "summary": "The founder of the world's most valuable AI company has the ear of Donald Trump when it comes to the risks and potential of the cutting-edge technology.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.06638847670836584,
+        "prominence": 0.0011490868049021247
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-26/jensen-huang-ai-boss-trusted-by-trump/107197212",
+          "published": "2026-09-26T04:10:47Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T04:10:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

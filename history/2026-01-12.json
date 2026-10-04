@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-01-12",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000357",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-01-12T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-01-12T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-8110: Gogs Gogs Gogs Path Traversal Vulnerability",
+      "summary": "Gogs contains a path traversal vulnerability affecting improper Symbolic link handling in the PutContents API that could allow for code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.7026102302730493e-40,
+        "prominence": 8.257420304413999e-81
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-8110",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:Y/R:U/V:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.85202,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-01-12",
+            "due_date": "2026-02-02"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-8110 as exploited in the wild, added 2026-01-12, with US federal agencies due to fix it by 2026-02-02.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-8110 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-8110"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-8110 being exploited in the next 30 days at 85%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-8110"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-8110",
+          "published": "2026-01-12T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-01-12T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    }
+  ]
+}

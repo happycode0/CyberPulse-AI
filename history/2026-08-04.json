@@ -1,0 +1,687 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-08-04",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 8,
+    "critical": 1,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 6,
+    "directly_reported_in_au": 2,
+    "pending_enrichment": 8
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000187",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-08-04T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-9198: IBM Langflow IBM Langflow Code Injection Vulnerability",
+      "summary": "Langflow contains a code injection vulnerability that allows unauthenticated attackers to achieve full remote code execution on default Langflow deployments.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 8.633259521441441e-10,
+        "prominence": 0.0012004454701682226
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-9198",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.28658,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-04",
+            "due_date": "2026-08-07"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-9198 as exploited in the wild, added 2026-08-04, with US federal agencies due to fix it by 2026-08-07.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-9198 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-9198"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-9198 being exploited in the next 30 days at 29%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-9198"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-9198",
+          "published": "2026-08-04T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000186",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2026-08-04T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-34486: Apache Tomcat Apache Tomcat Missing Encryption of Sensitive Data Vulnerability",
+      "summary": "Apache Tomcat contains a missing encryption of sensitive data vulnerability that allows the bypass of the EncryptInterceptor. This vulnerability can be chained with CVE‑2025‑24813.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 8.633259521441441e-10,
+        "prominence": 3.571735388474139e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-34486",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.06561,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-04",
+            "due_date": "2026-08-07"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-34486 as exploited in the wild, added 2026-08-04, with US federal agencies due to fix it by 2026-08-07.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-34486 is rated 7.5 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-34486"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-34486 being exploited in the next 30 days at 6.6%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-34486"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-34486",
+          "published": "2026-08-04T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000086",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T23:31:21Z",
+      "last_seen": "2026-10-03T19:15:00.004209Z",
+      "last_material_update": "2026-08-04T23:31:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New AI frontier cyber threat guidance for boards of directors",
+      "summary": "Questions for boards to ask about AI cyber threats.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 1.2125374831099983e-09,
+        "prominence": 5.15700325645694e-19
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC News)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_news",
+          "url": "https://www.cyber.gov.au/about-us/view-all-content/news/new-ai-frontier-cyber-threat-guidance-for-boards-of-directors",
+          "published": "2026-08-04T23:31:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T23:31:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC News",
+          "sources": [
+            "acsc_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002082",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T04:46:04Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-04T04:46:04Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Integrate Expo and Fusion Signage mark 10-year partnership ahead of 2026 show",
+      "summary": "Integrate Expo and digital signage software company Fusion Signage have marked 10 years of partnership, with Fusion continuing as the event’s Premier Software Partner for the 2026 edition of the show. According to the companies, Fusion Signage has designed and supplied event content across the Integrate Expo floor for a decade, providing signage content that [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 9.248594012121028e-10,
+        "prominence": 2.1448923184248617e-19
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/integrate-expo-and-fusion-signage-mark-10-year-partnership-ahead-of-2026-show/?utm_source=rss&utm_medium=rss&utm_campaign=integrate-expo-and-fusion-signage-mark-10-year-partnership-ahead-of-2026-show",
+          "published": "2026-08-04T04:46:04Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T04:46:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002401",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T19:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-04T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Third-party cyber evaluations involving OpenAI models",
+      "summary": "OpenAI explains recent third-party cybersecurity evaluation incidents and outlines new safeguards to strengthen AI model testing and evaluation.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.091656322583037e-09,
+        "prominence": 2.0945268063411135e-19
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/third-party-cyber-evaluations-involving-openai-models",
+          "published": "2026-08-04T19:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002120",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T13:00:00Z",
+      "last_seen": "2026-10-01T11:38:57.997809Z",
+      "last_material_update": "2026-08-04T13:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "QuickFox Supply Chain Attack Used to Deploy FDMTP Implant",
+      "summary": "The FortiGuard Labs Incident Response team analyzes a QuickFox supply chain attack that used trojanized Windows installers, selective targeting, and an evolving FDMTP implant",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 1.041606672819586e-09,
+        "prominence": 1.906872084422786e-19
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "fortinet_blog",
+          "url": "https://feeds.fortinet.com/~/966214247/0/fortinet/blog/threat-research~QuickFox-Supply-Chain-Attack-Used-to-Deploy-FDMTP-Implant",
+          "published": "2026-08-04T13:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "fortinet_blog",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T13:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Fortinet Security Blog",
+          "sources": [
+            "fortinet_blog"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002402",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-04T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New ways to learn and teach with ChatGPT Work and Codex",
+      "summary": "Explore new education plugins for ChatGPT Work and Codex that help K–12 teachers, college educators, and students learn, teach, research, and build.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 8.297136364124423e-10,
+        "prominence": 1.2099585969182476e-19
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/learn-teach-chatgpt-work-codex",
+          "published": "2026-08-04T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004914",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-04T13:30:42Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-08-04T13:30:42Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AISN #78: Internal Models Escape OpenAI and Anthropic",
+      "summary": "Also, two open letters on the future of AI, and protests against data centers",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 8.00428822420061e-10,
+        "prominence": 1.1260547094396723e-19
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cais_aisn",
+          "url": "https://newsletter.safe.ai/p/aisn-78-internal-models-escape-openai",
+          "published": "2026-08-04T13:30:42Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "cais_aisn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-04T13:30:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CAIS AI Safety Newsletter",
+          "sources": [
+            "cais_aisn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

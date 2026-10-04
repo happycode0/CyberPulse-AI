@@ -1,0 +1,260 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-08-04",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 3,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 3,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 3
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-003892",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-04T19:51:50Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-08-04T19:51:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Measuring Open-Source Llama Nemotron Models on DeepResearch Bench",
+      "summary": "Measuring Open-Source Llama Nemotron Models on DeepResearch Bench",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.2750569089730463e-64,
+        "prominence": 2.8574141522713376e-129
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/nvidia/ai-q-top-ranking-open-portable-deep-research-agent",
+          "published": "2025-08-04T19:51:50Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-04T19:51:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004577",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-04T07:04:58Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2025-08-04T07:04:58Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Cursor IDE: Arbitrary Data Exfiltration Via Mermaid (CVE-2025-54132)",
+      "summary": "Cursor is a popular AI code editor. In this post I want to share how I found an interesting data exfiltration issue, the demo exploits built and how it got fixed. When using Cursor I noticed that it can render Mermaid diagrams. Cursor Renders Mermaid Diagrams If you are not familiar with Mermaid, it has a simple syntax: graph TD User --> Computer This will create a diagram as follows:",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.060164760209514e-64,
+        "prominence": 1.97542607544926e-129
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-54132",
+          "cvss": null,
+          "epss": {
+            "score": 0.00351,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-54132 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-54132"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/cursor-data-exfiltration-with-mermaid/",
+          "published": "2025-08-04T07:04:58Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-04T07:04:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-002921",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-04T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-08-04T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "What we’re optimizing ChatGPT for",
+      "summary": "We build ChatGPT to help you thrive in all the ways you want. Learn how we’re improving support for tough moments, have rolled out reminders to take breaks, and are working on better life advice, all guided by expert input.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 9.570927338860131e-65,
+        "prominence": 1.6099859719069503e-129
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/optimizing-chatgpt",
+          "published": "2025-08-04T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-04T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

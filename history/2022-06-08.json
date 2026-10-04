@@ -1,0 +1,3806 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2022-06-08",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 33,
+    "critical": 1,
+    "high": 24,
+    "medium": 1,
+    "low": 0,
+    "unknown": 7,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 33
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001053",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2017-6862: NETGEAR Multiple Devices NETGEAR Multiple Devices Buffer Overflow Vulnerability",
+      "summary": "Multiple NETGEAR devices contain a buffer overflow vulnerability that allows for authentication bypass and remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 6.292709207931472e-69
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2017-6862",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.45748,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2017-6862 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2017-6862 is rated 9.8 (critical) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2017-6862"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2017-6862 being exploited in the next 30 days at 46%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2017-6862"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2017-6862",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001051",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2018-17480: Google Chromium V8 Google Chromium V8 Out-of-Bounds Write Vulnerability",
+      "summary": "Google Chromium V8 Engine contains out-of-bounds write vulnerability that allows a remote attacker to execute code inside a sandbox via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2018-17480",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.3564,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2018-17480 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2018-17480 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2018-17480"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2018-17480 being exploited in the next 30 days at 36%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2018-17480"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2018-17480",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001047"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001052",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2018-17463: Google Chromium V8 Google Chromium V8 Remote Code Execution Vulnerability",
+      "summary": "Google Chromium V8 Engine contains an unspecified vulnerability that allows a remote attacker to execute code inside a sandbox via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2018-17463",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.84564,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2018-17463 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2018-17463 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2018-17463"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2018-17463 being exploited in the next 30 days at 85%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2018-17463"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2018-17463",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001054",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2017-5070: Google Chromium V8 Google Chromium V8 Type Confusion Vulnerability",
+      "summary": "Google Chromium V8 Engine contains a type confusion vulnerability that allows a remote attacker to execute code inside a sandbox via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2017-5070",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.32071,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2017-5070 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2017-5070 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2017-5070"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2017-5070 being exploited in the next 30 days at 32%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2017-5070"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2017-5070",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001055",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2017-5030: Google Chromium V8 Google Chromium V8 Memory Corruption Vulnerability",
+      "summary": "Google Chromium V8 Engine contains a memory corruption vulnerability that allows a remote attacker to execute code via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2017-5030",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.40635,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2017-5030 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2017-5030 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2017-5030"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2017-5030 being exploited in the next 30 days at 41%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2017-5030"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2017-5030",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001056",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2016-5198: Google Chromium V8 Google Chromium V8 Out-of-Bounds Memory Vulnerability",
+      "summary": "Google Chromium V8 Engine contains an out-of-bounds memory access vulnerability that allows a remote attacker to perform read/write operations, leading to code execution, via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2016-5198",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.34164,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2016-5198 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2016-5198 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2016-5198"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2016-5198 being exploited in the next 30 days at 34%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2016-5198"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2016-5198",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001047"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2016-1646: Google Chromium V8 Google Chromium V8 Out-of-Bounds Read Vulnerability",
+      "summary": "Google Chromium V8 Engine contains an out-of-bounds read vulnerability that allows a remote attacker to cause a denial of service or possibly have another unspecified impact via crafted JavaScript code. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2016-1646",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.4811,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2016-1646 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2016-1646 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2016-1646"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2016-1646 being exploited in the next 30 days at 48%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2016-1646"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2016-1646",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001047"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001058",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2013-1331: Microsoft Office Microsoft Office Buffer Overflow Vulnerability",
+      "summary": "Microsoft Office contains a buffer overflow vulnerability that allows remote attackers to execute code via crafted PNG data in an Office document.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2013-1331",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.79822,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2013-1331 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2013-1331 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2013-1331"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2013-1331 being exploited in the next 30 days at 80%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2013-1331"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2013-1331",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001059",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-5054: Adobe Flash Player Adobe Flash Player Integer Overflow Vulnerability",
+      "summary": "Adobe Flash Player contains an integer overflow vulnerability that allows remote attackers to execute code via malformed arguments.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2012-5054",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.21194,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2012-5054 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-5054 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-5054"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-5054 being exploited in the next 30 days at 21%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-5054"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-5054",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001060",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-4969: Microsoft Internet Explorer Microsoft Internet Explorer Use-After-Free Vulnerability",
+      "summary": "Microsoft Internet Explorer contains a use-after-free vulnerability that allows remote attackers to execute code via a crafted web site.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2012-4969",
+          "cvss": {
+            "score": 8.1,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.8025,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2012-4969 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-4969 is rated 8.1 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-4969"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-4969 being exploited in the next 30 days at 80%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-4969"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-4969",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001061",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-1889: Microsoft XML Core Services Microsoft XML Core Services Memory Corruption Vulnerability",
+      "summary": "Microsoft XML Core Services contains a memory corruption vulnerability which could allow for remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2012-1889",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.83516,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2012-1889 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-1889 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-1889"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-1889 being exploited in the next 30 days at 84%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-1889"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-1889",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001063",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-0754: Adobe Flash Player Adobe Flash Player Memory Corruption Vulnerability",
+      "summary": "Adobe Flash Player contains a memory corruption vulnerability that allows remote attackers to execute code or cause denial-of-service (DoS).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2010-1297",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.82531,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2012-0754",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.91085,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2010-1297 and CVE-2012-0754 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-0754 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record, the highest of the 2 scored CVEs here.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-0754"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-0754 being exploited in the next 30 days at 91%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-0754"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-0754",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2010-1297",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Known Exploited Vulnerabilities added CVE-2010-1297",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001064",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-0151: Microsoft Windows Microsoft Windows Authenticode Signature Verification Remote Code Execution Vulnerability",
+      "summary": "The Authenticode Signature Verification function in Microsoft Windows (WinVerifyTrust) does not properly validate the digest of a signed portable executable (PE) file, which allows user-assisted remote attackers to execute code.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2012-0151",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.87719,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2012-0151 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-0151 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-0151"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-0151 being exploited in the next 30 days at 88%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-0151"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-0151",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001065",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2011-2462: Adobe Reader and Acrobat Adobe Reader and Acrobat Universal 3D Memory Corruption Vulnerability",
+      "summary": "The Universal 3D (U3D) component in Adobe Reader and Acrobat contains a memory corruption vulnerability which could allow remote attackers to execute code or cause denial-of-service (DoS).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2011-2462",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.88881,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2011-2462 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2011-2462 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2011-2462"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2011-2462 being exploited in the next 30 days at 89%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2011-2462"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2011-2462",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001066",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2011-0609: Adobe Flash Player Adobe Flash Player Unspecified Vulnerability",
+      "summary": "Adobe Flash Player contains an unspecified vulnerability that allows remote attackers to execute code or cause denial-of-service (DoS).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2011-0609",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.63507,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2011-0609 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2011-0609 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2011-0609"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2011-0609 being exploited in the next 30 days at 64%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2011-0609"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2011-0609",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001067",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2010-2883: Adobe Acrobat and Reader Adobe Acrobat and Reader Stack-Based Buffer Overflow Vulnerability",
+      "summary": "Adobe Acrobat and Reader contain a stack-based buffer overflow vulnerability that allows remote attackers to execute code or cause denial-of-service (DoS).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2010-2883",
+          "cvss": {
+            "score": 7.3,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.81376,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2010-2883 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2010-2883 is rated 7.3 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2010-2883"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2010-2883 being exploited in the next 30 days at 81%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2010-2883"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2010-2883",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001068",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2010-2572: Microsoft PowerPoint Microsoft PowerPoint Buffer Overflow Vulnerability",
+      "summary": "Microsoft PowerPoint contains a buffer overflow vulnerability that alllows for remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2010-2572",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.58646,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2010-2572 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2010-2572 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2010-2572"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2010-2572 being exploited in the next 30 days at 59%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2010-2572"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2010-2572",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001058"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001069",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2009-4324: Adobe Acrobat and Reader Adobe Acrobat and Reader Use-After-Free Vulnerability",
+      "summary": "Use-after-free vulnerability in Adobe Acrobat and Reader allows remote attackers to execute code via a crafted PDF file.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2009-4324",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.8188,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2009-4324 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2009-4324 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2009-4324"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2009-4324 being exploited in the next 30 days at 82%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2009-4324"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2009-4324",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001070",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2009-3953: Adobe Acrobat and Reader Adobe Acrobat and Reader Universal 3D Remote Code Execution Vulnerability",
+      "summary": "Adobe Acrobat and Reader contains an array boundary issue in Universal 3D (U3D) support that could lead to remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2009-3953",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.83219,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2009-3953 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2009-3953 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2009-3953"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2009-3953 being exploited in the next 30 days at 83%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2009-3953"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2009-3953",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001071",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2009-1862: Adobe Acrobat and Reader, Flash Player Adobe Acrobat and Reader, Flash Player Unspecified Vulnerability",
+      "summary": "Adobe Acrobat and Reader and Adobe Flash Player allows remote attackers to execute code or cause denial-of-service (DoS).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2009-1862",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.21198,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2009-1862 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2009-1862 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2009-1862"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2009-1862 being exploited in the next 30 days at 21%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2009-1862"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2009-1862",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001066"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001072",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2009-0563: Microsoft Office Microsoft Office Buffer Overflow Vulnerability",
+      "summary": "Microsoft Office contains a buffer overflow vulnerability that allows remote attackers to execute code via a Word document with a crafted tag containing an invalid length field.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2009-0563",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.62828,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2009-0563 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2009-0563 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2009-0563"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2009-0563 being exploited in the next 30 days at 63%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2009-0563"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2009-0563",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001058"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001073",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2009-0557: Microsoft Office Microsoft Office Object Record Corruption Vulnerability",
+      "summary": "Microsoft Office contains an object record corruption vulnerability that allows remote attackers to execute code via a crafted Excel file with a malformed record object.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2009-0557",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.53,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2009-0557 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2009-0557 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2009-0557"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2009-0557 being exploited in the next 30 days at 53%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2009-0557"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2009-0557",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001074",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2008-0655: Adobe Acrobat and Reader Adobe Acrobat and Reader Unspecified Vulnerability",
+      "summary": "Adobe Acrobat and Reader contains an unespecified vulnerability described as a design flaw which could allow a specially crafted file to be printed silently an arbitrary number of times.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2008-0655",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.37871,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2008-0655 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2008-0655 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2008-0655"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2008-0655 being exploited in the next 30 days at 38%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2008-0655"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2008-0655",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001071"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001075",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2007-5659: Adobe Acrobat and Reader Adobe Acrobat and Reader Buffer Overflow Vulnerability",
+      "summary": "Adobe Acrobat and Reader contain a buffer overflow vulnerability that allows remote attackers to execute code via a PDF file with long arguments to unspecified JavaScript methods.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2007-5659",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.87423,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2007-5659 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2007-5659 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2007-5659"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2007-5659 being exploited in the next 30 days at 87%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2007-5659"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2007-5659",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001067"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001076",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2006-2492: Microsoft Word Microsoft Word Malformed Object Pointer Vulnerability",
+      "summary": "Microsoft Word and Microsoft Works Suites contain a malformed object pointer which allows attackers to execute code.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 1.7049100492908877e-159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2006-2492",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.48107,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2006-2492 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2006-2492 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2006-2492"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2006-2492 being exploited in the next 30 days at 48%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2006-2492"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2006-2492",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001044",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-7195: QNAP Photo Station QNAP Photo Station Path Traversal Vulnerability",
+      "summary": "QNAP devices running Photo Station contain an external control of file name or path vulnerability allowing remote attackers to access or modify system files.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-7194",
+          "cvss": null,
+          "epss": {
+            "score": 0.83124,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2019-7195",
+          "cvss": null,
+          "epss": {
+            "score": 0.89681,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-7194 and CVE-2019-7195 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-7195 being exploited in the next 30 days at 90%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-7195"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-7195",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-7194",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Known Exploited Vulnerabilities added CVE-2019-7194",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001045",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-7193: QNAP QTS QNAP QTS Improper Input Validation Vulnerability",
+      "summary": "QNAP QTS contains an improper input validation vulnerability allowing remote attackers to inject code on the system.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-7193",
+          "cvss": null,
+          "epss": {
+            "score": 0.14367,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-7193 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-7193 being exploited in the next 30 days at 14%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-7193"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-7193",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001046",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-7192: QNAP Photo Station QNAP Photo Station Improper Access Control Vulnerability",
+      "summary": "QNAP NAS devices running Photo Station contain an improper access control vulnerability allowing remote attackers to gain unauthorized access to the system.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-7192",
+          "cvss": null,
+          "epss": {
+            "score": 0.88102,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-7192 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-7192 being exploited in the next 30 days at 88%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-7192"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-7192",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001047",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-5825: Google Chromium V8 Google Chromium V8 Out-of-Bounds Write Vulnerability",
+      "summary": "Google Chromium V8 Engine contains an out-of-bounds write vulnerability that allows a remote attacker to potentially exploit heap corruption via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-5825",
+          "cvss": null,
+          "epss": {
+            "score": 0.55925,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-5825 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-5825 being exploited in the next 30 days at 56%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-5825"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-5825",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001048",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-15271: Cisco RV Series Routers Cisco RV Series Routers Deserialization of Untrusted Data Vulnerability",
+      "summary": "A deserialization of untrusted data vulnerability in the web-based management interface of certain Cisco Small Business RV Series Routers could allow an attacker to execute code with root privileges.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-15271",
+          "cvss": null,
+          "epss": {
+            "score": 0.05488,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-15271 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-15271 being exploited in the next 30 days at 5.5%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-15271"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-15271",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001049",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2018-6065: Google Chromium V8 Google Chromium V8 Integer Overflow Vulnerability",
+      "summary": "Google Chromium V8 Engine contains an integer overflow vulnerability that allows a remote attacker to potentially exploit heap corruption via a crafted HTML page. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and Opera.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2018-6065",
+          "cvss": null,
+          "epss": {
+            "score": 0.60304,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2018-6065 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2018-6065 being exploited in the next 30 days at 60%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2018-6065"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2018-6065",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001050",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2018-4990: Adobe Acrobat and Reader Adobe Acrobat and Reader Double Free Vulnerability",
+      "summary": "Adobe Acrobat and Reader have a double free vulnerability that could lead to remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2018-4990",
+          "cvss": null,
+          "epss": {
+            "score": 0.36228,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2018-4990 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2018-4990 being exploited in the next 30 days at 36%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2018-4990"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2018-4990",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2022-06-08T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2022-06-08T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2012-0767: Adobe Flash Player Adobe Flash Player Cross-Site Scripting (XSS) Vulnerability",
+      "summary": "Adobe Flash Player contains a XSS vulnerability that allows remote attackers to inject web script or HTML.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.6363636363636364,
+        "confidence": 0.85,
+        "novelty": 2.8471351779402308e-238,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2012-0767",
+          "cvss": {
+            "score": 6.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.06187,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2022-06-08",
+            "due_date": "2022-06-22"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2012-0767 as exploited in the wild, added 2022-06-08, with US federal agencies due to fix it by 2022-06-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2012-0767 is rated 6.1 (medium) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2012-0767"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2012-0767 being exploited in the next 30 days at 6.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2012-0767"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2012-0767",
+          "published": "2022-06-08T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2022-06-08T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    }
+  ]
+}

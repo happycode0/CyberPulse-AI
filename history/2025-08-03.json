@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-08-03",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 1,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004578",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-03T08:30:58Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2025-08-03T08:30:58Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Anthropic Filesystem MCP Server: Directory Access Bypass via Improper Path Validation",
+      "summary": "A few months ago I was looking at the filesystem MCP server from Anthropic. The server allows to give an AI, like Claude Desktop, access to the local filesystem to read files or edit them and so forth. I was curious about access control and in the documentation there is a configuration setting to set allowedDirectories , which the AI should be allowed access to: As you can see the example shows two folders being allowlisted for access.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 7.653277426787985e-65,
+        "prominence": 1.0294587913758142e-129
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/anthropic-filesystem-mcp-server-bypass/",
+          "published": "2025-08-03T08:30:58Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-03T08:30:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    }
+  ]
+}

@@ -1,0 +1,400 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2025-05-02",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 4,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 3,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 4
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004586",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-02T19:30:35Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2025-05-02T19:30:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "MCP: Untrusted Servers and Confused Clients, Plus a Sneaky Exploit",
+      "summary": "The Model Context Protocol (MCP) is a protocol definition for how LLM apps/agents can leverage external tools. I have been calling it Model Control Protocol at times, because due to prompt injection, MCP tool servers control the client basically. This post will explain in detail why that is, and I will also share a novel exploit chain. Why MCP - How Is It Different? The main difference to other tool invocation setups, like OpenAPI is that MCP is dynamic. It allows runtime discovery of available tools, etc from a given server. At the core it supports three capabilities: tools , resources , and…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 9.01360726145556e-79,
+        "prominence": 1.4279444606358593e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/model-context-protocol-security-risks-and-exploits/",
+          "published": "2025-05-02T19:30:35Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-02T19:30:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-000507",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-02T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-05-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-34028: Commvault Command Center Commvault Command Center Path Traversal Vulnerability",
+      "summary": "Commvault Command Center contains a path traversal vulnerability that allows a remote, unauthenticated attacker to execute arbitrary code.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 7.076048344423509e-79,
+        "prominence": 1.4262494715836835e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-34028",
+          "cvss": null,
+          "epss": {
+            "score": 0.97604,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-05-02",
+            "due_date": "2025-05-23"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-34028 as exploited in the wild, added 2025-05-02, with US federal agencies due to fix it by 2025-05-23.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-34028 being exploited in the next 30 days at 98%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-34028"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-34028",
+          "published": "2025-05-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000508",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-02T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2025-05-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2024-58136: Yiiframework Yii Yiiframework Yii Improper Protection of Alternate Path Vulnerability",
+      "summary": "Yii Framework contains an improper protection of alternate path vulnerability that may allow a remote attacker to execute arbitrary code. This vulnerability could affect other products that implement Yii, including—but not limited to—Craft CMS, as represented by CVE-2025-32432.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 7.076048344423509e-79,
+        "prominence": 1.4262494715836835e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-58136",
+          "cvss": null,
+          "epss": {
+            "score": 0.87757,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-05-02",
+            "due_date": "2025-05-23"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2025-32432",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:L",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.99792,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-03-20",
+            "due_date": "2026-04-03"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2024-58136 and CVE-2025-32432 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-32432 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-32432"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-32432 being exploited in the next 30 days at 100%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-32432"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2024-58136",
+          "published": "2025-05-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000293"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002984",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-02T08:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2025-05-02T08:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Expanding on what we missed with sycophancy",
+      "summary": "A deeper dive on our findings, what went wrong, and future changes we’re making.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 7.63336253228676e-79,
+        "prominence": 1.0241081714728852e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/expanding-on-sycophancy",
+          "published": "2025-05-02T08:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-02T08:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

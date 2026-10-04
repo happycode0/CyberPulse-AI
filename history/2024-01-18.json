@@ -1,0 +1,267 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2024-01-18",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 3,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 3,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 3
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000760",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-01-18T00:00:00Z",
+      "last_seen": "2026-10-02T16:15:00.103003Z",
+      "last_material_update": "2024-01-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2023-35082: Ivanti Endpoint Manager Mobile (EPMM) and MobileIron Core Ivanti Endpoint Manager Mobile (EPMM) and MobileIron Core Authentication Bypass Vulnerability",
+      "summary": "Ivanti Endpoint Manager Mobile (EPMM) and MobileIron Core contain an authentication bypass vulnerability that allows unauthorized users to access restricted functionality or resources of the application.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.2815684590671463e-149,
+        "prominence": 4.6784019768460473e-299
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2023-35082",
+          "cvss": null,
+          "epss": {
+            "score": 0.99999,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2024-01-18",
+            "due_date": "2024-02-08"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2023-35082 as exploited in the wild, added 2024-01-18, with US federal agencies due to fix it by 2024-02-08.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2023-35082 being exploited in the next 30 days at 100%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2023-35082"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2023-35082",
+          "published": "2024-01-18T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-01-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004621",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-01-18T11:00:17Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2024-01-18T11:00:17Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AWS Fixes Data Exfiltration Attack Angle in Amazon Q for Business",
+      "summary": "A few weeks ago Amazon released the Preview of Amazon Q for Business, and after looking at it I found a data exfiltration angle via rendering markdown/hyperlinks and reported it to Amazon. Amazon reacted quickly and mitigated the problem. This post shares further details and how it was fixed. The Problem An Indirect Prompt Injection attack can cause the LLM to return markdown tags. This allows an adversary who’s data makes it into the chat context (e.g via an uploaded file) to achieve data exfiltration of the victim’s data by rendering hyperlinks.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.4438128335565845e-149,
+        "prominence": 3.6638345122386736e-299
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2024/aws-amazon-q-fixes-markdown-rendering-vulnerability/",
+          "published": "2024-01-18T11:00:17Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-01-18T11:00:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004205",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-01-18T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2024-01-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Preference Tuning LLMs with Direct Preference Optimization Methods",
+      "summary": "Preference Tuning LLMs with Direct Preference Optimization Methods",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.2316724915349371e-149,
+        "prominence": 2.666272525194698e-299
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/pref-tuning",
+          "published": "2024-01-18T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-01-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

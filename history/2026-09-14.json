@@ -1,0 +1,561 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-14",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 6,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 5,
+    "directly_reported_in_au": 3,
+    "pending_enrichment": 5
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001794",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-14T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-15T01:17:09Z",
+      "last_independent_confirmation": "2026-09-15T01:17:09Z",
+      "status": "monitoring",
+      "title": "Unauthenticated Remote Code Execution in Cisco Secure Email Gateway (CVE-2026-76461)",
+      "summary": "An unauthenticated remote code execution vulnerability (CVE-2026-76461) was discovered in Cisco Secure Email Gateway, allowing attackers to run arbitrary code.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.8, indicating a high risk of exploitation. It is listed on the KEV, meaning it is known to be actively exploited. The EPSs score of 0.28269 suggests a significant likelihood of exploitation in the wild.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.925,
+        "novelty": 0.0009753877970289427,
+        "prominence": 0.0931792691098534
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Australian research lab Triskele Labs reported the vulnerability.",
+          "The vulnerability is listed on the KEV."
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cisco"
+        ],
+        "products": [
+          "Cisco Secure Email Gateway"
+        ],
+        "countries": [
+          "US",
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-76461",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.28269,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-14",
+            "due_date": "2026-09-17"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "triskele"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-76461 as exploited in the wild, added 2026-09-14, with US federal agencies due to fix it by 2026-09-17.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-76461 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-76461"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-76461 being exploited in the next 30 days at 28%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-76461"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "triskele"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-76461",
+          "published": "2026-09-14T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/unauthenticated-remote-code-execution-in-cisco-secure-email-gateway-cve-2026-76461",
+          "published": "2026-09-15T01:17:09Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-15T01:17:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "unauthenticated-rce",
+        "cisco",
+        "secure-email-gateway",
+        "critical",
+        "kev"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002070",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-14T02:14:22Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-14T02:14:22Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "UNSW study finds support lags as technology-facilitated abuse becomes common in domestic violence",
+      "summary": "A study by the University of New South Wales has found online support and guidance for victims of technology-facilitated abuse is not keeping pace with the scale of digital abuse in domestic and family violence. The research, led by Dr Rahat Masood from the UNSW Institute for Cyber Security and the School of Computer Science [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0013223130672845149,
+        "prominence": 6.355069870654069e-07
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian organisation (UNSW)",
+          "names an Australian place (New South Wales)",
+          "reported by an Australian source"
+        ],
+        "sectors": [
+          "education"
+        ],
+        "soci_asset_classes": [
+          "higher education and research"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/unsw-study-finds-support-lags-as-technology-facilitated-abuse-becomes-common-in-domestic-violence/?utm_source=rss&utm_medium=rss&utm_campaign=unsw-study-finds-support-lags-as-technology-facilitated-abuse-becomes-common-in-domestic-violence",
+          "published": "2026-09-14T02:14:22Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T02:14:22Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000081",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-14T01:45:53Z",
+      "last_seen": "2026-10-03T19:15:00.004209Z",
+      "last_material_update": "2026-09-14T01:45:53Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Updated guidance on detecting and mitigating Active Directory compromises",
+      "summary": "Learn how malicious actors target Microsoft Active Directory environments, why they are critical to secure and how to reduce the likelihood of cyber attacks.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.0013132792703217891,
+        "prominence": 6.052921998035629e-07
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC News)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_news",
+          "url": "https://www.cyber.gov.au/updated-guidance-on-detecting-and-mitigating-active-directory-compromises",
+          "published": "2026-09-14T01:45:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T01:45:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC News",
+          "sources": [
+            "acsc_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002008",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-14T10:00:01Z",
+      "last_seen": "2026-10-02T00:00:00.044873Z",
+      "last_material_update": "2026-09-14T10:00:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Unmasking Cloud Identities: From Behavioral Clustering to Automated Detection",
+      "summary": "We designed a behavioral clustering model to map cloud identity roles from audit logs, enabling continuous threat detection using standard SQL queries. The post Unmasking Cloud Identities: From Behavioral Clustering to Automated Detection appeared first on Unit 42 .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.0014791289315843803,
+        "prominence": 3.8501177126354085e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/behavioral-clustering-map-to-cloud-identities/",
+          "published": "2026-09-14T10:00:01Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T10:00:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002318",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-14T12:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-14T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How Fyxer built an AI executive assistant people trust",
+      "summary": "Fyxer uses OpenAI models, fine-tuning, memory, and real user feedback to organize inboxes and draft emails in each user’s voice.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0014631897085695125,
+        "prominence": 3.7675352050734536e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/fyxer",
+          "published": "2026-09-14T12:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002319",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-14T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-14T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+      "summary": "Perplexity uses Astra to write communications, change software, and monitor production systems, and checks in much less frequently than with earlier models.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0012303909807722302,
+        "prominence": 2.663521054157023e-07
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+          "published": "2026-09-14T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}

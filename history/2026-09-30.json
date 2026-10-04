@@ -1,0 +1,5614 @@
+{
+  "generated_at": "2026-10-04T00:07:49.244976Z",
+  "date": "2026-09-30",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 69,
+    "critical": 2,
+    "high": 3,
+    "medium": 1,
+    "low": 1,
+    "unknown": 62,
+    "directly_reported_in_au": 14,
+    "pending_enrichment": 63
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001872",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-01T10:33:16Z",
+      "last_independent_confirmation": "2026-09-30T15:24:54Z",
+      "status": "active",
+      "title": "CISA Adds Exploited Cisco Catalyst SD-WAN Manager Auth Bypass to KEV",
+      "summary": "A critical authentication bypass flaw in Cisco Catalyst SD‑WAN Manager (CVE‑2026‑76504) has been added to CISA’s KEV list after reports of active exploitation.",
+      "why_it_matters": "The flaw has a CVSS score of 9.8 and allows unauthenticated remote attackers to gain access, making it a high‑risk vulnerability that is actively exploited.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "news",
+        "advisory",
+        "zero-day"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.9625,
+        "novelty": 0.2496992760394094,
+        "prominence": 0.513932445654851
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cisco",
+          "CISA"
+        ],
+        "products": [
+          "Cisco Catalyst SD-WAN Manager"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-76504",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01575,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-30",
+            "due_date": "2026-10-03"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-76504 as exploited in the wild, added 2026-09-30, with US federal agencies due to fix it by 2026-10-03.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-76504 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-76504"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-76504 being exploited in the next 30 days at 1.6%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-76504"
+          ]
+        },
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.9625,
+          "evidence": [
+            "cisa_kev",
+            "bleepingcomputer",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-76504",
+          "published": "2026-09-30T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/cisco-warns-of-new-sd-wan-authentication-bypass-zero-day-exploited-in-attacks/",
+          "published": "2026-09-30T14:46:40Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/cisco-warns-of-attackers-exploiting.html",
+          "published": "2026-09-30T15:24:54Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/cisa-adds-exploited-cisco-catalyst-sd.html",
+          "published": "2026-10-01T10:33:16Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T14:46:40Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T15:24:54Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T10:33:16Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        }
+      ],
+      "tags": [
+        "auth-bypass",
+        "cisco",
+        "kev",
+        "cisa",
+        "exploited"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002273",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T14:06:15Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-03T04:15:00Z",
+      "last_independent_confirmation": "2026-10-03T04:15:00Z",
+      "status": "active",
+      "title": "OpenAI cancels release of latest model over safety concerns.",
+      "summary": "OpenAI has halted the launch of its newest AI model due to safety concerns, while a Pentagon data breach exposed information about millions of U.S. military personnel and the FBI has urged members of the ShinyHunters group to surrender.",
+      "why_it_matters": "The breach potentially exposed sensitive military data affecting millions of personnel, and the FBI’s call to ShinyHunters indicates ongoing investigations into cybercriminal activity.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.3061053890371704,
+        "prominence": 0.32835150542220937
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters"
+        ],
+        "organisations": [
+          "OpenAI",
+          "Pentagon",
+          "FBI"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "defence"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "ars_ai",
+            "cyberwire"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/ai/2026/09/openai-delays-ipo-over-ai-safety-concerns/",
+          "published": "2026-09-30T14:06:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        },
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/week-that-was/10/38",
+          "published": "2026-10-03T04:15:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T14:06:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        },
+        {
+          "timestamp": "2026-10-03T04:15:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001831"
+        }
+      ],
+      "tags": [
+        "data-breach",
+        "openai",
+        "pentagon",
+        "shinyhunters",
+        "fbi",
+        "ai-safety"
+      ],
+      "pending_enrichment": false,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004532",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T21:00:40Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-30T21:00:40Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "From SELECT to SYSADMIN with SQL Copilot (CVE-2026-65669)",
+      "summary": "A critical elevation-of-privilege flaw in Microsoft SQL Server Copilot (CVE-2026-65669) was disclosed, with a CVSS score of 9.6.",
+      "why_it_matters": "The vulnerability permits an attacker to gain sysadmin privileges on SQL Server, potentially compromising all databases. It is rated critical by Microsoft.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "research"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.6,
+        "novelty": 0.33821089147574657,
+        "prominence": 0.29955005940228174
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [
+          "SQL Server",
+          "SQL Server Management Studio"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-65669",
+          "cvss": {
+            "score": 9.6,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:U/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00882,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.55,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "embracethered"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-65669 is rated 9.6 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-65669"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-65669 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-65669"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2026/from-select-to-sysadmin-sql-copilot-bluehat-asia/",
+          "published": "2026-09-30T21:00:40Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T21:00:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-002138"
+        }
+      ],
+      "tags": [
+        "sql-server",
+        "privilege-escalation",
+        "copilot",
+        "bluehat",
+        "research"
+      ],
+      "pending_enrichment": false,
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-002160",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T10:20:37Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-01T16:00:00Z",
+      "last_independent_confirmation": "2026-10-01T16:00:00Z",
+      "status": "active",
+      "title": "Pentagon data breach impacts millions of US military personnel.",
+      "summary": "A breach of the Pentagon’s personnel database exposed personal data of millions of U.S. military personnel.",
+      "why_it_matters": "The breach exposed sensitive personal information, including Social Security numbers, of millions of U.S. military personnel.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "malware",
+        "espionage",
+        "emerging-threat",
+        "analysis",
+        "vendor_advisory",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.9375,
+        "novelty": 0.28992576272180853,
+        "prominence": 0.26906014490826663
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Star Blizzard"
+        ],
+        "organisations": [
+          "Pentagon",
+          "MI5",
+          "MSS"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "GB",
+          "RU",
+          "CN"
+        ],
+        "industries": [
+          "defence",
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.9375,
+          "evidence": [
+            "grahamcluley",
+            "malwarebytes",
+            "cyberwire"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/pentagon-personnel-database-breach-personal-data-millions",
+          "published": "2026-09-30T10:20:37Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        },
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/privacy/2026/10/pentagon-breach-exposes-social-security-numbers-and-military-records-of-millions",
+          "published": "2026-10-01T10:48:58Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        },
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/daily-briefing/15/188",
+          "published": "2026-10-01T16:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T10:20:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T10:48:58Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T16:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "malware",
+        "espionage",
+        "star-blizzard",
+        "pentagon",
+        "us-military"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001878",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T14:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T16:46:29Z",
+      "last_independent_confirmation": "2026-09-30T16:46:29Z",
+      "status": "monitoring",
+      "title": "Attackers Exploit Zimbra Flaw to Deploy Web Shells and Harvest Authentication Secrets",
+      "summary": "Threat actors used a patched Zimbra Collaboration Suite vulnerability to drop web shells and steal mailbox credentials.",
+      "why_it_matters": "The CVE-2026-73570 flaw has a CVSS score of 8.9 and allows unauthenticated remote code execution via OS command injection, enabling attackers to deploy web shells and exfiltrate authentication secrets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "malware",
+        "research",
+        "news",
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.875,
+        "novelty": 0.3056452835966463,
+        "prominence": 0.23602165836952405
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Zimbra",
+          "Microsoft"
+        ],
+        "products": [
+          "Zimbra Collaboration Suite"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-73570",
+          "cvss": {
+            "score": 8.9,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:L",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.11736,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-21",
+            "due_date": "2026-08-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1059",
+          "name": "Command and Scripting Interpreter",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        },
+        {
+          "id": "T1505.003",
+          "name": "Server Software Component: Web Shell",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-73570 as exploited in the wild, added 2026-08-21, with US federal agencies due to fix it by 2026-08-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-73570 is rated 8.9 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-73570"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-73570 being exploited in the next 30 days at 12%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-73570"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.875,
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/30/unauthenticated-command-injection-on-internet-facing-mail-servers-tracking-cve-2026-73570/",
+          "published": "2026-09-30T14:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-exploit-zimbra-flaw-to-deploy.html",
+          "published": "2026-09-30T16:46:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T16:46:29Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000171"
+        }
+      ],
+      "tags": [
+        "zimbra-flaw",
+        "web-shell",
+        "command-injection",
+        "rce",
+        "microsoft-research"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002254",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T22:35:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-02T15:20:53Z",
+      "last_independent_confirmation": "2026-10-02T15:20:53Z",
+      "status": "active",
+      "title": "US sanctions Tren de Aragua gang members in ATM hacks crackdown",
+      "summary": "The U.S. Treasury Department has sanctioned eight members of the Venezuelan gang Tren de Aragua (TdA) for their role in the theft of millions of dollars in ATM jackpotting attacks across the United States. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "policy",
+        "malware",
+        "fraud",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.3459773876707202,
+        "prominence": 0.12847474328002587
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Tren de Aragua"
+        ],
+        "organisations": [
+          "U.S. Treasury Department"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "VE"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "therecord",
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/us-sanctions-10-atm-jackpotting-tren-de-aragua",
+          "published": "2026-09-30T22:35:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/us-sanctions-tren-de-aragua-members-in-atm-jackpotting-crackdown/",
+          "published": "2026-10-02T15:20:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T22:35:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        },
+        {
+          "timestamp": "2026-10-02T15:20:53Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "atm-jackpotting",
+        "sanctions",
+        "fraud",
+        "malware",
+        "policy"
+      ],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001944",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:58:34Z",
+      "last_seen": "2026-10-02T08:00:00.142739Z",
+      "last_material_update": "2026-09-30T13:58:34Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Greens leadership fight scuttles Senate AI committee hearing",
+      "summary": "The Senate committee conducting an inquiry into AI and data centres has scuttled its hearing in Canberra scheduled for Thursday, apparently falling victim to the Greens’ unexpected leadership change. Greens senator Sarah Hanson-Young – who chairs the committee – had over the weekend demanded that OpenAI chief executive Sam Altman and Anthropic CEO Dario Amodei... The post Greens leadership fight scuttles Senate AI committee hearing appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3677490176568887,
+        "prominence": 0.04982486795592348
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Canberra)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/greens-leadership-fight-scuttles-senate-ai-committee-hearing/",
+          "published": "2026-09-30T13:58:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:58:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001945",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:58:09Z",
+      "last_seen": "2026-10-02T08:00:00.142739Z",
+      "last_material_update": "2026-09-30T13:58:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Qld added new strings to $470m PsiQuantum investment",
+      "summary": "Queensland tightened the conditions on its $470 million PsiQuantum investment in the wake of a review of the joint federal-state deal to build a quantum computer on the outskirts of Brisbane. Queensland Treasurer David Janetzki on Wednesday revealed that “additional gateways” were added to the contract last year to “make sure that the taxpayer dollar... The post Qld added new strings to $470m PsiQuantum investment appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3677121410055496,
+        "prominence": 0.04981412798596637
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australian places (Qld, Queensland, Brisbane)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/qld-added-new-strings-to-470m-psiquantum-investment/",
+          "published": "2026-09-30T13:58:09Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:58:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001946",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:57:43Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-30T13:57:43Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Aged care algorithm included ‘mental retardation’ category",
+      "summary": "The controversial algorithm determining aged care supports could place older Australians in a “mental retardation” category as recently as last year, despite the term being phased out of practice more than a decade ago. A Victorian aged care official warned federal counterparts that developed the Integrated Assessment Tool (IAT) that the anachronistic term remained a... The post Aged care algorithm included ‘mental retardation’ category appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3676737932108504,
+        "prominence": 0.04980296094063986
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/aged-care-algorithm-included-mental-retardation-category/",
+          "published": "2026-09-30T13:57:43Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:57:43Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002152",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T16:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-10-01T10:53:38Z",
+      "last_independent_confirmation": "2026-10-01T10:53:38Z",
+      "status": "archived",
+      "title": "FBI tells ShinyHunters members to turn themselves in, after arrest of alleged leader",
+      "summary": "The FBI has urged members of the ShinyHunters gang to surrender after Dutch police arrested a 24-year-old suspected leader who may have arranged two murders.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "policy",
+        "news",
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.8,
+        "novelty": 0.3349168771549618,
+        "prominence": 0.049613970837944464
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters"
+        ],
+        "organisations": [
+          "FBI",
+          "Dutch police"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "NL"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.8,
+          "evidence": [
+            "cyberwire",
+            "grahamcluley"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/daily-briefing/15/187",
+          "published": "2026-09-30T16:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        },
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/fbi-shinyhunters-turn-themselves-in-arrest-leader",
+          "published": "2026-10-01T10:53:38Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T10:53:38Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "fbi",
+        "shinyhunters",
+        "arrest",
+        "law-enforcement",
+        "threat-actor",
+        "cybercrime"
+      ],
+      "pending_enrichment": false,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002016",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T21:25:47Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T21:25:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Malicious Custom GPTs Turn ChatGPT Into RAT Delivery Lure",
+      "summary": "In yet another ClickFix-style campaign, threat actors abuse legitimate domains from OpenAI and Google to fool unsuspecting users.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.44660674803138706,
+        "prominence": 0.048418047696599555
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/malicious-custom-gpts-chatgpt-rat-delivery-lure",
+          "published": "2026-09-30T21:25:47Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T21:25:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001947",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T07:00:36Z",
+      "last_seen": "2026-10-02T00:00:00.044873Z",
+      "last_material_update": "2026-09-30T07:00:36Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Greens’ tech maven takes party leadership",
+      "summary": "The Greens have vowed to stare down “US tech billionaires” and “replace” Labor under new leader David Shoebridge, who emerged victorious on Wednesday from a closely contested leadership race. The NSW Senator has owned the progressive party’s tech policy and digital rights efforts in recent years, and will lead the party with deputy Senator Steph... The post Greens’ tech maven takes party leadership appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.36265410269927434,
+        "prominence": 0.04835334053022211
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (NSW)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/greens-tech-maven-takes-party-leadership/",
+          "published": "2026-09-30T07:00:36Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T07:00:36Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002017",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:51:15Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:51:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Trump, Tech Giants Strike Voluntary AI Safety Accord",
+      "summary": "The new White House Accord on so-called \"Super Intelligence\" calls on companies to implement greater controls and oversight over AI safety.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.44291022668510427,
+        "prominence": 0.04751108988293953
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/trump-tech-giants-strike-voluntary-ai-safety-accord",
+          "published": "2026-09-30T20:51:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:51:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000001",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T06:21:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-30T06:21:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "In Pictures: Governing the agents of chaos Saviynt roundtable",
+      "summary": "A selection of photos from a recent iTnews roundtable lunch at Aria in Sydney.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3592141472608551,
+        "prominence": 0.047373798802601716
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Sydney)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/gallery/in-pictures-governing-the-agents-of-chaos-saviynt-roundtable-629327?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-30T06:21:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T06:21:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001746",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:34:01Z",
+      "last_seen": "2026-10-02T12:00:00.142001Z",
+      "last_material_update": "2026-09-30T20:34:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Russian state hackers use new RedFlick technique to push malware",
+      "summary": "The Russian state actor Star Blizzard has been using a new malware installation tactic dubbed \"RedFlick\" to deploy its signature CosmicPulse backdoor. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.44107699383853927,
+        "prominence": 0.047065103131581604
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/russian-state-hackers-use-new-redflick-technique-to-push-malware/",
+          "published": "2026-09-30T20:34:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:34:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001789",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:32:00Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T20:32:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Automakers routinely share personally identifiable connected-car data with third parties, report says",
+      "summary": "A new study reveals fresh details about how drivers are exposed to a web of large corporations participating in the advertising ecosystem.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.440862963120677,
+        "prominence": 0.0470131980787348
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/automakers-routinely-share-connected-car-data-third-parties",
+          "published": "2026-09-30T20:32:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:32:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001824",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:30:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The guardrails go to court.",
+      "summary": "AI companies sign a voluntary accord aimed at addressing safety concerns. Cybercriminals abuse the CustomGPT feature as part of a ClickFix campaign. The FBI is urging members of ShinyHunters to come forward. A fraud campaign turns stolen credentials into job scams. Maria Varmazis joins us for her space cyber story. The WaterISAC confronts persistent weaknesses. AI gives SOC teams more time at the expense of training. Two U.S. Air Force members get federal prison time over a business email compromise scheme. Our guest is Dan Ohlemeier, Senior Solutions Architect for Ready1 at Semperis, discuss…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.44065080382540417,
+        "prominence": 0.046961780698995655
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/daily-podcast/2647/notes",
+          "published": "2026-09-30T20:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001825",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:20:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:20:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Crisis Orchestration: The Unsung Hero of Successful Cyber Incident Response with Dan Ohlemeier from Semperis",
+      "summary": "Dan Ohlemeier, Principal Solutions Architect at Semperis, joins Dave Bittner on the CyberWire Daily podcast for a sponsored Industry Voices conversation about crisis orchestration and the often-overlooked challenges of executing an incident response plan during a real cyber crisis. Dan explains why organizations need to prepare for communication, coordination, and documentation when normal systems are unavailable or untrusted, how more realistic tabletop exercises can expose gaps before an incident, and why effective cyber resilience depends on aligning people, processes, and technology.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.43959153784828203,
+        "prominence": 0.04670556831253182
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.comhttps://explore.thecyberwire.com/semperis",
+          "published": "2026-09-30T20:20:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:20:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001826",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Island raises $400 million in a Series F round.",
+      "summary": "Israeli cloud security company Upwind is acquiring AI cybersecurity startup Aegis.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4374806387769372,
+        "prominence": 0.0461974886227599
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/business-briefing/8/39",
+          "published": "2026-09-30T20:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000109",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T05:32:14Z",
+      "last_seen": "2026-10-03T20:15:00.101764Z",
+      "last_material_update": "2026-09-30T05:32:14Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australian government to invest $3.5m to combat technology-facilitated abuse",
+      "summary": "The Albanese government to stand up 12 new “innovative” projects as part of its National Plan to End Violence Against Women and Children.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3550227066295008,
+        "prominence": 0.04619545544690582
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/government/14250-australian-government-to-invest-3-5-million-to-combat-technology-facilitated-abuse",
+          "published": "2026-09-30T05:32:14Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T05:32:14Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001747",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:49:15Z",
+      "last_seen": "2026-10-02T12:00:00.142001Z",
+      "last_material_update": "2026-09-30T19:49:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "DIVD says Zammad zero-days enabled AI-driven network breach",
+      "summary": "The Dutch Institute for Vulnerability Disclosure (DIVD) says that the breach of its network was possible by exploiting a chain of two zero-day vulnerabilities in the open-source Zammad ticketing system. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4363502220424599,
+        "prominence": 0.045926770506995986
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/divd-says-zammad-zero-days-enabled-ai-driven-network-breach/",
+          "published": "2026-09-30T19:49:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:49:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001790",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:35:00Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T19:35:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "After reports on suicide deaths, Pentagon puts Cyber Command on notice",
+      "summary": "An August 31 memo obtained by Recorded Future News shows that the Pentagon's assistant secretary for cyber policy made specific demands of U.S. Cyber Command leadership after reports of a cluster of suicide deaths.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.43485626360254026,
+        "prominence": 0.04557044826190449
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/cyber-command-suicide-deaths-pentagon-memo",
+          "published": "2026-09-30T19:35:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:35:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002126",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:31:00Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-30T19:31:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "​​Secure what’s next: Your guide to Microsoft Security at Microsoft Ignite 2026",
+      "summary": "This year at Microsoft Ignite, we spotlight our AI-first, end-to-end security platform designed to protect identities, devices, data, applications, clouds, infrastructure, and the AI agents now working alongside your teams. The post ​​Secure what’s next: Your guide to Microsoft Security at Microsoft Ignite 2026 appeared first on Microsoft Security Blog .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.43443782700431477,
+        "prominence": 0.04547094481176278
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/30/secure-whats-next-your-guide-to-microsoft-security-at-microsoft-ignite-2026/",
+          "published": "2026-09-30T19:31:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:31:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003518",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T21:54:19Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T21:54:19Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "He Built This City",
+      "summary": "I visited the Museum of the City of New York today and got to see He Built This City: Joe Macken’s Model , the 50 x27 feet model of the city built over a 21 year period from balsa wood and cardboard. It exceeded my already high expectations. The exhibition closes on 12th October so you should absolutely make a priority to see it if you get the chance. Tags: museums , new-york",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4321764911453178,
+        "prominence": 0.044935451399316505
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/30/he-built-this-city/",
+          "published": "2026-09-30T21:54:19Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T21:54:19Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001948",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T04:34:13Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T04:34:13Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Sicona warns ‘small window’ for Aussie battery industry is closing",
+      "summary": "A local battery manufacturer is warning that the “small window” for Australia to become a key player in a $17 billion industry could soon close as rivals in the UK and US are boosted by their governments. Sicona Battery Technologies, which needs $55 million to finish building commercial-scale manufacturing plant in Port Kembla, has called for... The post Sicona warns ‘small window’ for Aussie battery industry is closing appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3500998937392625,
+        "prominence": 0.044832719099822164
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/aussie-battery-firm-pushes-for-55m-investment-to-compete-internationally/",
+          "published": "2026-09-30T04:34:13Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T04:34:13Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001791",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:00:00Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Google: Vulnerability disclosures double to 10,000 per month as AI fuels exploitation",
+      "summary": "Vulnerability disclosures continue to skyrocket, doubling over the course of the year to more than 10,000 each month, Google researchers warned.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.43120856576002836,
+        "prominence": 0.0447074006313524
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/google-vulnerabilities-cyberattacks-ai",
+          "published": "2026-09-30T19:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002018",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T18:56:56Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T18:56:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "As AI Reshapes the SOC Career Ladder, Satisfaction Rises for 91%, but Entry Gets Harder for Nearly Half",
+      "summary": "New Swimlane research underscores a paradox: While AI detection and response is essential to giving defenders an edge, one in four security pros say AI limits their skill development.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4308904196155644,
+        "prominence": 0.04463259426639203
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cybersecurity-careers/ai-reshapes-soc-career-ladder",
+          "published": "2026-09-30T18:56:56Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T18:56:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001748",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T18:08:34Z",
+      "last_seen": "2026-10-02T12:00:00.142001Z",
+      "last_material_update": "2026-09-30T18:08:34Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Over 543,000 valid credentials exposed in public GitHub repositories",
+      "summary": "More than 543,000 credentials exposed in public GitHub repositories were still valid in July despite the platform's security measures to prevent accidental leaks of sensitive data. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.42590363426384903,
+        "prominence": 0.04346980166867641
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/over-543-000-valid-credentials-exposed-in-public-github-repositories/",
+          "published": "2026-09-30T18:08:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T18:08:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003547",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:01:45Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:01:45Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Gemini 4 Argon: our next era of frontier intelligence",
+      "summary": "Gemini 4 Argon: our next era of frontier intelligence",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.42062510175644696,
+        "prominence": 0.04225888725775399
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "deepmind",
+          "url": "https://deepmind.google/blog/gemini-4-argon-our-next-era-of-frontier-intelligence/",
+          "published": "2026-09-30T20:01:45Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:01:45Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DeepMind Blog",
+          "sources": [
+            "deepmind"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001879",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T16:32:59Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T16:32:59Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Attackers Abuse MSP360 to Deploy ScreenConnect in Dual-RMM Phishing Attacks",
+      "summary": "Microsoft has warned of phishing campaigns distributing an installer for the MSP360 Remote Monitoring and Management (RMM) software under the guise of meeting invitations, PDF-themed lures, software update prompts, and other social-engineering content. \"Once executed, the legitimate MSP360 installer, distributed under a deceptive file name established remote management access on affected",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4162177187451636,
+        "prominence": 0.041263406605471176
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-abuse-msp360-to-deploy.html",
+          "published": "2026-09-30T16:32:59Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T16:32:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001749",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:49:29Z",
+      "last_seen": "2026-10-02T12:00:00.142001Z",
+      "last_material_update": "2026-09-30T15:49:29Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA warns of critical pre-auth RCE flaw in MikroTik RouterOS",
+      "summary": "The U.S. Cybersecurity and Infrastructure Security Agency (CISA) is warning of a new critical vulnerability in MikroTik RouterOS that could lead to remote code execution or cause a denial-of-service condition. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4118828956892175,
+        "prominence": 0.04029807355940648
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/cisa-warns-of-critical-pre-auth-rce-flaw-in-mikrotik-routeros/",
+          "published": "2026-09-30T15:49:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:49:29Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001924",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:29:42Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T15:29:42Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Hackers steal protective order and foster care records from Arizona courts",
+      "summary": "Attackers copied sensitive court records, including more than 150,000 foster care reports, raising privacy and safety concerns for those Arizonans affected.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.4099264279555411,
+        "prominence": 0.03986683178527868
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/data-breaches/2026/09/hackers-steal-protective-order-and-foster-care-records-from-arizona-courts",
+          "published": "2026-09-30T15:29:42Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:29:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000111",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T00:43:44Z",
+      "last_seen": "2026-10-02T00:00:00.003581Z",
+      "last_material_update": "2026-09-30T00:43:44Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Medicare hack: OpenAI’s email to the Australian government – 5 paragraphs, zero apology",
+      "summary": "OpenAI’s email is revealed as ASD chief says the company’s recent apology is important. “We shouldn’t miss that moment.”",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.33120803870152477,
+        "prominence": 0.039813936071935896
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/government/14247-medicare-hack-openai-s-email-to-the-aussie-government-five-paragraphs-zero-apology",
+          "published": "2026-09-30T00:43:44Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:43:44Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004841",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:02:29Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T19:02:29Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI leaders warn US 'tech bros' must be forced to invest in Australia",
+      "summary": "Union figures and leading academics want big tech companies building Australian data centres to help fund the local AI industry through a levy.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3291220785136621,
+        "prominence": 0.039280122986630826
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-10-01/unions-want-big-tech-to-pay-levy-to-build-australian-owned-ai/107207158",
+          "published": "2026-09-30T19:02:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:02:29Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002019",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:02:25Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T15:02:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Russia's Star Blizzard Ditches ClickFix to Widen Phishing Net",
+      "summary": "The APT actor is using a new tactic, dubbed \"RedFlick,\" against Ukrainian-linked targets such as NGOs, think tanks, and journalists to deploy its CosmicPulse backdoor.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4072434863826474,
+        "prominence": 0.03927994415614328
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/threat-intelligence/russia-star-blizzard-apt-ditches-clickfix-widen-phishing-net",
+          "published": "2026-09-30T15:02:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:02:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001881",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:00:15Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T15:00:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Attackers Abuse ChatGPT Custom GPTs to Deliver RAT via ClickFix Lures",
+      "summary": "Threat actors are abusing ChatGPT Custom GPTs to disguise them as legitimate product offerings and direct unsuspecting victims to malicious sites that employ ClickFix lures to deliver malware. Huntress, which observed the activity in late September 2026, said it marks the abuse of yet another feature in trusted artificial intelligence (AI) platforms. Prior campaigns have weaponized shared",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.40703117856203297,
+        "prominence": 0.03923372319243775
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-abuse-chatgpt-custom-gpts-to.html",
+          "published": "2026-09-30T15:00:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:00:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000108",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T06:02:45Z",
+      "last_seen": "2026-10-03T20:15:00.101764Z",
+      "last_material_update": "2026-09-30T06:02:45Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The industry speaks: International Women in Cyber Day 2026",
+      "summary": "“Women in cyber shouldn’t just adapt to the agentic era; we should be the ones designing how the workforce gets there.” – Tiffany Shogren, Optiv",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3576398170138401,
+        "prominence": 0.03893511291538951
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14251-the-industry-speaks-international-women-in-cyber-day-2026",
+          "published": "2026-09-30T06:02:45Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T06:02:45Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001751",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T14:01:11Z",
+      "last_seen": "2026-10-02T08:00:00.142739Z",
+      "last_material_update": "2026-09-30T14:01:11Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI's Third Wave: Coworkers Break the Security Model That Worked for Agents",
+      "summary": "Persistent AI coworkers may operate continuously with standing access, creating identity risks that existing security models were not designed to handle. Token Security explains why these agents need their own identities, owners, scoped permissions, and lifecycle controls. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4012857845236347,
+        "prominence": 0.037995166175736825
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/ais-third-wave-coworkers-break-the-security-model-that-worked-for-agents/",
+          "published": "2026-09-30T14:01:11Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T14:01:11Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001792",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T14:00:00Z",
+      "last_seen": "2026-10-01T12:00:00.178361Z",
+      "last_material_update": "2026-09-30T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Mobile malware warning from Ukrainian researchers includes iPhone exploit kit",
+      "summary": "'Hit and run' iPhone malware known as DarkSword is part of a wave of Russian attacks on iOS and Android devices, according to Ukraine's SSSCIP.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.40117151458221373,
+        "prominence": 0.037970771720865215
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/ukraine-ssscip-mobile-malware-warning-ios-android",
+          "published": "2026-09-30T14:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001752",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:37:15Z",
+      "last_seen": "2026-10-01T20:00:00.076942Z",
+      "last_material_update": "2026-09-30T13:37:15Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft to block Entra ID script injection attacks starting October",
+      "summary": "Microsoft has reminded customers that the Entra ID authentication system will get better protection against external script injection attacks starting next month. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3989809501040971,
+        "prominence": 0.037504925219515636
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/microsoft-to-block-entra-id-script-injection-attacks-starting-october/",
+          "published": "2026-09-30T13:37:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:37:15Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001753",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T12:25:10Z",
+      "last_seen": "2026-10-01T20:00:00.076942Z",
+      "last_material_update": "2026-09-30T12:25:10Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "TeamViewer urges users to patch severe flaws “as soon as possible”",
+      "summary": "Remote access software company TeamViewer warned customers on Tuesday to immediately patch a set of high-severity vulnerabilities affecting its client and host software. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.39211883164119105,
+        "prominence": 0.03606765163962125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/teamviewer-urges-users-to-patch-severe-flaws-as-soon-as-possible/",
+          "published": "2026-09-30T12:25:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T12:25:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003548",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:03:07Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T15:03:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing SynthID Bio",
+      "summary": "Proof of concept for watermarking AI-generated proteins while preserving biological function.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.3914540091196148,
+        "prominence": 0.0359301714286275
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "deepmind",
+          "url": "https://deepmind.google/blog/introducing-synthid-bio/",
+          "published": "2026-09-30T15:03:07Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:03:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DeepMind Blog",
+          "sources": [
+            "deepmind"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001882",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T11:58:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T11:58:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Know Your Enemy: Browser-Based Attack Techniques in 2026",
+      "summary": "Given that the browser is where business apps are accessed and used, it makes sense that attacks are happening there too. Most breaches today begin in a browser session. Often, they never leave it, with the entire attack chain from initial access to exfiltration playing out in the browser. Here are the six most dangerous techniques that should be on every security team's radar in 2026. 1.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.38956337796701895,
+        "prominence": 0.03554090271708645
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/know-your-enemy-browser-based-attack.html",
+          "published": "2026-09-30T11:58:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T11:58:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001949",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T02:50:11Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T02:50:11Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Federal agencies ordered to audit legacy systems after Medicare breach",
+      "summary": "Federal agencies have been ordered to hunt down vulnerable legacy systems in their technology estates and set targets to reduce them, following the breach of a Medicare statistics portal by an OpenAI agent. Home Affairs secretary Stephanie Foster signed off on the directive on Tuesday, giving agencies six months to complete the legacy technology stocktake... The post Federal agencies ordered to audit legacy systems after Medicare breach appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.34144280628689466,
+        "prominence": 0.03520509182185859
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/federal-agencies-ordered-to-audit-legacy-systems-after-medicare-breach/",
+          "published": "2026-09-30T02:50:11Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T02:50:11Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001883",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T11:30:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T11:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI Coding Agents Exposed 13,000 Internal Images, Including Billing Records, on GitHub",
+      "summary": "AI coding agents asked to share screenshots of code changes for review have put internal company images in public GitHub repositories, security company Glow said. Its researchers found more than 13,000 internal images from developers at over 300 organizations, including customer billing records and screens of features not yet released. In most cases, they sat under developers' personal accounts",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3869469630942985,
+        "prominence": 0.03500633837213502
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/ai-coding-agents-exposed-13000-internal.html",
+          "published": "2026-09-30T11:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T11:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001925",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T11:28:06Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T11:28:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Your car’s app could be telling Big Tech who you are and where you go",
+      "summary": "Who you are and where you live, work, and seek medical care could be revealed by data your car’s app shares with trackers.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.3867700586586415,
+        "prominence": 0.034970367790415784
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/news/2026/09/your-cars-app-could-be-telling-big-tech-who-you-are-and-where-you-go",
+          "published": "2026-09-30T11:28:06Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T11:28:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001754",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T11:11:46Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-30T11:11:46Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bitget hacked via zero-day in third-party security products",
+      "summary": "Cryptocurrency exchange Bitget revealed today that attackers who stole $387.5 million last week breached its systems after exploiting a zero-day flaw in third-party security products. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.385252633398363,
+        "prominence": 0.03466272337739139
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/bitget-hacked-via-zero-day-in-third-party-security-products/",
+          "published": "2026-09-30T11:11:46Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T11:11:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001803",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T11:05:35Z",
+      "last_seen": "2026-10-03T00:00:00.142996Z",
+      "last_material_update": "2026-09-30T11:05:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "I Want Better Reporting on AI Genie Behavior",
+      "summary": "AI systems are regularly completing tasks in ways that their prompters don’t want or intend. Some of them are disturbing, and some of them are dangerous. This is something I’ve been calling “ genie behavior ,” because I think that really gets at the core of what’s happening. I wish the popular press would report on this better. I don’t like the “going rogue” framing because it deflects the responsibility from the prompters—often the AI companies themselves. And now, pretty much anything off-script is being called “hacking.” Take, for example, the recent stories of one of OpenAI’s models hacki…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.38467973430585634,
+        "prominence": 0.03454699146341406
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "schneier",
+          "url": "https://www.schneier.com/blog/archives/2026/09/i-want-better-reporting-on-ai-genie-behavior.html",
+          "published": "2026-09-30T11:05:35Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "schneier",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T11:05:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bruce Schneier Blog",
+          "sources": [
+            "schneier"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001884",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T10:45:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T10:45:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "US-Focused CSuite Phishing Steals Microsoft 365 Sessions and Deploys RMM Tools for Remote Access",
+      "summary": "ANY.RUN researchers traced a US-focused CSuite phishing campaign across 351 sandbox analyses, with 51% of submissions coming from the United States. Technology, manufacturing, government, and consulting organizations showed the highest exposure. By combining Microsoft 365 session theft with remote-access tool deployment, CSuite can turn a phishing incident into broader account compromise, fraud",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3827787755132155,
+        "prominence": 0.034164616556031605
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/us-focused-csuite-phishing-steals.html",
+          "published": "2026-09-30T10:45:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T10:45:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000110",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T01:51:16Z",
+      "last_seen": "2026-10-03T20:15:00.101764Z",
+      "last_material_update": "2026-09-30T01:51:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ShinyHunters v the FBI: Arrests, murders and threats, oh my!",
+      "summary": "The FBI cyber division assistant director warns hackers that their friends will not protect them in the wake of the arrest of an alleged member by Dutch authorities.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.33663536891922374,
+        "prominence": 0.03413899219217515
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14248-shinyhunters-vs-the-fbi-arrests-murders-and-threats-oh-my",
+          "published": "2026-09-30T01:51:16Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T01:51:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002066",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T00:38:17Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T00:38:17Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Data centre security must futureproof for changing access needs as we prepare for huge expansion",
+      "summary": "Data centres are always evolving. User traffic patterns don’t stand still either. An entrance strategy that’s well-designed for your facility can slowly become out of sync with how people actually operate on a daily basis, not necessarily because you did a poor job planning it, but because your operations change. Shifts in staffing models, increases [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3307738829618496,
+        "prominence": 0.03286429094755414
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/data-centre-security-must-futureproof-for-changing-access-needs-as-we-prepare-for-huge-expansion/?utm_source=rss&utm_medium=rss&utm_campaign=data-centre-security-must-futureproof-for-changing-access-needs-as-we-prepare-for-huge-expansion",
+          "published": "2026-09-30T00:38:17Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:38:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000002",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T00:08:00Z",
+      "last_seen": "2026-10-04T00:00:00.100255Z",
+      "last_material_update": "2026-09-30T00:08:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Home Affairs orders gov-wide 'legacy' system stocktake within six months",
+      "summary": "After OpenAI agent interaction with Medicare statistics site.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.32837181024318374,
+        "prominence": 0.032349852941349615
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/home-affairs-orders-gov-wide-legacy-system-stocktake-within-six-months-629313?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-30T00:08:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:08:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001885",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T08:24:35Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T08:24:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Attackers Exploit NetScaler Flaw for Root Access, Deploy WHIPSHOT and SLAPSHOT",
+      "summary": "Unknown threat actors have been observed exploiting a newly patched security flaw in Citrix NetScaler ADC and NetScaler Gateway appliances to target organizations in North America and Europe. The activity, observed by Mandiant Consulting and Google Threat Intelligence Group (GTIG) in September 2026, has targeted government, financial services, technology, education, and legal and professional",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.37005893485768654,
+        "prominence": 0.03167045909522862
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-exploit-netscaler-flaw-for.html",
+          "published": "2026-09-30T08:24:35Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T08:24:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001886",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T08:09:28Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T08:09:28Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OpenSSL Fixes High-Severity DTLS Flaw That Can Leak Heap Memory Unencrypted",
+      "summary": "A High-severity OpenSSL flaw can leak heap memory to the other side of a DTLS connection or crash the program, OpenSSL said on September 29 as it released fixes. DTLS, the TLS variant used for UDP traffic, resends a handshake message if no reply arrives before the timer expires. The leak or crash can happen when such a resend starts while a larger handshake message is stuck part-way",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3687150250777298,
+        "prominence": 0.03141344142791486
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/openssl-fixes-high-severity-dtls-flaw.html",
+          "published": "2026-09-30T08:09:28Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T08:09:28Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002279",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T10:30:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T10:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Disrupting a coordinated model-distillation campaign",
+      "summary": "Learn how OpenAI disrupted a campaign to extract protected model reasoning and is strengthening defenses against adversarial distillation.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.36655016200713464,
+        "prominence": 0.031002014011034685
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/disrupting-a-coordinated-model-distillation-campaign",
+          "published": "2026-09-30T10:30:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T10:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002280",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T10:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T10:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Helping small businesses put AI to work",
+      "summary": "OpenAI is partnering with America’s SBDC to expand hands-on AI training and local support for small businesses, alongside a new report on how small teams are using AI.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.3639130976876846,
+        "prominence": 0.03050515924534159
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/helping-small-businesses-put-ai-to-work",
+          "published": "2026-09-30T10:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T10:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001828",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T07:05:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T07:05:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From Identity Compromise to AI Defense: Inside Modern Incident Response",
+      "summary": "This week we are taking you back to Black Hat USA 2026 and exploring two sides of the security landscape. First, Microsoft incident response experts Adrian Hill and Terry Mee break down identity-based attacks, from compromised credentials and MFA bypasses to containment, logging, access controls, and the growing risks surrounding AI agents. Then, members of Microsoft’s Defender Purple Team discuss how they recreate full attack chains, including emerging AI-driven techniques, to identify detection gaps, strengthen defenses, and use AI to accelerate security research while keeping human experti…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.36303834769360027,
+        "prominence": 0.03034138958114212
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/microsoft-threat-intelligence/78/notes",
+          "published": "2026-09-30T07:05:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T07:05:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002020",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T07:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "South Africa Seeks Help After Cyberattack Targets Air Traffic Control",
+      "summary": "As aviation infrastructure suffers more cyberattacks, air traffic systems are the latest target, with a ransomware toolkit installed on at least one operational network.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3626017371743035,
+        "prominence": 0.030259842078504316
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/south-africa-help-cyberattack-air-traffic-control",
+          "published": "2026-09-30T07:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001829",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T05:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How Lenin Alevski Built a Cybersecurity Survival Game in a Week and Got 12,000 Players",
+      "summary": "Lenin Alevski is an AI Security Engineer at Google who spent a week building a text-based cybersecurity survival game in his spare time. ⁠Accidental CISO⁠ puts you in the seat of the first security hire at a company where everything is on fire, and every fraught and heart-pounding decision leads to one of eight endings. He sat down with Gianna to talk about how the game came together, why spec-driven development matters more than vibe coding alone, and what 12,000 players and zero marketing budget taught him about building indie cyber games.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.35227916958262073,
+        "prominence": 0.028369332098327288
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/breaking-through-in-cybersecurity-marketing/231/notes",
+          "published": "2026-09-30T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001863",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T02:00:03Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T02:00:03Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ISC Stormcast For Wednesday, September 30th, 2026 https://isc.sans.edu/podcastdetail/10116, (Wed, Sep 30th)",
+      "summary": "(c) SANS Internet Storm Center. https://isc.sans.edu Creative Commons Attribution-Noncommercial 3.0 United States License.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.3373477480667517,
+        "prominence": 0.025760531147329038
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33384",
+          "published": "2026-09-30T02:00:03Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T02:00:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004946",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T20:11:08Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T20:11:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Google announces Gemini 4 Argon AI model, but you can't use it yet",
+      "summary": "So much for Gemini 3.5 Pro.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3346051419259087,
+        "prominence": 0.02529731273101449
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/google/2026/09/google-announces-gemini-4-argon-ai-model-but-you-cant-use-it-yet/",
+          "published": "2026-09-30T20:11:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T20:11:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004947",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T19:31:25Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T19:31:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "RFK Jr. thinks AI will free us from the \"tyranny\" of medical facts, expertise",
+      "summary": "AI is far from a perfect resource. But it seems to hallucinate less than Kennedy.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3314219388137094,
+        "prominence": 0.024765833064842698
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/health/2026/09/rfk-jr-says-ai-backs-his-anti-vaccine-views-we-checked-it-doesnt/",
+          "published": "2026-09-30T19:31:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T19:31:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001755",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T00:40:57Z",
+      "last_seen": "2026-10-01T12:00:00.178361Z",
+      "last_material_update": "2026-09-30T00:40:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft is rolling out Linux container support to WSL",
+      "summary": "Microsoft is taking Windows Subsystem for Linux beyond just running Linux distributions, as WSL Containers is now generally available. [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.33098624275333177,
+        "prominence": 0.024693600526569957
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-is-rolling-out-linux-container-support-to-wsl/",
+          "published": "2026-09-30T00:40:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:40:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004948",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T18:47:01Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T18:47:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Trump plan to combat AI risks hinges on Big Tech pals policing themselves",
+      "summary": "Trump gets dozens of AI firms to agree to voluntary safety tests.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3278992131460511,
+        "prominence": 0.024185339322164
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/tech-policy/2026/09/trump-plan-to-combat-ai-risks-hinges-on-big-tech-pals-policing-themselves/",
+          "published": "2026-09-30T18:47:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T18:47:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004949",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T18:25:04Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T18:25:04Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "\"An AI did it\" is no defense, says nonprofit suing OpenAI over Hugging Face hack",
+      "summary": "OpenAI makes others suffer \"the harms of its unsafe decision-making,\" nonprofit says.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.326171541431056,
+        "prominence": 0.02390357945081617
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/tech-policy/2026/09/lawsuit-demands-openai-halt-unsafe-development-that-caused-hugging-face-hack/",
+          "published": "2026-09-30T18:25:04Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T18:25:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004950",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T16:03:48Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T16:03:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Google's early attempt to pay websites for AI answers is struggling",
+      "summary": "Many sites see just one-tenth of one percent of their advertising revenue from AI payments.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3152682717341311,
+        "prominence": 0.022169633224112726
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/google/2026/09/google-is-paying-100-websites-for-contributions-to-ai-overviews-but-the-amounts-are-tiny/",
+          "published": "2026-09-30T16:03:48Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T16:03:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003659",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T00:00:00Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning",
+      "summary": "Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.31498009107769115,
+        "prominence": 0.022124833411455776
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/open-tts-leaderboard",
+          "published": "2026-09-30T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004951",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T15:54:52Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T15:54:52Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Google figures out how to watermark AI-designed proteins",
+      "summary": "Intended to help with biosecurity, it works with a popular AI protein design tool.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.31459116055039354,
+        "prominence": 0.022064454895876984
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/science/2026/09/google-figures-out-how-to-watermark-ai-designed-proteins/",
+          "published": "2026-09-30T15:54:52Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T15:54:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004932",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T10:40:30Z",
+      "last_seen": "2026-10-04T00:00:00.153212Z",
+      "last_material_update": "2026-09-30T10:40:30Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "“We’re not going to shoot ourselves in the foot” over hack fallout, says OpenAI’s chief research officer",
+      "summary": "Two months after the bombshell news that a swarm of its agents had broken their containment and hacked into the computers of the AI company Hugging Face, OpenAI is still putting out fires. A steady drip of disclosures about other hacks in the weeks since has kept OpenAI in the spotlight and raised serious questions…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.29166717721257035,
+        "prominence": 0.018673459409306866
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "mit_tr_ai",
+          "url": "https://www.technologyreview.com/2026/09/30/1145339/were-not-going-to-shoot-ourselves-in-the-foot-over-hugging-face-says-openais-chief-research-officer/",
+          "published": "2026-09-30T10:40:30Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mit_tr_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T10:40:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by MIT Technology Review AI",
+          "sources": [
+            "mit_tr_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "beat": "ai"
+    }
+  ]
+}
