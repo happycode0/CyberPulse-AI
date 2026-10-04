@@ -523,16 +523,16 @@ MORPHEUS
 **Concurrency policy `skip_if_active`** and **Catch-up policy `skip_missed`** for every one, so a
 slow run never stacks up a queue and a reboot never fires a burst of missed jobs.
 
-| Routine | Assigned to | Cron expression | Switch on |
-|---|---|---|---|
-| Daily editorial | MORPHEUS | `30 7 * * *` | now |
-| Desk digest | DECKARD | `0 6,14,22 * * *` | now |
-| Daily QA sample | VOIGHT | `0 7 * * *` | Stage 5 |
-| Follow-up | DECKARD | `0 3-21/6 * * *` | Stage 5 |
-| Source discovery | TACHIKOMA | `30 3 * * *` (after the worker's 03:10 search) | Stage 5 |
-| Model scan | RIPPERDOC | `0 4 * * *` | Stage 5 |
-| Model gauntlet | RIPPERDOC | `0 5 * * 0` (after the worker's 03:40 run) | Stage 5 |
-| Monthly cost review | RIPPERDOC | `0 9 1 * *` | now |
+| Routine | Assigned to | Cron expression | Switch on | What it is for (the site's crew page) |
+|---|---|---|---|---|
+| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest, picks the stories to follow up and the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report. |
+| Desk digest | DECKARD | `0 6,14,22 * * *` | now | Desk notes on the last 8 hours' candidate events: Australia first, then global, then AI. |
+| Daily QA sample | VOIGHT | `0 7 * * *` | Stage 5 | Checks a sample of yesterday's published events against their evidence. |
+| Follow-up | DECKARD | `0 3-21/6 * * *` | Stage 5 | Reports on each follow-up task due on a developing story. |
+| Source discovery | TACHIKOMA | `30 3 * * *` (after the worker's 03:10 search) | Stage 5 | Reads the night's search finds and proposes sources, plus some for each open coverage gap. |
+| Model scan | RIPPERDOC | `0 4 * * *` | Stage 5 | Reports what the worker's nightly scan of the model catalogue found. |
+| Model gauntlet | RIPPERDOC | `0 5 * * 0` (after the worker's 03:40 run) | Stage 5 | Reports the weekly gauntlet's results and raises each model proposal for MORPHEUS. |
+| Monthly cost review | RIPPERDOC | `0 9 1 * *` | now | Reconciles last month's AI spend from the worker's cost ledger and reports it to MORPHEUS. |
 
 The desk digest runs three times a day, at 06:00, 14:00 and 22:00 Sydney time. Each run reads
 the last 8 hours of the worker's digest, so together they cover the day. DECKARD takes the

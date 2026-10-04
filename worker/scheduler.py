@@ -5,7 +5,6 @@ Paperclip routine, so it has no schedule here and is only reachable through `--l
 import asyncio
 import logging
 import signal
-from collections.abc import Iterable
 from datetime import UTC, datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -15,7 +14,6 @@ from worker import ops_api
 from worker.ai.enrich import AiLayer, enrich_pending
 from worker.ai.mitre import suggest_techniques
 from worker.ai.scout import run_gauntlet, scan_models
-from worker.cadence import FAST_INTERVAL_MINUTES, fast_minutes
 from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
 from worker.discovery.run import run_gate, run_search
@@ -31,118 +29,53 @@ from worker.notify.telegram import Telegram
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
 from worker.publish.run import publish_now, push_now
+# The schedule itself lives in worker/schedule.py, which the publisher reads too; the names
+# are re-exported here for worker/main.py and the tests.
+from worker.schedule import (  # noqa: F401
+    ALERT_AFTER_COLLECTION,
+    ALERT_AFTER_ENRICHMENT,
+    ALERT_JOB_ID,
+    ALERT_MISFIRE_GRACE_SECONDS,
+    ALERT_SCHEDULE,
+    DIGEST_JOB_ID,
+    DIGEST_MISFIRE_GRACE_SECONDS,
+    DIGEST_SCHEDULE,
+    DIGEST_TIMEZONE,
+    DISCOVERY_JOB_ID,
+    DISCOVERY_MISFIRE_GRACE_SECONDS,
+    DISCOVERY_SCHEDULE,
+    ENRICH_JOB_ID,
+    ENRICH_MINUTES,
+    ENRICH_MISFIRE_GRACE_SECONDS,
+    ENRICH_SCHEDULE,
+    FAST_MINUTES,
+    GATE_JOB_ID,
+    GATE_MISFIRE_GRACE_SECONDS,
+    GATE_SCHEDULE,
+    GAUNTLET_JOB_ID,
+    GAUNTLET_MISFIRE_GRACE_SECONDS,
+    GAUNTLET_SCHEDULE,
+    GROUNDTRUTH_JOB_ID,
+    GROUNDTRUTH_MISFIRE_GRACE_SECONDS,
+    GROUNDTRUTH_SCHEDULE,
+    JOBS,
+    LANE_JOBS,
+    MISFIRE_GRACE_SECONDS,
+    MODEL_SCAN_JOB_ID,
+    MODEL_SCAN_MISFIRE_GRACE_SECONDS,
+    MODEL_SCAN_SCHEDULE,
+    SCHEDULE,
+    WATCHDOG_JOB_ID,
+    WATCHDOG_MISFIRE_GRACE_SECONDS,
+    WATCHDOG_SCHEDULE,
+    alert_minutes,
+    job_id,
+)
 from worker.settings import get_settings
 from worker.watchdog.run import Watchdog
 
 logger = logging.getLogger(__name__)
 
-
-def _minute_list(minutes: Iterable[int]) -> str:
-    return ",".join(str(m) for m in sorted(minutes))
-
-
-# The FAST lane runs every FAST_INTERVAL_MINUTES (worker/cadence.py), from the top of the hour:
-# hourly since 2026-10-04, for stability (PLAN.md §2.3). The two lanes share :00 every four
-# hours, which is safe: `publish_now` holds a lock (worker/publish/run.py).
-FAST_MINUTES = fast_minutes()
-SCHEDULE: dict[Lane, str] = {
-    Lane.FAST: f"{_minute_list(FAST_MINUTES)} * * * *",
-    Lane.NORMAL: "0 */4 * * *",
-}
-
-# A run that started late (the loop was busy, or the process was paused) is still worth running
-# while it can finish well before the next one: two thirds of the cadence for FAST, half an hour
-# for NORMAL.
-MISFIRE_GRACE_SECONDS = {Lane.FAST: FAST_INTERVAL_MINUTES * 60 * 2 // 3, Lane.NORMAL: 1800}
-
-# The registers answer on their own clock, which is much slower than any feed: EPSS republishes once
-# a day, KEV on CISA's working days. Four passes a day is enough to pick either up within hours while
-# leaving the CVSS backfill four batches a day to work through — and the sync writes only what moved,
-# so the three passes a day that find an unchanged EPSS file cost a download and no rows.
-#
-# :25 rather than :00 keeps it off the hour the FAST and NORMAL lanes share, and clear of the
-# enrichment passes and the alerts. Nothing breaks if they overlap — `publish_now` holds a lock and
-# `rescore` is idempotent — but a sync competing with a collection for the same connection pool
-# makes both slower for no reason.
-GROUNDTRUTH_SCHEDULE = "25 */6 * * *"
-GROUNDTRUTH_JOB_ID = "groundtruth-sync"
-
-# Six hours between passes, so an hour late is still well within the cadence. A missed pass costs
-# nothing permanent — the registers are read in full every time, not as a delta — but KEV is the
-# strongest exploitation signal the site has and there is no reason to skip a reading of it.
-GROUNDTRUTH_MISFIRE_GRACE_SECONDS = 3600
-
-# Twice an hour, whatever the FAST cadence. :05 enriches what the :00 run collected, once it is
-# stored. :35 is the backlog pass: events arrive at the same rate however often we collect, and
-# each pass takes a small batch, so one pass an hour would halve what gets enriched. A small batch
-# keeps the spend per pass small and lets the budget mode change between passes. A pass with
-# nothing pending costs a budget reading and no calls.
-ENRICH_MINUTES = (5, 35)
-ENRICH_SCHEDULE = f"{_minute_list(ENRICH_MINUTES)} * * * *"
-ENRICH_JOB_ID = "ai-enrichment"
-ENRICH_MISFIRE_GRACE_SECONDS = 900
-
-# The daily digest at 07:10 Sydney time: ten minutes past the hour, so it reports the 07:00 run
-# and the enrichment pass after it. 08:10 and 09:10 send it only if 07:10 failed or was missed:
-# each Sydney date's digest is sent once (worker/notify/jobs.py).
-DIGEST_SCHEDULE = "10 7,8,9 * * *"
-DIGEST_TIMEZONE = "Australia/Sydney"
-DIGEST_JOB_ID = "daily-digest"
-DIGEST_MISFIRE_GRACE_SECONDS = 1800
-
-# Minutes an alert pass waits after a FAST run, which is over in seconds, and after an enrichment
-# pass, which can take several minutes.
-ALERT_AFTER_COLLECTION = 3
-ALERT_AFTER_ENRICHMENT = 13
-
-
-def alert_minutes(fast: Iterable[int], enrich: Iterable[int]) -> tuple[int, ...]:
-    """The alert pass follows every FAST run, so a critical event collected at :00 is in the
-    chat by :03. It also follows every enrichment pass, which can raise an event's Australian
-    relevance. Hourly, that is :03, :18 (after :05) and :48 (after the :35 backlog pass)."""
-    after_runs = {(m + ALERT_AFTER_COLLECTION) % 60 for m in fast}
-    after_passes = {(m + ALERT_AFTER_ENRICHMENT) % 60 for m in enrich}
-    return tuple(sorted(after_runs | after_passes))
-
-
-ALERT_SCHEDULE = f"{_minute_list(alert_minutes(FAST_MINUTES, ENRICH_MINUTES))} * * * *"
-ALERT_JOB_ID = "critical-alerts"
-ALERT_MISFIRE_GRACE_SECONDS = 600
-
-# The nightly discovery search at 03:10 Sydney time, off the hourly run's minute. Tavily's credits
-# are counted over the last 24 hours (worker/discovery/run.py), so a pass that runs late still
-# keeps within the day's allowance.
-DISCOVERY_SCHEDULE = "10 3 * * *"
-DISCOVERY_JOB_ID = "source-discovery"
-DISCOVERY_MISFIRE_GRACE_SECONDS = 3600
-
-# SERAPH's gate every 4 hours, ten minutes before each NORMAL run, which then collects anything it
-# activated. A probe is one fetch per candidate per pass, so 6 healthy probes in a row
-# (config/discovery.yaml) take a day.
-GATE_SCHEDULE = "50 3-23/4 * * *"
-GATE_JOB_ID = "source-gate"
-GATE_MISFIRE_GRACE_SECONDS = 1800
-
-# RIPPERDOC's model scan at 03:20 Sydney time, after the discovery search and clear of every
-# other job's minute. A model the guard now refuses leaves its chain from the next enrichment
-# pass, so a day is the longest a price rise goes unnoticed (worker/ai/scout.py).
-MODEL_SCAN_SCHEDULE = "20 3 * * *"
-MODEL_SCAN_JOB_ID = "model-scan"
-MODEL_SCAN_MISFIRE_GRACE_SECONDS = 3600
-
-# The gauntlet on Sunday at 03:40 Sydney time, after that day's scan. A day name, not 0:
-# APScheduler counts the days of the week from Monday.
-GAUNTLET_SCHEDULE = "40 3 * * sun"
-GAUNTLET_JOB_ID = "model-gauntlet"
-GAUNTLET_MISFIRE_GRACE_SECONDS = 3600
-
-# The watchdog every five minutes from :02 (worker/watchdog/run.py). Every other job starts on a
-# minute that is a multiple of five, or three past one (:00, :03, :05, :18 and so on), so the
-# watchdog never starts with one. At :02 it reads the :00 run once it has finished, not while it
-# is in progress.
-WATCHDOG_SCHEDULE = "2-57/5 * * * *"
-WATCHDOG_JOB_ID = "watchdog"
-WATCHDOG_MISFIRE_GRACE_SECONDS = 240
 
 # Kept for the life of the process: the governor in it must remember a 402 from one pass to the
 # next (worker/ai/enrich.py), and the model scan hands it the ladder as it checked it.
@@ -163,10 +96,6 @@ def _the_watchdog() -> Watchdog:
     if _watchdog is None:
         _watchdog = Watchdog(get_settings())
     return _watchdog
-
-
-def job_id(lane: Lane) -> str:
-    return f"lane-{lane.value}"
 
 
 def _now() -> datetime:
@@ -432,117 +361,52 @@ async def _watchdog_job() -> None:
 
 
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
-    """A configured, not yet started scheduler.
+    """A configured, not yet started scheduler, with the jobs worker/schedule.py lists.
 
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
     The ground-truth sync, enrichment, discovery, the model scan and gauntlet, notifications and
-    the watchdog are added only for the default schedule. `lanes` comes from `--lane`, which means "schedule this one thing", and silently bringing a register sync or
-    model calls along with it would make the narrow form impossible to ask for.
+    the watchdog are added only for the default schedule. `lanes` comes from `--lane`, which
+    means "schedule this one thing", and silently bringing a register sync or model calls along
+    with it would make the narrow form impossible to ask for.
     """
+    # Looked up here, not at import, so a test that replaces a handler is the one scheduled.
+    handlers = {
+        GROUNDTRUTH_JOB_ID: _groundtruth_job,
+        ENRICH_JOB_ID: _enrich_job,
+        DIGEST_JOB_ID: _digest_job,
+        ALERT_JOB_ID: _alert_job,
+        DISCOVERY_JOB_ID: _discovery_job,
+        GATE_JOB_ID: _gate_job,
+        MODEL_SCAN_JOB_ID: _model_scan_job,
+        GAUNTLET_JOB_ID: _gauntlet_job,
+        WATCHDOG_JOB_ID: _watchdog_job,
+    }
     scheduler = AsyncIOScheduler(timezone="UTC")
     if lanes is None:
-        scheduler.add_job(
-            _groundtruth_job,
-            CronTrigger.from_crontab(GROUNDTRUTH_SCHEDULE, timezone="UTC"),
-            id=GROUNDTRUTH_JOB_ID,
-            name="ground-truth sync",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=GROUNDTRUTH_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _enrich_job,
-            CronTrigger.from_crontab(ENRICH_SCHEDULE, timezone="UTC"),
-            id=ENRICH_JOB_ID,
-            name="AI enrichment",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=ENRICH_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _digest_job,
-            CronTrigger.from_crontab(DIGEST_SCHEDULE, timezone=DIGEST_TIMEZONE),
-            id=DIGEST_JOB_ID,
-            name="daily digest",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=DIGEST_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _alert_job,
-            CronTrigger.from_crontab(ALERT_SCHEDULE, timezone="UTC"),
-            id=ALERT_JOB_ID,
-            name="critical alerts",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=ALERT_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _discovery_job,
-            CronTrigger.from_crontab(DISCOVERY_SCHEDULE, timezone=DIGEST_TIMEZONE),
-            id=DISCOVERY_JOB_ID,
-            name="discovery search",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=DISCOVERY_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _gate_job,
-            CronTrigger.from_crontab(GATE_SCHEDULE, timezone="UTC"),
-            id=GATE_JOB_ID,
-            name="source gate",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=GATE_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _model_scan_job,
-            CronTrigger.from_crontab(MODEL_SCAN_SCHEDULE, timezone=DIGEST_TIMEZONE),
-            id=MODEL_SCAN_JOB_ID,
-            name="model scan",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=MODEL_SCAN_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _gauntlet_job,
-            CronTrigger.from_crontab(GAUNTLET_SCHEDULE, timezone=DIGEST_TIMEZONE),
-            id=GAUNTLET_JOB_ID,
-            name="model gauntlet",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=GAUNTLET_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _watchdog_job,
-            CronTrigger.from_crontab(WATCHDOG_SCHEDULE, timezone="UTC"),
-            id=WATCHDOG_JOB_ID,
-            name="watchdog",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=WATCHDOG_MISFIRE_GRACE_SECONDS,
-            replace_existing=True,
-        )
+        for job in JOBS:
+            scheduler.add_job(
+                handlers[job.id],
+                CronTrigger.from_crontab(job.cron, timezone=job.timezone),
+                id=job.id,
+                name=job.label,
+                max_instances=1,
+                coalesce=True,
+                misfire_grace_time=job.misfire_grace_seconds,
+                replace_existing=True,
+            )
     for lane in lanes if lanes is not None else tuple(SCHEDULE):
+        job = LANE_JOBS[lane]
         scheduler.add_job(
             _run_lane_job,
-            CronTrigger.from_crontab(SCHEDULE[lane], timezone="UTC"),
+            CronTrigger.from_crontab(job.cron, timezone=job.timezone),
             args=[lane],
-            id=job_id(lane),
-            name=f"{lane.value} lane",
+            id=job.id,
+            name=job.label,
             max_instances=1,
             coalesce=True,
-            misfire_grace_time=MISFIRE_GRACE_SECONDS[lane],
+            misfire_grace_time=job.misfire_grace_seconds,
             replace_existing=True,
         )
     return scheduler

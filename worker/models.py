@@ -167,6 +167,25 @@ class HealthStatus(StrEnum):
     DISABLED = "disabled"
 
 
+class Standing(StrEnum):
+    """What kind of voice a source is: the base of its reputation (worker/pipeline/reputation.py).
+
+    Set by hand in config/sources.yaml. A source the discovery gate added has none there and is
+    COMMUNITY until someone gives it one.
+    """
+
+    AUTHORITATIVE = "authoritative"
+    ESTABLISHED = "established"
+    SPECIALIST = "specialist"
+    COMMUNITY = "community"
+
+
+class ImportanceTier(StrEnum):
+    KEY = "key"
+    NOTABLE = "notable"
+    ROUTINE = "routine"
+
+
 class LifecycleState(StrEnum):
     DISCOVERED = "discovered"
     CANDIDATE = "candidate"
@@ -291,6 +310,15 @@ class Relationship(_Model):
     event_id: EventId
 
 
+class Importance(_Model):
+    """How much an event matters, from its facts (worker/pipeline/importance.py)."""
+
+    version: str
+    score: Annotated[int, Field(ge=0, le=100)]
+    tier: ImportanceTier
+    reasons: Annotated[list[str], Field(max_length=5)] = Field(default_factory=list)
+
+
 class Event(_Model):
     """The canonical unit. Article-shaped records exist only as `sources`."""
 
@@ -337,6 +365,9 @@ class Event(_Model):
     relationships: list[Relationship] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     pending_enrichment: bool = False
+    # Set at publish time from the sources' reputations (worker/publish/build.py), never
+    # stored: every published event has one, and an event read from the database has none.
+    importance: Importance | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -412,11 +443,24 @@ class SourceConfig(_Model):
     lifecycle_state: LifecycleState | None = None
     # The desk its items start on (seed_domains); None means cyber. Never OTHER.
     beat: Beat | None = None
+    # One plain sentence on what the source is, and what kind of voice it is (Standing). Every
+    # source in config/sources.yaml has both (tests/unit/test_registry.py); one the discovery
+    # gate added has neither.
+    description: str | None = None
+    standing: Standing | None = None
 
     @model_validator(mode="after")
     def _no_other_beat(self) -> "SourceConfig":
         if self.beat is Beat.OTHER:
             raise ValueError(f"source {self.id}: beat 'other' is for triage, not for sources")
+        return self
+
+    @model_validator(mode="after")
+    def _one_line_description(self) -> "SourceConfig":
+        if self.description is not None and (
+            not self.description.strip() or "\n" in self.description
+        ):
+            raise ValueError(f"source {self.id}: description must be one non-empty line")
         return self
 
 

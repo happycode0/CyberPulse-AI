@@ -19,10 +19,22 @@ publishers:
   abc:
     name: ABC
 
+# Every source has a `description` (one plain sentence, published on the site's Sources page)
+# and a `standing`, the base of its reputation (worker/pipeline/reputation.py):
+#   authoritative  government agencies, CERTs, standards bodies, a vendor's own security
+#                  advisories about its own products
+#   established    national public broadcasters, major newsrooms, long-running specialist
+#                  outlets with editorial standards
+#   specialist     trade press, vendor research and blogs, respected individual researchers,
+#                  academic preprints
+#   community      aggregators, social search, personal blogs without editorial review
+# docs/wiki/importance-and-reputation.md says how to change one.
 sources:
   # FAST Lane: Authoritative advisories & CVE feeds
   - id: acsc_alerts
     name: ACSC Alerts
+    description: "Urgent alerts from the Australian Cyber Security Centre (part of ASD) about threats and vulnerabilities affecting Australia."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au
@@ -38,6 +50,8 @@ sources:
 
   - id: acsc_advisories
     name: ACSC Advisories
+    description: "Advisories from the Australian Cyber Security Centre on significant threats and vulnerabilities, with advice on what to do."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au
@@ -53,6 +67,8 @@ sources:
 
   - id: acsc_news
     name: ACSC News
+    description: "News from the Australian Cyber Security Centre: announcements, campaigns and updates on its work."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au
@@ -68,6 +84,8 @@ sources:
 
   - id: acsc_publications
     name: ACSC Publications
+    description: "Guidance and reports published by the Australian Cyber Security Centre for organisations and individuals."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au
@@ -83,6 +101,8 @@ sources:
 
   - id: cisa_advisories
     name: CISA Advisories
+    description: "Cyber security advisories from the US Cybersecurity and Infrastructure Security Agency (CISA), including joint advisories with partner agencies."
+    standing: authoritative
     publisher: cisa
     type: rss
     region: us
@@ -98,6 +118,8 @@ sources:
 
   - id: cisa_ics
     name: CISA ICS Advisories
+    description: "CISA advisories on vulnerabilities in industrial control systems and operational technology."
+    standing: authoritative
     publisher: cisa
     type: rss
     region: us
@@ -113,6 +135,8 @@ sources:
 
   - id: cisa_news
     name: CISA News
+    description: "News releases and announcements from the US Cybersecurity and Infrastructure Security Agency."
+    standing: authoritative
     publisher: cisa
     type: rss
     region: us
@@ -128,6 +152,8 @@ sources:
 
   - id: cisa_kev
     name: CISA Known Exploited Vulnerabilities
+    description: "CISA's Known Exploited Vulnerabilities catalogue: vulnerabilities with evidence of active exploitation, each with a remediation due date for US federal agencies."
+    standing: authoritative
     publisher: cisa
     type: json_api
     region: us
@@ -144,6 +170,8 @@ sources:
   # FAST Lane: Australian specialist news
   - id: cyber_daily
     name: CyberDaily AU
+    description: "Cyber Daily, an Australian news site covering cyber security incidents, policy and industry."
+    standing: specialist
     type: rss
     region: au
     category: news
@@ -158,6 +186,8 @@ sources:
 
   - id: itnews_security
     name: ITNews Security
+    description: "The security section of iTnews, an Australian technology newsroom covering business and government IT."
+    standing: established
     type: rss
     region: au
     category: news
@@ -172,6 +202,8 @@ sources:
 
   - id: dta
     name: DTA News and Blogs
+    description: "News and blog posts from the Digital Transformation Agency, the Australian Government agency for digital and ICT policy."
+    standing: authoritative
     type: rss
     region: au
     category: news
@@ -187,6 +219,8 @@ sources:
   # NORMAL Lane: General security news & analysis
   - id: securitybrief_au
     name: Security Brief AU
+    description: "SecurityBrief Australia, a trade news site on security industry news, products and research in Australia."
+    standing: specialist
     type: rss
     region: au
     category: news
@@ -201,6 +235,8 @@ sources:
 
   - id: acsm
     name: Australian Cybersecurity Magazine
+    description: "Australian Cyber Security Magazine, a MySecurity Media trade publication on cyber security news and industry in Australia."
+    standing: specialist
     publisher: mysecuritymedia
     type: rss
     region: au
@@ -216,6 +252,8 @@ sources:
 
   - id: asm
     name: Australian Security Magazine
+    description: "Australian Security Magazine, a MySecurity Media trade publication on physical and cyber security in Australia."
+    standing: specialist
     publisher: mysecuritymedia
     type: rss
     region: au
@@ -231,6 +269,8 @@ sources:
 
   - id: abc_cyber
     name: ABC News Cyber Security
+    description: "Cyber security news from the ABC, Australia's national public broadcaster."
+    standing: established
     publisher: abc
     type: rss
     region: au
@@ -246,6 +286,8 @@ sources:
 
   - id: abc_ai
     name: ABC News Artificial Intelligence
+    description: "Artificial intelligence news from the ABC, Australia's national public broadcaster."
+    standing: established
     publisher: abc
     type: rss
     region: au
@@ -262,6 +304,8 @@ sources:
 
   - id: triskele
     name: Triskele Labs
+    description: "Articles and research from Triskele Labs, an Australian cyber security services company."
+    standing: specialist
     type: rss
     region: au
     category: research
@@ -276,6 +320,8 @@ sources:
 
   - id: innovationaus
     name: Innovation Australia
+    description: "InnovationAus.com, an Australian publication on technology policy, innovation and government digital programmes."
+    standing: specialist
     type: rss
     region: au
     category: news
@@ -290,6 +336,8 @@ sources:
 
   - id: thn
     name: The Hacker News
+    description: "The Hacker News, a cyber security news site covering vulnerabilities, malware and attacks."
+    standing: specialist
     type: rss
     region: global
     category: news
@@ -304,6 +352,8 @@ sources:
 
   - id: bleepingcomputer
     name: Bleeping Computer
+    description: "BleepingComputer, a technology news site known for its reporting on ransomware, malware and data breaches."
+    standing: established
     type: rss
     region: global
     category: news
@@ -318,6 +368,8 @@ sources:
 
   - id: krebs
     name: Krebs on Security
+    description: "Krebs on Security, investigative cyber crime reporting by journalist Brian Krebs."
+    standing: established
     type: rss
     region: global
     category: news
@@ -332,6 +384,8 @@ sources:
 
   - id: darkreading
     name: Dark Reading
+    description: "Dark Reading, a cyber security news and analysis site for security professionals."
+    standing: established
     type: rss
     region: global
     category: news
@@ -346,6 +400,8 @@ sources:
 
   - id: therecord
     name: The Record
+    description: "The Record, a cyber security news publication from Recorded Future News."
+    standing: established
     type: rss
     region: global
     category: news
@@ -360,6 +416,8 @@ sources:
 
   - id: cyberwire
     name: The CyberWire
+    description: "The CyberWire, a cyber security news service publishing daily briefings and podcasts."
+    standing: established
     type: rss
     region: global
     category: news
@@ -374,6 +432,8 @@ sources:
 
   - id: schneier
     name: Bruce Schneier Blog
+    description: "Schneier on Security, the blog of security technologist and author Bruce Schneier."
+    standing: specialist
     type: rss
     region: global
     category: analysis
@@ -388,6 +448,8 @@ sources:
 
   - id: grahamcluley
     name: Graham Cluley
+    description: "The blog of security commentator Graham Cluley, on threats, scams and privacy."
+    standing: specialist
     type: rss
     region: global
     category: analysis
@@ -402,6 +464,8 @@ sources:
 
   - id: sans_isc
     name: SANS Internet Storm Center
+    description: "Handler diaries from the SANS Internet Storm Center: daily notes on threats and attack activity seen on the internet."
+    standing: specialist
     type: rss
     region: global
     category: analysis
@@ -417,6 +481,8 @@ sources:
   # NORMAL Lane: Vendor security blogs
   - id: microsoft_security
     name: Microsoft Security Blog
+    description: "Microsoft's security blog: threat intelligence and security news from Microsoft."
+    standing: specialist
     publisher: microsoft
     type: rss
     region: global
@@ -432,6 +498,8 @@ sources:
 
   - id: crowdstrike
     name: CrowdStrike Blog
+    description: "Threat research and company news from the blog of the security vendor CrowdStrike."
+    standing: specialist
     type: rss
     region: global
     category: vendor_advisory
@@ -446,6 +514,8 @@ sources:
 
   - id: unit42
     name: Unit 42 Palo Alto Networks
+    description: "Threat research from Unit 42, the threat intelligence and incident response team at Palo Alto Networks."
+    standing: specialist
     type: rss
     region: global
     category: vendor_advisory
@@ -460,6 +530,8 @@ sources:
 
   - id: malwarebytes
     name: Malwarebytes Labs
+    description: "Malwarebytes Labs: threat research and consumer security news from the security vendor Malwarebytes."
+    standing: specialist
     type: rss
     region: global
     category: vendor_advisory
@@ -475,6 +547,8 @@ sources:
   # NORMAL Lane: AI security & specialist research (PLAN.md section 5: AI sources are NORMAL)
   - id: simonwillison
     name: Simon Willison Blog
+    description: "Simon Willison's blog on large language models, AI tools and prompt injection."
+    standing: specialist
     type: rss
     region: global
     category: research
@@ -490,6 +564,8 @@ sources:
 
   - id: embracethered
     name: Embrace The Red
+    description: "Embrace The Red, Johann Rehberger's blog on red teaming and attacks on AI systems such as prompt injection."
+    standing: specialist
     type: rss
     region: global
     category: research
@@ -505,6 +581,8 @@ sources:
 
   - id: openai_news
     name: OpenAI News
+    description: "OpenAI's own news: product launches, research and safety announcements."
+    standing: specialist
     type: rss
     region: global
     category: ai_security
@@ -520,6 +598,8 @@ sources:
 
   - id: deepmind
     name: DeepMind Blog
+    description: "Google DeepMind's blog on its AI research, models and safety work."
+    standing: specialist
     publisher: google
     type: rss
     region: global
@@ -536,6 +616,8 @@ sources:
 
   - id: google_security
     name: Google Security Blog
+    description: "Google's security posts: news on the security of Google products and its security research."
+    standing: specialist
     publisher: google
     type: rss
     region: global
@@ -551,6 +633,8 @@ sources:
 
   - id: ms_ai_security
     name: Microsoft AI & Security Blog
+    description: "Microsoft Security Blog posts on AI and machine learning: securing AI systems and using AI in defence."
+    standing: specialist
     publisher: microsoft
     type: rss
     region: global
@@ -567,6 +651,8 @@ sources:
 
   - id: owasp_genai
     name: OWASP GenAI Security
+    description: "The OWASP GenAI Security Project, publishing guidance on the risks of generative AI and LLM applications, including the OWASP Top 10 for LLM Applications."
+    standing: specialist
     type: rss
     region: global
     category: ai_security
@@ -582,6 +668,8 @@ sources:
 
   - id: huggingface
     name: Hugging Face Blog
+    description: "The Hugging Face blog on open models, datasets and machine learning tools."
+    standing: specialist
     type: rss
     region: global
     category: ai_security
@@ -599,6 +687,8 @@ sources:
   # Each feed and its robots.txt were checked with plain GETs on 2026-10-04.
   - id: verge_ai
     name: The Verge AI
+    description: "The Verge's coverage of artificial intelligence."
+    standing: established
     type: rss
     region: global
     category: news
@@ -614,6 +704,8 @@ sources:
 
   - id: techcrunch_ai
     name: TechCrunch AI
+    description: "TechCrunch's coverage of AI companies, products and funding."
+    standing: established
     type: rss
     region: global
     category: news
@@ -629,6 +721,8 @@ sources:
 
   - id: ars_ai
     name: Ars Technica AI
+    description: "Ars Technica's coverage of artificial intelligence."
+    standing: established
     type: rss
     region: global
     category: news
@@ -644,6 +738,8 @@ sources:
 
   - id: mit_tr_ai
     name: MIT Technology Review AI
+    description: "MIT Technology Review's coverage of artificial intelligence."
+    standing: established
     type: rss
     region: global
     category: news
@@ -659,6 +755,8 @@ sources:
 
   - id: import_ai
     name: Import AI (Jack Clark)
+    description: "Import AI, Jack Clark's weekly newsletter on AI research and policy."
+    standing: specialist
     type: rss
     region: global
     category: analysis
@@ -674,6 +772,8 @@ sources:
 
   - id: cais_aisn
     name: CAIS AI Safety Newsletter
+    description: "The AI Safety Newsletter from the Center for AI Safety, on AI safety research and policy."
+    standing: specialist
     type: rss
     region: global
     category: analysis
@@ -689,6 +789,8 @@ sources:
 
   - id: eu_digital_strategy
     name: European Commission Digital Strategy
+    description: "News from the European Commission on digital policy, including the EU AI Act."
+    standing: authoritative
     type: rss
     region: global
     category: advisory
@@ -706,6 +808,8 @@ sources:
   # (worker/scheduler.py), so a source here is read only when that routine runs.
   - id: arxiv_cs_cr
     name: arXiv Computer Science - Cryptography and Security
+    description: "New academic preprints in cryptography and security posted to arXiv; preprints are not peer reviewed."
+    standing: specialist
     type: rss
     region: global
     category: research
@@ -721,6 +825,8 @@ sources:
   # Additional specialist security sources
   - id: fortinet_blog
     name: Fortinet Security Blog
+    description: "Threat research from FortiGuard Labs, published on the blog of the security vendor Fortinet."
+    standing: specialist
     type: rss
     region: global
     category: vendor_advisory
@@ -738,6 +844,8 @@ sources:
 
   - id: sophos_labs
     name: Sophos Labs
+    description: "Sophos News: threat research and security news from the security vendor Sophos."
+    standing: specialist
     type: rss
     region: global
     category: research
@@ -758,6 +866,8 @@ sources:
 
   - id: zerodayinitiative
     name: Zero Day Initiative
+    description: "The blog of Trend Micro's Zero Day Initiative, a vulnerability disclosure programme, on vulnerability research and monthly patch reviews."
+    standing: specialist
     type: rss
     region: global
     category: research
@@ -772,6 +882,8 @@ sources:
 
   - id: cvedetails
     name: CVE Details Security News
+    description: "CVE Details, a site that aggregates vulnerability records from public sources."
+    standing: community
     type: rss
     region: global
     category: advisory
@@ -794,6 +906,8 @@ sources:
   # (worker/collectors/web_page.py), or a vendor API (worker/collectors/json_api.py).
   - id: asd
     name: ASD (Australian Signals Directorate)
+    description: "News releases from the Australian Signals Directorate, Australia's signals intelligence and cyber security agency."
+    standing: authoritative
     publisher: asd
     type: web_page
     region: au
@@ -809,6 +923,8 @@ sources:
 
   - id: oaic
     name: Office of the Australian Information Commissioner
+    description: "Media releases from the Office of the Australian Information Commissioner, the regulator for privacy and notifiable data breaches."
+    standing: authoritative
     type: web_page
     region: au
     category: advisory
@@ -823,6 +939,8 @@ sources:
 
   - id: msrc_cvrf
     name: Microsoft Security Updates
+    description: "Microsoft's monthly security update releases from the Microsoft Security Response Center, listing the vulnerabilities each one fixes."
+    standing: authoritative
     publisher: microsoft
     type: json_api
     region: global
@@ -838,6 +956,8 @@ sources:
 
   - id: anthropic_news
     name: Anthropic News
+    description: "Anthropic's own news: model releases, research and policy announcements."
+    standing: specialist
     type: web_page
     region: global
     category: ai_security
@@ -854,6 +974,8 @@ sources:
   # Disabled sources with reasons
   - id: securityweek
     name: SecurityWeek
+    description: "SecurityWeek, a cyber security news site covering threats, vulnerabilities and the security industry."
+    standing: established
     type: rss
     region: global
     category: news
@@ -868,6 +990,8 @@ sources:
 
   - id: x_security_search
     name: X Security Search
+    description: "Posts on X (formerly Twitter) matching a cyber security search."
+    standing: community
     type: rss
     region: global
     category: social
@@ -882,6 +1006,8 @@ sources:
 
   - id: msrc_blog
     name: Microsoft Security Response Center Blog
+    description: "The Microsoft Security Response Center blog on Microsoft's security updates and vulnerability response."
+    standing: authoritative
     publisher: microsoft
     type: web_page
     region: global
@@ -897,6 +1023,8 @@ sources:
 
   - id: acsc_threats
     name: ACSC Threats
+    description: "The Australian Cyber Security Centre's threats feed."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au
@@ -912,6 +1040,8 @@ sources:
 
   - id: acsc_advice
     name: ACSC Advice
+    description: "General security advice for individuals and organisations from the Australian Cyber Security Centre."
+    standing: authoritative
     publisher: asd
     type: rss
     region: au

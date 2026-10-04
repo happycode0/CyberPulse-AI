@@ -1,0 +1,171 @@
+{
+  "agents": [
+    {
+      "adapter": "model",
+      "budget_usd": 2.0,
+      "callsign": "MORPHEUS",
+      "max_daily_runs": 4,
+      "model": "openrouter/xiaomi/mimo-v2.6-pro",
+      "reports_to": null,
+      "role": "ceo",
+      "summary": "Decides what the crew covers and follows up, writes the daily intelligence report, and approves or refuses each model change.",
+      "team": "Intelligence",
+      "title": "CEO"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 1.0,
+      "callsign": "TELETRAAN",
+      "max_daily_runs": 12,
+      "model": "openrouter/qwen/qwen3.8-flash",
+      "reports_to": "MORPHEUS",
+      "role": "devops",
+      "summary": "Diagnoses each incident the worker's watchdog opens and hands the fix to its owner, then checks every code fix WHEELJACK writes, on another vendor's model.",
+      "team": "Operations",
+      "title": "Operation"
+    },
+    {
+      "adapter": "http",
+      "budget_usd": 0.0,
+      "callsign": "SERAPH",
+      "max_daily_runs": null,
+      "model": null,
+      "reports_to": "TELETRAAN",
+      "role": "devops",
+      "summary": "The worker's own jobs on the org chart: ground truth, source checks, correlation and publishing, all in code. It runs no model and spends nothing.",
+      "team": "Operations",
+      "title": "Collector"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 2.0,
+      "callsign": "DECKARD",
+      "max_daily_runs": 12,
+      "model": "openrouter/xiaomi/mimo-v2.6-flash",
+      "reports_to": "MORPHEUS",
+      "role": "researcher",
+      "summary": "Writes the desk notes on candidate events across three beats, Australia first, then global cyber and AI, and works the follow-up queue on developing stories.",
+      "team": "Intelligence",
+      "title": "Researcher"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 2.0,
+      "callsign": "VOIGHT",
+      "max_daily_runs": 20,
+      "model": "openrouter/xiaomi/mimo-v2.6-pro",
+      "reports_to": "MORPHEUS",
+      "role": "qa",
+      "summary": "Holds the veto over what the crew wrote: checks every claim on a high or critical event against its evidence, and samples the day's published events.",
+      "team": "Intelligence",
+      "title": "Publisher"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 1.0,
+      "callsign": "TACHIKOMA",
+      "max_daily_runs": 2,
+      "model": "openrouter/xiaomi/mimo-v2.6-flash",
+      "reports_to": "MORPHEUS",
+      "role": "researcher",
+      "summary": "Reads the worker's nightly finds and proposes sources the registry does not know yet. The worker's gate tests each one before anything is collected.",
+      "team": "Intelligence",
+      "title": "Finder"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 0.5,
+      "callsign": "RIPPERDOC",
+      "max_daily_runs": 4,
+      "model": "openrouter/xiaomi/mimo-v2.6-flash",
+      "reports_to": "MORPHEUS",
+      "role": "cfo",
+      "summary": "Keeps each model tier on the cheapest model that does the job: reports the worker's daily model scan and weekly gauntlet, raises model proposals and reviews each month's costs.",
+      "team": "Operations",
+      "title": "Cheap"
+    },
+    {
+      "adapter": "model",
+      "budget_usd": 1.0,
+      "callsign": "WHEELJACK",
+      "max_daily_runs": 4,
+      "model": "openrouter/xiaomi/mimo-v2.6-flash",
+      "reports_to": "TELETRAAN",
+      "role": "engineer",
+      "summary": "Writes the code fix for an engineering issue on its own branch, with a test that shows the fault. TELETRAAN checks it and a person always merges.",
+      "team": "Engineering",
+      "title": "Coder"
+    }
+  ],
+  "company": {
+    "budget_usd": 12.0,
+    "mission": "Produce the most accurate, evidence-based picture of cyber security, AI security and AI-related developments, with an Australia-first perspective and global coverage. Monitor and update continuously, covering Australian and international cyber security news, threat intelligence, vulnerabilities, incidents, ransomware activity, data breaches, regulatory changes, emerging threats, AI security research, adversarial AI risks, model vulnerabilities, AI governance, AI safety, and significant AI industry developments.",
+    "name": "CyberPulse"
+  },
+  "routines": [
+    {
+      "assignee": "MORPHEUS",
+      "cron": "30 7 * * *",
+      "name": "Daily editorial",
+      "starts": "now",
+      "summary": "Reads the overnight digest, picks the stories to follow up and the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "DECKARD",
+      "cron": "0 6,14,22 * * *",
+      "name": "Desk digest",
+      "starts": "now",
+      "summary": "Desk notes on the last 8 hours' candidate events: Australia first, then global, then AI.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "VOIGHT",
+      "cron": "0 7 * * *",
+      "name": "Daily QA sample",
+      "starts": "Stage 5",
+      "summary": "Checks a sample of yesterday's published events against their evidence.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "DECKARD",
+      "cron": "0 3-21/6 * * *",
+      "name": "Follow-up",
+      "starts": "Stage 5",
+      "summary": "Reports on each follow-up task due on a developing story.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "TACHIKOMA",
+      "cron": "30 3 * * *",
+      "name": "Source discovery",
+      "starts": "Stage 5",
+      "summary": "Reads the night's search finds and proposes sources, plus some for each open coverage gap.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "RIPPERDOC",
+      "cron": "0 4 * * *",
+      "name": "Model scan",
+      "starts": "Stage 5",
+      "summary": "Reports what the worker's nightly scan of the model catalogue found.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "RIPPERDOC",
+      "cron": "0 5 * * 0",
+      "name": "Model gauntlet",
+      "starts": "Stage 5",
+      "summary": "Reports the weekly gauntlet's results and raises each model proposal for MORPHEUS.",
+      "timezone": "Australia/Sydney"
+    },
+    {
+      "assignee": "RIPPERDOC",
+      "cron": "0 9 1 * *",
+      "name": "Monthly cost review",
+      "starts": "now",
+      "summary": "Reconciles last month's AI spend from the worker's cost ledger and reports it to MORPHEUS.",
+      "timezone": "Australia/Sydney"
+    }
+  ]
+}

@@ -13,6 +13,9 @@
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }
     },
-    "events": { "type": "array", "items": { "$ref": "event.schema.json" } }
+    "events": {
+      "type": "array",
+      "items": { "$ref": "event.schema.json#/$defs/published_event" }
+    }
   }
 }
