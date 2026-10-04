@@ -1,0 +1,772 @@
+{
+ "generated_at": "2026-10-04T10:00:01.877051Z",
+ "counts": {
+  "ok": 4,
+  "no_data": 2,
+  "stale": 2,
+  "timeout": 1
+ },
+ "sources": [
+  {
+   "source_id": "abc_ai",
+   "name": "ABC News Artificial Intelligence",
+   "region": "au",
+   "category": "news",
+   "lane": "normal",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": {
+    "checked_at": "2026-10-04T08:00:00.121046Z",
+    "status": "ok",
+    "error": null,
+    "newest_item_age_days": 0.16794121581018517,
+    "items_fetched": 25,
+    "duration_ms": 1590
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-04T00:00:00.153212Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.20858973625,
+     "items_fetched": 25,
+     "duration_ms": 3503
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.098238Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.3752557666435186,
+     "items_fetched": 25,
+     "duration_ms": 1231
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.121046Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.16794121581018517,
+     "items_fetched": 25,
+     "duration_ms": 1590
+    }
+   ],
+   "description": "ABC News coverage of artificial intelligence.",
+   "publisher": "Australian Broadcasting Corporation",
+   "url": "https://feeds.example.org/abc_ai.xml",
+   "beat": "ai",
+   "priority": 2,
+   "expected_frequency": "daily",
+   "standing": "established",
+   "reputation": {
+    "version": "1",
+    "score": 79,
+    "standing": "established",
+    "uptime": 1.0,
+    "corroboration": 0.62,
+    "events_90d": 41,
+    "basis": "established standing, 3 checks"
+   },
+   "attention": null
+  },
+  {
+   "source_id": "acsc_advice",
+   "name": "ACSC Advice",
+   "region": "au",
+   "category": "advisory",
+   "lane": "fast",
+   "enabled": false,
+   "lifecycle_state": "discovered",
+   "latest": null,
+   "history": [],
+   "description": "Advisories from the Australian Cyber Security Centre.",
+   "publisher": "Australian Signals Directorate",
+   "url": "https://feeds.example.org/acsc_advice.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "weekly",
+   "standing": "authoritative",
+   "reputation": null,
+   "attention": {
+    "kind": "coming",
+    "reason": "Being tested before it is switched on."
+   }
+  },
+  {
+   "source_id": "arxiv_cs_cr",
+   "name": "arXiv Computer Science - Cryptography and Security",
+   "region": "global",
+   "category": "research",
+   "lane": "deep",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": null,
+   "history": [],
+   "description": "New cryptography and security papers on arXiv.",
+   "publisher": null,
+   "url": "https://feeds.example.org/arxiv_cs_cr.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "daily",
+   "standing": "specialist",
+   "reputation": null,
+   "attention": null
+  },
+  {
+   "source_id": "cisa_kev",
+   "name": "CISA Known Exploited Vulnerabilities",
+   "region": "us",
+   "category": "advisory",
+   "lane": "fast",
+   "enabled": true,
+   "lifecycle_state": "degraded",
+   "latest": {
+    "checked_at": "2026-10-04T10:00:00.085037Z",
+    "status": "stale",
+    "error": "newest item is 2.41667 days old; expected one within 2 days",
+    "newest_item_age_days": 2.416667650891204,
+    "items_fetched": 0,
+    "duration_ms": 135
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-04T03:00:00.035169Z",
+     "status": "stale",
+     "error": "newest item is 2.125 days old; expected one within 2 days",
+     "newest_item_age_days": 2.1250004070486113,
+     "items_fetched": 0,
+     "duration_ms": 395
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.044458Z",
+     "status": "stale",
+     "error": "newest item is 2.16667 days old; expected one within 2 days",
+     "newest_item_age_days": 2.166667181226852,
+     "items_fetched": 0,
+     "duration_ms": 1099
+    },
+    {
+     "checked_at": "2026-10-04T05:00:00.022987Z",
+     "status": "stale",
+     "error": "newest item is 2.20833 days old; expected one within 2 days",
+     "newest_item_age_days": 2.2083335993865743,
+     "items_fetched": 0,
+     "duration_ms": 566
+    },
+    {
+     "checked_at": "2026-10-04T06:00:00.101607Z",
+     "status": "stale",
+     "error": "newest item is 2.25 days old; expected one within 2 days",
+     "newest_item_age_days": 2.2500011760069447,
+     "items_fetched": 0,
+     "duration_ms": 729
+    },
+    {
+     "checked_at": "2026-10-04T07:00:00.003253Z",
+     "status": "stale",
+     "error": "newest item is 2.29167 days old; expected one within 2 days",
+     "newest_item_age_days": 2.2916667043171297,
+     "items_fetched": 0,
+     "duration_ms": 484
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.067443Z",
+     "status": "stale",
+     "error": "newest item is 2.33333 days old; expected one within 2 days",
+     "newest_item_age_days": 2.3333341139236112,
+     "items_fetched": 0,
+     "duration_ms": 903
+    },
+    {
+     "checked_at": "2026-10-04T09:00:00.003444Z",
+     "status": "stale",
+     "error": "newest item is 2.375 days old; expected one within 2 days",
+     "newest_item_age_days": 2.3750000398611113,
+     "items_fetched": 0,
+     "duration_ms": 1076
+    },
+    {
+     "checked_at": "2026-10-04T10:00:00.085037Z",
+     "status": "stale",
+     "error": "newest item is 2.41667 days old; expected one within 2 days",
+     "newest_item_age_days": 2.416667650891204,
+     "items_fetched": 0,
+     "duration_ms": 135
+    }
+   ],
+   "description": "CISA's catalogue of vulnerabilities exploited in the wild.",
+   "publisher": "Cybersecurity and Infrastructure Security Agency",
+   "url": "https://feeds.example.org/cisa_kev.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "daily",
+   "standing": "authoritative",
+   "reputation": {
+    "version": "1",
+    "score": 88,
+    "standing": "authoritative",
+    "uptime": 0.9,
+    "corroboration": 0.71,
+    "events_90d": 120,
+    "basis": "authoritative standing"
+   },
+   "attention": {
+    "kind": "watch",
+    "reason": "Quieter than usual: no new entry for 2 days."
+   }
+  },
+  {
+   "source_id": "sophos_labs",
+   "name": "Sophos Labs",
+   "region": "global",
+   "category": "research",
+   "lane": "normal",
+   "enabled": true,
+   "lifecycle_state": "degraded",
+   "latest": {
+    "checked_at": "2026-10-04T08:00:00.121046Z",
+    "status": "timeout",
+    "error": "ReadTimeout after 30s",
+    "newest_item_age_days": null,
+    "items_fetched": 0,
+    "duration_ms": 92768
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-03T04:00:00.220766Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 91960
+    },
+    {
+     "checked_at": "2026-10-03T08:00:00.135655Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 92703
+    },
+    {
+     "checked_at": "2026-10-03T12:00:00.111184Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 91438
+    },
+    {
+     "checked_at": "2026-10-03T16:00:00.096076Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 92277
+    },
+    {
+     "checked_at": "2026-10-03T20:00:00.114524Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 92501
+    },
+    {
+     "checked_at": "2026-10-04T00:00:00.153212Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 91835
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.098238Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 92864
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.121046Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 92768
+    }
+   ],
+   "description": null,
+   "publisher": "Sophos",
+   "url": "https://feeds.example.org/sophos_labs.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "weekly",
+   "standing": "specialist",
+   "reputation": {
+    "version": "1",
+    "score": 47,
+    "standing": "specialist",
+    "uptime": 0.35,
+    "corroboration": null,
+    "events_90d": 6,
+    "basis": "specialist standing; uptime low"
+   },
+   "attention": {
+    "kind": "fix",
+    "reason": "Timed out on the last 3 checks."
+   }
+  },
+  {
+   "source_id": "bleepingcomputer",
+   "name": "Bleeping Computer",
+   "region": "global",
+   "category": "news",
+   "lane": "normal",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": {
+    "checked_at": "2026-10-04T08:00:00.121046Z",
+    "status": "ok",
+    "error": null,
+    "newest_item_age_days": 0.36627454914351854,
+    "items_fetched": 15,
+    "duration_ms": 1169
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-02T16:00:00.066724Z",
+     "status": "error",
+     "error": "storing items failed: OperationalError('(psycopg.errors.DeadlockDetected) deadlock detected\\nDETAIL: Process 5730 waits for ShareLock on transaction 10743; blocked by process 159.\\nProcess 159 waits for ShareLock on transaction 10746; blocked by process 5730.\\nHINT: See server log for query details…",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 820
+    },
+    {
+     "checked_at": "2026-10-03T08:00:00.135655Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.5405108293402777,
+     "items_fetched": 15,
+     "duration_ms": 780
+    },
+    {
+     "checked_at": "2026-10-03T12:00:00.111184Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.7071772127777778,
+     "items_fetched": 15,
+     "duration_ms": 1413
+    },
+    {
+     "checked_at": "2026-10-03T16:00:00.096076Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.058797408287037035,
+     "items_fetched": 15,
+     "duration_ms": 772
+    },
+    {
+     "checked_at": "2026-10-03T20:00:00.114524Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.03497817736111111,
+     "items_fetched": 15,
+     "duration_ms": 825
+    },
+    {
+     "checked_at": "2026-10-04T00:00:00.153212Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.032941588101851854,
+     "items_fetched": 15,
+     "duration_ms": 304
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.098238Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.19960761849537034,
+     "items_fetched": 15,
+     "duration_ms": 311
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.121046Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.36627454914351854,
+     "items_fetched": 15,
+     "duration_ms": 1169
+    }
+   ],
+   "description": "A security news site covering breaches, malware and vulnerabilities.",
+   "publisher": null,
+   "url": "https://feeds.example.org/bleepingcomputer.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "hourly",
+   "standing": "established",
+   "reputation": {
+    "version": "1",
+    "score": 81,
+    "standing": "established",
+    "uptime": 0.95,
+    "corroboration": 0.8,
+    "events_90d": 300,
+    "basis": "established standing"
+   },
+   "attention": null
+  },
+  {
+   "source_id": "fortinet_blog",
+   "name": "Fortinet Security Blog",
+   "region": "global",
+   "category": "vendor_advisory",
+   "lane": "normal",
+   "enabled": true,
+   "lifecycle_state": "degraded",
+   "latest": {
+    "checked_at": "2026-10-04T08:00:00.121046Z",
+    "status": "stale",
+    "error": "newest item is 9.79167 days old; expected one within 7 days",
+    "newest_item_age_days": 9.791668067662036,
+    "items_fetched": 0,
+    "duration_ms": 3872
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-03T04:00:00.220766Z",
+     "status": "stale",
+     "error": "newest item is 8.625 days old; expected one within 7 days",
+     "newest_item_age_days": 8.625002555162038,
+     "items_fetched": 0,
+     "duration_ms": 2790
+    },
+    {
+     "checked_at": "2026-10-03T08:00:00.135655Z",
+     "status": "stale",
+     "error": "newest item is 8.79167 days old; expected one within 7 days",
+     "newest_item_age_days": 8.791668236747686,
+     "items_fetched": 0,
+     "duration_ms": 4133
+    },
+    {
+     "checked_at": "2026-10-03T12:00:00.111184Z",
+     "status": "stale",
+     "error": "newest item is 8.95833 days old; expected one within 7 days",
+     "newest_item_age_days": 8.958334620185186,
+     "items_fetched": 0,
+     "duration_ms": 2793
+    },
+    {
+     "checked_at": "2026-10-03T16:00:00.096076Z",
+     "status": "stale",
+     "error": "newest item is 9.125 days old; expected one within 7 days",
+     "newest_item_age_days": 9.125001111990741,
+     "items_fetched": 0,
+     "duration_ms": 2666
+    },
+    {
+     "checked_at": "2026-10-03T20:00:00.114524Z",
+     "status": "stale",
+     "error": "newest item is 9.29167 days old; expected one within 7 days",
+     "newest_item_age_days": 9.291667992175926,
+     "items_fetched": 0,
+     "duration_ms": 3021
+    },
+    {
+     "checked_at": "2026-10-04T00:00:00.153212Z",
+     "status": "stale",
+     "error": "newest item is 9.45834 days old; expected one within 7 days",
+     "newest_item_age_days": 9.45833510662037,
+     "items_fetched": 0,
+     "duration_ms": 3678
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.098238Z",
+     "status": "stale",
+     "error": "newest item is 9.625 days old; expected one within 7 days",
+     "newest_item_age_days": 9.625001137013887,
+     "items_fetched": 0,
+     "duration_ms": 3058
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.121046Z",
+     "status": "stale",
+     "error": "newest item is 9.79167 days old; expected one within 7 days",
+     "newest_item_age_days": 9.791668067662036,
+     "items_fetched": 0,
+     "duration_ms": 3872
+    }
+   ],
+   "description": "Threat research from Fortinet's FortiGuard Labs.",
+   "publisher": "Fortinet",
+   "url": "https://feeds.example.org/fortinet_blog.xml",
+   "beat": "cyber",
+   "priority": 2,
+   "expected_frequency": "weekly",
+   "standing": "specialist",
+   "reputation": {
+    "version": "1",
+    "score": 58,
+    "standing": "specialist",
+    "uptime": 1.0,
+    "corroboration": 0.1,
+    "events_90d": 4,
+    "basis": "specialist standing"
+   },
+   "attention": null
+  },
+  {
+   "source_id": "itnews_security",
+   "name": "ITNews Security",
+   "region": "au",
+   "category": "news",
+   "lane": "fast",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": {
+    "checked_at": "2026-10-04T10:00:00.085037Z",
+    "status": "ok",
+    "error": null,
+    "newest_item_age_days": 0.3256954286689815,
+    "items_fetched": 20,
+    "duration_ms": 235
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-04T03:00:00.035169Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.03402818482638889,
+     "items_fetched": 20,
+     "duration_ms": 273
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.044458Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.07569495900462964,
+     "items_fetched": 20,
+     "duration_ms": 246
+    },
+    {
+     "checked_at": "2026-10-04T05:00:00.022987Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.11736137716435185,
+     "items_fetched": 20,
+     "duration_ms": 511
+    },
+    {
+     "checked_at": "2026-10-04T06:00:00.101607Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.15902895378472223,
+     "items_fetched": 20,
+     "duration_ms": 256
+    },
+    {
+     "checked_at": "2026-10-04T07:00:00.003253Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.2006944820949074,
+     "items_fetched": 20,
+     "duration_ms": 867
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.067443Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.2423618917013889,
+     "items_fetched": 20,
+     "duration_ms": 887
+    },
+    {
+     "checked_at": "2026-10-04T09:00:00.003444Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.2840278176388889,
+     "items_fetched": 20,
+     "duration_ms": 257
+    },
+    {
+     "checked_at": "2026-10-04T10:00:00.085037Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.3256954286689815,
+     "items_fetched": 20,
+     "duration_ms": 235
+    }
+   ],
+   "description": null,
+   "publisher": null,
+   "url": "https://feeds.example.org/itnews_security.xml",
+   "beat": null,
+   "priority": 2,
+   "expected_frequency": null,
+   "standing": "community",
+   "reputation": null,
+   "attention": null
+  },
+  {
+   "source_id": "cisa_advisories",
+   "name": "CISA Advisories",
+   "region": "us",
+   "category": "advisory",
+   "lane": "fast",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": {
+    "checked_at": "2026-10-04T10:00:00.085037Z",
+    "status": "ok",
+    "error": null,
+    "newest_item_age_days": 1.916667650891204,
+    "items_fetched": 30,
+    "duration_ms": 780
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-04T03:00:00.035169Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.6250004070486113,
+     "items_fetched": 30,
+     "duration_ms": 408
+    },
+    {
+     "checked_at": "2026-10-04T04:00:00.044458Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.6666671812268516,
+     "items_fetched": 30,
+     "duration_ms": 755
+    },
+    {
+     "checked_at": "2026-10-04T05:00:00.022987Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.708333599386574,
+     "items_fetched": 30,
+     "duration_ms": 215
+    },
+    {
+     "checked_at": "2026-10-04T06:00:00.101607Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.7500011760069443,
+     "items_fetched": 30,
+     "duration_ms": 738
+    },
+    {
+     "checked_at": "2026-10-04T07:00:00.003253Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.7916667043171297,
+     "items_fetched": 30,
+     "duration_ms": 197
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00.067443Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.8333341139236112,
+     "items_fetched": 30,
+     "duration_ms": 561
+    },
+    {
+     "checked_at": "2026-10-04T09:00:00.003444Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.875000039861111,
+     "items_fetched": 30,
+     "duration_ms": 466
+    },
+    {
+     "checked_at": "2026-10-04T10:00:00.085037Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 1.916667650891204,
+     "items_fetched": 30,
+     "duration_ms": 780
+    }
+   ],
+   "description": null,
+   "publisher": null,
+   "url": "https://feeds.example.org/cisa_advisories.xml",
+   "beat": null,
+   "priority": 2,
+   "expected_frequency": null,
+   "standing": "community",
+   "reputation": null,
+   "attention": null
+  },
+  {
+   "source_id": "example_feed",
+   "name": "Example Security Feed",
+   "region": "global",
+   "category": "news",
+   "lane": "normal",
+   "enabled": true,
+   "lifecycle_state": "active",
+   "latest": {
+    "checked_at": "2026-10-04T09:00:00Z",
+    "status": "error",
+    "error": "HTTP 503 from upstream",
+    "newest_item_age_days": null,
+    "items_fetched": 0,
+    "duration_ms": 120
+   },
+   "history": [
+    {
+     "checked_at": "2026-10-04T07:00:00Z",
+     "status": "ok",
+     "error": null,
+     "newest_item_age_days": 0.5,
+     "items_fetched": 10,
+     "duration_ms": 300
+    },
+    {
+     "checked_at": "2026-10-04T08:00:00Z",
+     "status": "timeout",
+     "error": "ReadTimeout after 30s",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 30000
+    },
+    {
+     "checked_at": "2026-10-04T09:00:00Z",
+     "status": "error",
+     "error": "HTTP 503 from upstream",
+     "newest_item_age_days": null,
+     "items_fetched": 0,
+     "duration_ms": 120
+    }
+   ],
+   "description": null,
+   "publisher": null,
+   "url": "javascript:alert(1)",
+   "beat": "ai",
+   "priority": 2,
+   "expected_frequency": "daily",
+   "standing": null,
+   "reputation": null,
+   "attention": null
+  }
+ ],
+ "pipeline": [
+  {
+   "name": "Example CERT advisories",
+   "host": "cert.example.net",
+   "state": "candidate",
+   "found_at": "2026-10-03T16:10:00Z",
+   "reason": "Cited by two authoritative sources this month."
+  },
+  {
+   "name": null,
+   "host": "blog.example.com",
+   "state": "discovered",
+   "found_at": "2026-10-04T16:10:00Z",
+   "reason": null
+  }
+ ]
+}
