@@ -338,13 +338,14 @@ export const REPUTATION_WEIGHTS = [
   ['Uptime', 15, 'share of checks that work'],
   ['Corroboration', 25, 'how often other sources confirm its stories'],
 ];
+// The most each part can add (worker/pipeline/importance.py; test_site_pages checks they agree).
 export const IMPORTANCE_POINTS = [
-  ['Source standing', 25],
+  ['Harm: severity, exploitation, an incident', 25],
   ['Australia', 25],
+  ['Source reputation, a quarter of it', 25],
   ['Public sector or critical infrastructure', 15],
-  ['Harm', 25],
+  ['Corroboration', 12],
   ['Cyber and AI together', 5],
-  ['Corroboration', 10],
 ];
 export const KEY_AT = 60;
 export const NOTABLE_AT = 40;
@@ -1150,7 +1151,7 @@ function ratePanel(live) {
         h('p', { class: 'subhead', text: 'STORY IMPORTANCE' }),
         h('p', { class: 'hint', text: `Points from the facts of a story, up to ${most}, held to a score of 0–100. Code, not AI.` }),
         weightsTable('Story importance points', ['FACT', 'POINTS'], IMPORTANCE_POINTS.map(([n, p]) => [n, String(p)])),
-        h('p', { class: 'pg-rate__note', text: `KEY at ${KEY_AT} or more, NOTABLE at ${NOTABLE_AT} or more, otherwise ROUTINE.` }),
+        h('p', { class: 'pg-rate__note', text: `KEY at ${KEY_AT} or more, NOTABLE at ${NOTABLE_AT} or more, otherwise ROUTINE. A story on neither the cyber nor the AI desk stays ROUTINE.` }),
       ),
     ),
     h('p', { class: 'subhead', text: 'THIS SNAPSHOT' }),

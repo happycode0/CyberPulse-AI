@@ -581,16 +581,29 @@ def test_formatting(pages):
     assert f["clock"] == ["21:00", "3 OCT 20:00"]
 
 
-def test_published_weights_match_the_brief(pages):
+def test_published_weights_match_the_worker(pages):
+    """HOW WE RATE shows the weights the publisher really uses (worker/pipeline/)."""
+    from worker.pipeline import importance as imp
+    from worker.pipeline import reputation as rep
+
     c = pages["constants"]
-    assert c["standing"] == {"authoritative": 90, "established": 75, "specialist": 60, "community": 40}
-    assert c["reputation"] == [["Standing", 60], ["Uptime", 15], ["Corroboration", 25]]
+    assert c["standing"] == {s.value: points for s, points in rep.STANDING_BASE.items()}
+    assert c["reputation"] == [
+        ["Standing", round(rep.STANDING_WEIGHT * 100)],
+        ["Uptime", round(rep.UPTIME_WEIGHT * 100)],
+        ["Corroboration", round(rep.CORROBORATION_WEIGHT * 100)],
+    ]
     assert sum(w for _, w in c["reputation"]) == 100
-    assert dict(c["importance"]) == {
-        "Source standing": 25, "Australia": 25, "Public sector or critical infrastructure": 15,
-        "Harm": 25, "Cyber and AI together": 5, "Corroboration": 10,
-    }
-    assert (c["keyAt"], c["notableAt"]) == (60, 40)
+    assert [p for _, p in c["importance"]] == [
+        max(*imp.HARM_BY_SEVERITY.values(), imp.HARM_EXPLOITED, imp.HARM_INCIDENT,
+            *imp.HARM_BY_SIGNIFICANCE.values()),
+        imp.AU_STRONG,
+        round(100 * imp.STANDING_SHARE),
+        imp.PUBLIC_TARGET,
+        imp.CORROBORATION_MORE,
+        imp.CONVERGENCE,
+    ]
+    assert (c["keyAt"], c["notableAt"]) == (imp.KEY_AT, imp.NOTABLE_AT)
     assert c["fallback"] == [
         ["fast", "0 * * * *", "UTC", "code"],
         ["normal", "0 */4 * * *", "UTC", "code"],
