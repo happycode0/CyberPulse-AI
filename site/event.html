@@ -20,23 +20,24 @@
 <header class="site-header">
   <div class="site-header__row">
     <a class="brand brand--link" href="index.html"><span class="brand__mark" aria-hidden="true">◆</span> CYBERPULSE<span class="brand__ai">-AI</span></a>
+    <!-- The dashboard's tabs, as plain links back into it: no tab is current on this page. -->
+    <nav class="tabs" aria-label="Views">
+      <a class="tab" href="index.html?view=dashboard&amp;scope=au">DASHBOARD</a>
+      <a class="tab" href="index.html?view=events&amp;scope=au">EVENTS</a>
+      <a class="tab" href="index.html?view=crew&amp;scope=au">CREW</a>
+      <a class="tab" href="index.html?view=system&amp;scope=au">SYSTEM</a>
+      <a class="tab" href="index.html?view=sources&amp;scope=au">SOURCES</a>
+    </nav>
     <div class="status-strip" id="status-strip" role="status">
       <span class="status-strip__label">LAST COMPLETED COLLECTION</span>
       <span class="status-strip__value mono" id="strip-collection"><time>awaiting data</time></span>
       <span class="status-strip__local mono" id="strip-local"></span>
     </div>
     <div class="site-header__controls">
+      <a class="btn" href="history.html">HISTORY</a>
       <button type="button" id="fx-toggle" class="btn" aria-pressed="false">FX OFF</button>
     </div>
   </div>
-  <nav class="site-nav" aria-label="Navigation">
-    <a href="index.html">DASHBOARD</a>
-    <a href="index.html?view=events&amp;scope=au">AUSTRALIA NOW</a>
-    <a href="index.html?view=events&amp;scope=all">ALL EVENTS</a>
-    <a href="index.html?view=events&amp;scope=all&amp;feed=vulnerabilities">VULNERABILITIES</a>
-    <a href="index.html?view=crew&amp;scope=au">THE CREW &amp; SYSTEM</a>
-    <a href="history.html">HISTORY</a>
-  </nav>
 </header>
 
 <noscript>

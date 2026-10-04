@@ -1053,7 +1053,7 @@ it was measured against the other one only.
 | Token | Hex | Page / surface | Role |
 |---|---|---|---|
 | `--bg-page` | `#0F172A` | — | Page; the map's ocean; the inside of chips |
-| `--bg-surface` | `#1E293B` | 1.22 vs page | Panels, cards, sidebar |
+| `--bg-surface` | `#1E293B` | 1.22 vs page | Panels, cards, header menus |
 | `--line` | `#334155` | 1.72 / 1.41 | Container borders only |
 | `--line-strong` | `#64748B` | 3.75 / 3.07 | Control borders, and nothing else (1.4.11) |
 | `--text-head` | `#F8FAFC` | 17.06 / 13.98 | Headings and card titles |
@@ -1140,36 +1140,60 @@ parameter — rather than a second, coarser set of paths to keep in step with th
 
 ### 8.2 Sections
 
-The page has one header, one sidebar and three views, and every section the page used to have
-lives in one of them.
+The page has one two-row header and five views, and every section the page used to have lives in
+one of them. There is no sidebar: since October 2026 the views are tabs in the header and the
+feeds are a menu beside the filters, so the content runs full width (to a 1480px measure).
 
 **Header** (sticky above 720px):
-- The wordmark.
-- `LAST COMPLETED COLLECTION <UTC>`, with the Sydney time beside it; never "LIVE".
-- HISTORY and FX OFF.
-- Under these, the filter row:
+- Row 1:
+  - The wordmark.
+  - The view tabs: `DASHBOARD` · `EVENTS` · `CREW` · `SYSTEM` · `SOURCES`. Each is a real `?view=&scope=` link, and the open one carries `aria-current="page"`.
+  - `LAST COMPLETED COLLECTION <UTC>`, with the Sydney time beside it; never "LIVE".
+  - HISTORY and FX OFF.
+- Row 2, the filters:
   - SCOPE: `AUSTRALIA` (preselected) · `GLOBAL` · `ALL`, a radio group.
   - BEAT: `CYBER` · `AI`, two toggles.
-  - `TAG FILTERS`, a popover that holds every tag facet.
+  - `FEEDS ▾`, a menu of the presets below. The summary names the open feed.
+  - `TAG FILTERS ▾`, a menu that holds every tag facet. The summary counts the chosen tags.
+  - `KEY ONLY`, a toggle (`aria-pressed`) that keeps only the stories rated KEY (§8.3 item 17).
   - `CLEAR FILTERS`, and `n OF N EVENTS`.
+
+Below 1180px the collection status takes its own line. Below 860px the tabs take theirs and
+scroll sideways rather than fold, and the filters wrap; there is no hamburger. Below 720px the
+header stops being sticky, and the two menus open full width under the filter row.
 
 GLOBAL means *not Australian*, decided by the same `isAu()` that defines AUSTRALIA, so the two
 partition ALL exactly. A beat toggle matches its own beat and `both`. With neither pressed every
 story shows, `other` included. Facets are OR within a dimension and AND across dimensions.
-Scope, beat and tags apply to every view, the dashboard included.
+Scope, beat, KEY ONLY and tags apply to every view, the dashboard included.
 
-**Sidebar.** It lists the three views first, then two groups of presets that open Events:
-- **GEOGRAPHIC SCOPE** sets the scope: `AUSTRALIA NOW` and `GLOBAL CYBER`.
-- **INTELLIGENCE FEEDS** keep the scope and add a feed: `AI + CYBER` (the AI beat), `ACTIVE EXPLOITATION`, `VULNERABILITIES`, `THREAT ACTORS`, `POLICY & RESEARCH`, `DEVELOPING EVENTS` and `EMERGING THREATS`.
+**FEEDS.** Each entry keeps the scope and opens Events with a feed: `AI + CYBER` (the AI beat),
+`ACTIVE EXPLOITATION`, `VULNERABILITIES`, `THREAT ACTORS`, `POLICY & RESEARCH`, `DEVELOPING
+EVENTS` and `EMERGING THREATS`. Each shows its count at the current scope, beat, KEY ONLY and
+tags. A feed with matches outside the scope also shows `+n IN ALL`, which widens to ALL in one
+click. Choosing a feed switches to Events. `AUSTRALIA NOW` and `GLOBAL CYBER` left the menu,
+because each is exactly a SCOPE choice, but they stay in `PRESETS` so their old links still
+resolve and still count.
 
-Every preset shows its count at the current scope, beat and tags. A feed with matches outside
-the scope also shows `+n IN ALL`, which widens to ALL in one click. Under 900px the sidebar folds
-behind MENU and opens in the flow above the view, never over it.
+**Menus close themselves.** FEEDS and TAG FILTERS are `<details data-dropdown>` disclosures. Each
+closes once a choice is applied, on a click or tap anywhere outside it, and on Escape; Escape
+returns focus to its summary. At most one is open at a time. A tag toggled where the reader
+already is returns focus to the TAG FILTERS summary; a choice that moves the view leaves focus
+to the view. The decision is the pure `dropdownAfter(open, event)`, tested in node, and
+`initDropdowns()` only carries it out.
 
 **Views:**
-- **DASHBOARD** (the default) shows the WORLD MAP, SEVERITY DISTRIBUTION, PULSE (the CyberPulse Index and the threat radar), TOP SIGNALS, DEVELOPING EVENTS, EMERGING THREATS and TRENDS.
+- **DASHBOARD** (the default) shows the WORLD MAP, SEVERITY DISTRIBUTION, PULSE (the CyberPulse Index and the threat radar), TOP SIGNALS, DEVELOPING EVENTS, EMERGING THREATS and TRENDS. Its head counts `n SIGNALS · n KEY` once any story in the snapshot is scored.
 - **EVENTS** is one list of event cards, headed by the preset that opened it. A notice offers to widen when the scope hides matches.
-- **THE CREW & SYSTEM** shows the eight agents, then SYSTEM: how this runs, the collection replay, sources and versions.
+- **CREW** shows THE COMPANY (the facts, then the ORG CHART), THE CREW (the eight agents and their last run) and ROUTINES. The chart puts the CEO, the one agent who reports to nobody, at the top, with a column per team below. Each agent is shown with its manager, runtime (model, or code over HTTP), budget and run cap. ROUTINES lists each schedule in plain English beside its cron and timezone. Both come from `assets/org.json`, which the worker publishes from the Paperclip package. With no file the view says `ORG CHART NOT PUBLISHED YET.` and draws nothing else. The page says "Schedules as configured; Paperclip decides whether they run", and never claims a routine ran.
+- **SYSTEM** is how the news is processed: the flow from collection to publication, which steps are code and which are a model, and the run's status. `site/assets/pages.js` draws it into `#system-page`.
+- **SOURCES** is the registry's health, what is in the pipeline, coming or in need of fixing, and each source's reputation. `pages.js` draws it into `#sources-page`.
+
+`hud.js` hands both pages what it read, null for anything it could not, and puts the result in
+the view's head:
+- `renderSystemPage(host, { status, health, crew, live })` and `renderSourcesPage(host, { health, live })` each return `{ label, led }`, with `led` one of `ok`, `warn`, `fail` or `idle`.
+- A page that throws is replaced by `THE … PAGE COULD NOT BE DRAWN.` and a `fail` LED, so one bad page cannot blank the others.
+- Both are called before the no-data guard, so a failed snapshot still draws both pages, each saying what is missing.
 
 The old sections map onto this layout as follows:
 - The three domain sections are now the scope and the beat.
@@ -1180,18 +1204,21 @@ The tag filter keeps its facets, without the old AI facet. The AI subdomains are
 SUBDOMAIN tag, and the beat has its own row. Category tags show their labels (AI INDUSTRY, MODEL
 RELEASE and so on), while cards keep the raw `#slug`.
 `test_every_section_the_js_renders_has_a_home_in_the_markup` requires every feed to be applied by
-a sidebar preset, so a feed cannot be lost in silence.
+a preset in the FEEDS menu, so a feed cannot be lost in silence.
 
-**The URL is the state:** `?view=&scope=&beat=&feed=&tag=dim:value&event=`. `parseLocation()` and
-`toSearch()` round-trip it, so any state a reader can reach is a link. A link can name a story
-that the current scope or tags hide: `?event=`, a link from `event.html`, or a related event. In
-that case only what is in the way is lifted (`sectionFor()`): the scope goes to ALL, the beat and
-any tag that excludes the story are dropped, and every other tag stays.
+**The URL is the state:** `?view=&scope=&beat=&feed=&key=1&tag=dim:value&event=`.
+`parseLocation()` and `toSearch()` round-trip it, so any state a reader can reach is a link. A
+link can name a story that the current scope, KEY ONLY or tags hide: `?event=`, a link from
+`event.html`, or a related event. In that case only what is in the way is lifted
+(`sectionFor()`): the scope goes to ALL, the beat, KEY ONLY and any tag that excludes the story
+are dropped, and every other tag stays.
 
 **Old anchors.** No `#sec-*` id is a place on the page any more. Bookmarks, older builds of
 `event.html` and `history.html`, and other people's pages still carry them. `LEGACY_ANCHORS`
 sends each one to the view and scope that show what it used to, and `replaceState` rewrites the
-address. An anchor on a URL this version wrote is not treated as legacy.
+address. An anchor on a URL this version wrote is not treated as legacy, with one exception:
+`#sec-system` and the source anchors on a `?view=` URL were blocks of the old crew view. They
+now open their own view, and the rest of that URL is kept.
 
 | Old anchor | Opens |
 |---|---|
@@ -1207,13 +1234,15 @@ address. An anchor on a URL this version wrote is not treated as legacy.
 | `#sec-vulnerabilities` | `?view=events&scope=all&feed=vulnerabilities` |
 | `#sec-research` | `?view=events&scope=all&feed=research` |
 | `#sec-policy-regulation` | `?view=events&scope=all&feed=policy-regulation` |
+| `#sec-world-map` | `?view=dashboard&scope=all` |
 | `#sec-the-crew` | `?view=crew&scope=au` |
-| `#sec-system` | `?view=crew&scope=au#sec-system` |
+| `#sec-system` | `?view=system&scope=au` |
+| `#sec-sources`, `#sec-source-health`, `#source-health` | `?view=sources&scope=au` |
 
 A section link used to show everything that section held, so the old section anchors open at ALL.
 `#sec-australia-now` and `#sec-global-cyber` keep their own scope. `event.html` and
-`history.html` share the theme, and their header nav reads DASHBOARD · AUSTRALIA NOW · ALL EVENTS ·
-VULNERABILITIES · THE CREW & SYSTEM · HISTORY.
+`history.html` share the theme and the header's first row: the same five tabs, as links back
+into the dashboard at `scope=au`, then HISTORY (current on the history page) and FX OFF.
 
 ### 8.3 Components
 
@@ -1237,11 +1266,11 @@ VULNERABILITIES · THE CREW & SYSTEM · HISTORY.
    - DETAIL expands in place.
 6. **Event detail** — the full §5 field set, evidence separated from AI inference, timeline, related events and source reports. A `SEVERITY VIA` chip names the severity's source; an AI-only story has no severity, so it has no such chip.
 7. **Timeline** — tick-mark axis, hex nodes, day grouping, keyboard navigable.
-8. **Pipeline flow** — SOURCES → COLLECT → MATCH → VERIFY → ENRICH → CROSS-REF → SCORE → PUBLISH, circuit-trace SVG paths with travelling dash pulses, per-node counter and status LED, source nodes coloured healthy/degraded/broken.
+8. **Pipeline flow** — on the SYSTEM page, drawn by `pages.js` (it left the dashboard in October 2026). SOURCES → COLLECT → MATCH → VERIFY → ENRICH → CROSS-REF → SCORE → PUBLISH, circuit-trace SVG paths with travelling dash pulses, per-node counter and status LED, source nodes coloured healthy/degraded/broken. The `pipe-*` styles stay in `hud.css` for it.
 9. **World map** — world-atlas `countries-110m.json` (Natural Earth, **public domain**, 108 KB) + `d3-geo` as ES modules, Equal Earth rotated to 150°E so Australia sits centre. ISO-3166 numeric `id` per country enables click-to-filter, which filters every view; paired with a `<select>` for keyboard/screen-reader parity. The ramp is in §8.1.
 10. **Top signals** — the static list that replaced the scrolling ticker. It shows the highest-prominence stories at the current scope, beat and tags. Each row has its rank badge and a 3px left border in its severity, and choosing one opens it in Events.
 11. **Boot sequence** — ≤2.5 s typed terminal, once per session, skippable, skipped entirely under reduced motion, never blocking content.
-12. **Tag filter** — client-side across severity, AI significance, Australia, category, AI subdomain, source, CVE, country, organisation, product, sector, actor and MITRE. It sits in a popover under the filter row, stays open while chips are chosen, and closes on Escape or an outside click.
+12. **Tag filter** — client-side across importance, severity, AI significance, Australia, category, AI subdomain, source, CVE, country, organisation, product, sector, actor and MITRE. It sits in the `TAG FILTERS ▾` menu of the filter row and closes itself as §8.2 describes: once a chip is applied, on an outside click and on Escape. IMPORTANCE lists KEY, NOTABLE and ROUTINE in that order, whatever the counts; an unscored story is in none of them.
 13. **History** — previous/next day and jump-to-date via `data/index.json`, in the same theme and card.
 14. **Rank badge** — a story is ranked by severity on the cyber desk and by significance on the AI desk.
     - **Severity badge:** a glyph (◆ ▲ ● ■ ○), a label and a bar count. The text is in `--sev-text` on a 10% tint of the hue, with a 1px border in the hue. With a CVSS score it reads `CRITICAL (CVSS: 9.8)`. An unrated story reads `UNRATED`, never a zero.
@@ -1249,11 +1278,18 @@ VULNERABILITIES · THE CREW & SYSTEM · HISTORY.
     - **Story on both desks:** shows severity first and significance beside it as the secondary badge.
     - The detail page uses the same badges.
 15. **Scope and beat** — the header's SCOPE radio group (AUSTRALIA preselected) and BEAT toggles. Each is a real `<input>` or a `<button aria-pressed>`, with a filled cyan state and `--bg-page` text (7.35:1), so the pressed state is never colour alone: a ✓ marks a pressed beat.
-16. **Sidebar presets** — the geographic scopes and the intelligence feeds of §8.2, each with its count in the snapshot at the current filters and, for a feed, the one-click `+n IN ALL` widen.
+16. **FEEDS menu** — the intelligence feeds of §8.2, each with its count in the snapshot at the current filters and the one-click `+n IN ALL` widen.
+17. **Importance badge** — the worker's `importance` on an event (`{"version": "1", "score": 0-100, "tier": "key" | "notable" | "routine", "reasons": [...]}`), shown separately from the rank badge.
+    - Severity says how bad a flaw is; importance says how much the story matters to this reader. The two are different questions, so importance never bends the rank, and TOP SIGNALS keeps its own ordering.
+    - `KEY` is filled cyan with `--bg-page` text. `NOTABLE` is outlined in cyan. Each carries its score, and ROUTINE shows nothing, so a list is not a wall of labels.
+    - The badge is on cards and TOP SIGNALS. DETAIL and `event.html` say `Why this rates KEY: <reasons>. Score n of 100.`
+    - A story without the field, or with a tier outside the three, is unrated: never KEY, and never counted as ROUTINE.
+    - `KEY ONLY` filters every view and count by it.
+18. **Org chart and routines** — the CREW view's company panel, from `assets/org.json` (§8.2): the CEO on top, a dashed column per team, each agent as a node with its portrait, title, summary, runtime, monthly budget, daily run cap and routine count. The routines table groups schedules by the agent they wake. `describeCron()` reads the crew's cron shapes as English (`Daily at 06:00, 14:00 and 22:00 Sydney time`); for any shape it cannot say exactly, it returns nothing and the cron stands alone. A routine that starts at a later stage is marked `FROM STAGE 5`.
 
 ### 8.4 Non-negotiables
 
-- **Honesty:** never the word "LIVE". Always `LAST COMPLETED COLLECTION <timestamp> UTC`, and the pipeline animation is labelled `COLLECTION REPLAY`.
+- **Honesty:** never the word "LIVE". Always `LAST COMPLETED COLLECTION <timestamp> UTC`, and the pipeline animation on the SYSTEM page is labelled `COLLECTION REPLAY`. A schedule is shown as configured, never as a claim that it ran.
 - **Motion:** every loop inside `@media (prefers-reduced-motion: no-preference)`, plus a persisted `FX OFF` toggle. Anything auto-moving >5 s is pausable (WCAG 2.2.2). No flicker — the classic CRT flicker at ~7 Hz is dropped outright (WCAG 2.3.1).
 - **Colour is never the only signal** (WCAG 1.4.1): severity also carries a label, a shape (◆ ▲ ● ■ ○) and a bar count.
 - **Performance:** animate only `transform`/`opacity` *(one narrow, deliberate exception: the EKG pulse line and pipeline dash-trace in §8.3 items 2 and 8 animate SVG `stroke-dashoffset`, since a travelling dash cannot be done any other way. Scoped to ≤2 small paths, always removable via `FX OFF` or reduced motion, never forces layout — accepted during Task 14 implementation rather than dropping the dash-pulse visual entirely)*; canvas at 30 fps, DPR capped at 2, paused on `visibilitychange` and via `IntersectionObserver`; `content-visibility: auto` on long lists.
