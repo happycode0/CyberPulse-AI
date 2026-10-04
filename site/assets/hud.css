@@ -45,7 +45,7 @@
   --radius: 8px;
   --radius-sm: 4px;
   --gap: 16px;
-  --sidebar-w: 264px;
+  --measure: 1480px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,32 +71,50 @@ a:hover { color: var(--text-head); }
 .skip-link { position: absolute; left: -999px; top: 0; z-index: 200; background: var(--accent); color: var(--bg-page); padding: 8px 12px; font: 600 13px/1.2 var(--font-mono); }
 .skip-link:focus { left: 8px; top: 8px; }
 [hidden] { display: none !important; }
+/* Read out, not shown: the word that makes a badge make sense to a screen reader. */
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 
 /* ------------------------------------------------------------------ header */
 
-/* Sticky on a wide screen, because it carries the scope row and the tag filters, and a control
+/* Sticky on a wide screen, because it carries the tabs, the scope and the filters, and a control
    a reader has to scroll back up to find is a control they stop using. Static under 720px,
    where it wraps to several rows and would cover too much of a phone. */
 .site-header { position: sticky; top: 0; z-index: 90; background: var(--bg-page); border-bottom: 1px solid var(--line); }
 @media (max-width: 720px) { .site-header { position: static; } }
-.site-header__row { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; max-width: 1480px; margin: 0 auto; padding: 10px 20px 8px; }
-.brand { font: 700 18px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-head); white-space: nowrap; }
+/* Row one is a grid, so the four parts keep their places as it narrows instead of wrapping in
+   whatever order fits: brand, tabs, status and controls on one line on a wide screen; the status
+   drops under them below 1180px; and below 860px the tabs take a line of their own. */
+.site-header__row { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr) max-content; grid-template-areas: "brand tabs status controls"; align-items: center; gap: 8px 20px; max-width: var(--measure); margin: 0 auto; padding: 10px 20px 8px; }
+.brand { grid-area: brand; font: 700 18px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-head); white-space: nowrap; }
 .brand__mark { color: var(--accent); }
 .brand__ai { color: var(--beat-ai); }
 .brand--link { text-decoration: none; }
 .brand--link:hover { color: var(--accent); }
-.site-header__controls { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.site-header__controls { grid-area: controls; display: flex; gap: 8px; justify-content: flex-end; }
+.site-header__controls .btn[aria-current] { border-color: var(--accent); color: var(--accent); }
+
+/* The views. A tab is a link, and the open one carries aria-current="page"; it is marked by a
+   filled ground and an accent bar under it, not by its colour alone. */
+.tabs { grid-area: tabs; display: flex; gap: 2px; min-width: 0; }
+.tab { display: inline-flex; align-items: center; min-height: 36px; padding: 8px 12px; font: 600 12px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; white-space: nowrap; color: var(--text-dim); border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+.tab:hover { color: var(--accent); background: var(--bg-surface); }
+.tab[aria-current] { color: var(--text-head); background: var(--bg-surface); border-bottom-color: var(--accent); }
 
 /* "As at when", in the header so it is on screen whenever the scope or the filters are. */
-.status-strip { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; flex: 1 1 320px; min-width: 0; font: 400 13px/1.5 var(--font-mono); color: var(--text-dim); }
+.status-strip { grid-area: status; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 12px; align-items: baseline; min-width: 0; font: 400 13px/1.5 var(--font-mono); color: var(--text-dim); }
 .status-strip__label { font: 600 11.5px/1.5 var(--font-mono); letter-spacing: 0.08em; color: var(--text-muted); }
 .status-strip__value { color: var(--text-head); }
 .status-strip__local { color: var(--text-muted); }
-@media (max-width: 720px) { .status-strip { order: 3; flex-basis: 100%; } }
 
-/* The menu button only exists where the sidebar is folded away. Two classes, so .btn's
-   display (declared below it) cannot bring it back on a wide screen. */
-.btn.sidebar-toggle { display: none; }
+@media (max-width: 1180px) {
+  .site-header__row { grid-template-columns: max-content minmax(0, 1fr) max-content; grid-template-areas: "brand tabs controls" "status status status"; }
+  .status-strip { justify-content: flex-start; }
+}
+/* The tabs scroll sideways rather than wrap or fold: five words, all always one swipe away. */
+@media (max-width: 860px) {
+  .site-header__row { grid-template-columns: minmax(0, 1fr) max-content; grid-template-areas: "brand controls" "tabs tabs" "status status"; }
+  .tabs { overflow-x: auto; scrollbar-width: thin; margin: 0 -20px; padding: 0 20px; }
+}
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: 600 12px/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 12px; min-height: 34px; cursor: pointer; }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -105,9 +123,10 @@ a:hover { color: var(--text-head); }
 /* A .btn that is a link needs its underline removed. */
 a.btn { text-decoration: none; }
 
-/* The scope row, the beat toggles, TAG FILTERS and the count: one line on a wide screen. The
-   filter panel opens over the page from here (position: absolute against .filterbar). */
-.filterbar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; max-width: 1480px; margin: 0 auto; padding: 0 20px 10px; }
+/* Row two: the scope, the beat, FEEDS, TAG FILTERS, KEY ONLY and the count. One line on a wide
+   screen, wrapping as it narrows. The tag panel opens over the page from here (position:
+   absolute against .filterbar); the feeds panel hangs from its own summary. */
+.filterbar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; max-width: var(--measure); margin: 0 auto; padding: 0 20px 10px; }
 .scope-row { display: flex; align-items: center; margin: 0; padding: 0; border: 0; min-width: 0; }
 /* Floated so it lays out as a label beside the segments instead of on the fieldset's border. */
 .scope-row__legend, .beat-row__label { float: left; margin: 0 10px 0 0; padding: 0; font: 600 11px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--text-muted); }
@@ -125,18 +144,50 @@ a.btn { text-decoration: none; }
 .seg-btn[aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
 .seg input:focus-visible + .seg__label { outline: 2px solid var(--accent); outline-offset: 2px; position: relative; }
 
+/* KEY ONLY stands alone, so it is rounded on both ends whatever the :first-of-type rules say. */
+.seg-btn.key-toggle { border-radius: 6px; }
+
+/* FEEDS and TAG FILTERS: a <details> each, so they open and close without script and a screen
+   reader announces them as expandable. hud.js only closes them (after a choice, an outside
+   click or Escape) and keeps it to one open at a time. */
+.dropdown > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 6px 12px; list-style: none; cursor: pointer; font: 600 12px/1 var(--font-mono); letter-spacing: 0.08em; color: var(--text); background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: 6px; white-space: nowrap; }
+.dropdown > summary::-webkit-details-marker { display: none; }
+.dropdown > summary::after { content: "▾"; color: var(--text-muted); }
+.dropdown > summary:hover { color: var(--accent); border-color: var(--accent); }
+.dropdown[open] > summary { color: var(--accent); border-color: var(--accent); }
+.dropdown[open] > summary::after { content: "▴"; color: var(--accent); }
+/* What is chosen inside, on the closed summary: the feed's name, or how many tags are on. */
+.dropdown__now { color: var(--accent); font-weight: 600; }
+.dropdown__now:empty { display: none; }
+.dropdown__now::before { content: "· "; color: var(--text-muted); }
+.dropdown__panel, .filterbar__more > .facets { position: absolute; z-index: 95; padding: 14px 16px; background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: var(--radius); box-shadow: 0 16px 40px rgba(2, 6, 23, 0.6); overflow-y: auto; }
+.filterbar__feeds { position: relative; }
+.dropdown__panel { top: calc(100% + 6px); left: 0; width: max-content; min-width: 300px; max-width: min(420px, calc(100vw - 40px)); max-height: min(70vh, 560px); display: grid; gap: 10px; }
+.dropdown__note { font-size: 12.5px; line-height: 1.5; color: var(--text-muted); max-width: 44ch; }
 .filterbar__more { position: static; }
-.filterbar__more > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 6px 12px; list-style: none; cursor: pointer; font: 600 12px/1 var(--font-mono); letter-spacing: 0.08em; color: var(--text); background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: 6px; }
-.filterbar__more > summary::-webkit-details-marker { display: none; }
-.filterbar__more > summary::after { content: "▾"; color: var(--text-muted); }
-.filterbar__more[open] > summary { color: var(--accent); border-color: var(--accent); }
-.filterbar__more[open] > summary::after { content: "▴"; color: var(--accent); }
-.filterbar__more > .facets { position: absolute; z-index: 95; top: calc(100% - 2px); left: 20px; width: min(960px, calc(100% - 40px)); max-height: min(62vh, 560px); overflow-y: auto; padding: 14px 16px; background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: var(--radius); box-shadow: 0 16px 40px rgba(2, 6, 23, 0.6); }
+.filterbar__more > .facets { top: calc(100% - 2px); left: 20px; width: min(960px, calc(100% - 40px)); max-height: min(62vh, 560px); }
+
+/* One row per feed: its name and its count, and under it, when the scope hides some of it, a
+   plain underlined link to the same feed at ALL. The current feed gets a bar on its edge as
+   well as a fill, so it does not rest on colour. */
+.feed-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.feed-item { display: grid; }
+.feed-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 7px 10px 7px 9px; border-left: 3px solid transparent; border-radius: 6px; color: var(--text); text-decoration: none; font: 500 12.5px/1.35 var(--font-mono); letter-spacing: 0.04em; }
+.feed-link:hover { color: var(--accent); background: var(--bg-page); }
+.feed-link[aria-current] { color: var(--text-head); background: var(--bg-page); border-left-color: var(--accent); font-weight: 600; }
+.feed-link__label { min-width: 0; }
+.feed-link__count { flex: none; min-width: 2.5em; text-align: right; font-size: 12px; color: var(--text-muted); }
+.feed-link[aria-current] .feed-link__count { color: var(--accent); }
+.feed-widen { justify-self: start; margin: -3px 0 5px 12px; padding: 0 2px; font-size: 11px; line-height: 1.5; letter-spacing: 0.04em; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.feed-widen:hover { color: var(--text-head); }
+
 .filterbar__actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto; }
 .filterbar__count { font-size: 12.5px; color: var(--text-dim); }
+/* On a phone both panels hang from the filter bar at its full width: a panel anchored to a
+   summary halfway along a wrapped row would run off the side of the screen. */
 @media (max-width: 720px) {
-  .filterbar__more { flex-basis: 100%; }
-  .filterbar__more > .facets { position: static; width: auto; max-height: none; margin-top: 8px; box-shadow: none; }
+  .filterbar__feeds { position: static; }
+  .dropdown__panel, .filterbar__more > .facets { top: calc(100% - 2px); left: 14px; right: 14px; width: auto; min-width: 0; max-width: none; max-height: 70vh; }
   .filterbar__actions { margin-left: 0; }
 }
 
@@ -147,34 +198,9 @@ a.btn { text-decoration: none; }
 
 /* ------------------------------------------------------------------ layout */
 
-.layout { display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); gap: 24px; max-width: 1480px; margin: 0 auto; padding: 20px; align-items: start; }
-.main { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
-
-.sidebar { position: sticky; top: calc(var(--header-h, 0px) + 20px); max-height: calc(100vh - var(--header-h, 0px) - 40px); overflow-y: auto; padding: 12px; background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--radius); }
-.side-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.side-head { margin: 14px 10px 4px; font: 600 11px/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
-.side-item { display: grid; }
-/* The current entry gets a bar on its edge as well as a fill, so it does not rest on colour. */
-.side-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px 7px 9px; border-left: 3px solid transparent; border-radius: 6px; color: var(--text); text-decoration: none; font: 500 12.5px/1.35 var(--font-mono); letter-spacing: 0.04em; }
-.side-link:hover { color: var(--accent); background: var(--bg-page); }
-.side-link[aria-current] { color: var(--text-head); background: var(--bg-page); border-left-color: var(--accent); font-weight: 600; }
-.side-link__label { min-width: 0; }
-.side-link__count { flex: none; min-width: 2.5em; text-align: right; font-size: 12px; color: var(--text-muted); }
-.side-link[aria-current] .side-link__count { color: var(--accent); }
-/* A plain underlined link under its feed: it is an offer, not a control competing with the
-   feed itself, so it takes one short line and no box. */
-.side-widen { justify-self: start; margin: -3px 0 5px 12px; padding: 0 2px; font-size: 11px; line-height: 1.5; letter-spacing: 0.04em; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-.side-widen:hover { color: var(--text-head); }
-.side-note { margin: 16px 10px 4px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
-
-/* Under 900px the sidebar folds behind MENU and, when opened, sits in the flow above the view
-   rather than over it, so nothing it opens is hidden underneath it. */
-@media (max-width: 900px) {
-  .btn.sidebar-toggle { display: inline-flex; }
-  .layout { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: var(--gap); }
-  .sidebar { position: static; max-height: none; }
-  .sidebar:not(.is-open) { display: none; }
-}
+/* One column at the header's measure: nothing sits beside the view any more. */
+.main { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); max-width: var(--measure); margin: 0 auto; padding: 20px; }
+@media (max-width: 720px) { .main { padding: 16px; } }
 
 /* ------------------------------------------------------------------- views */
 
@@ -206,7 +232,7 @@ a.btn { text-decoration: none; }
 .map-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; }
 .map-controls .field { flex: 1 1 280px; }
 
-/* A block a link can jump to (#sec-trends, #sec-system). scroll-margin-top clears the sticky
+/* A block a link can jump to (#sec-trends). scroll-margin-top clears the sticky
    header, and it cannot be a constant: the header reflows as the viewport narrows and grows
    when the collection time arrives. initViews() measures it and publishes --header-h; the
    literal is only the no-JS fallback. */
@@ -216,7 +242,7 @@ a.btn { text-decoration: none; }
 .led { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); flex: none; }
 .led[data-state="ok"] { background: var(--sev-low); }
 .led[data-state="warn"] { background: var(--sev-medium); }
-.led[data-state="bad"] { background: var(--sev-critical); }
+.led[data-state="bad"], .led[data-state="fail"] { background: var(--sev-critical); }
 .led[data-state="idle"] { background: var(--text-muted); }
 
 .empty, .hint, .notice { color: var(--text-dim); font-size: 14.5px; line-height: 1.6; max-width: 80ch; }
@@ -250,6 +276,12 @@ a.btn { text-decoration: none; }
 .sev-bars { display: inline-flex; gap: 2px; }
 .sev-bars i { display: block; width: 5px; height: 10px; border: 1px solid var(--sev-color, var(--text-muted)); }
 .sev-bars i.on { background: var(--sev-color, var(--text-muted)); }
+
+/* Importance is a third scale beside severity and AI significance, so it takes the accent rather
+   than any severity hue, and its tier is the word: KEY filled, NOTABLE outlined, ROUTINE none. */
+.imp-badge { display: inline-flex; align-items: center; padding: 4px 8px; border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); background: transparent; font: 700 12px/1.1 var(--font-mono); letter-spacing: 0.08em; white-space: nowrap; }
+.imp-badge[data-tier="key"] { color: var(--bg-page); background: var(--accent); }
+.imp-badge__score { font-weight: 500; letter-spacing: 0.02em; }
 
 /* ------------------------------------------------------------------ chips */
 
@@ -306,7 +338,8 @@ button.chip[aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
 .watch .sev-badge { justify-self: start; }
 .watch__link { font-size: 14.5px; }
 .watch__all { justify-self: start; margin-top: 10px; }
-@media (max-width: 560px) { .headline { grid-template-columns: minmax(0, 1fr); } .headline .sev-badge { justify-self: start; } }
+.headline__badges { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+@media (max-width: 560px) { .headline { grid-template-columns: minmax(0, 1fr); } .headline .headline__badges { justify-self: start; } }
 
 /* ------------------------------------------------------- index, gauges, radar */
 
@@ -399,9 +432,9 @@ button.chip[aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
 /* A bot takes its accent from whatever is carrying it, so the same agent's eyes are the same
    colour on its card and in its run-table row. Declared on both carriers rather than as a
    default on .bot itself: a value set on the element would beat the inherited one. */
-.crew-card, .run-table tbody tr { --bot-accent: var(--accent); }
-.crew-card[data-desk="ENGINEERING"], .run-table tbody tr[data-desk="ENGINEERING"] { --bot-accent: var(--sev-medium); }
-.crew-card[data-desk="OPERATIONS"], .run-table tbody tr[data-desk="OPERATIONS"] { --bot-accent: var(--sev-low); }
+.crew-card, .run-table tbody tr, .org-node { --bot-accent: var(--accent); }
+.crew-card[data-desk="ENGINEERING"], .run-table tbody tr[data-desk="ENGINEERING"], .org-node[data-desk="ENGINEERING"] { --bot-accent: var(--sev-medium); }
+.crew-card[data-desk="OPERATIONS"], .run-table tbody tr[data-desk="OPERATIONS"], .org-node[data-desk="OPERATIONS"] { --bot-accent: var(--sev-low); }
 .crew-card__head { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; align-items: center; }
 .crew-card__id { display: grid; gap: 2px; min-width: 0; }
 .crew-card__callsign { font: 600 15px/1.2 var(--font-mono); letter-spacing: 0.06em; color: var(--text-head); min-width: 0; }
@@ -428,6 +461,32 @@ button.chip[aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
 .bot-mouth { fill: none; stroke: var(--bg-page); stroke-width: 1.4; stroke-linecap: round; }
 .crew-card[data-status="active"] .bot-shell { stroke: var(--sev-low); stroke-width: 1.6; }
 .crew-card[data-status="degraded"] .bot-shell { stroke: var(--sev-medium); stroke-width: 1.6; }
+
+/* The org chart: the CEO on top, then one box per team of the agents reporting up, deepest
+   last. Boxes and a rule rather than drawn connectors, so it reflows to one column on a phone
+   and still reads top to bottom; who reports to whom below the CEO is said in words. */
+.org-facts { max-width: 720px; }
+.org-chart { display: grid; gap: 14px; }
+.org-top { display: grid; justify-items: center; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line-strong); }
+.org-top > .org-node { width: min(100%, 380px); }
+.org-teams { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; align-items: start; }
+.org-team { display: grid; gap: 8px; align-content: start; padding: 10px; border: 1px dashed var(--line-strong); border-radius: var(--radius); }
+.org-team__name { font: 600 11px/1.4 var(--font-mono); letter-spacing: 0.12em; color: var(--text-muted); }
+.org-team__members { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.org-node { display: grid; gap: 6px; align-content: start; padding: 10px 12px; background: var(--bg-page); border: 1px solid var(--line); border-top: 3px solid var(--bot-accent); border-radius: 6px; }
+.org-node__head { display: flex; align-items: center; gap: 10px; }
+.org-node__id { display: grid; gap: 1px; min-width: 0; }
+.org-node__callsign { font: 600 14px/1.2 var(--font-mono); letter-spacing: 0.06em; color: var(--text-head); }
+.org-node__title { font-size: 11px; line-height: 1.3; letter-spacing: 0.06em; color: var(--text-muted); }
+.org-node__summary { font-size: 14px; line-height: 1.5; color: var(--text-dim); }
+.org-node__meta, .org-node__reports { font-size: 11.5px; line-height: 1.45; letter-spacing: 0.04em; color: var(--text-muted); }
+.org-node__reports { color: var(--text-dim); }
+
+/* Routines: what each agent is scheduled to do, in words first and the cron after it. */
+.routine__name { display: block; font-weight: 600; color: var(--text-head); }
+.routine__starts { margin-top: 4px; font-size: 11px; color: var(--sev-medium); border-color: var(--sev-medium); }
+.routine__when { display: block; color: var(--text); }
+.routine__cron { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
 
 /* The SYSTEM explainer is prose, so it gets a measure. */
 .explain { display: grid; gap: 12px; max-width: 70ch; color: var(--text-dim); font-size: 15.5px; line-height: 1.7; }
@@ -490,10 +549,7 @@ button.chip[aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
 
 /* -------------------------------------------- event and history pages */
 
-.site-nav { display: flex; flex-wrap: wrap; gap: 4px; max-width: 1480px; margin: 0 auto; padding: 0 20px 10px; }
-.site-nav a { display: flex; align-items: center; min-height: 34px; padding: 7px 11px; font: 500 12px/1.3 var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; color: var(--text); border: 1px solid var(--line-strong); border-radius: 6px; }
-.site-nav a:hover { color: var(--accent); border-color: var(--accent); }
-.site-nav a[aria-current] { color: var(--bg-page); background: var(--accent); border-color: var(--accent); }
+/* Their header has the same tabs, as links back into the dashboard, and only the one row. */
 main.wrap { padding-top: 20px; }
 main.wrap > * + * { margin-top: var(--gap); }
 
@@ -589,10 +645,13 @@ main.wrap > * + * { margin-top: var(--gap); }
   .panel-body { padding: 14px 14px 18px; }
   .timeline__node { grid-template-columns: 1fr; }
   .detail__title { overflow-wrap: anywhere; }
-  .site-header__row, .filterbar, .site-nav { padding-left: 14px; padding-right: 14px; }
+  .site-header__row, .filterbar { padding-left: 14px; padding-right: 14px; }
+  .tabs { margin: 0 -14px; padding: 0 14px; }
 }
+/* On paper the navigation is noise: the view printed is the one open, and its head says which. */
 @media print {
-  .site-nav, .sidebar, .btn.sidebar-toggle, .filterbar, .fx-field { display: none; }
+  .tabs, .site-header__controls, .filterbar, .fx-field { display: none; }
   .site-header { position: static; }
-  .layout { grid-template-columns: minmax(0, 1fr); }
+  .site-header__row { grid-template-columns: max-content minmax(0, 1fr); grid-template-areas: "brand status"; }
+  .main { max-width: none; padding: 12px 0; }
 }

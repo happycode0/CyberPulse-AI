@@ -3,6 +3,10 @@
 // never parsed as markup.
 
 import { renderMap, syncMapSelection } from './map.js';
+// The SYSTEM and SOURCES views are drawn by pages.js, which owns their markup and styles
+// (pages.css). The contract is two functions that clear and refill a host and hand back the
+// view head's count and LED; renderPage() below is the only caller.
+import { renderSystemPage, renderSourcesPage } from './pages.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const DATA_BASES = ['data/', '../data/'];
@@ -17,13 +21,6 @@ export const SEVERITY = {
   unknown: { glyph: '◇', shape: 'open-diamond', label: 'UNRATED', bars: 0 },
 };
 const SEVERITY_WEIGHT = { critical: 10, high: 6, medium: 3, low: 1, info: 0.5, unknown: 1 };
-
-const HEALTH = {
-  healthy: { glyph: '●', label: 'HEALTHY' },
-  degraded: { glyph: '▲', label: 'DEGRADED' },
-  broken: { glyph: '■', label: 'BROKEN' },
-  off: { glyph: '○', label: 'OFF' },
-};
 
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
 // ship with the site. Workload per agent comes from data/crew.json and is looked up by
@@ -387,22 +384,23 @@ function inFeed(event, feeds) {
 // ------------------------------------------------------------ view state and URL
 
 // Everything a reader can choose is in the URL, so a link or a bookmark reopens the same view:
-// ?view=events&scope=global&beat=ai&feed=vulnerabilities&tag=severity:critical&event=<id>.
-// `anchor` is the one place a fragment is still used: a block inside a view (#sec-trends,
-// #sec-system) that a link can jump to.
-export const VIEWS = ['dashboard', 'events', 'crew'];
-const VIEW_ANCHORS = { dashboard: ['sec-trends'], events: [], crew: ['sec-system'] };
+// ?view=events&scope=global&beat=ai&feed=vulnerabilities&key=1&tag=severity:critical&event=<id>.
+// `anchor` is the one place a fragment is still used: a block inside a view (#sec-trends) that
+// a link can jump to. `key` is KEY ONLY: just the stories the importance score rates KEY.
+export const VIEWS = ['dashboard', 'events', 'crew', 'system', 'sources'];
+const VIEW_ANCHORS = { dashboard: ['sec-trends'], events: [], crew: [], system: [], sources: [] };
 const EVENT_CARDS = 20;
 
 export function freshState(over = {}) {
-  return { view: 'dashboard', scope: 'au', beat: [], feed: [], tags: {}, event: null, anchor: null, ...over };
+  return { view: 'dashboard', scope: 'au', beat: [], feed: [], key: false, tags: {}, event: null, anchor: null, ...over };
 }
 
 // Every #sec-* anchor the site has ever published, and what it opens now. The page used to be
 // one long run of sections and then five tabs, and links to all of them are in bookmarks, in
 // event.html and history.html, and in other people's pages. Each opens the view that now holds
 // what it used to show, at the scope that reproduces it: the old sections other than
-// AUSTRALIA NOW were not limited to Australia, so they open at ALL.
+// AUSTRALIA NOW were not limited to Australia, so they open at ALL. SYSTEM and the source list
+// were blocks of one crew view until October 2026 and are views of their own now.
 export const LEGACY_ANCHORS = {
   'sec-australia-now': { view: 'events', scope: 'au' },
   'sec-global-cyber': { view: 'events', scope: 'global' },
@@ -416,9 +414,18 @@ export const LEGACY_ANCHORS = {
   'sec-vulnerabilities': { view: 'events', scope: 'all', feed: ['vulnerabilities'] },
   'sec-research': { view: 'events', scope: 'all', feed: ['research'] },
   'sec-policy-regulation': { view: 'events', scope: 'all', feed: ['policy-regulation'] },
+  'sec-world-map': { view: 'dashboard', scope: 'all' },
   'sec-the-crew': { view: 'crew' },
-  'sec-system': { view: 'crew', anchor: 'sec-system' },
+  'sec-system': { view: 'system' },
+  'sec-sources': { view: 'sources' },
+  'sec-source-health': { view: 'sources' },
+  'source-health': { view: 'sources' },
 };
+
+// Anchors that were blocks inside a view this version still has, and the view that holds them
+// now: ?view=crew&scope=au#sec-system is what the crew link wrote before SYSTEM had its own
+// view. The rest of that URL still says what the reader chose, so only the view moves.
+const MOVED_ANCHORS = { 'sec-system': 'system', 'sec-sources': 'sources', 'sec-source-health': 'sources', 'source-health': 'sources' };
 
 // An old anchor only counts when the query has no `view`: a URL this version wrote says
 // exactly what it wants, and a fragment on it is an anchor inside that view.
@@ -427,6 +434,11 @@ export function parseLocation(search = '', hash = '') {
   const anchor = String(hash || '').replace(/^#/, '');
   if (!q.has('view') && Object.hasOwn(LEGACY_ANCHORS, anchor)) {
     return { ...freshState(LEGACY_ANCHORS[anchor]), legacy: true };
+  }
+  if (q.has('view') && Object.hasOwn(MOVED_ANCHORS, anchor)) {
+    const moved = new URLSearchParams(q);
+    moved.set('view', MOVED_ANCHORS[anchor]);
+    return { ...parseLocation(moved.toString(), ''), legacy: true };
   }
   const list = (key, allowed) => [
     ...new Set(
@@ -453,6 +465,7 @@ export function parseLocation(search = '', hash = '') {
     scope: Object.hasOwn(SCOPES, q.get('scope') ?? '') ? q.get('scope') : 'au',
     beat: list('beat', Object.keys(BEATS)),
     feed: list('feed', SECTIONS.map((section) => section.id)),
+    key: q.get('key') === '1',
     tags,
     event: q.get('event') || null,
     anchor: VIEW_ANCHORS[view].includes(anchor) ? anchor : null,
@@ -467,6 +480,7 @@ export function toSearch(state) {
   q.set('scope', state.scope);
   if (state.beat?.length) q.set('beat', state.beat.join(','));
   if (state.feed?.length) q.set('feed', state.feed.join(','));
+  if (state.key) q.set('key', '1');
   for (const [dim, values] of Object.entries(state.tags || {})) for (const v of values) q.append('tag', `${dim}:${v}`);
   if (state.event) q.set('event', state.event);
   const search = q.toString().replace(/%2C/g, ',').replace(/%3A/g, ':');
@@ -482,13 +496,16 @@ export function filterEvents(events, state, { skip = [] } = {}) {
     (e) =>
       (skip.includes('scope') || inScope(e, state.scope)) &&
       (skip.includes('beat') || inBeat(e, state.beat)) &&
-      (skip.includes('feed') || inFeed(e, state.feed)),
+      (skip.includes('feed') || inFeed(e, state.feed)) &&
+      (skip.includes('key') || !state.key || isKey(e)),
   );
   return applyFilters({ events: pool, selected: tags });
 }
 
-// The sidebar presets. Each is a change to the state, not a place: a geographic preset sets the
-// scope, and a feed keeps the scope the reader chose. Tags always carry over.
+// The FEEDS presets. Each is a change to the state, not a place: a geographic preset sets the
+// scope, and a feed keeps the scope the reader chose. Tags and KEY ONLY always carry over.
+// AUSTRALIA NOW and GLOBAL CYBER are no longer in the menu (the SCOPE radios do the same), but
+// stay here so their old links and anchors still name a preset and still count.
 const feedPreset = (id, label, feed) => ({
   id,
   label,
@@ -522,7 +539,7 @@ export function currentPreset(state) {
 }
 
 // How many events each preset would list from here, and how many more it would list at ALL:
-// the sidebar's counts and its one-click widen.
+// the FEEDS menu's counts and its one-click widen.
 export function presetCounts(events, state) {
   const out = {};
   for (const preset of PRESETS) {
@@ -535,15 +552,16 @@ export function presetCounts(events, state) {
 }
 
 // The state that shows `event` in the Events view, widened only as far as it has to be. A
-// headline, a related-event link or a bookmark can name a story the current scope, beat, feed
-// or a tag hides; each of those is lifted only if it is the one in the way, so a reader who
-// chose AUSTRALIA and clicks a global story lands on ALL with their tags intact.
+// headline, a related-event link or a bookmark can name a story the current scope, beat, feed,
+// KEY ONLY or a tag hides; each of those is lifted only if it is the one in the way, so a
+// reader who chose AUSTRALIA and clicks a global story lands on ALL with their tags intact.
 export function sectionFor(event, state = freshState()) {
   if (!event) return null;
   const next = { ...state, tags: { ...(state.tags || {}) }, view: 'events', event: event.event_id, anchor: null };
   if (!inScope(event, next.scope)) next.scope = 'all';
   if (!inBeat(event, next.beat)) next.beat = [];
   if (!inFeed(event, next.feed)) next.feed = [];
+  if (next.key && !isKey(event)) next.key = false;
   for (const dim of Object.keys(next.tags)) {
     if (!applyFilters({ events: [event], selected: { [dim]: next.tags[dim] } }).length) delete next.tags[dim];
   }
@@ -554,7 +572,8 @@ const expanded = new Set();
 let filtersActive = false;
 // An event can be listed in more than one place, so cards carry data-event-id, never a DOM id.
 // main() fills these in so revealEvent can widen the view when a card is capped or filtered out.
-const view = { events: [], state: freshState(), navigate: () => {} };
+// `menus` is initDropdowns()'s, so a tag toggled in main() can close TAG FILTERS.
+const view = { events: [], state: freshState(), navigate: () => {}, menus: { applied: () => {} } };
 
 function findCard(eventId) {
   const host = document.querySelector('[data-section-body="events"]');
@@ -611,11 +630,14 @@ function renderSectionBody(body, id, matches, unread = false) {
         class: 'empty',
         // Short on purpose: the full explanation is already in the notice at the top of the
         // page. It only has to not claim the view is empty, which "UNKNOWN" does in one word.
+        // KEY ONLY on a snapshot with no importance scores is not "nothing is key": nothing was rated.
         text: unread
           ? 'UNKNOWN — NO SNAPSHOT WAS READ.'
-          : filtersActive
-            ? 'NO SIGNALS MATCH THE CURRENT FILTERS.'
-            : 'NO SIGNALS IN THIS SNAPSHOT.',
+          : view.state.key && !view.events.some((e) => importanceOf(e))
+            ? 'NO STORY IN THIS SNAPSHOT HAS AN IMPORTANCE SCORE YET, SO KEY ONLY LISTS NOTHING.'
+            : filtersActive
+              ? 'NO SIGNALS MATCH THE CURRENT FILTERS.'
+              : 'NO SIGNALS IN THIS SNAPSHOT.',
       }),
     );
     return;
@@ -699,6 +721,55 @@ function rankBadge(event) {
   return severityBadge(sevKey(event), scores.length ? Math.max(...scores) : null);
 }
 
+// How much a story matters to a reader, as the worker scored it: a 0-100 score, a tier and the
+// reasons behind it (importance v1). It is a separate question from severity — a medium bug in
+// an Australian agency can matter more here than a critical one in a product nobody runs — so
+// it has its own badge rather than bending the rank. KEY and NOTABLE are badged; ROUTINE is not,
+// so a list is not a wall of labels. A snapshot from before the score has no `importance`, and
+// such a story is unrated: never KEY, and never counted as ROUTINE either.
+export const IMPORTANCE = {
+  key: { label: 'KEY' },
+  notable: { label: 'NOTABLE' },
+  routine: { label: 'ROUTINE' },
+};
+
+export function importanceOf(event) {
+  const imp = event?.importance;
+  if (!imp || typeof imp !== 'object' || !Object.hasOwn(IMPORTANCE, imp.tier ?? '')) return null;
+  const score = hasNum(imp.score) ? Number(imp.score) : NaN;
+  return {
+    tier: imp.tier,
+    score: Number.isFinite(score) ? Math.round(Math.min(100, Math.max(0, score))) : null,
+    reasons: (Array.isArray(imp.reasons) ? imp.reasons : [])
+      .filter((r) => typeof r === 'string' && r.trim())
+      .map((r) => r.trim().replace(/\.+$/, '')),
+  };
+}
+
+export function isKey(event) {
+  return importanceOf(event)?.tier === 'key';
+}
+
+// The words are the signal, not the fill: KEY is filled and NOTABLE outlined, and both say so.
+function importanceBadge(event) {
+  const imp = importanceOf(event);
+  if (!imp || imp.tier === 'routine') return null;
+  return h(
+    'span',
+    { class: 'imp-badge', 'data-tier': imp.tier },
+    h('span', { class: 'visually-hidden', text: 'Importance ' }),
+    IMPORTANCE[imp.tier].label,
+    hasNum(imp.score) ? h('span', { class: 'imp-badge__score', text: ` ${imp.score}` }) : null,
+  );
+}
+
+// "Australian government target; reported by ABC (established). Score 78 of 100." The reasons
+// are the worker's, joined as written; a score with none says so rather than inventing one.
+function importanceWhy(imp) {
+  const why = imp.reasons.length ? `${imp.reasons.join('; ')}.` : 'no reasons were published with the score.';
+  return `${why}${hasNum(imp.score) ? ` Score ${imp.score} of 100.` : ''}`;
+}
+
 // A sorted list of event cards. Used by the Events view and by the history page.
 export function renderEventCards(events) {
   const list = [...(events || [])].sort(byProminence);
@@ -730,7 +801,7 @@ function eventCard(event) {
   if (event.severity_source === 'ai_estimate') chips.push(h('span', { class: 'chip chip--ai', text: 'AI-SUGGESTED' }));
   const firstSource = (event.sources || [])[0];
   if (firstSource) chips.push(h('span', { class: 'chip chip--src', text: `${firstSource.evidence_class} · ${firstSource.source_id}` }));
-  const badges = [rankBadge(event)];
+  const badges = [importanceBadge(event), rankBadge(event)];
   if (beat === 'both' && event.ai_significance) badges.push(significanceBadge(significanceKey(event)));
   return h(
     'article',
@@ -758,6 +829,8 @@ function eventCard(event) {
 
 function eventDetail(event) {
   const body = h('div', { class: 'event-more__body' }, h('p', { class: 'mono event-more__id', text: `EVENT ${event.event_id}` }));
+  const imp = importanceOf(event);
+  if (imp) body.append(h('h4', { text: 'IMPORTANCE' }), h('p', { text: `Why this rates ${IMPORTANCE[imp.tier].label}: ${importanceWhy(imp)}` }));
   if (event.why_it_matters) body.append(h('h4', { text: 'WHY IT MATTERS' }), h('p', { text: event.why_it_matters }));
   if (event.resolution) body.append(h('h4', { text: 'RESOLUTION' }), h('p', { text: event.resolution }));
   if (event.au?.reasons?.length) {
@@ -1077,6 +1150,7 @@ export function renderEventDetail(event, related = []) {
   const au = event.au || {};
   const entities = event.entities || {};
   const severitySource = String(event.severity_source || 'unknown').toUpperCase().replace(/_/g, ' ');
+  const imp = importanceOf(event);
   const root = h('div', { class: 'detail', 'data-severity': key });
 
   // append(), not root.append(): the optional rows below are null when the field is absent, and
@@ -1086,6 +1160,7 @@ export function renderEventDetail(event, related = []) {
     h(
       'div',
       { class: 'detail__meta' },
+      importanceBadge(event),
       rankBadge(event),
       beat === 'both' && event.ai_significance ? significanceBadge(significanceKey(event)) : null,
       // An AI-only story is ranked by significance and has no severity to source.
@@ -1096,6 +1171,7 @@ export function renderEventDetail(event, related = []) {
       h('span', { class: 'mono detail__id', text: event.event_id }),
     ),
     event.summary ? h('p', { class: 'detail__summary', text: event.summary }) : null,
+    imp ? h('p', { class: 'detail__why detail__imp' }, h('strong', { text: `WHY THIS RATES ${IMPORTANCE[imp.tier].label}: ` }), importanceWhy(imp)) : null,
     event.why_it_matters
       ? h('p', { class: 'detail__why' }, h('strong', { text: 'WHY IT MATTERS: ' }), event.why_it_matters)
       : null,
@@ -1302,7 +1378,10 @@ export function renderEventDetail(event, related = []) {
 // The tag filters. The scope (AUSTRALIA / GLOBAL / ALL) and the beat (CYBER / AI) are not in
 // here: they have their own rows in the header, because every view reads through them. The AI
 // beat's own facets are AI SIGNIFICANCE and AI SUBDOMAIN, which only AI stories carry.
+// IMPORTANCE leads because it is the question most readers start with; KEY ONLY in the header is
+// the one-click form of its KEY chip. A story with no published score has no IMPORTANCE token.
 const DIMENSIONS = [
+  ['importance', 'IMPORTANCE'],
   ['severity', 'SEVERITY'],
   ['significance', 'AI SIGNIFICANCE'],
   ['au', 'AUSTRALIA'],
@@ -1319,7 +1398,9 @@ const DIMENSIONS = [
 ];
 
 export function facetTokens(event) {
-  const out = [['severity', sevKey(event)]];
+  const imp = importanceOf(event);
+  const out = imp ? [['importance', imp.tier]] : [];
+  out.push(['severity', sevKey(event)]);
   if (Object.hasOwn(SIGNIFICANCE, event.ai_significance ?? '')) out.push(['significance', event.ai_significance]);
   if (event.au?.directly_reported_in_au) out.push(['au', 'REPORTED IN AU']);
   if ((event.au?.relevance ?? 0) >= 0.5) out.push(['au', 'AU RELEVANT']);
@@ -1339,6 +1420,7 @@ export function facetTokens(event) {
 // What a chip says. The value in the URL stays the raw token, so a link keeps working when a
 // label is reworded.
 function facetLabel(dim, value) {
+  if (dim === 'importance') return IMPORTANCE[value]?.label || String(value).toUpperCase();
   if (dim === 'aidomain') return String(value).replaceAll('_', ' ');
   if (dim === 'significance') return SIGNIFICANCE[value]?.label || String(value).toUpperCase();
   if (dim === 'category' && Object.hasOwn(CATEGORY_LABEL, value)) return CATEGORY_LABEL[value];
@@ -1378,9 +1460,12 @@ export function applyFilters(state) {
 }
 
 const FACET_CHIPS = 40;
+// Chips are listed by count, except where the values are a scale: KEY, NOTABLE, ROUTINE reads
+// in that order whatever the counts are.
+const FACET_ORDER = { importance: Object.keys(IMPORTANCE) };
 // Which dimensions the reader has open. The chips are rebuilt on every change of scope, beat or
 // tag (their counts follow the scope), and a rebuild must not fold away what the reader opened.
-const openFacets = new Set(['severity']);
+const openFacets = new Set(['importance', 'severity']);
 
 // `tags` is the state's { dim: [values] }; onToggle(dim, value) changes it. The counts are for
 // the events the current scope and beat leave, so a chip never promises more than it gives.
@@ -1397,7 +1482,12 @@ function renderFacetUi(facets, tags, onToggle) {
     // zero; otherwise the only way to undo it would be CLEAR FILTERS.
     for (const value of chosen) if (!bucket.has(value)) bucket.set(value, 0);
     if (!bucket.size) continue;
-    const entries = [...bucket.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+    const order = FACET_ORDER[dim];
+    const entries = [...bucket.entries()].sort(
+      order
+        ? (a, b) => order.indexOf(a[0]) - order.indexOf(b[0])
+        : (a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])),
+    );
     const shown = entries.slice(0, FACET_CHIPS);
     for (const entry of entries.slice(FACET_CHIPS)) if (chosen.includes(entry[0])) shown.push(entry);
     const chips = h('div', { class: 'facet__chips' });
@@ -1829,143 +1919,6 @@ export function renderTrends(trends, events = [], { unread = false } = {}) {
   );
 }
 
-// --------------------------------------------------------------- pipeline
-
-const STAGES = ['SOURCES', 'COLLECT', 'MATCH', 'VERIFY', 'ENRICH', 'CROSS-REF', 'SCORE', 'PUBLISH'];
-
-function stageNodes(health, status, feed) {
-  const run = status?.last_run;
-  const num = (v) => (v === undefined || v === null ? '—' : String(v));
-  const later = { count: '—', state: 'NOT IN STAGE 1', led: 'idle' };
-  if (!run && !feed) {
-    return STAGES.map((name) => ({ name, ...(name === 'VERIFY' || name === 'CROSS-REF' ? later : { count: '—', state: 'NO DATA', led: 'idle' }) }));
-  }
-  const attention = run ? run.sources_failed + run.sources_stale : 0;
-  const counted = run ? run.sources_ok + attention : (health?.sources || []).length;
-  const pending = feed?.counts?.pending_enrichment;
-  return [
-    { name: 'SOURCES', count: num(counted), state: attention ? `${attention} NEED ATTENTION` : 'ALL CHECKED OK', led: attention ? 'warn' : 'ok' },
-    { name: 'COLLECT', count: num(run?.items_fetched), state: 'ITEMS FETCHED', led: run ? 'ok' : 'idle' },
-    { name: 'MATCH', count: run ? String(run.new_events + run.updated_events) : '—', state: run ? `${run.duplicates} MERGED` : 'NO DATA', led: run ? 'ok' : 'idle' },
-    { name: 'VERIFY', ...later },
-    { name: 'ENRICH', count: num(pending), state: pending ? 'QUEUED' : 'NONE QUEUED', led: 'idle' },
-    { name: 'CROSS-REF', ...later },
-    { name: 'SCORE', count: num(feed?.counts?.events), state: 'EVENTS SCORED', led: feed ? 'ok' : 'idle' },
-    { name: 'PUBLISH', count: num(feed?.counts?.events), state: 'IN SNAPSHOT', led: feed ? 'ok' : 'idle' },
-  ];
-}
-
-export function healthOf(source) {
-  const st = source.latest?.status;
-  if (!source.enabled || source.lifecycle_state === 'retired' || st === 'disabled' || !source.latest) return 'off';
-  if (source.lifecycle_state === 'broken' || st === 'error' || st === 'timeout') return 'broken';
-  if (st === 'ok') return 'healthy';
-  return 'degraded';
-}
-
-export function renderPipeline(health, extras = {}) {
-  const { status = null, feed = null } = extras;
-  const host = document.getElementById('pipeline');
-  if (host) {
-    const nodes = stageNodes(health, status, feed);
-    const svg = s('svg', { class: 'pipe-svg', viewBox: '0 0 800 40', preserveAspectRatio: 'none', 'aria-hidden': 'true' });
-    let d = '';
-    for (let i = 0; i < nodes.length - 1; i += 1) {
-      const x1 = i * 100 + 50;
-      const x2 = x1 + 100;
-      d += `M${x1} 30 H${x1 + 22} V12 H${x2 - 22} V30 H${x2} `;
-    }
-    svg.append(s('path', { class: 'pipe-trace', d }), s('path', { class: 'pipe-pulse', d, pathLength: 100 }));
-    const list = h(
-      'ol',
-      { class: 'pipe-nodes', 'aria-label': 'Collection replay stages' },
-      nodes.map((n) =>
-        h(
-          'li',
-          { class: 'pipe-node' },
-          h('span', { class: 'led', 'data-state': n.led }),
-          h('span', { class: 'pipe-node__name', text: n.name }),
-          h('span', { class: 'pipe-node__count mono', text: n.count }),
-          h('span', { class: 'pipe-node__state', text: n.state }),
-        ),
-      ),
-    );
-    clear(host).append(svg, list);
-  }
-  renderSources(health);
-  renderSystem(status, feed, health);
-  renderCrewRun(status, feed);
-}
-
-function renderSources(health) {
-  const host = document.getElementById('source-health');
-  if (!host) return;
-  clear(host);
-  const sources = health?.sources || [];
-  if (!sources.length) {
-    host.append(h('p', { class: 'empty', text: 'NO SOURCE HEALTH PUBLISHED YET.' }));
-    return;
-  }
-  host.append(
-    h(
-      'ul',
-      { class: 'source-grid' },
-      sources.map((src) => {
-        const key = healthOf(src);
-        const info = HEALTH[key];
-        return h(
-          'li',
-          { class: 'source-node', 'data-health': key },
-          h('span', { class: 'sev-shape', 'aria-hidden': 'true', text: info.glyph }),
-          h('span', { class: 'source-node__name', text: src.name }),
-          h('span', { class: 'source-node__state', text: info.label }),
-        );
-      }),
-    ),
-  );
-}
-
-function renderSystem(status, feed, health) {
-  const led = document.getElementById('system-led');
-  const label = document.getElementById('system-state');
-  const sources = health?.sources || [];
-  const broken = sources.filter((x) => healthOf(x) === 'broken').length;
-  const degraded = sources.filter((x) => healthOf(x) === 'degraded').length;
-  if (led && label) {
-    if (!status && !feed) {
-      led.dataset.state = 'idle';
-      label.textContent = 'AWAITING DATA';
-    } else if (broken) {
-      led.dataset.state = 'bad';
-      label.textContent = `${broken} SOURCES BROKEN`;
-    } else if (degraded) {
-      led.dataset.state = 'warn';
-      label.textContent = `${degraded} SOURCES DEGRADED`;
-    } else {
-      led.dataset.state = 'ok';
-      label.textContent = 'SOURCES HEALTHY';
-    }
-  }
-  const dl = document.getElementById('system-versions');
-  if (!dl) return;
-  clear(dl);
-  const rows = [
-    ['PIPELINE', status?.pipeline_version || feed?.pipeline_version],
-    ['SCHEMA', status?.schema_version],
-    ['SCORING', status?.scoring_version],
-    ['SNAPSHOT BUILT', feed?.generated_at ? `${formatUtc(feed.generated_at)} UTC` : null],
-    ['LAST RUN LANE', status?.last_run?.lane?.toUpperCase()],
-  ];
-  for (const [k, v] of rows) if (v) dl.append(h('dt', { text: k }), h('dd', { text: v }));
-  // Every stamp here comes from a completed run, so before the first one the list is empty — and
-  // an empty list under a VERSIONS heading reads as a rendering fault rather than as "not yet".
-  // One line saying which, for the same reason a crew card with no workload says so in one line
-  // instead of printing five rows of "—".
-  if (!dl.children.length) {
-    dl.append(h('dt', { text: 'STATUS' }), h('dd', { text: 'No completed run has been published, so there are no version stamps yet.' }));
-  }
-}
-
 // -------------------------------------------------------------------- crew
 
 const CREW_JOBS = {
@@ -2247,6 +2200,266 @@ export function renderCrew(crew) {
   if (count) count.textContent = `${CREW.length} AGENTS`;
 }
 
+// ------------------------------------------------------------- the company
+
+// THE COMPANY and ROUTINES read assets/org.json, which ships with the site rather than with the
+// data: the worker writes it from the same table that builds the Paperclip package, so it is the
+// configuration — who reports to whom, on which model and budget, and which routine wakes whom —
+// and not a record of what ran. Paperclip can pause any agent or routine, and this page cannot
+// see that, so it never says one is running.
+
+const DAYS = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// One cron field as the values it matches, with `any` for "*". Understands n, a-b, a-b/n, */n
+// and lists of those; anything else is null, so the caller can give up honestly.
+function cronField(field, lo, hi) {
+  if (field === '*') return { any: true, values: [] };
+  const values = new Set();
+  for (const part of String(field).split(',')) {
+    const m = /^(\*|(\d+)(?:-(\d+))?)(?:\/(\d+))?$/.exec(part);
+    if (!m) return null;
+    const step = m[4] ? Number(m[4]) : 1;
+    const from = m[2] === undefined ? lo : Number(m[2]);
+    // "5/15" runs from 5 to the top of the range, as cron reads it.
+    const to = m[3] !== undefined ? Number(m[3]) : m[2] === undefined || m[4] ? hi : from;
+    if (!step || from < lo || to > hi || from > to) return null;
+    for (let v = from; v <= to; v += step) values.add(v);
+  }
+  return { any: false, values: [...values].sort((a, b) => a - b) };
+}
+
+function ordinal(n) {
+  const tail = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
+  return `${n}${tail}`;
+}
+
+const listWords = (items) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
+
+// A five-field cron line in plain English: "0 6,14,22 * * *" in Australia/Sydney reads "Daily at
+// 06:00, 14:00 and 22:00 Sydney time". The cron is always printed beside it, so this only has to
+// be right for the shapes the crew uses; for anything else it returns null and the page shows
+// the cron alone rather than a confident misreading.
+export function describeCron(cron, timezone = null) {
+  const fields = String(cron || '').trim().split(/\s+/);
+  if (fields.length !== 5) return null;
+  const [minute, hour, dom, month, dow] = [
+    cronField(fields[0], 0, 59), cronField(fields[1], 0, 23), cronField(fields[2], 1, 31),
+    cronField(fields[3], 1, 12), cronField(fields[4], 0, 7),
+  ];
+  if (!minute || !hour || !dom || !month || !dow || minute.any) return null;
+  // Cron ORs the two day fields when both are set, which no short sentence says correctly.
+  if (!dom.any && !dow.any) return null;
+  let when;
+  if (hour.any) {
+    if (minute.values.length !== 1) return null;
+    when = minute.values[0] ? `every hour at ${pad(minute.values[0])} past` : 'every hour on the hour';
+  } else {
+    const times = hour.values.flatMap((hh) => minute.values.map((mm) => `${pad(hh)}:${pad(mm)}`));
+    if (times.length > 8) return null;
+    when = `at ${listWords(times)}`;
+  }
+  let days = 'Daily';
+  if (!dow.any) {
+    const set = [...new Set(dow.values.map((d) => d % 7))].sort((a, b) => a - b);
+    days = set.join() === '1,2,3,4,5' ? 'Weekdays' : listWords(set.map((d) => DAYS[d]));
+  } else if (!dom.any) {
+    days = `Monthly on the ${listWords(dom.values.map(ordinal))}`;
+  }
+  if (!month.any) days += ` in ${listWords(month.values.map((m) => MONTHS[m - 1]))}`;
+  const zone = !timezone ? '' : timezone === 'Australia/Sydney' ? ' Sydney time' : ` ${timezone}`;
+  // "Every hour on the hour" needs no day and no zone; any other shape is pinned to both.
+  if (hour.any && days === 'Daily') return `${when[0].toUpperCase()}${when.slice(1)}`;
+  return `${days} ${when}${zone}`;
+}
+
+// org.json in the shape the page draws: the one agent who reports to nobody at the top, then
+// every team in the order the file first names it, each member after the manager they report
+// to. Personas join by callsign from CREW, which is what the rest of the page keys on too.
+// Returns null when there is nothing to draw, so the caller has one honest empty state.
+export function orgModel(org) {
+  const agents = (Array.isArray(org?.agents) ? org.agents : []).filter((a) => a && typeof a.callsign === 'string' && a.callsign);
+  if (!agents.length) return null;
+  const known = new Set(agents.map((a) => a.callsign));
+  const top = agents.find((a) => !a.reports_to || !known.has(a.reports_to)) || null;
+  const byCallsign = new Map(agents.map((a) => [a.callsign, a]));
+  const depth = (a) => {
+    let n = 0;
+    for (let at = a; at && at !== top && n < agents.length; at = byCallsign.get(at.reports_to)) n += 1;
+    return n;
+  };
+  const routines = (Array.isArray(org?.routines) ? org.routines : [])
+    .filter((r) => r && typeof r.name === 'string' && r.name)
+    .map((r) => ({ ...r, schedule: describeCron(r.cron, r.timezone) }));
+  const node = (a) => ({
+    ...a,
+    persona: CREW.find((c) => c.callsign === a.callsign) || null,
+    manager: a === top ? null : a.reports_to,
+    routines: routines.filter((r) => r.assignee === a.callsign).length,
+  });
+  const teams = new Map();
+  for (const a of agents) {
+    if (a === top) continue;
+    const team = String(a.team || 'Unassigned');
+    if (!teams.has(team)) teams.set(team, []);
+    teams.get(team).push(a);
+  }
+  return {
+    company: org?.company && typeof org.company === 'object' ? org.company : {},
+    top: top ? node(top) : null,
+    teams: [...teams].map(([name, members]) => ({
+      name,
+      members: [...members].sort((a, b) => depth(a) - depth(b)).map(node),
+    })),
+    agents: agents.map(node),
+    routines,
+    unlisted: CREW.map((c) => c.callsign).filter((c) => !known.has(c)),
+  };
+}
+
+function usd(value) {
+  return hasNum(value) && Number.isFinite(Number(value)) ? `US$${Number(value).toFixed(2)}` : null;
+}
+
+// What an agent runs on, in one line: the model (without the router's prefix) or plain code.
+function orgRuntime(a) {
+  if (a.adapter === 'http') return 'CODE OVER HTTP · NO MODEL';
+  if (a.adapter === 'model') return a.model ? `MODEL ${String(a.model).replace(/^openrouter\//, '')}` : 'MODEL NOT SET';
+  return a.adapter ? String(a.adapter).toUpperCase() : null;
+}
+
+function orgNode(a, topCallsign) {
+  const limits = [
+    usd(a.budget_usd) ? `${usd(a.budget_usd)} A MONTH` : null,
+    hasNum(a.max_daily_runs) ? `UP TO ${plural(Number(a.max_daily_runs), 'run').toUpperCase()} A DAY` : null,
+    a.routines ? plural(a.routines, 'routine').toUpperCase() : null,
+  ].filter(Boolean);
+  return h(
+    'article',
+    { class: 'org-node', 'data-desk': a.persona?.desk || undefined, 'data-callsign': a.callsign },
+    h(
+      'div',
+      { class: 'org-node__head' },
+      a.persona ? botFace(a.persona, 'bot bot--sm') : null,
+      h(
+        'span',
+        { class: 'org-node__id' },
+        h('span', { class: 'org-node__callsign', text: a.callsign }),
+        h('span', { class: 'org-node__title mono', text: String(a.title || a.role || '').toUpperCase() }),
+      ),
+    ),
+    a.summary ? h('p', { class: 'org-node__summary', text: a.summary }) : null,
+    orgRuntime(a) ? h('p', { class: 'org-node__meta mono', text: orgRuntime(a) }) : null,
+    limits.length ? h('p', { class: 'org-node__meta mono', text: limits.join(' · ') }) : null,
+    a.manager && a.manager !== topCallsign ? h('p', { class: 'org-node__reports mono', text: `REPORTS TO ${a.manager}` }) : null,
+  );
+}
+
+function routineRow(r) {
+  const later = r.starts && String(r.starts).toLowerCase() !== 'now';
+  return h(
+    'tr',
+    {},
+    h('th', { scope: 'row' }, h('span', { class: 'routine__name', text: r.name }), later ? h('span', { class: 'chip routine__starts', text: `FROM ${String(r.starts).toUpperCase()}` }) : null),
+    h('td', { class: 'mono', text: r.assignee || '—' }),
+    h(
+      'td',
+      {},
+      h('span', { class: 'routine__when', text: r.schedule || 'Custom schedule' }),
+      h('span', { class: 'routine__cron mono', text: `${r.cron || '—'}${r.timezone ? ` · ${r.timezone}` : ''}` }),
+    ),
+    h('td', { text: r.summary || '' }),
+  );
+}
+
+// The company panel: the facts, then the chart (top, then a column per team); and the routines
+// panel, one row each, grouped by the agent they wake in the order the chart lists the agents.
+export function renderOrg(org) {
+  const model = orgModel(org);
+  const facts = document.getElementById('org-facts');
+  const chart = document.getElementById('org-chart');
+  const table = document.getElementById('org-routines');
+  const count = document.getElementById('org-count');
+  const led = document.getElementById('org-led');
+  const routineCount = document.getElementById('routines-count');
+  if (facts) clear(facts);
+  if (!model) {
+    if (chart) clear(chart).append(h('p', { class: 'empty', text: 'ORG CHART NOT PUBLISHED YET.' }));
+    if (table) clear(table).append(h('p', { class: 'empty', text: 'NO ROUTINES PUBLISHED YET.' }));
+    if (count) count.textContent = 'NOT PUBLISHED';
+    if (routineCount) routineCount.textContent = 'NOT PUBLISHED';
+    if (led) led.dataset.state = 'idle';
+    return null;
+  }
+  const { company } = model;
+  if (facts) {
+    const rows = [
+      ['COMPANY', company.name],
+      ['MISSION', company.mission],
+      ['MONTHLY BUDGET', usd(company.budget_usd)],
+      ['AGENTS', String(model.agents.length)],
+      ['ROUTINES', String(model.routines.length)],
+    ];
+    for (const [k, v] of rows) if (v) facts.append(h('dt', { text: k }), h('dd', { text: v }));
+  }
+  // Teams as published, the CEO's own included, though the chart draws that one as the top.
+  const teamCount = new Set(model.agents.map((a) => String(a.team || 'Unassigned'))).size;
+  if (count) count.textContent = `${plural(model.agents.length, 'agent').toUpperCase()} · ${plural(teamCount, 'team').toUpperCase()}`;
+  if (led) led.dataset.state = 'ok';
+  const topCallsign = model.top?.callsign || null;
+  if (chart) {
+    clear(chart).append(
+      model.top
+        ? h(
+          'div',
+          { class: 'org-top' },
+          model.top.team ? h('h4', { class: 'org-team__name', text: String(model.top.team).toUpperCase() }) : null,
+          orgNode(model.top, null),
+        )
+        : null,
+      h(
+        'ul',
+        { class: 'org-teams', 'aria-label': model.top ? `Teams reporting to ${model.top.callsign}` : 'Teams' },
+        model.teams.map((team) =>
+          h(
+            'li',
+            { class: 'org-team' },
+            h('h4', { class: 'org-team__name', text: team.name.toUpperCase() }),
+            h('ul', { class: 'org-team__members' }, team.members.map((a) => h('li', {}, orgNode(a, topCallsign)))),
+          ),
+        ),
+      ),
+      model.unlisted.length
+        ? h('p', { class: 'hint', text: `Not in the published org chart: ${listWords(model.unlisted)}.` })
+        : null,
+    );
+  }
+  if (routineCount) routineCount.textContent = plural(model.routines.length, 'routine').toUpperCase();
+  if (table) {
+    clear(table);
+    if (!model.routines.length) {
+      table.append(h('p', { class: 'empty', text: 'NO ROUTINES PUBLISHED YET.' }));
+    } else {
+      const order = model.agents.map((a) => a.callsign);
+      const rank = (r) => (order.includes(r.assignee) ? order.indexOf(r.assignee) : order.length);
+      const rows = model.routines.map((r, i) => [r, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(([r]) => routineRow(r));
+      table.append(
+        h(
+          'table',
+          { class: 'run-table routine-table' },
+          h(
+            'thead',
+            {},
+            h('tr', {}, h('th', { scope: 'col', text: 'ROUTINE' }), h('th', { scope: 'col', text: 'AGENT' }), h('th', { scope: 'col', text: 'SCHEDULE' }), h('th', { scope: 'col', text: 'WHAT IT DOES' })),
+          ),
+          h('tbody', {}, rows),
+        ),
+      );
+    }
+  }
+  return model;
+}
+
 // ------------------------------------------------------------- top signals
 
 // A link that opens one event in the Events view. The href is the state that shows it
@@ -2275,8 +2488,18 @@ export function renderHeadlines(events) {
     return;
   }
   // data-severity on the row, not just the badge, so the row's left stripe picks up
-  // --sev-color from the one shared severity mapping in the CSS.
-  host.append(...top.map((e) => h('li', { class: 'headline', 'data-severity': sevKey(e), 'data-beat': beatOf(e) }, rankBadge(e), eventLink(e, 'headline__link'))));
+  // --sev-color from the one shared severity mapping in the CSS. The ranking stays prominence;
+  // the importance badge says which of these the score rates KEY, without reordering them.
+  host.append(
+    ...top.map((e) =>
+      h(
+        'li',
+        { class: 'headline', 'data-severity': sevKey(e), 'data-beat': beatOf(e) },
+        h('span', { class: 'headline__badges' }, importanceBadge(e), rankBadge(e)),
+        eventLink(e, 'headline__link'),
+      ),
+    ),
+  );
 }
 
 const WATCH_ROWS = 5;
@@ -2307,13 +2530,13 @@ function renderWatch(id, events) {
   );
 }
 
-// --------------------------------------------------------------- sidebar
+// ------------------------------------------------------------------ feeds
 
-// Counts beside every preset, from the events the preset would list from here. When the scope
-// hides some of them a feed gets a second, one-click link to the same feed at ALL: the reader
-// sees that there is more, and how much, without having to guess which control to move. The two
-// geographic presets are the scope, so they have nothing to widen.
-function renderSidebar(events, state) {
+// Counts beside every preset in the FEEDS menu, from the events the preset would list from here.
+// When the scope hides some of them a feed gets a second, one-click link to the same feed at
+// ALL: the reader sees that there is more, and how much, without having to guess which control
+// to move. The two geographic presets are the scope, so they have nothing to widen.
+function renderFeeds(events, state) {
   const counts = presetCounts(events, state);
   for (const out of document.querySelectorAll('[data-preset-count]')) {
     const entry = counts[out.dataset.presetCount];
@@ -2345,6 +2568,7 @@ function renderEventsHead(events, listed, state) {
       `SCOPE ${SCOPES[state.scope]}`,
       `BEAT ${state.beat.length ? state.beat.map((b) => BEATS[b]).join(' + ') : 'ALL'}`,
       state.feed.length ? state.feed.map((f) => FEED_LABEL[f]).join(' + ') : 'EVERY FEED',
+      state.key ? 'KEY ONLY' : null,
       tagCount ? `${tagCount} TAG ${tagCount === 1 ? 'FILTER' : 'FILTERS'}` : null,
     ]
       .filter(Boolean)
@@ -2360,29 +2584,88 @@ function renderEventsHead(events, listed, state) {
   }
 }
 
+// -------------------------------------------------------------- dropdowns
+
+// FEEDS and TAG FILTERS are disclosure menus (<details data-dropdown>) that close themselves:
+// once a choice is applied, on a click or tap anywhere else, and on Escape. At most one is open,
+// so the two never stack over the page. What happens is a pure function of which menu is open
+// and what just happened, so node can test it without a browser; initDropdowns() carries it out.
+//   { type: 'open', id }          menu `id` opened (its summary, or anything that set .open)
+//   { type: 'close', id }         menu `id` closed by its own summary
+//   { type: 'click', inside }     a click or tap; `inside` is the menu it landed in, or null
+//   { type: 'key', key }          a key pressed anywhere on the page
+//   { type: 'apply', id, moved }  a choice in `id` was applied; `moved` if it changed the view
+// Returns { open, focus }: the menu that is open now (or null), and the menu whose summary takes
+// focus (or null, to leave focus alone). A choice that moved the view leaves focus to the view.
+export function dropdownAfter(open, event) {
+  switch (event?.type) {
+    case 'open':
+      return { open: event.id, focus: null };
+    case 'close':
+      return { open: open === event.id ? null : open, focus: null };
+    case 'click':
+      return { open: open && event.inside === open ? open : null, focus: null };
+    case 'key':
+      return event.key === 'Escape' && open ? { open: null, focus: open } : { open, focus: null };
+    case 'apply':
+      return { open: null, focus: event.moved ? null : event.id };
+    default:
+      return { open, focus: null };
+  }
+}
+
+function initDropdowns() {
+  const menus = [...document.querySelectorAll('details[data-dropdown]')];
+  let open = menus.find((m) => m.open)?.id || null;
+  const settle = ({ open: next, focus }) => {
+    open = next;
+    for (const m of menus) if (m.open !== (m.id === next)) m.open = m.id === next;
+    if (focus) document.getElementById(focus)?.querySelector('summary')?.focus();
+  };
+  for (const m of menus) {
+    // `toggle` fires after the fact and also for our own writes to .open, which settle() has
+    // already accounted for; only a change it did not make is news.
+    m.addEventListener('toggle', () => {
+      if (m.open && open !== m.id) settle(dropdownAfter(open, { type: 'open', id: m.id }));
+      else if (!m.open && open === m.id) settle(dropdownAfter(open, { type: 'close', id: m.id }));
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (open) settle(dropdownAfter(open, { type: 'key', key: e.key }));
+  });
+  // The path, not contains(): a facet chip's own click rebuilds the chips, so by the time the
+  // click reaches the document its target is detached and contains() would call it outside.
+  document.addEventListener('click', (e) => {
+    if (!open) return;
+    const path = e.composedPath();
+    settle(dropdownAfter(open, { type: 'click', inside: menus.find((m) => path.includes(m))?.id || null }));
+  });
+  return { applied: (id, moved = false) => settle(dropdownAfter(open, { type: 'apply', id, moved })) };
+}
+
 // ------------------------------------------------------------------- views
 
 const isPlainClick = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 
-// The view a sidebar view link opens from `st`. The dashboard and the crew have no feed, so the
-// feed is dropped; the scope, the beat and the tags are the reader's and carry over.
+// The view a tab opens from `st`. Only Events has a feed, so the feed is dropped elsewhere; the
+// scope, the beat, KEY ONLY and the tags are the reader's and carry over.
 function viewState(st, name) {
   return { ...st, view: name, feed: name === 'events' ? st.feed : [], event: null, anchor: null };
 }
 
-// Three views — DASHBOARD, EVENTS, THE CREW & SYSTEM — one visible at a time, with the whole
-// state (view, scope, beat, feed, tags, an event to open) kept in the query string so it survives
-// a reload and is linkable. The sidebar links are real hrefs to those states; a plain click is
-// handled in place and anything else (new tab, copy link) gets the browser's own behaviour. An
-// old #sec-* fragment opens the view and scope that now hold what it pointed at
-// (LEGACY_ANCHORS), and the address is rewritten to say so. Returns null on a page without views.
+// Five views — DASHBOARD, EVENTS, CREW, SYSTEM, SOURCES — one visible at a time, with the whole
+// state (view, scope, beat, feed, KEY ONLY, tags, an event to open) kept in the query string so
+// it survives a reload and is linkable. The header tabs and the FEEDS menu are real hrefs to
+// those states; a plain click is handled in place and anything else (new tab, copy link) gets
+// the browser's own behaviour. An old #sec-* fragment opens the view and scope that now hold what
+// it pointed at (LEGACY_ANCHORS), and the address is rewritten to say so. Returns null on a page
+// without views.
 export function initViews({ onChange = () => {} } = {}) {
   const panels = VIEWS.map((name) => document.getElementById(`view-${name}`));
   if (panels.some((p) => !p)) return null;
   const main = document.getElementById('main');
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebar-toggle');
-  const more = document.getElementById('filter-more');
+  const menus = initDropdowns();
+  view.menus = menus;
 
   // .site-header is sticky on a wide screen, so anything jumped to has to be pushed clear of it,
   // and its height is not a number the stylesheet can hold: the scope row and the status strip
@@ -2459,20 +2742,15 @@ export function initViews({ onChange = () => {} } = {}) {
     if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
   };
 
-  const setSidebar = (open) => {
-    if (!sidebar || !toggle) return;
-    sidebar.classList.toggle('is-open', open);
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  };
-
-  // Puts the state on the page: which view shows, which scope and beat are chosen, where every
-  // sidebar link now goes and which one is current. Then hands it to main() to render.
+  // Puts the state on the page: which view shows, which scope, beat and KEY ONLY are chosen,
+  // where every tab and feed now goes and which one is current. Then hands it to main() to render.
   const apply = (st, { focus = false, scroll = false } = {}) => {
     VIEWS.forEach((name, i) => { panels[i].hidden = name !== st.view; });
     for (const radio of document.querySelectorAll('input[name="scope"]')) radio.checked = radio.value === st.scope;
     for (const btn of document.querySelectorAll('[data-beat-toggle]')) {
       btn.setAttribute('aria-pressed', st.beat.includes(btn.dataset.beatToggle) ? 'true' : 'false');
     }
+    document.getElementById('key-toggle')?.setAttribute('aria-pressed', st.key ? 'true' : 'false');
     for (const link of document.querySelectorAll('[data-view-link]')) {
       const name = link.dataset.viewLink;
       link.setAttribute('href', toSearch(viewState(st, name)));
@@ -2487,6 +2765,13 @@ export function initViews({ onChange = () => {} } = {}) {
       if (preset.id === current) link.setAttribute('aria-current', 'true');
       else link.removeAttribute('aria-current');
     }
+    // The menus close after a choice, so their summaries say what is chosen in them.
+    const feed = PRESETS.find((p) => p.id === current && p.group === 'feeds');
+    const feedNow = document.getElementById('feed-now');
+    if (feedNow) feedNow.textContent = feed ? feed.label : st.feed.map((f) => FEED_LABEL[f]).join(' + ');
+    const tagsOn = Object.values(st.tags).reduce((n, values) => n + values.length, 0);
+    const tagsNow = document.getElementById('tags-now');
+    if (tagsNow) tagsNow.textContent = tagsOn ? `${tagsOn} ON` : '';
     onChange(st);
     if (scroll) scrollToView();
     if (focus) panels[VIEWS.indexOf(st.view)].focus({ preventScroll: true });
@@ -2517,17 +2802,20 @@ export function initViews({ onChange = () => {} } = {}) {
     return true;
   };
 
-  // Every in-page link to a state (?view=...) is handled here, so the sidebar, the widen links
-  // and VIEW ALL behave the same. A link with its own handler (a headline, which also focuses
-  // the card) has already called preventDefault and is left alone.
+  // Every in-page link to a state (?view=...) is handled here, so the tabs, the feeds, the widen
+  // links and VIEW ALL behave the same. A link with its own handler (a headline, which also
+  // focuses the card) has already called preventDefault and is left alone. A choice made in a
+  // menu closes it: the reader asked for a feed, not for the menu to stay over the list.
   document.addEventListener('click', (e) => {
     if (e.defaultPrevented || !isPlainClick(e)) return;
     const link = e.target.closest?.('a[href^="?view="]');
     if (!link) return;
     e.preventDefault();
     const url = new URL(link.href);
+    const before = view.state.view;
     navigate({ ...parseLocation(url.search, url.hash), event: null });
-    if (sidebar?.contains(link)) setSidebar(false);
+    const menu = link.closest('details[data-dropdown]');
+    if (menu) menus.applied(menu.id, view.state.view !== before);
   });
 
   for (const radio of document.querySelectorAll('input[name="scope"]')) {
@@ -2542,28 +2830,12 @@ export function initViews({ onChange = () => {} } = {}) {
       navigate({ ...view.state, beat: on ? view.state.beat.filter((b) => b !== beat) : [...view.state.beat, beat], event: null, anchor: null });
     });
   }
+  // KEY ONLY is a filter like a beat: a step Back undoes, kept on every view.
+  document.getElementById('key-toggle')?.addEventListener('click', () => {
+    navigate({ ...view.state, key: !view.state.key, event: null, anchor: null });
+  });
   document.getElementById('events-widen-btn')?.addEventListener('click', () => {
     navigate({ ...view.state, scope: 'all', event: null });
-  });
-
-  // The narrow-screen menu. The sidebar is in the page flow under the header, so opening it
-  // pushes the view down rather than covering it, and Escape or a choice closes it again.
-  toggle?.addEventListener('click', () => setSidebar(toggle.getAttribute('aria-expanded') !== 'true'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (more?.open) {
-      more.open = false;
-      more.querySelector('summary')?.focus();
-    } else if (sidebar?.classList.contains('is-open')) {
-      setSidebar(false);
-      toggle?.focus();
-    }
-  });
-  // TAG FILTERS opens over the page on a wide screen; a click anywhere else closes it. The path,
-  // not contains(): a facet chip's own click rebuilds the chips, so by the time the click reaches
-  // the document its target is detached and contains() would call it a click outside.
-  document.addEventListener('click', (e) => {
-    if (more?.open && !e.composedPath().includes(more)) more.open = false;
   });
 
   window.addEventListener('popstate', () => {
@@ -2766,6 +3038,28 @@ function showError(message) {
   box.textContent = message;
 }
 
+// The SYSTEM and SOURCES views. pages.js draws them; this gives each its host and its inputs and
+// puts what it hands back — { label, led } — in the view head. Any input may be null (no snapshot
+// read, or a file missing) and the page says so itself. A page that throws must not take the
+// rest of the site down with it, so the failure is caught here and the view says it plainly.
+const PAGE_LEDS = new Set(['ok', 'warn', 'fail', 'idle']);
+
+function renderPage(name, draw, args) {
+  const host = document.getElementById(`${name}-page`);
+  if (!host) return;
+  let out = null;
+  try {
+    out = draw(host, args);
+  } catch {
+    clear(host).append(h('p', { class: 'empty', text: `THE ${name.toUpperCase()} PAGE COULD NOT BE DRAWN.` }));
+    out = { label: 'NOT DRAWN', led: 'fail' };
+  }
+  const count = document.getElementById(`${name}-count`);
+  if (count) count.textContent = out?.label ? String(out.label) : 'AWAITING DATA';
+  const led = document.getElementById(`${name}-led`);
+  if (led) led.dataset.state = PAGE_LEDS.has(out?.led) ? out.led : 'idle';
+}
+
 export async function main() {
   initCommon();
   // The views come up before the data, so the address is read (and an old anchor rewritten)
@@ -2773,6 +3067,8 @@ export async function main() {
   // in once there is something to render.
   let refresh = () => {};
   const views = initViews({ onChange: () => refresh() });
+  // The org chart ships with the site, so it is asked for at once rather than after the feed.
+  const orgRead = getJson('assets/org.json', globalThis.fetch);
   let data = null;
   try {
     data = await loadData();
@@ -2782,21 +3078,26 @@ export async function main() {
 
   // Two kinds of content on this page, and only one of them depends on the feed.
   //
-  // The crew roster, the stage list and the per-agent ownership table are presentation: they
-  // describe what the system is, not what the last run found, and they ship with the site. So
-  // they render whether or not data/ could be read. Gating the roster behind a successful read
-  // was a defect, not a simplification — until the data branch existed, THE CREW served an empty
-  // grid underneath a count that still read its full size. The roster's own fallbacks already say
-  // NOT YET ACTIVE and "No workload published for this agent yet" per card, which is the honest
-  // statement; reaching them was the problem.
+  // The crew roster, the org chart, the routines and the per-agent ownership table are
+  // presentation: they describe what the system is, not what the last run found, and they ship
+  // with the site. So they render whether or not data/ could be read. Gating the roster behind a
+  // successful read was a defect, not a simplification — until the data branch existed, THE CREW
+  // served an empty grid underneath a count that still read its full size. The roster's own
+  // fallbacks already say NOT PUBLISHED and "No workload published for this agent" per card, which
+  // is the honest statement; reaching them was the problem. SYSTEM and SOURCES take whatever was
+  // read, nulls included, and say what is missing.
   //
   // Everything below the guard is a reading of the feed, and each one would have to invent a
   // figure to render on empty input: the index and the gauges both compute "0 events, LOW" from
   // no events, and the headline list would claim this snapshot has no headlines when the truth is
   // that no snapshot was read. A fabricated zero is worse than an absence, so those wait.
   renderStrip(data || {});
-  renderPipeline(data?.health || null, data ? { status: data.status, feed: data.feed } : {});
-  renderCrew(data ? await getJson(`${data.base}crew.json`, globalThis.fetch) : null);
+  const crew = data ? await getJson(`${data.base}crew.json`, globalThis.fetch) : null;
+  renderCrew(crew);
+  renderCrewRun(data?.status || null, data?.feed || null);
+  renderOrg(await orgRead);
+  renderPage('system', renderSystemPage, { status: data?.status || null, health: data?.health || null, crew, live: data?.feed || null });
+  renderPage('sources', renderSourcesPage, { health: data?.health || null, live: data?.feed || null });
   if (!data) {
     renderSections({ events: [], unread: true });
     renderTrends(null, [], { unread: true });
@@ -2812,6 +3113,7 @@ export async function main() {
   renderTrends(await getJson(`${data.base}trends.json`, globalThis.fetch), data.events);
 
   const total = data.events.length;
+  const scored = data.events.some((e) => importanceOf(e));
   const count = document.getElementById('filter-count');
   const dashCount = document.getElementById('dash-count');
 
@@ -2823,6 +3125,8 @@ export async function main() {
     if (values.length) tags[dim] = values;
     else delete tags[dim];
     navigate({ ...st, tags, event: null }, { replace: true });
+    // The choice is made, so the menu gets out of the way of the list it just changed.
+    view.menus.applied('filter-more');
   };
 
   // The world map and the country dropdown filter in exactly the same way a country chip does,
@@ -2843,7 +3147,7 @@ export async function main() {
     const st = view.state;
     const scoped = filterEvents(data.events, st, { skip: ['feed'] });
     const listed = filterEvents(data.events, st);
-    filtersActive = st.scope !== 'all' || st.beat.length > 0 || st.feed.length > 0 || Object.keys(st.tags).length > 0;
+    filtersActive = st.scope !== 'all' || st.beat.length > 0 || st.feed.length > 0 || st.key || Object.keys(st.tags).length > 0;
 
     renderSections({ events: listed });
     renderEventsHead(data.events, listed, st);
@@ -2853,13 +3157,22 @@ export async function main() {
     renderHeadlines(scoped);
     renderWatch('developing-events', scoped);
     renderWatch('emerging-threats', scoped);
-    renderSidebar(data.events, st);
+    renderFeeds(data.events, st);
     const facetSkip = st.view === 'events' ? ['tags'] : ['tags', 'feed'];
     renderFacetUi(buildFacets(filterEvents(data.events, st, { skip: facetSkip })), st.tags, toggleTag);
 
     const shown = st.view === 'events' ? listed.length : scoped.length;
     if (count) count.textContent = `${shown} OF ${total} EVENTS`;
-    if (dashCount) dashCount.textContent = `${plural(scoped.length, 'signal').toUpperCase()} · ${SCOPES[st.scope]}`;
+    // "n KEY" only once the snapshot carries the score: before that it would be a made-up zero.
+    if (dashCount) {
+      dashCount.textContent = [
+        plural(scoped.length, 'signal').toUpperCase(),
+        scored ? `${scoped.filter(isKey).length} KEY` : null,
+        SCOPES[st.scope],
+      ]
+        .filter(Boolean)
+        .join(' · ');
+    }
 
     const pool = filterEvents(data.events, st, { skip: ['feed', 'country'] });
     const key = pool.map((e) => e.event_id).join('|');
@@ -2872,11 +3185,11 @@ export async function main() {
     }
   };
 
-  // CLEAR FILTERS clears what narrows the list — the tags, the beat and the feed — and keeps the
-  // scope, which is a choice of where to look rather than a filter on what is there.
+  // CLEAR FILTERS clears what narrows the list — the tags, the beat, the feed and KEY ONLY — and
+  // keeps the scope, which is a choice of where to look rather than a filter on what is there.
   const clearFilters = () => {
     syncMapSelection('');
-    navigate({ ...view.state, beat: [], feed: [], tags: {}, event: null });
+    navigate({ ...view.state, beat: [], feed: [], key: false, tags: {}, event: null });
   };
   const clearCountry = () => {
     const tags = { ...view.state.tags };
