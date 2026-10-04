@@ -410,6 +410,57 @@ def test_an_unpublished_org_chart_is_nothing_not_an_empty_company(site):
     assert partial["unlisted"] == 7
 
 
+# renderOrg drawn into a small fake DOM that, like a browser's, writes a null it is given as
+# the text "null".
+DRAW_ORG = r"""
+const [hudPath, orgPath] = process.argv.slice(2);
+// Imported before there is a document, so the page's own entry point stays out of it.
+const m = await import(hudPath);
+class FakeNode {}
+class FakeText extends FakeNode {
+  constructor(t) { super(); this.data = String(t); }
+  get textContent() { return this.data; }
+}
+class FakeEl extends FakeNode {
+  constructor(tag) { super(); this.tagName = tag.toUpperCase(); this.childNodes = []; this.dataset = {}; }
+  setAttribute() {}
+  set className(v) {}
+  get textContent() { return this.childNodes.map((c) => c.textContent).join(''); }
+  set textContent(v) { this.childNodes = [new FakeText(v)]; }
+  append(...nodes) { for (const n of nodes) this.childNodes.push(n instanceof FakeNode ? n : new FakeText(n)); }
+  replaceChildren(...nodes) { this.childNodes = []; this.append(...nodes); }
+}
+const hosts = {};
+globalThis.Node = FakeNode;
+globalThis.document = {
+  createElement: (t) => new FakeEl(t),
+  createElementNS: (_, t) => new FakeEl(t),
+  createTextNode: (t) => new FakeText(t),
+  getElementById: (id) => (hosts[id] ||= new FakeEl('div')),
+};
+const { readFileSync } = await import('node:fs');
+m.renderOrg(JSON.parse(readFileSync(orgPath, 'utf8')));
+const text = (id) => (hosts[id] ? hosts[id].textContent : null);
+process.stdout.write(JSON.stringify({
+  chart: text('org-chart'), routines: text('org-routines'), facts: text('org-facts'),
+}));
+"""
+
+
+@pytest.mark.parametrize("org", [ORG, ROOT / "site" / "assets" / "org.json"], ids=["fixture", "published"])
+def test_the_org_chart_draws_no_stray_null(org, tmp_path):
+    (tmp_path / "draw.mjs").write_text(DRAW_ORG, encoding="utf-8")
+    done = subprocess.run(
+        [NODE, str(tmp_path / "draw.mjs"), str(HUD), str(org)],
+        capture_output=True, text=True, timeout=60, check=False,
+    )
+    assert done.returncode == 0, done.stderr
+    drawn = json.loads(done.stdout)
+    assert "MORPHEUS" in drawn["chart"] and "Daily editorial" in drawn["routines"]
+    for part, text in drawn.items():
+        assert "null" not in text and "undefined" not in text, part
+
+
 def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     widen = site["widen"]
     assert widen["view"] == "events" and widen["scope"] == "all"
