@@ -17,6 +17,7 @@ import os
 import shutil
 import tempfile
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
@@ -25,16 +26,31 @@ from pydantic import ValidationError
 from sqlalchemy import Connection
 
 from worker.db.crew import load_crew_activity, load_pipeline_ai
+from worker.db.discovery import Candidate, load_at_the_gate
 from worker.db.events import load_event_dates, load_live_events
 from worker.db.merge import merged_redirects
 from worker.db.runs import load_last_completed_collection, load_latest_run
 from worker.db.sources import (
+    RegistryRow,
+    load_corroboration,
     load_health_history,
     load_lifecycle_states,
     load_registry_rows,
 )
 from worker.db.trends import load_trend_inputs
-from worker.models import Event, EventStatus, LifecycleState, SourceHealth
+from worker.models import (
+    Beat,
+    Event,
+    EventStatus,
+    HealthStatus,
+    LifecycleState,
+    PublisherConfig,
+    SourceConfig,
+    SourceHealth,
+)
+from worker.pipeline.health import consecutive_failures
+from worker.pipeline.importance import Voice, with_importance
+from worker.pipeline.reputation import CORROBORATION_WINDOW, Reputation, assess_reputation
 from worker.pipeline.trends import ACTIVITY_DAYS, compute_trends, load_trends_config
 from worker.publish.claims import with_fact_claims
 from worker.publish.validate import (
@@ -43,6 +59,8 @@ from worker.publish.validate import (
     scan_text_for_secrets,
     validate_payload,
 )
+from worker.schedule import public_schedule
+from worker.sources.registry import REGISTRY_PATH, load_publishers, load_registry
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION
 
 LIVE_MIN_PROMINENCE = 0.05
@@ -55,6 +73,10 @@ HEALTH_HISTORY_LIMIT = 20
 # was shared before it was merged still finds the story (site/assets/hud.js, `findEvent`).
 MERGED_REDIRECT_WINDOW = timedelta(days=90)
 HEALTH_ERROR_MAX_CHARS = 300
+# source-health.json's `pipeline`: the finds still at SERAPH's gate, furthest through first.
+PIPELINE_LIMIT = 25
+# An `attention` reason quotes at most this much of a check's error or a registry note.
+ATTENTION_DETAIL_MAX_CHARS = 160
 
 # crew.json: how recent an agent's last piece of work must be for it to read ACTIVE: the
 # ledger takes a row whenever the pipeline calls a model. SERAPH needs none, because writing
@@ -114,29 +136,190 @@ def _health_record(h: SourceHealth) -> dict[str, Any]:
     }
 
 
-def _source_health_payload(conn: Connection, generated_at: str) -> dict[str, Any]:
+@dataclass(frozen=True)
+class _Source:
+    """A registered source as the publisher sees it: its registry row, its entry in
+    config/sources.yaml (None for a source only the database has, which the discovery gate
+    added), its recent checks and its reputation."""
+
+    row: RegistryRow
+    config: SourceConfig | None
+    publisher: PublisherConfig | None
+    history: list[SourceHealth]
+    state: LifecycleState
+    reputation: Reputation
+
+    @property
+    def label(self) -> str:
+        """Who a reader knows it as: the organisation behind it, or its own name."""
+        return self.publisher.name if self.publisher else self.row.name
+
+
+def _load_sources(conn: Connection, now: datetime) -> list[_Source]:
+    """Every registered source, with the description and standing config/sources.yaml gives
+    it. The file is read at publish time, so a change there shows at the next publish."""
+    configs = {s.id: s for s in load_registry(REGISTRY_PATH)}
+    publishers = load_publishers(REGISTRY_PATH)
     states = load_lifecycle_states(conn)
+    corroboration = load_corroboration(conn, since=now - CORROBORATION_WINDOW)
     sources = []
     for row in load_registry_rows(conn):
         history = load_health_history(conn, row.id, HEALTH_HISTORY_LIMIT)
-        state = states.get(row.id) or (
-            LifecycleState.ACTIVE if row.enabled else LifecycleState.DISCOVERED
-        )
+        config = configs.get(row.id)
         sources.append(
-            {
-                "source_id": row.id,
-                "name": row.name,
-                "region": row.region,
-                "category": row.category,
-                "lane": row.lane,
-                "enabled": row.enabled,
-                "lifecycle_state": state.value,
-                "latest": _health_record(history[-1]) if history else None,
-                "history": [_health_record(h) for h in history],
-            }
+            _Source(
+                row=row,
+                config=config,
+                publisher=publishers.get(config.publisher or "") if config else None,
+                history=history,
+                state=states.get(row.id)
+                or (LifecycleState.ACTIVE if row.enabled else LifecycleState.DISCOVERED),
+                reputation=assess_reputation(
+                    config.standing if config else None, history, corroboration.get(row.id)
+                ),
+            )
         )
-    counts = Counter(s["latest"]["status"] if s["latest"] else "no_data" for s in sources)
-    return {"generated_at": generated_at, "counts": dict(counts), "sources": sources}
+    return sources
+
+
+def _voices(sources: list[_Source]) -> dict[str, Voice]:
+    return {s.row.id: Voice(s.label, s.reputation.standing, s.reputation.score) for s in sources}
+
+
+def _plural(n: int, word: str) -> str:
+    return f"{n} {word}{'' if n == 1 else 's'}"
+
+
+def _detail(text: str | None) -> str:
+    """`text` on one line and at most `ATTENTION_DETAIL_MAX_CHARS` long."""
+    text = " ".join((text or "").split())
+    if len(text) > ATTENTION_DETAIL_MAX_CHARS:
+        text = text[: ATTENTION_DETAIL_MAX_CHARS - 3].rstrip() + "..."
+    return text
+
+
+_FAILED = {
+    HealthStatus.ERROR: "failed",
+    HealthStatus.TIMEOUT: "timed out",
+    HealthStatus.EMPTY: "came back empty",
+}
+_UNWELL = (LifecycleState.DEGRADED, LifecycleState.BROKEN)
+_FREQUENCY = {"real_time": "around the clock"}
+
+
+def _quiet_for(check: SourceHealth, row: RegistryRow) -> str:
+    age = check.newest_item_age_days
+    said = f"nothing new in {age:.1f} days" if age is not None else "nothing new lately"
+    if row.expected_frequency:
+        frequency = _FREQUENCY.get(row.expected_frequency, row.expected_frequency)
+        said += f" (it usually publishes {frequency})"
+    return said
+
+
+def _attention(source: _Source) -> dict[str, str] | None:
+    """What the Sources page should flag about a source, if anything.
+
+    `fix`: its last check failed, or it is degraded and still failing. `watch`: it is stale, or
+    degraded and healthy again. `coming`: it is not collected yet, or is still a find on trial.
+    A retired source needs nothing.
+    """
+    row, state = source.row, source.state
+    latest = source.history[-1] if source.history else None
+    if state is LifecycleState.RETIRED:
+        return None
+    if not row.enabled:
+        # The registry's note on a disabled source says why (config/sources.yaml).
+        note = _detail(source.config.notes if source.config else None)
+        if note and not note.endswith("."):
+            note += "."
+        return {"kind": "coming", "reason": f"Not collected yet. {note}".rstrip()}
+    if state in (LifecycleState.DISCOVERED, LifecycleState.CANDIDATE):
+        return {"kind": "coming", "reason": "A new find, on trial before it is collected."}
+    if latest is not None and latest.status in _FAILED:
+        error = _detail(latest.error)
+        said = f"The last check {_FAILED[latest.status]}"
+        return {"kind": "fix", "reason": f"{said}: {error}" if error else f"{said}."}
+    failing = consecutive_failures(source.history)
+    if state in _UNWELL and failing:
+        said = f"Degraded: {_plural(failing, 'unhealthy check')} in a row"
+        if latest is not None and latest.status is HealthStatus.STALE:
+            said += f", {_quiet_for(latest, row)}"
+        return {"kind": "fix", "reason": said + "."}
+    if latest is not None and latest.status is HealthStatus.STALE:
+        return {"kind": "watch", "reason": f"Stale: {_quiet_for(latest, row)}."}
+    if state in _UNWELL:
+        return {"kind": "watch", "reason": "Recovering: healthy again after failed checks."}
+    return None
+
+
+def _source_entry(source: _Source) -> dict[str, Any]:
+    row, config, history = source.row, source.config, source.history
+    return {
+        "source_id": row.id,
+        "name": row.name,
+        "description": config.description if config else None,
+        "publisher": source.publisher.name if source.publisher else None,
+        "url": row.url,
+        "region": row.region,
+        "category": row.category,
+        # The registry leaves a cyber source's beat unset, and a source the gate added is cyber.
+        "beat": (config.beat if config and config.beat else Beat.CYBER).value,
+        "lane": row.lane,
+        "priority": row.priority,
+        "expected_frequency": row.expected_frequency,
+        "enabled": row.enabled,
+        "standing": source.reputation.standing.value,
+        "reputation": source.reputation.public(),
+        "lifecycle_state": source.state.value,
+        "attention": _attention(source),
+        "latest": _health_record(history[-1]) if history else None,
+        "history": [_health_record(h) for h in history],
+    }
+
+
+_FOUND_BY = {"search": "Found by the nightly search", "tachikoma": "Proposed by TACHIKOMA"}
+
+
+def _gate_reason(c: Candidate) -> str:
+    """Where a find stands, in the worker's own words. Never the finder's `reason`, which a
+    model wrote from pages on the open web."""
+    who = _FOUND_BY.get(c.found_by, "Found")
+    if c.state == "discovered":
+        return f"{who}; looking for its feed."
+    if c.state == "testing":
+        return f"{who}; {_plural(c.passes, 'healthy probe')} in a row so far."
+    if c.failures:
+        return f"{who}; feed found, {_plural(c.failures, 'failed probe')} in a row."
+    return f"{who}; feed found, waiting for its first probe."
+
+
+def _pipeline(conn: Connection) -> list[dict[str, Any]]:
+    """The finds still at the gate: names and domains only, never a feed URL or evidence."""
+    return [
+        {
+            "name": c.name,
+            "host": c.host,
+            "state": c.state,
+            "found_at": _iso(c.created_at),
+            "reason": _gate_reason(c),
+        }
+        for c in load_at_the_gate(conn, limit=PIPELINE_LIMIT)
+    ]
+
+
+def _source_health_payload(
+    conn: Connection, generated_at: str, sources: list[_Source] | None = None
+) -> dict[str, Any]:
+    if sources is None:
+        sources = _load_sources(conn, datetime.fromisoformat(generated_at))
+    entries = [_source_entry(s) for s in sources]
+    counts = Counter(e["latest"]["status"] if e["latest"] else "no_data" for e in entries)
+    return {
+        "generated_at": generated_at,
+        "counts": dict(counts),
+        "sources": entries,
+        "pipeline": _pipeline(conn),
+    }
 
 
 def _system_status_payload(
@@ -173,6 +356,8 @@ def _system_status_payload(
             "sources_total": len(registry),
             "sources_enabled": sum(1 for r in registry if r.enabled),
         },
+        # What runs when, and whether code or a model does it (worker/schedule.py).
+        "schedule": public_schedule(),
     }
 
 
@@ -240,9 +425,12 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
     """
     generated_at = _iso(now)
 
-    # Prominence-descending, each with the claims its ground truth supports. An archived event
-    # keeps its day page but is never live: its score is no longer kept up to date.
-    all_events = [with_fact_claims(e) for e in _load_events(conn)]
+    # Prominence-descending, each with the claims its ground truth supports and its importance,
+    # which its sources' reputations feed. An archived event keeps its day page but is never
+    # live: its score is no longer kept up to date.
+    sources = _load_sources(conn, now)
+    voices = _voices(sources)
+    all_events = [with_importance(with_fact_claims(e), voices) for e in _load_events(conn)]
     public = [e.model_dump_public() for e in all_events]
     live = [
         p
@@ -270,7 +458,10 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
                 "events": events,
             },
         )
-    out["source-health.json"] = ("source-health", _source_health_payload(conn, generated_at))
+    out["source-health.json"] = (
+        "source-health",
+        _source_health_payload(conn, generated_at, sources),
+    )
     out["system-status.json"] = (
         "system-status",
         _system_status_payload(conn, generated_at, published=len(live), total=len(public)),

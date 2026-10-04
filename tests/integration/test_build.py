@@ -5,8 +5,11 @@ import pytest
 from sqlalchemy import text
 
 from worker.db.migrate import run_migrations
+from worker.db.sources import record_health
+from worker.models import HealthStatus, SourceHealth
 from worker.publish.build import build_all
 from worker.publish.validate import ValidationFailure
+from worker.schedule import public_schedule
 from worker.version import (
     ENRICHMENT_VERSION,
     PIPELINE_VERSION,
@@ -187,6 +190,88 @@ def test_source_health_lists_registry_sources(tmp_path, conn):
     build_all(conn, tmp_path, now=NOW)
     ids = {s["source_id"] for s in read(tmp_path, "source-health.json")["sources"]}
     assert SOURCE in ids
+
+
+def test_every_published_event_is_rated_with_its_sources_reputation(tmp_path, conn):
+    """docs/wiki/importance-and-reputation.md, end to end from the database."""
+    record_health(conn, SourceHealth(source_id=SOURCE, checked_at=NOW, status=HealthStatus.OK))
+    insert_event(conn, "evt-2026-000001")
+    conn.execute(
+        text(
+            "update events set domains = '{cybersecurity}', categories = '{zero-day}', "
+            "au_relevance = 0.8 where event_id = 'evt-2026-000001'"
+        )
+    )
+    insert_report(conn, "evt-2026-000001", "Acme VPN zero-day", NOW - timedelta(hours=1))
+    build_all(conn, tmp_path, now=NOW)
+    (live,) = read(tmp_path, "live.json")["events"]
+    (day,) = read(tmp_path, "history/2026-09-30.json")["events"]
+    # A DB-only source is community: (0.60 * 40 + 0.15 * 100) / 0.75 = 52, a quarter of it 13.
+    assert live["importance"] == day["importance"] == {
+        "version": "1",
+        "score": 58,
+        "tier": "notable",
+        "reasons": [
+            "strongly relevant to Australia",  # 25
+            "high severity, exploited as a zero-day",  # 20
+            "reported by ACSC Alerts (community)",  # 13
+        ],
+    }
+    [source] = [
+        s for s in read(tmp_path, "source-health.json")["sources"] if s["source_id"] == SOURCE
+    ]
+    assert source["reputation"]["score"] == 52
+    assert source["reputation"]["events_90d"] == 1
+
+
+def test_source_health_says_what_each_source_is_and_what_needs_doing(tmp_path, conn):
+    record_health(
+        conn,
+        SourceHealth(source_id=SOURCE, checked_at=NOW, status=HealthStatus.TIMEOUT,
+                     error="ReadTimeout after 30s"),
+    )
+    conn.execute(text("delete from source_candidates"))
+    conn.execute(
+        text(
+            "insert into source_candidates (host, feed_url, name, found_by, reason, evidence, "
+            "state, passes, last_error, created_at, updated_at) values ('news.example.org', "
+            "'https://news.example.org/feed', 'News', 'tachikoma', 'The finder says so.', "
+            "'[{\"url\": \"https://news.example.org/a\"}]', 'testing', 2, 'HTTP 500', :at, :at)"
+        ),
+        {"at": NOW - timedelta(hours=2)},
+    )
+    build_all(conn, tmp_path, now=NOW)
+    health = read(tmp_path, "source-health.json")
+    [source] = [s for s in health["sources"] if s["source_id"] == SOURCE]
+    assert {k: source[k] for k in ("description", "publisher", "url", "beat", "priority",
+                                   "expected_frequency", "standing", "attention")} == {
+        "description": None,
+        "publisher": None,
+        "url": "https://example.org/feed",
+        "beat": "cyber",
+        "priority": 1,
+        "expected_frequency": "daily",
+        "standing": "community",
+        "attention": {"kind": "fix", "reason": "The last check timed out: ReadTimeout after 30s"},
+    }
+    assert source["reputation"] == {
+        "version": "1", "score": 32, "standing": "community", "uptime": 0.0,
+        "corroboration": None, "events_90d": 0,
+        "basis": "standing and uptime over the last check; left out: 0 events in 90 days, too "
+                 "few to judge corroboration (needs 5)",
+    }
+    assert health["pipeline"] == [
+        {
+            "name": "News", "host": "news.example.org", "state": "testing",
+            "found_at": "2026-09-30T10:00:00Z",
+            "reason": "Proposed by TACHIKOMA; 2 healthy probes in a row so far.",
+        }
+    ]
+
+
+def test_system_status_publishes_the_schedule(tmp_path, conn):
+    build_all(conn, tmp_path, now=NOW)
+    assert read(tmp_path, "system-status.json")["schedule"] == public_schedule()
 
 
 def test_build_writes_nothing_when_a_secret_is_found(tmp_path, conn, monkeypatch):

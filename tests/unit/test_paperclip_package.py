@@ -2,6 +2,7 @@
 routines, read from the wiki (stage 4a and 4b) and written as the zip the Import page takes."""
 
 import importlib.util
+import json
 import re
 import zipfile
 from pathlib import Path
@@ -196,3 +197,80 @@ def test_the_builder_refuses_one_vendor_for_code_and_its_check(builder, monkeypa
     monkeypatch.setattr(builder, "read_crew", lambda: (house_rules, cards))
     with pytest.raises(SystemExit, match="must differ"):
         builder.build(tmp_path / "crew.zip")
+
+
+# --- The public org chart (site/assets/org.json) -------------------------------------------------
+
+ORG_JSON = REPO / "site/assets/org.json"
+
+
+def test_the_committed_org_chart_is_the_wiki_as_it_stands(builder):
+    """Rebuild it after a wiki change:
+    python3 ops/build-paperclip-package.py --org-json site/assets/org.json"""
+    assert ORG_JSON.read_text(encoding="utf-8") == builder.org_json()
+
+
+def test_the_org_chart_shape(builder):
+    org = builder.org_chart()
+    assert org["company"] == {
+        "name": "CyberPulse", "mission": builder.read_setup()[0], "budget_usd": 12.0,
+    }
+    agents = {a["callsign"]: a for a in org["agents"]}
+    assert set(agents) == {slug.upper() for slug in CREW}
+    assert [a["callsign"] for a in org["agents"]][0] == "MORPHEUS"  # creation order
+    assert agents["DECKARD"] == {
+        "callsign": "DECKARD", "title": "Researcher", "role": "researcher",
+        "reports_to": "MORPHEUS", "team": "Intelligence", "adapter": "model",
+        "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 2.0, "max_daily_runs": 12,
+        "summary": agents["DECKARD"]["summary"],
+    }
+    assert (agents["SERAPH"]["adapter"], agents["SERAPH"]["model"],
+            agents["SERAPH"]["budget_usd"], agents["SERAPH"]["max_daily_runs"]) == (
+        "http", None, 0.0, None,
+    )
+    assert {a["callsign"]: a["team"] for a in org["agents"]} == {
+        "MORPHEUS": "Intelligence", "DECKARD": "Intelligence", "VOIGHT": "Intelligence",
+        "TACHIKOMA": "Intelligence", "TELETRAAN": "Operations", "SERAPH": "Operations",
+        "RIPPERDOC": "Operations", "WHEELJACK": "Engineering",
+    }
+    assert all(a["summary"] for a in org["agents"])
+    assert sum(a["budget_usd"] for a in org["agents"]) == 9.5
+    routines = {r["name"]: r for r in org["routines"]}
+    assert {name: (r["assignee"].lower(), r["cron"], r["starts"] == "now")
+            for name, r in routines.items()} == ROUTINES
+    assert {r["timezone"] for r in org["routines"]} == {"Australia/Sydney"}
+    assert all(r["summary"] for r in org["routines"])
+    assert routines["Model gauntlet"]["starts"] == "Stage 5"
+
+
+def test_the_org_chart_carries_no_prompt_payload_or_address(builder):
+    text = ORG_JSON.read_text(encoding="utf-8")
+    house_rules, cards = builder.read_crew()
+    for card in cards.values():
+        for line in card.get("prompt", "").splitlines():
+            if len(line.strip()) > 30:
+                assert line.strip() not in text, f"{card['name']}'s prompt is in org.json"
+        for skill in card["skills"]:
+            assert skill["text"].splitlines()[0] not in text
+    assert house_rules.splitlines()[0] not in text
+    assert "payload" not in text.lower() and "pipeline" not in text
+    assert builder.OPS_WAKE_URL.split("{")[0] not in text
+    for leak in ("http://", "https://", "worker:", "8700", "$CYBERPULSE", "/ops/", "{{", "token"):
+        assert leak not in text
+    assert not RETIRED & {a["callsign"].lower() for a in json.loads(text)["agents"]}
+
+
+def test_the_org_chart_is_refused_if_the_wiki_puts_an_address_in_it(builder, monkeypatch):
+    house_rules, cards = builder.read_crew()
+    cards["seraph"]["summary"] = "Answers at http://worker:8700/ops/agents/seraph/wake."
+    monkeypatch.setattr(builder, "read_crew", lambda: (house_rules, cards))
+    with pytest.raises(SystemExit, match="would publish"):
+        builder.org_chart()
+
+
+def test_org_json_is_written_sorted_and_pretty(builder, tmp_path):
+    output = tmp_path / "assets" / "org.json"
+    builder.write_org_json(output)
+    text = output.read_text(encoding="utf-8")
+    assert text.endswith("}\n") and text.startswith('{\n  "agents": [')
+    assert json.loads(text) == builder.org_chart()

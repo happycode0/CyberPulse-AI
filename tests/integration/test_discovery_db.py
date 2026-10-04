@@ -346,6 +346,31 @@ def test_the_overview_has_every_part(engine):
     assert overview["active_discovered_sources"] == 1
 
 
+def test_the_finds_at_the_gate_come_furthest_through_first(engine):
+    """source-health.json's `pipeline` (worker/publish/build.py)."""
+    activate(engine, "settled.example.org")
+    call(engine, db.add_found, host="old.example.org", evidence={}, now=NOW - timedelta(hours=2))
+    call(engine, db.add_found, host="new.example.org", evidence={}, now=NOW)
+    propose(engine, "https://waiting.example.org/feed")
+    _, trying = propose(engine, "https://trying.example.org/feed")
+    call(engine, db.record_probe, candidate_id=trying.id, probe=healthy(), error=None, gate=GATE,
+         now=NOW)
+    _, refused = propose(engine, "https://refused.example.org/feed")
+    for _ in range(GATE.failures_to_reject):
+        call(engine, db.record_probe, candidate_id=refused.id, probe=None, error="HTTP 500",
+             gate=GATE, now=NOW)
+    gate = call(engine, db.load_at_the_gate, limit=10)
+    assert [(c.host, c.state) for c in gate] == [
+        ("trying.example.org", "testing"),
+        ("waiting.example.org", "candidate"),
+        ("new.example.org", "discovered"),
+        ("old.example.org", "discovered"),
+    ]
+    assert [c.host for c in call(engine, db.load_at_the_gate, limit=2)] == [
+        "trying.example.org", "waiting.example.org",
+    ]
+
+
 # --- From a search hit to a collected source -----------------------------------------------------
 
 TITLES = (
