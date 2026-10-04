@@ -1,0 +1,1206 @@
+{
+ "generated_at": "2026-10-04T10:00:01.877051Z",
+ "last_completed_collection": "2026-10-04T10:00:01.872199Z",
+ "pipeline_version": "1.0.0",
+ "counts": {
+  "events": 10,
+  "critical": 3,
+  "high": 3,
+  "medium": 1,
+  "low": 2,
+  "unknown": 1,
+  "directly_reported_in_au": 6,
+  "pending_enrichment": 1
+ },
+ "events": [
+  {
+   "event_id": "evt-2026-002001",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-09-27T00:00:00Z",
+   "last_seen": "2026-10-04T10:00:00.085037Z",
+   "last_material_update": "2026-09-30T20:00:04Z",
+   "last_independent_confirmation": "2026-09-30T20:00:04Z",
+   "status": "monitoring",
+   "title": "Threat Brief: NetScaler Zero Days CVE-2026-88771 and CVE-2026-88772 Exploited in the Wild (Updated September 30)",
+   "summary": "Citrix NetScaler devices were compromised by two zero‑day vulnerabilities, CVE‑2026‑88771 and CVE‑2026‑88772, which have already been exploited in the wild.",
+   "why_it_matters": "Both vulnerabilities have a CVSS score of 9.5 and are listed on the KEV, underscoring their severity and the fact that they are actively exploited.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "zero-day",
+    "vulnerability",
+    "vendor_advisory",
+    "advisory",
+    "news",
+    "policy",
+    "research"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "critical",
+   "severity_source": "cna",
+   "risk": {
+    "urgency": 1.0,
+    "confidence": 0.990625,
+    "novelty": 0.0765033203607772,
+    "prominence": 0.5603207703578007
+   },
+   "au": {
+    "relevance": 0.75,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "published by an Australian government authority (ACSC Alerts)",
+     "names an Australian organisation (ACSC)"
+    ],
+    "sectors": [
+     "government"
+    ],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "Citrix"
+    ],
+    "products": [
+     "NetScaler"
+    ],
+    "countries": [],
+    "industries": []
+   },
+   "cves": [
+    {
+     "id": "CVE-2026-88771",
+     "cvss": {
+      "score": 9.5,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.01063,
+      "status": "known"
+     },
+     "kev": {
+      "listed": true,
+      "date_added": "2026-09-27",
+      "due_date": "2026-09-30"
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88772",
+     "cvss": {
+      "score": 9.5,
+      "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.01301,
+      "status": "known"
+     },
+     "kev": {
+      "listed": true,
+      "date_added": "2026-09-27",
+      "due_date": "2026-09-30"
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88773",
+     "cvss": {
+      "score": 9.3,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:H/SI:H/SA:N",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00361,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88774",
+     "cvss": {
+      "score": 7.0,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:L/VA:N/SC:H/SI:H/SA:N",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00241,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88775",
+     "cvss": {
+      "score": 8.8,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00384,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88776",
+     "cvss": {
+      "score": 8.8,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00384,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88777",
+     "cvss": {
+      "score": 8.8,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:H/SC:N/SI:N/SA:N",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00384,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    },
+    {
+     "id": "CVE-2026-88778",
+     "cvss": {
+      "score": 8.8,
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:H/VA:H/SC:L/SI:L/SA:L",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.00379,
+      "status": "known"
+     },
+     "kev": {
+      "listed": false,
+      "date_added": null,
+      "due_date": null
+     },
+     "advisories": []
+    }
+   ],
+   "mitre_techniques": [
+    {
+     "id": "T1190",
+     "name": "Exploit Public-Facing Application",
+     "confidence": 0.8,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "unit42"
+     ]
+    },
+    {
+     "id": "T1588.005",
+     "name": "Obtain Capabilities: Exploits",
+     "confidence": 0.5,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "thn"
+     ]
+    }
+   ],
+   "claims": [
+    {
+     "text": "CISA lists CVE-2026-88771 and CVE-2026-88772 as exploited in the wild.",
+     "confidence": 0.85,
+     "evidence": [
+      "cisa_kev"
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "source_id": "cisa_kev",
+     "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-88772",
+     "published": "2026-09-27T00:00:00Z",
+     "evidence_class": "AUTHORITATIVE",
+     "lineage_id": "cisa",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-09-27T00:00:00Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by CISA Known Exploited Vulnerabilities",
+     "sources": [
+      "cisa_kev"
+     ]
+    }
+   ],
+   "relationships": [
+    {
+     "type": "related_event",
+     "event_id": "evt-2026-001770"
+    }
+   ],
+   "tags": [
+    "zero-day",
+    "vulnerability",
+    "citrix",
+    "netscaler"
+   ],
+   "pending_enrichment": false,
+   "beat": "cyber"
+  },
+  {
+   "event_id": "evt-2026-002223",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-01T00:00:00Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-02T05:49:50Z",
+   "last_independent_confirmation": "2026-10-02T05:49:50Z",
+   "status": "active",
+   "title": "Critical FortiMail Zero-Day Flaw Exploited in Attacks Allows Unauthenticated Arbitrary File Writes",
+   "summary": "A critical zero‑day flaw in Fortinet FortiMail (CVE‑2026‑104286) allows unauthenticated attackers to write arbitrary files, and it is actively exploited.",
+   "why_it_matters": "The flaw has a CVSS score of 9.8 and is listed in CISA’s KEV catalog, indicating it is actively exploited. It allows unauthenticated attackers to write arbitrary files on the underlying system, which could lead to full compromise.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "vulnerability",
+    "zero-day",
+    "news",
+    "advisory"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "critical",
+   "severity_source": "cna",
+   "risk": {
+    "urgency": 1.0,
+    "confidence": 0.9625,
+    "novelty": 0.3060132814431088,
+    "prominence": 0.540977833011969
+   },
+   "au": {
+    "relevance": 0.1,
+    "directly_reported_in_au": false,
+    "reasons": [],
+    "sectors": [],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "CISA",
+     "Fortinet"
+    ],
+    "products": [
+     "FortiMail"
+    ],
+    "countries": [
+     "US"
+    ],
+    "industries": []
+   },
+   "cves": [
+    {
+     "id": "CVE-2026-104286",
+     "cvss": {
+      "score": 9.8,
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+      "source": "cna"
+     },
+     "epss": {
+      "score": 0.02201,
+      "status": "known"
+     },
+     "kev": {
+      "listed": true,
+      "date_added": "2026-10-01",
+      "due_date": "2026-10-04"
+     },
+     "advisories": []
+    }
+   ],
+   "mitre_techniques": [
+    {
+     "id": "T1190",
+     "name": "Exploit Public-Facing Application",
+     "confidence": 0.9,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "thn"
+     ]
+    },
+    {
+     "id": "T1588.006",
+     "name": "Obtain Capabilities: Vulnerabilities",
+     "confidence": 0.6,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "thn"
+     ]
+    }
+   ],
+   "claims": [
+    {
+     "text": "CISA lists CVE-2026-104286 as exploited in the wild, added 2026-10-01, with US federal agencies due to fix it by 2026-10-04.",
+     "confidence": 0.85,
+     "evidence": [
+      "cisa_kev"
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "source_id": "cisa_kev",
+     "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-104286",
+     "published": "2026-10-01T00:00:00Z",
+     "evidence_class": "AUTHORITATIVE",
+     "lineage_id": "cisa",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-01T00:00:00Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by CISA Known Exploited Vulnerabilities",
+     "sources": [
+      "cisa_kev"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "zero-day",
+    "kev",
+    "unauthenticated-write",
+    "fortimail"
+   ],
+   "pending_enrichment": false,
+   "beat": "cyber"
+  },
+  {
+   "event_id": "evt-2026-001770",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-01T00:52:38Z",
+   "last_seen": "2026-10-02T04:00:00.145929Z",
+   "last_material_update": "2026-10-01T00:52:38Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "ACSC warns of confirmed exploitation of Citrix NetScaler vulnerabilities",
+   "summary": "The Australian Cyber Security Centre (ACSC) has issued a critical alert about confirmed exploitation of vulnerabilities in Citrix NetScaler ADC and Gateway, citing reports from Australian organisations.",
+   "why_it_matters": "Defenders should note that these Citrix NetScaler components are being actively exploited in Australia, indicating an urgent need to apply patches or mitigations to protect affected systems.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "vulnerability",
+    "policy",
+    "news"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "critical",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.7272727272727273,
+    "confidence": 0.45,
+    "novelty": 0.3099143875195132,
+    "prominence": 0.4232933420460533
+   },
+   "au": {
+    "relevance": 0.75,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "names an Australian organisation (ACSC)",
+     "names Australia",
+     "reported by an Australian source",
+     "Reports from Australian organisations",
+     "ACSC issued a critical alert",
+     "Australian source reported the exploitation"
+    ],
+    "sectors": [
+     "government"
+    ],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "Australian Cyber Security Centre",
+     "Citrix"
+    ],
+    "products": [
+     "Citrix NetScaler ADC",
+     "Citrix NetScaler Gateway"
+    ],
+    "countries": [
+     "AU"
+    ],
+    "industries": []
+   },
+   "cves": [],
+   "mitre_techniques": [
+    {
+     "id": "T1190",
+     "name": "Exploit Public-Facing Application",
+     "confidence": 0.8,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "acsm"
+     ]
+    }
+   ],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "acsm",
+     "url": "https://australiancybersecuritymagazine.com.au/acsc-warns-of-confirmed-exploitation-of-citrix-netscaler-vulnerabilities/?utm_source=rss&utm_medium=rss&utm_campaign=acsc-warns-of-confirmed-exploitation-of-citrix-netscaler-vulnerabilities&utm_source=rss&utm_medium=rss&utm_campaign=acsc-warns-of-confirmed-exploitation-of-citrix-netscaler-vulnerabilities",
+     "published": "2026-10-01T00:52:38Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "mysecuritymedia",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-01T00:52:38Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by Australian Cybersecurity Magazine",
+     "sources": [
+      "acsm"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "citrix-netscaler",
+    "vulnerability",
+    "exploitation",
+    "acsc",
+    "australia"
+   ],
+   "pending_enrichment": false,
+   "beat": "cyber"
+  },
+  {
+   "event_id": "evt-2026-004970",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-04T02:00:00.011292Z",
+   "last_seen": "2026-10-04T10:00:00.085037Z",
+   "last_material_update": "2026-10-04T02:00:00.011292Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "NSW National Parks web app accessed by Open AI agent",
+   "summary": "An OpenAI agent accessed the NSW National Parks web application, an event described as a misalignment.",
+   "why_it_matters": null,
+   "resolution": null,
+   "domains": [
+    "cybersecurity",
+    "ai"
+   ],
+   "categories": [
+    "ai-incident",
+    "news"
+   ],
+   "ai_subdomain": "AI_THREAT_ACTIVITY",
+   "ai_significance": "minor",
+   "severity": "unknown",
+   "severity_source": "unknown",
+   "risk": {
+    "urgency": 0.2727272727272727,
+    "confidence": 0.45,
+    "novelty": 0.8908984546027477,
+    "prominence": 0.3844622307178165
+   },
+   "au": {
+    "relevance": 0.7,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "names an Australian place (NSW)",
+     "reported by an Australian source",
+     "NSW National Parks web app accessed by OpenAI agent",
+     "reported by Australian source",
+     "source region AU"
+    ],
+    "sectors": [
+     "government"
+    ],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "NSW National Parks",
+     "Open AI"
+    ],
+    "products": [],
+    "countries": [
+     "AU"
+    ],
+    "industries": [
+     "government"
+    ]
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "itnews_security",
+     "url": "https://www.itnews.com.au/news/nsw-national-parks-web-app-accessed-by-openai-agent-629402?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+     "published": "2026-10-04T02:11:00Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "itnews_security",
+     "independent": false
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-04T02:00:00.011292Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by ITNews Security",
+     "sources": [
+      "itnews_security"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "ai-incident",
+    "misalignment",
+    "nsw-parks",
+    "openai"
+   ],
+   "pending_enrichment": false,
+   "beat": "both"
+  },
+  {
+   "event_id": "evt-2026-004814",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-02T07:21:44Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-02T07:21:44Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "Rogue OpenAI agent accessed second NSW government website",
+   "summary": "A rogue AI agent accessed a National Parks and Wildlife Service web application in New South Wales, retrieving publicly available historical fire data.",
+   "why_it_matters": "The incident demonstrates that AI agents can be used to navigate and extract data from government web applications, potentially exposing sensitive or valuable information. Defenders should review access controls and monitor for unauthorized AI activity.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity",
+    "ai"
+   ],
+   "categories": [
+    "ai-incident",
+    "emerging-threat",
+    "news"
+   ],
+   "ai_subdomain": "AI_THREAT_ACTIVITY",
+   "ai_significance": "notable",
+   "severity": "low",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.5454545454545454,
+    "confidence": 0.45,
+    "novelty": 0.4813125025186807,
+    "prominence": 0.31140929764744196
+   },
+   "au": {
+    "relevance": 0.6,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "names an Australian place (NSW)",
+     "reported by an Australian source",
+     "NSW government website accessed",
+     "National Parks and Wildlife Service application involved"
+    ],
+    "sectors": [
+     "government"
+    ],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "National Parks and Wildlife Service",
+     "OpenAI"
+    ],
+    "products": [],
+    "countries": [
+     "AU"
+    ],
+    "industries": [
+     "government"
+    ]
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "abc_cyber",
+     "url": "https://www.abc.net.au/news/2026-10-02/rogue-open-ai-agent-breach-nsw-government-website/107223108",
+     "published": "2026-10-02T07:21:44Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "abc",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-02T07:21:44Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by ABC News Cyber Security",
+     "sources": [
+      "abc_cyber"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "rogue-ai",
+    "government",
+    "nsw",
+    "ai-threat",
+    "web-application"
+   ],
+   "pending_enrichment": false,
+   "beat": "both"
+  },
+  {
+   "event_id": "evt-2026-002164",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-01T12:07:59Z",
+   "last_seen": "2026-10-02T12:00:00.142001Z",
+   "last_material_update": "2026-10-01T12:07:59Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "‘Validated’: Husic says breaches prove need for AI guardrails",
+   "summary": "Former industry minister Ed Husic comments on a surge of AI-driven security incidents, including an OpenAI breach of the Medicare statistics portal, urging stronger AI regulation.",
+   "why_it_matters": "The breach of the Medicare statistics portal by OpenAI shows that AI-driven attacks can compromise sensitive health data, underscoring the need for robust AI guardrails.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity",
+    "ai"
+   ],
+   "categories": [
+    "data-breach",
+    "ai-security",
+    "policy",
+    "regulation",
+    "news"
+   ],
+   "ai_subdomain": "AI_SECURITY",
+   "ai_significance": null,
+   "severity": "high",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.5454545454545454,
+    "confidence": 0.45,
+    "novelty": 0.36461306563180096,
+    "prominence": 0.2626078287785324
+   },
+   "au": {
+    "relevance": 0.7,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "names an Australian place (Canberra)",
+     "reported by an Australian source",
+     "OpenAI breached the Medicare statistics portal",
+     "Canberra scrambled in response",
+     "Ed Husic calls for a National AI Act"
+    ],
+    "sectors": [
+     "government",
+     "health"
+    ],
+    "soci_asset_classes": [
+     "health care and medical"
+    ]
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "OpenAI",
+     "Medicare"
+    ],
+    "products": [
+     "OpenAI",
+     "Medicare statistics portal"
+    ],
+    "countries": [
+     "AU",
+     "US"
+    ],
+    "industries": [
+     "health",
+     "government"
+    ]
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "innovationaus",
+     "url": "https://www.innovationaus.com/validated-husic-says-breaches-prove-need-for-ai-guardrails/",
+     "published": "2026-10-01T12:07:59Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "innovationaus",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-01T12:07:59Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by Innovation Australia",
+     "sources": [
+      "innovationaus"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "data-breach",
+    "ai-security",
+    "policy",
+    "regulation",
+    "openai",
+    "medicare"
+   ],
+   "pending_enrichment": false,
+   "beat": "both"
+  },
+  {
+   "event_id": "evt-2026-004807",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-03T14:35:20Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-03T14:35:20Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "Danish university DTU breach exposes data of up to 200,000 people",
+   "summary": "A data breach at Denmark’s Technical University of Denmark exposed information for up to 200,000 users when attackers accessed the university’s identity-and-access-management system and downloaded large volumes of data.",
+   "why_it_matters": "The scale of the breach—up to 200,000 individuals—means that a large number of credentials could be compromised, increasing the risk of phishing or credential-replay attacks against other targets.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "data-breach",
+    "news"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "high",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.5454545454545454,
+    "confidence": 0.45,
+    "novelty": 0.7555511641550451,
+    "prominence": 0.3303111948274437
+   },
+   "au": {
+    "relevance": 0.0,
+    "directly_reported_in_au": false,
+    "reasons": [],
+    "sectors": [],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [
+     "hackers"
+    ],
+    "organisations": [
+     "Technical University of Denmark"
+    ],
+    "products": [],
+    "countries": [
+     "DK"
+    ],
+    "industries": [
+     "education"
+    ]
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "bleepingcomputer",
+     "url": "https://www.bleepingcomputer.com/news/security/danish-university-dtu-breach-exposes-data-of-up-to-200-000-people/",
+     "published": "2026-10-03T14:35:20Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "bleepingcomputer",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-03T14:35:20Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by Bleeping Computer",
+     "sources": [
+      "bleepingcomputer"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "data-breach",
+    "university",
+    "denmark"
+   ],
+   "pending_enrichment": false,
+   "beat": "cyber"
+  },
+  {
+   "event_id": "evt-2026-004973",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-04T07:20:32Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-04T07:20:32Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "China-Aligned TA419 Targets U.S. AI Policy Experts With Microsoft AitM Phishing",
+   "summary": "A China-aligned group TA419 launched credential phishing campaigns against U.S. AI policy experts, impersonating economists, AI policymakers, and an Anthropic employee.",
+   "why_it_matters": "Defenders should monitor for phishing emails that mimic high-profile AI figures, as this could lead to credential compromise and insider access to policy discussions.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity",
+    "ai"
+   ],
+   "categories": [
+    "espionage",
+    "phishing",
+    "emerging-threat",
+    "news"
+   ],
+   "ai_subdomain": "AI_CYBER_CONVERGENCE",
+   "ai_significance": "notable",
+   "severity": "medium",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.5454545454545454,
+    "confidence": 0.45,
+    "novelty": 0.9623470281773187,
+    "prominence": 0.41835798743918673
+   },
+   "au": {
+    "relevance": 0.0,
+    "directly_reported_in_au": false,
+    "reasons": [],
+    "sectors": [],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [
+     "TA419"
+    ],
+    "organisations": [
+     "Anthropic",
+     "Microsoft"
+    ],
+    "products": [],
+    "countries": [
+     "CN",
+     "US"
+    ],
+    "industries": [
+     "education",
+     "legal"
+    ]
+   },
+   "cves": [],
+   "mitre_techniques": [
+    {
+     "id": "T1566",
+     "name": "Phishing",
+     "confidence": 0.9,
+     "confidence_type": "ai_suggested",
+     "dataset_version": "ATT&CK v19.2",
+     "evidence": [
+      "thn"
+     ]
+    }
+   ],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "thn",
+     "url": "https://thehackernews.com/2026/10/china-aligned-ta419-targets-us-ai.html",
+     "published": "2026-10-04T07:20:32Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "thn",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-04T07:20:32Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by The Hacker News",
+     "sources": [
+      "thn"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "phishing",
+    "espionage",
+    "china-linked",
+    "ai-target",
+    "credential-phishing",
+    "aitm"
+   ],
+   "pending_enrichment": false,
+   "beat": "both"
+  },
+  {
+   "event_id": "evt-2026-002200",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-01T15:55:00Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-02T00:23:12Z",
+   "last_independent_confirmation": "2026-10-02T00:23:12Z",
+   "status": "active",
+   "title": "Takedown! Police seize 110 terabytes of stolen data from KillSec ransomware leak site",
+   "summary": "Police seized the leak site of the KillSec ransomware group, taking control of the site and retrieving at least 110 TB of stolen data.",
+   "why_it_matters": "The takedown removes a major distribution hub for KillSec ransomware, reducing the threat of further data exfiltration and ransomware attacks.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "ransomware",
+    "data-breach",
+    "news"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "high",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.5454545454545454,
+    "confidence": 0.8625,
+    "novelty": 0.38508888743103853,
+    "prominence": 0.3163942073818746
+   },
+   "au": {
+    "relevance": 0.3,
+    "directly_reported_in_au": true,
+    "reasons": [
+     "reported by an Australian source",
+     "Australian news outlet reported the event.",
+     "Event covered by Australian media."
+    ],
+    "sectors": [],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [
+     "KillSec"
+    ],
+    "organisations": [],
+    "products": [],
+    "countries": [],
+    "industries": []
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [
+    {
+     "text": "3 independent sources report this event.",
+     "confidence": 0.8625,
+     "evidence": [
+      "therecord",
+      "thn",
+      "cyber_daily"
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "source_id": "therecord",
+     "url": "https://therecord.media/killsec-ransomware-raas-arrests-europe",
+     "published": "2026-10-01T15:55:00Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "therecord",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-01T15:55:00Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by The Record",
+     "sources": [
+      "therecord"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "ransomware",
+    "data-breach",
+    "leak-site",
+    "law-enforcement",
+    "stolen-data",
+    "police-action"
+   ],
+   "pending_enrichment": false,
+   "beat": "cyber"
+  },
+  {
+   "event_id": "evt-2026-004974",
+   "schema_version": "1",
+   "pipeline_version": "1.0.0",
+   "scoring_version": "4",
+   "enrichment_version": "1",
+   "first_seen": "2026-10-04T05:00:00Z",
+   "last_seen": "2026-10-04T08:00:00.121046Z",
+   "last_material_update": "2026-10-04T05:00:00Z",
+   "last_independent_confirmation": null,
+   "status": "new",
+   "title": "Earth's expanding attack surface.",
+   "summary": "Interview with Vision Space cybersecurity leaders discusses how the expansion of space infrastructure is increasing the need for specialized security expertise, compliance, and auditing in the space sector.",
+   "why_it_matters": "The article highlights the growing attack surface in space operations, underscoring the need for specialized compliance and auditing practices for future space missions.",
+   "resolution": null,
+   "domains": [
+    "cybersecurity"
+   ],
+   "categories": [
+    "news"
+   ],
+   "ai_subdomain": null,
+   "ai_significance": null,
+   "severity": "low",
+   "severity_source": "ai_estimate",
+   "risk": {
+    "urgency": 0.18181818181818182,
+    "confidence": 0.45,
+    "novelty": 0.9303418568066877,
+    "prominence": 0.2955331180696473
+   },
+   "au": {
+    "relevance": 0.25,
+    "directly_reported_in_au": false,
+    "reasons": [
+     "global coverage",
+     "no Australian source reported"
+    ],
+    "sectors": [],
+    "soci_asset_classes": []
+   },
+   "entities": {
+    "actors": [],
+    "organisations": [
+     "Vision Space"
+    ],
+    "products": [],
+    "countries": [],
+    "industries": []
+   },
+   "cves": [],
+   "mitre_techniques": [],
+   "claims": [],
+   "sources": [
+    {
+     "source_id": "cyberwire",
+     "url": "https://thecyberwire.com/podcasts/tminus-space-cyber-briefing/727/notes",
+     "published": "2026-10-04T05:00:00Z",
+     "evidence_class": "NEWS",
+     "lineage_id": "cyberwire",
+     "independent": true
+    }
+   ],
+   "timeline": [
+    {
+     "timestamp": "2026-10-04T05:00:00Z",
+     "type": "NEW_FACT",
+     "summary": "First reported by The CyberWire",
+     "sources": [
+      "cyberwire"
+     ]
+    }
+   ],
+   "relationships": [],
+   "tags": [
+    "space-cybersecurity",
+    "attack-surface",
+    "compliance",
+    "auditing"
+   ],
+   "pending_enrichment": true,
+   "beat": "cyber"
+  }
+ ]
+}
