@@ -134,7 +134,9 @@ about each.
 Stated plainly, because an intelligence product that oversells itself is worthless:
 
 - **The public site is not live.** It shows the last completed collection run, labelled with its
-  timestamp.
+  timestamp. The FAST lane (critical and time-sensitive feeds) collects and publishes hourly; the
+  NORMAL lane (everything else) every 4 hours — across roughly 70 sources, with the live count and
+  each one's health on the site's own [Sources](https://happycode0.github.io/CyberPulse-AI/index.html?view=sources) page.
 - **AI severity and MITRE mappings are labelled as AI-suggested.** They are not official
   attribution. CVSS, KEV status and CVE facts always come from authoritative sources, or are
   recorded as `unknown`.
