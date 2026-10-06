@@ -3,7 +3,7 @@
 [Runbooks](README.md) · [Threat model, credentials](../threat-model.md#credentials-names-only) ·
 [.env.example](../../.env.example)
 
-The credentials live in `.env` on the VM (mode 600, owner `deploy-user`). Paperclip also keeps its
+The credentials live in `.env` on the VM (mode 600, owned by the deploy user). Paperclip also keeps its
 secrets folder, and its own copy of the OpenRouter key. There are copies in every backup, and in the
 worker image from its last build
 ([threat model, B8](../threat-model.md#b8-backups-on-a-single-disk-host)). This page names them and
@@ -29,7 +29,7 @@ reminder in your calendar for day 80 as well.
 ## The same six steps every time
 
 1. **Make the new one** at the provider. Keep the old one working for now.
-2. **Edit `.env` with an editor,** as `deploy-user` and without `sudo`: `nano .env`, then replace the
+2. **Edit `.env` with an editor,** as the deploy user and without `sudo`: `nano .env`, then replace the
    value after the `=`. Never paste a token into a command line, a chat or a ticket.
 3. **Check it parses:** `docker compose config -q` is silent when the file is fine.
 4. **Recreate what reads it,** at a safe minute (`date -u +%M`, between :10 and :45). A restart keeps
@@ -107,8 +107,7 @@ each token with its expiry date and when it was last used.
 
 ## Engineer token
 
-Not in use yet. WHEELJACK is paused, and the token is still to be made
-([Stage 6, What's left](../wiki/stage-6-self-healing.md#whats-left)).
+Not in use yet. WHEELJACK has no GitHub connection configured, and the token is still to be made.
 
 **Fix.** The same as the publish token, with these permissions: this repository only, **Contents**
 and **Pull requests** read and write, nothing else, 90 days. Put the new one wherever WHEELJACK
@@ -140,7 +139,7 @@ one keeps nothing out of the server container: it only ends the old one's use an
    ```bash
    sed -i "s/^CYBERPULSE_OPS_TOKEN=.*/CYBERPULSE_OPS_TOKEN=$(openssl rand -hex 32)/" .env
    grep -c '^CYBERPULSE_OPS_TOKEN=[0-9a-f]\{64\}$' .env      # prints 1
-   ls -l .env                                                # still -rw------- deploy-user
+   ls -l .env                                                # still -rw------- (same owner)
    ```
 
    If `grep` prints 0, the line was missing. Add `CYBERPULSE_OPS_TOKEN=` with `nano`, then run the
@@ -205,7 +204,7 @@ Each takes [the same six steps](#the-same-six-steps-every-time), and a recreate 
 | `TAVILY_API_KEY` | [app.tavily.com](https://app.tavily.com), a new API key | The next discovery pass (03:10 Sydney) completes: `q "select finished_at, completed, note from job_runs where job = 'discovery' order by finished_at desc limit 1"` | Delete it on Tavily |
 | `NVD_API_KEY` | [Request a new one](https://nvd.nist.gov/developers/request-an-api-key). Blank is fine too | The next ground-truth pass (:25, every 6 hours) completes, as above with `job = 'groundtruth'` | NVD's site has no revoke. The key only raises a free rate limit |
 | `TELEGRAM_BOT_TOKEN` | **@BotFather** → `/revoke` → your bot. The old one stops at once, so do the rest straight away | `docker compose logs worker --since 5m \| grep -i telegram` says `Telegram notifications are on`. The chat id does not change | Done by `/revoke` |
-| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Paperclip → **Routines → Incident**, the webhook trigger card → **Rotate secret**. It is shown once | The start-up log says `incidents go to the Incident routine in Paperclip`. On the next sent incident, no `paperclip:incident:<n>: failed` line; if there is one, see [Stage 6's table](../wiki/stage-6-self-healing.md#the-incident-routine) | Done by the rotation |
+| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Paperclip → **Routines → Incident**, the webhook trigger card → **Rotate secret**. It is shown once | The start-up log says `incidents go to the Incident routine in Paperclip`. On the next sent incident, no `paperclip:incident:<n>: failed` line | Done by the rotation |
 
 `ops/check-keys.sh` checks most of these in one go from the VM, without showing a value. It needs
 `jq` (`sudo apt-get install -y jq`), and it sends a test message to the Telegram chat.
@@ -278,9 +277,8 @@ agent tokens, approvals and the secrets it stores.
 **Stop and decide yourself** before changing any of them. Rotate one only if it has leaked, after a
 backup, with Paperclip's own documentation open. Never delete or replace a file in the secrets
 folder: a backup of the `paperclip` database is no use without it
-([Stage 7](../wiki/stage-7-hardening.md#backups--do-this-one-early)). Every AI agent can read these
-today ([threat model, B5](../threat-model.md#b5-paperclip-its-agents-and-the-ops-api-ops-token)).
-Keeping the agents paused is what protects them.
+([backup and restore](backup-and-restore.md)). Every AI agent running as a local process can
+read these ([threat model, B5](../threat-model.md#b5-paperclip-its-agents-and-the-ops-api-ops-token)).
 
 ---
 

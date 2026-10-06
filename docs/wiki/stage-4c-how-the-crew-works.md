@@ -1,7 +1,6 @@
-# 4c — How the crew works together
+# How the crew works together
 
-[← 4b — The crew](stage-4b-the-crew.md) · [Wiki home](README.md) ·
-[Stage 5 — Full crew →](stage-5-full-crew.md)
+[The crew](stage-4b-the-crew.md) · [Wiki home](README.md)
 
 The [crew page](stage-4b-the-crew.md) says what each agent is. This page shows how the work moves
 between them — who starts it, who hands it to whom, and where it stops.
@@ -13,10 +12,9 @@ between them — who starts it, who hands it to whom, and where it stops.
 **Python does the work that never needs judgment. Agents only do the judgment.**
 
 The worker container collects, de-duplicates, scores, fetches ground truth and publishes **on
-its own schedule, with no AI and no Paperclip**. That is already running on the VM today. If
-Paperclip is stopped, upgraded or broken, the site keeps updating every hour (PLAN.md
-§2.3). Agents add judgment on top: Australian relevance, campaign links, follow-ups, quality
-checks.
+its own schedule, with no AI and no Paperclip**. If Paperclip is stopped, upgraded or broken,
+the site keeps updating every hour (PLAN.md §2.3). Agents add judgment on top: Australian
+relevance, campaign links, follow-ups, quality checks.
 
 ```text
                ┌──────────────── PAPERCLIP (judgment) ────────────────┐
@@ -130,7 +128,7 @@ Three stops are stacked on top of each other, so a runaway agent cannot run up a
 2. The company budget, US$12.
 3. The OpenRouter key's hard limit, US$20. Nothing gets past this.
 
-### 6. Repair loop — Stage 6
+### 6. Repair loop
 
 ```text
 watchdog (every 5 min) sees a signature ──► incident INC-<n> ──► Telegram (high and critical)
@@ -143,7 +141,7 @@ watchdog (every 5 min) sees a signature ──► incident INC-<n> ──► Tel
 ```
 
 The watchdog opens and resolves incidents itself; no agent can close one.
-[Stage 6](stage-6-self-healing.md) has the signatures and the setup.
+[Watchdog incidents](../runbooks/watchdog-incidents.md) has the signatures and the setup.
 
 ---
 
@@ -172,5 +170,4 @@ The prompt asks nicely. These are the controls that actually enforce it:
 
 ---
 
-[← 4b — The crew](stage-4b-the-crew.md) · [Wiki home](README.md) ·
-**Next:** [Stage 5 — Full crew + notifications →](stage-5-full-crew.md)
+[The crew](stage-4b-the-crew.md) · [Wiki home](README.md)

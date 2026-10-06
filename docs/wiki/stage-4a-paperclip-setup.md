@@ -1,9 +1,9 @@
 # 4a — Paperclip setup: open it, claim it, create the crew
 
-[← Stage 4 — overview](stage-4-paperclip.md) · [Wiki home](README.md) ·
+[Wiki home](README.md) ·
 [4b — The crew →](stage-4b-the-crew.md)
 
-The production Paperclip on the VM: one control panel for all 8 agents. Do the steps in order;
+The production Paperclip instance: one control panel for all 8 agents. Do the steps in order;
 each one says who does it (🔴 you · 🟢 Claude).
 
 | Step | | State |
@@ -13,7 +13,7 @@ each one says who does it (🔴 you · 🟢 Claude).
 | 2–3 | Open it, claim it | ✅ done 2026-10-02 20:21 Sydney — your account is instance admin, sign-up is off |
 | 4–5 | Board approval toggle; company mission and budget | 🟡 board approval on, charter goal saved, MORPHEUS hired. Budget, Description and connection requests still to do |
 | 6–7 | 8 agents, routines | ✅ the 16-agent crew imported 2026-10-02. 🔴 **next**: [move it to 8 agents](#moving-from-16-agents-to-8) |
-| 8 | First test ticket | 🔴 once Claude has wired OpenCode ([Stage 4](stage-4-paperclip.md#whats-left-in-order)) |
+| 8 | First test ticket | 🔴 once OpenCode is wired |
 
 You need [4b — the crew](stage-4b-the-crew.md) open at step 6.
 
@@ -38,7 +38,7 @@ cp -p .env .env.bak-$(date +%Y%m%d%H%M%S)
   echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)"
   echo "PAPERCLIP_AGENT_JWT_SECRET=$(openssl rand -base64 32)"
   echo "PAPERCLIP_TOOL_ACTION_SIGNING_SECRET=$(openssl rand -base64 32)"
-  echo "PAPERCLIP_PUBLIC_URL=http://10.0.0.0:3100"
+  echo "PAPERCLIP_PUBLIC_URL=http://<your-vm-address>:3100"
   echo "PAPERCLIP_DEPLOYMENT_MODE=authenticated"
   echo "PAPERCLIP_DEPLOYMENT_EXPOSURE=private"
   echo "PAPERCLIP_AUTH_BASE_URL_MODE=explicit"
@@ -65,7 +65,7 @@ Afterwards the section looks like this (your three secrets are your own random v
 BETTER_AUTH_SECRET=<random, generated on the VM>
 PAPERCLIP_AGENT_JWT_SECRET=<random, generated on the VM>
 PAPERCLIP_TOOL_ACTION_SIGNING_SECRET=<random, generated on the VM>
-PAPERCLIP_PUBLIC_URL=http://10.0.0.0:3100
+PAPERCLIP_PUBLIC_URL=http://<your-vm-address>:3100
 PAPERCLIP_DEPLOYMENT_MODE=authenticated
 PAPERCLIP_DEPLOYMENT_EXPOSURE=private
 PAPERCLIP_AUTH_BASE_URL_MODE=explicit
@@ -122,7 +122,7 @@ docker compose logs -f server      # Ctrl-c stops watching, not the server
 
 It keeps its data in the shared Postgres (the `paperclip` database) and its files in the
 `paperclip-data` volume, and it comes back up after a reboot like the rest of the stack. It
-listens on **`10.0.0.0:3100` only**: the home network, never `0.0.0.0`, never a router port
+listens on **`<your-vm-address>:3100` only**: the home network, never `0.0.0.0`, never a router port
 forward. It gets only its own settings from `.env`, so it never sees the publish token or the API
 keys.
 
@@ -130,7 +130,7 @@ keys.
 
 From any browser **on your home network**:
 
-> **http://10.0.0.0:3100**
+> **http://<your-vm-address>:3100**
 
 Use exactly that address. Login only works at the address in `PAPERCLIP_PUBLIC_URL`, so
 `localhost`, an SSH tunnel or the VM's hostname will load the page but fail to sign you in.
@@ -159,14 +159,14 @@ cd ~/CyberPulse-AI
 docker compose exec server pnpm paperclipai auth bootstrap-ceo
 ```
 
-Check that it worked: `curl -s http://10.0.0.0:3100/api/health` no longer says
+Check that it worked: `curl -s http://<your-vm-address>:3100/api/health` no longer says
 `"bootstrapStatus":"bootstrap_pending"`.
 
 ## 4. 🔴 Harden it — the six toggles (runbook Part 6)
 
 | Check | Where | Set it to |
 |---|---|---|
-| **Require board approval for new hires** | http://10.0.0.0:3100/CYB/company/settings | **on** — it defaults to off, and agents can hire agents. ✅ on since 2026-10-02 |
+| **Require board approval for new hires** | http://<your-vm-address>:3100/CYB/company/settings | **on** — it defaults to off, and agents can hire agents. ✅ on since 2026-10-02 |
 | **Connection requests** | the same page, the agent-request settings | **Human only**, so only a person can answer an agent's request to use a connection. 🔴 Still unset on 2026-10-02 |
 | Sign-up | `.env` `PAPERCLIP_AUTH_DISABLE_SIGN_UP` | `true` (step 3) ✅ |
 | Secrets strict mode | `.env` `PAPERCLIP_SECRETS_STRICT_MODE` | `true` (step 0) ✅ |
@@ -197,9 +197,9 @@ instead (the agents are created at step 6, not in the wizard):
 
 | What | Page | What to do |
 |---|---|---|
-| Board approval | http://10.0.0.0:3100/CYB/company/settings | Turn on **Require board approval for new hires** (step 4) |
+| Board approval | http://<your-vm-address>:3100/CYB/company/settings | Turn on **Require board approval for new hires** (step 4) |
 | Short mission | the same page, **Description** | The first paragraph of the mission below |
-| Full mission | http://10.0.0.0:3100/CYB/goals | **New Goal**, title `CyberPulse charter`, level **Organization**, the whole text below as its description. This release keeps a company's mission as its organization goal |
+| Full mission | http://<your-vm-address>:3100/CYB/goals | **New Goal**, title `CyberPulse charter`, level **Organization**, the whole text below as its description. This release keeps a company's mission as its organization goal |
 | Monthly budget | the browser console, below | Company budget **US$12** |
 
 **The budget has no form in this release.** `/CYB/costs` now opens *Audit → Budgets*, which
@@ -377,8 +377,7 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
    in step 7.
 
 What the import cannot set:
-- **Nothing for the `http` agent.** SERAPH's wake needs no auth header
-  ([Stage 4](stage-4-paperclip.md#the-workers-ops-api)). Paperclip refuses to call a private
+- **Nothing for the `http` agent.** SERAPH's wake needs no auth header. Paperclip refuses to call a private
   address such as `http://worker:8700` unless the server's
   `PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST` lists it. `docker-compose.yml` sets that.
 - **Connection requests → Human only** (step 4). Set it by hand.
@@ -402,8 +401,7 @@ apart from the few minutes of each test in step 6.
    docker compose restart worker     # the code is mounted, so a restart loads it
    ```
 
-   Then try the wake, as in [Stage 4](stage-4-paperclip.md#the-workers-ops-api), with
-   `seraph/wake` and `{"job":"pipeline"}`. It answers `"ok": true` with four checks under
+   Then try the wake with `seraph/wake` and `{"job":"pipeline"}`. It answers `"ok": true` with four checks under
    `summary.checks`, or 503 with the failing ones named in `reason`. The old wakes, such as
    `link/wake`, now answer 404.
 2. 🔴 **Build the package and import it**, exactly as in the quick way above: **Company Settings →
@@ -476,7 +474,7 @@ apart from the few minutes of each test in step 6.
    If a test fails, leave that agent paused and tell Claude.
 7. **Leave everything paused.** All 8 agents and all 8 routines are paused now. **Resume nothing
    until you choose to.** When you do, start with MORPHEUS, DECKARD and RIPPERDOC, and the three
-   routines marked "now" in step 7, after [Stage 4's last row](stage-4-paperclip.md#whats-left-in-order).
+   routines marked "now" in step 7.
    The retired agents never come back: a terminated agent cannot be resumed.
 
 ### The manual way
@@ -599,7 +597,7 @@ tell Claude.
 | `docker compose up -d` sits at `Pulling` for minutes | The first download of the Paperclip image is 1.8 GB | Wait. It is slow, not stuck. Check with `docker compose ps -a`: if `db` and `worker` are gone too, start them on their own with `docker compose up -d --no-deps db worker` |
 | `server` stays `(unhealthy)` or keeps restarting | Usually the database: the login above, or the `paperclip` database was never created | `docker compose logs --tail 50 server` shows which |
 | `database "paperclip" does not exist` | Step 1's one-off `CREATE DATABASE` was skipped | Run it, then `docker compose restart server` |
-| `/api/health` warns `database_backup_missing` | Paperclip backs up its own database every 60 minutes (kept 7 days) into its `paperclip-data` volume; a fresh instance has none yet | Clears after the first hourly backup. Those copies sit on the same single disk, so they are not the real backup — [Stage 7](stage-7-hardening.md#backups--do-this-one-early) is |
+| `/api/health` warns `database_backup_missing` | Paperclip backs up its own database every 60 minutes (kept 7 days) into its `paperclip-data` volume; a fresh instance has none yet | Clears after the first hourly backup. Those copies sit on the same single disk, so they are not the real backup — see [backup and restore](../runbooks/backup-and-restore.md) |
 
 **Making the database match a new `POSTGRES_PASSWORD`.** This runs inside the db container and
 reads the password from its environment, so the value is never typed or shown:
@@ -629,5 +627,5 @@ sudo rm -rf /root/.paperclip
 
 ---
 
-[← Stage 4 — overview](stage-4-paperclip.md) · [Wiki home](README.md) ·
+[Wiki home](README.md) ·
 **Next:** [4b — The crew →](stage-4b-the-crew.md)

@@ -278,7 +278,7 @@ Neither appeared in the source prompts.
                                │
                      ┌─────────┴──────────┐
                      │     PAPERCLIP      │  control plane: agents, goals,
-                     │ 10.0.0.0:3100│  issues, delegation, heartbeats,
+                     │  LAN address :3100 │  issues, delegation, heartbeats,
                      └─────────┬──────────┘  budgets, approvals, audit
                                │ agent API key / http+process adapters
         ┌──────────────────────┼──────────────────────┐
@@ -1395,7 +1395,7 @@ further notification channels, failure-injection test suite, threat model review
   marker written last. PBS and `vzdump` are the owner's, on the Proxmox host, with a target off
   the single disk.
 - `ops/restore.sh rehearse` restores into a throwaway Postgres of the same image, with no
-  network, and compares every row count with the manifest. Rehearsed on the VM on 2026-10-03:
+  network, and compares every row count with the manifest. Rehearsed on 2026-10-03:
   `cyber_intel` 43 tables and 44,084 rows, `paperclip` 215 tables and 2,153 rows, all matched.
   `restore.sh fresh` rebuilds a new VM, and refuses unless both databases are empty and the
   Paperclip server is stopped.

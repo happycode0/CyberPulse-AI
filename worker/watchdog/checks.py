@@ -10,7 +10,7 @@ are, not cleared because nothing was seen.
 Titles and evidence are our own words and figures. A feed's last error is the only text from
 outside, and the site already publishes it (source-health.json).
 
-The thresholds were set against what the VM showed on 2026-10-03. A fast run brings about 90
+The thresholds were set against what the production VM showed on 2026-10-03. A fast run brings about 90
 items and a normal run about 320, nearly all duplicates. Fresh events are what volume is
 judged on, because a new source's back catalogue arrives as thousands of old events at once.
 
@@ -62,7 +62,7 @@ ZERO_SPAN = timedelta(minutes=30)
 # About how long a fast source fails before it is an incident.
 FAILING_SPAN = timedelta(hours=1)
 # How often the Pages workflow rebuilds the site from the data branch. It is the owner's file
-# (.github/workflows/pages.yml); docs/vm200-runbook.md gives the hourly schedule to set.
+# (.github/workflows/pages.yml), set to match the FAST lane's cadence.
 PAGES_INTERVAL = timedelta(hours=1)
 
 

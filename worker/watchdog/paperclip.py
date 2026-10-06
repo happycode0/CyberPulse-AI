@@ -1,7 +1,7 @@
 """Paperclip, from the watchdog's side: the Incident routine's webhook, and whether the server
 answers at all.
 
-The routine is the owner's (docs/wiki/stage-6-self-healing.md). Its webhook trigger signs with
+The routine is the owner's (docs/runbooks/watchdog-incidents.md). Its webhook trigger signs with
 a bearer secret that Paperclip shows once, and the owner puts that and the trigger's URL in the
 worker's environment. A fire opens TELETRAAN's issue, or joins the one already open
 (`coalesce_if_active`). What it carries is an incident's id, kind, subject, severity and our

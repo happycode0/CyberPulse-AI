@@ -1,7 +1,6 @@
 # Watchdog incidents
 
-[Runbooks](README.md) · [Stage 6 — the watchdog](../wiki/stage-6-self-healing.md#the-watchdog) ·
-[Threat model](../threat-model.md)
+[Runbooks](README.md) · [Threat model](../threat-model.md)
 
 The watchdog checks the system every five minutes, at 2, 7, 12 … minutes past the hour (UTC). A
 fault it sees opens an **incident**: a kind, and a subject such as a lane, a source or a job. High
@@ -323,9 +322,9 @@ ls -l .env
 **Fix.**
 
 - **"secret scan cannot read /app/.env":** the worker cannot read `.env`, so it cannot know what
-  to look for. `ls -l .env` should show `-rw-------` and owner `deploy-user`. If someone edited it with
-  `sudo` and it now belongs to root, `sudo chown deploy-user:deploy-user .env`, then
-  `docker compose up -d --force-recreate worker` at a safe minute.
+  to look for. `ls -l .env` should show `-rw-------` and the deploy user as owner. If someone
+  edited it with `sudo` and it now belongs to root, `sudo chown <deploy-user>:<deploy-user> .env`,
+  then `docker compose up -d --force-recreate worker` at a safe minute.
 - **A schema failure after a merge:** pin the last good commit, then fix the builder or the schema
   by pull request.
 - **The scan found a secret pattern in the data:** find which event carries it. If it is **one of

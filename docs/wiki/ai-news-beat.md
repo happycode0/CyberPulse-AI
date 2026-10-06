@@ -1,9 +1,9 @@
 # The AI news beat
 
-[Wiki home](README.md) · [Stage 5 — Full crew](stage-5-full-crew.md) ·
-Plan: [PLAN.md §5, data model](../../PLAN.md#5-data-model) and [§7, AI layer](../../PLAN.md#7-ai-layer)
+[Wiki home](README.md) ·
+Design: [PLAN.md §5, data model](../../PLAN.md#5-data-model) and [§7, AI layer](../../PLAN.md#7-ai-layer)
 
-**Status: the worker's half is built.** Every event is on a beat, AI stories are ranked on their
+Every event is on a beat, AI stories are ranked on their
 own scale, and trends count AI subjects. The site's half is the one Events feed with a beat
 filter (change (b), B3).
 

@@ -17,8 +17,7 @@ Outcome = Literal["sent", "failed", "withheld"]
 # A failed send is tried again by later passes, up to this many attempts in all.
 MAX_ATTEMPTS = 3
 ERROR_MAX_CHARS = 200
-# The alert rule (docs/wiki/stage-5-full-crew.md): as relevant to Australia as the AU desk's
-# escalations.
+# The alert rule: as relevant to Australia as the AU desk's escalations.
 ALERT_AU_RELEVANCE = 0.7
 ALERT_CANDIDATES = 50
 # A change in an event's first hour is part of its arrival, which the alert covers.

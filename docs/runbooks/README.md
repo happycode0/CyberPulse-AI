@@ -1,7 +1,6 @@
 # Runbooks
 
-[Threat model](../threat-model.md) · [Wiki home](../wiki/README.md) ·
-[the VM runbook](../vm200-runbook.md)
+[Threat model](../threat-model.md) · [Wiki home](../wiki/README.md)
 
 What to do when something breaks. Every entry has the same four parts:
 
@@ -47,7 +46,7 @@ helper reads it inside the container, and every ops API answer passes the secret
 
 - **Never delete a volume.** No `docker compose down` with the volumes flag, no
   `docker volume rm`. The database lives in a volume.
-- **Never widen a port.** Paperclip stays on `10.0.0.0:3100`. Never bind anything to every
+- **Never widen a port.** Paperclip stays on the VM's own LAN address, port 3100. Never bind anything to every
   interface, and never forward a router port. Docker-published ports bypass `ufw`.
 - **No one-off SQL that changes production rows.** These pages only read the database. If a repair
   needs a change, take a backup first ([backup and restore](backup-and-restore.md)) and decide it

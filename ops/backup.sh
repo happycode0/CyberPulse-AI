@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Back up both databases, Paperclip's secrets folder and .env into a new directory that only
-# its owner can read (docs/wiki/stage-7-hardening.md#backups).
+# its owner can read (docs/runbooks/backup-and-restore.md).
 #
 #   ./ops/backup.sh [--databases-only] [--keep N] <target-dir>
 #

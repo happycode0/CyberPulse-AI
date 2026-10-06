@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Roll the worker back to an earlier commit of main, and forward again
-# (docs/wiki/stage-6-self-healing.md#rollback).
+# (docs/runbooks/deploy-and-rollback.md).
 #
 #   ./ops/rollback.sh status              what is running, against main's tip
 #   ./ops/rollback.sh pin <sha>           run an earlier commit of main now (on the VM)

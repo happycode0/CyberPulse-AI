@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Prove a backup made by ops/backup.sh restores, or restore it onto a rebuilt VM
-# (docs/wiki/stage-7-hardening.md#backups).
+# (docs/runbooks/backup-and-restore.md).
 #
 #   ./ops/restore.sh rehearse <backup-dir>     restore into a throwaway Postgres and compare
 #   ./ops/restore.sh fresh <backup-dir> --yes  restore into this checkout's empty compose db

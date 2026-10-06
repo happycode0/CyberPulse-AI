@@ -45,7 +45,9 @@ services:
     ports:
       # Home network only — never 0.0.0.0, never a router port forward. Docker-published
       # ports bypass the host firewall, so this address is the only thing limiting exposure.
-      - "10.0.0.0:3100:3100"
+      # Set PAPERCLIP_BIND_ADDRESS in .env to the VM's own LAN address (a DHCP reservation
+      # keeps it stable).
+      - "${PAPERCLIP_BIND_ADDRESS}:3100:3100"
     # Explicit list, not env_file: Paperclip gets its own settings and nothing else
     # (no publish token, no API keys).
     environment:

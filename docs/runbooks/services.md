@@ -1,7 +1,6 @@
 # Services: the database and Paperclip
 
-[Runbooks](README.md) · [Watchdog incidents](watchdog-incidents.md) ·
-[the VM runbook](../vm200-runbook.md)
+[Runbooks](README.md) · [Watchdog incidents](watchdog-incidents.md)
 
 Three containers run on the VM: `db` (Postgres, holding `cyber_intel` and `paperclip`), `worker`
 and `server` (Paperclip). Every entry assumes the `q` helper from
@@ -101,20 +100,19 @@ remove it with `docker image rm <its image id>` once the new one is running.
 
 **Never** `docker volume prune` or `docker system prune --volumes`. With the stack stopped, every
 volume counts as unused, the database included. Container logs are capped already (3 × 10 MB per
-container, vm200-runbook.md:29).
+container).
 
 **Stop and decide yourself** before deleting anything from the raw cache or the database. The raw
 cache holds the bytes each event came from, and old ones cannot be fetched again. If there is
-nothing left to take back, grow the disk on the Proxmox host
-([the VM runbook, Part 2](../vm200-runbook.md)).
+nothing left to take back, grow the disk on the host instead.
 
 ---
 
 ## Paperclip down
 
 **Symptom.** `paperclip-down` (high): "Paperclip has not answered 3 checks in a row". Or the
-dashboard at `http://10.0.0.0:3100` does not load. The crew is not told. The worker carries
-on.
+dashboard on the VM's LAN address, port 3100, does not load. The crew is not told. The worker
+carries on.
 
 **Check.**
 
@@ -122,9 +120,9 @@ on.
 docker compose ps -a server
 docker inspect -f '{{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} health={{.State.Health.Status}}' $(docker compose ps -aq server)
 docker compose logs server --since 30m --tail 100
-curl -sS -o /dev/null -w '%{http_code}\n' http://10.0.0.0:3100/api/health
-ss -ltn | grep 3100                # should show only 10.0.0.0:3100
-ip -4 addr show eth0 | grep inet   # the VM should still be 10.0.0.0
+curl -sS -o /dev/null -w '%{http_code}\n' http://<your-vm-lan-address>:3100/api/health
+ss -ltn | grep 3100                # should show only your VM's LAN address
+ip -4 addr show eth0 | grep inet   # the VM should still have the address you reserved
 free -h
 ```
 
@@ -144,8 +142,8 @@ answer below 500 counts as up.
 - **`database "paperclip" does not exist`:** the database was never created on this volume, as
   after a rebuild. [4a step 1](../wiki/stage-4a-paperclip-setup.md#1--start-paperclip) has the
   one-off command. After a restore, [Backup and restore](backup-and-restore.md) covers it.
-- **The VM's address changed:** the server binds to `10.0.0.0` only, so it cannot start on
-  another address. That is the safe failure. Put the address back with a DHCP reservation on the
+- **The VM's address changed:** the server binds to one fixed LAN address only, so it cannot start
+  on another. That is the safe failure. Put the address back with a DHCP reservation on the
   router. **Never** change the `ports:` line to `0.0.0.0` or forward a router port to get it back.
 - **It answers but is stuck, or `oom=true`:** restart it. An agent run in progress is cut off, so
   check the agents' pages first if Paperclip still loads. After a change to `.env`, recreate it

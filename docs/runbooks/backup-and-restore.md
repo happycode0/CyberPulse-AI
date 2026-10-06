@@ -1,7 +1,6 @@
 # Backup and restore
 
-[Runbooks](README.md) · [Stage 7, Backups](../wiki/stage-7-hardening.md#backups--do-this-one-early) ·
-[Threat model, B8](../threat-model.md#b8-backups-on-a-single-disk-host)
+[Runbooks](README.md) · [Threat model, B8](../threat-model.md#b8-backups-on-a-single-disk-host)
 
 The Proxmox host has one disk. A backup on that disk dies with it, so only an **off-host target**
 counts: a NAS, a USB disk, or a Proxmox Backup Server. There are three kinds of copy:
@@ -22,7 +21,7 @@ build copies it.
 ## Take a backup
 
 **What it writes.** Each run makes `<target>/cyberpulse-<UTC time>/`, such as
-`cyberpulse-20261003T021000Z/`, readable by `deploy-user` only:
+`cyberpulse-20261003T021000Z/`, readable by `the deploy user` only:
 
 | File | What |
 |---|---|
@@ -73,7 +72,7 @@ Never `cat` the backup's `env`. It is `.env`.
 
 ## Schedule it
 
-As `deploy-user`, `crontab -e`, and add one line. It runs at 02:10 by the VM's clock:
+As `the deploy user`, `crontab -e`, and add one line. It runs at 02:10 by the VM's clock:
 
 ```cron
 10 2 * * * cd ~/CyberPulse-AI && mountpoint -q /mnt/backup && ./ops/backup.sh --keep 14 /mnt/backup >> ~/backup.log 2>&1
@@ -90,7 +89,7 @@ No new `complete:` line means the target was not mounted or the run failed.
 
 **On the Proxmox host,** add the `vzdump` job too: **Datacenter → Backup → Add**, the VM, mode
 **snapshot**, storage the off-host target, retention `keep-daily=7,keep-weekly=4,keep-monthly=3`,
-**Repeat missed** on ([the VM runbook](../vm200-runbook.md), Part 7).
+**Repeat missed** on.
 
 Once a scheduled backup has run and one rehearsal has passed, delete the loose copy of `.env` left
 from the sign-up change: `rm ~/env-backup-20261002-signup`.
@@ -123,23 +122,23 @@ the one before it, and find out why before you rely on any of them.
 
 ## Restore onto a rebuilt VM
 
-**When.** the VM or its disk is lost. If there is a good `vzdump` on the off-host target, restoring
-the whole VM in Proxmox is quicker and brings back everything, the raw cache included. This is the
-way when there is no `vzdump`, or to rehearse on a scratch VM.
+**When.** The VM or its disk is lost. If there is a good `vzdump` on the off-host target, restoring
+the whole VM is quicker and brings back everything, the raw cache included. This is the way when
+there is no `vzdump`, or to rehearse on a scratch VM.
 
 `ops/restore.sh fresh` only restores into **empty** databases, so it can never overwrite one.
 
-1. **Build the VM:** [the VM runbook](../vm200-runbook.md), Parts 1 to 3: the VM, its disk,
-   Docker, and the clone of the repository. Skip Part 4: `.env` comes from the backup. To replace
-   the VM, give the new VM the same address, `10.0.0.0`, with a DHCP reservation. The
-   server binds to that address only and does not start on another.
+1. **Build a replacement VM:** a fresh Debian host, Docker Engine with the compose plugin, and a
+   clone of this repository. `.env` comes from the backup, not from scratch. Give the new VM the
+   same LAN address as the old one (a DHCP reservation keeps it stable) — the server binds to that
+   one address only and refuses to start on another.
 2. **Mount the target, and put `.env` in place** from the backup:
 
    ```bash
    cd ~/CyberPulse-AI
    d=/mnt/backup/cyberpulse-20261003T021000Z      # the newest complete one
    install -m 600 "$d/env" .env
-   ls -l .env                                      # -rw------- deploy-user
+   ls -l .env                                      # -rw------- (owner-readable only)
    docker compose config -q
    ```
 
@@ -173,7 +172,7 @@ way when there is no `vzdump`, or to rehearse on a scratch VM.
    docker compose logs -f worker      # the next run logs "done: ok=" and "published"
    ```
 
-7. **Check:** sign in at `http://10.0.0.0:3100` with your own account, and see the agents as
+7. **Check:** sign in to Paperclip on the VM's LAN address, port 3100, with your own account, and see the agents as
    they were, paused ones still paused. `ops /ops/incidents` answers. The site updates after the
    next run.
 

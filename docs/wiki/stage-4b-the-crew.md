@@ -451,8 +451,8 @@ NEVER: rewrite facts yourself; lower a severity without recording the reason.
 The worker does the searching and the testing. Each night at 03:10 Sydney it runs up to 30
 Tavily searches (`config/discovery.yaml`) and records each unregistered site the results name.
 TACHIKOMA's routine runs at 03:30, after the search, so it reads that night's finds.
-Every 4 hours SERAPH's gate, also in the worker, looks for each site's feed and probes it
-([Stage 5](stage-5-full-crew.md#source-discovery)). TACHIKOMA reads what was found and proposes
+Every 4 hours SERAPH's gate, also in the worker, looks for each site's feed and probes it.
+TACHIKOMA reads what was found and proposes
 sites the worker can't find by itself, through the ops API.
 
 ```text
@@ -507,7 +507,7 @@ the open web).
 | Adapter · Model | `opencode_local` · `openrouter/qwen/qwen3.8-flash` — the AUDIT model, **a different vendor from WHEELJACK** |
 | Budget · Max daily runs | US$1.00 · 12 |
 | Environment | No repository token: the repository is public, so it reads pull requests without one. The ops API token every agent inherits. Like every `opencode_local` agent it also runs with the server container's environment: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
-| Wakes on | Routine *Incident*, which the worker's watchdog fires when it opens a high or critical incident ([Stage 6](stage-6-self-healing.md#the-incident-routine)); a pull request opened by WHEELJACK. The checks cost nothing; the model only diagnoses and verifies |
+| Wakes on | Routine *Incident*, which the worker's watchdog fires when it opens a high or critical incident; a pull request opened by WHEELJACK. The checks cost nothing; the model only diagnoses and verifies |
 | Summary | Diagnoses each incident the worker's watchdog opens and hands the fix to its owner, then checks every code fix WHEELJACK writes, on another vendor's model. |
 
 TELETRAAN took over TRON's job of checking WHEELJACK's fixes. So it asks for a fix and then
@@ -603,7 +603,7 @@ stage, and polls the key's remaining limit to set the degradation tier **before*
 spent. Each night at 03:20 Sydney it reads OpenRouter's model list, records what changed and
 puts every ladder model through the price guard again. On Sundays at 03:40 it runs the gauntlet:
 each tier's default and up to two challengers answer the golden set, for at most US$0.08 a run
-and US$0.25 a month ([Stage 5](stage-5-full-crew.md#model-scout)). RIPPERDOC reads the results
+and US$0.25 a month. RIPPERDOC reads the results
 and raises what the worker proposes.
 
 RIPPERDOC raises the `[MODEL]` proposals, so it never approves them. The cost figures on a
@@ -677,8 +677,7 @@ worker, which does the job in Python. It is in Paperclip so the whole crew is on
 with one audit log and one place to pause anything. It does the work of four old agents: ground
 truth (LIBRARIAN), source checks (SERAPH), correlation (PROWL) and publishing (LINK).
 
-**Shared `http` settings**. The worker's ops API answers them
-([Stage 4](stage-4-paperclip.md#the-workers-ops-api)):
+**Shared `http` settings**. The worker's ops API answers them:
 
 | Field | Value |
 |---|---|
@@ -693,7 +692,7 @@ truth (LIBRARIAN), source checks (SERAPH), correlation (PROWL) and publishing (L
 |---|---|
 | Name / Title · Role | `SERAPH` / `Collector` · DevOps · reports to TELETRAAN |
 | Payload template | `{"job": "pipeline"}` |
-| Wakes on | The worker's own schedule. Collection, the source gate, ground truth and publishing all run in the worker, **already on the VM today**. In Paperclip a wake (an issue assigned to SERAPH) only asks whether all four are healthy |
+| Wakes on | The worker's own schedule. Collection, the source gate, ground truth and publishing all run in the worker, independently of Paperclip. In Paperclip a wake (an issue assigned to SERAPH) only asks whether all four are healthy |
 | Does | One answer for four checks, each reported on its own in the reply. **Ground truth**: CISA KEV, EPSS and the CVE.org record (CVSS in the order CNA → CISA-ADP → NVD). **Source checks**: every registered source's health and lifecycle, stale-but-200 feeds caught by the age of their newest item, and the gate for discovered sites (6 healthy probes in a row to activate, 3 failures in a row to reject, retired after 21 days with no healthy fetch). **Correlation**: one event or many, by URL → GUID → title → trigram + entities → date. **Publishing**: builds `data/*.json`, validates against the schemas and **fails closed**, runs the secret scan before every push, pushes the `data` branch and checks Pages deployed |
 | Never | Lets a model author a CVSS score, KEV status or technique ID; promotes a source on a single successful fetch; treats title similarity alone as identity, or syndicated copies as independent confirmation; publishes unvalidated data, raw article bodies, or anything that trips the secret scan |
 | Summary | The worker's own jobs on the org chart: ground truth, source checks, correlation and publishing, all in code. It runs no model and spends nothing. |

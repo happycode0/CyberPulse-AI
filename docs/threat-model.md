@@ -1,7 +1,6 @@
 # Threat model
 
-[Runbooks](runbooks/README.md) · [Wiki home](wiki/README.md) ·
-[Stage 7 — Hardening](wiki/stage-7-hardening.md)
+[Runbooks](runbooks/README.md) · [Wiki home](wiki/README.md)
 
 **Reviewed 2026-10-03 against `main` at `13ecc2c9` (Stage 6 merged).** This page covers what the
 code and the VM actually do, not what the plan meant them to do. Where the two differ, it says so.
@@ -22,7 +21,7 @@ and Telegram as services.
   feeds, registers, the open web (untrusted)
         │
         ▼
-  ┌────────────── the VM (Debian, docker compose; one 94 GB disk on the host) ─────────────┐
+  ┌────────────── the VM (Debian, docker compose; one disk on the host) ───────────────────┐
   │                                                                                        │
   │  worker ── reads all of .env, mounts the checkout read-write                            │
   │    │  ├──► OpenRouter, Tavily, NVD (API keys)                                           │
@@ -31,7 +30,7 @@ and Telegram as services.
   │    │                                                                                    │
   │    │ :8700 ops API, compose network only (ops token; wakes need none)                   │
   │    ▼                                                                                    │
-  │  server (Paperclip) ── published on 10.0.0.0:3100 only ◄── the home LAN           │
+  │  server (Paperclip) ── published on the VM's LAN address, port 3100 ◄── the home LAN    │
   │    └─ 11 opencode_local agents run inside this container, with its environment          │
   │                                                                                        │
   │  db (Postgres 17): cyber_intel, paperclip. One login, `cyberpulse`, a superuser,        │
@@ -54,7 +53,7 @@ and Telegram as services.
 | Paperclip's state | The `paperclip` database, the `paperclip-data` volume and its secrets folder | Agents, issues, approvals, budgets, and the OpenRouter connection the agents use |
 | Money | The OpenRouter key, US$20 a month hard limit | Shared by the worker and every AI agent |
 | Credentials | `.env` on the VM (mode 600), every backup, Paperclip's stored secrets | [Below](#credentials-names-only) |
-| The VM | Login `deploy-user`: key-only, in the `docker` group, passwordless sudo (vm200-runbook.md:26) | `deploy-user` is root in practice. Whatever runs as `deploy-user` owns everything above |
+| The VM | Login as a dedicated deploy user: key-only, in the `docker` group, passwordless sudo | That user is root in practice. Whatever runs as it owns everything above |
 
 ### Credentials (names only)
 
@@ -70,7 +69,7 @@ and Telegram as services.
 | `PAPERCLIP_INCIDENT_WEBHOOK_URL`, `_SECRET` | worker | Firing the Incident routine, which opens a TELETRAAN issue |
 | `BETTER_AUTH_SECRET`, `PAPERCLIP_AGENT_JWT_SECRET`, `PAPERCLIP_TOOL_ACTION_SIGNING_SECRET` | server (docker-compose.yml:56-58); the worker through `env_file` | Signing Paperclip's sessions, agent tokens and tool actions |
 | Paperclip's secrets folder | `/paperclip/instances/default/secrets`, inside `HOME=/paperclip` | The keys Paperclip signs and encrypts with |
-| SSH key `cyberpulse_vm_ed25519` | The WSL box | `deploy-user` on the VM |
+| SSH key `cyberpulse_vm_ed25519` | The WSL box | The deploy user on the VM |
 
 The worker reads the whole `.env` (docker-compose.yml:21), so it holds every credential in this
 table, Paperclip's included. The server gets an explicit list (docker-compose.yml:51-73).
@@ -107,11 +106,11 @@ Every feed, register and page the worker reads is someone else's text. Some of i
 | T | Prompt injection: text an agent reads steers the agent | What an agent writes back is checked as hostile: follow-up reports (worker/pipeline/followup.py:1-20) and source proposals (worker/discovery/gate.py). **Nothing in this repo limits what an `opencode_local` agent can run.** It can run a shell inside the server container: [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token) |
 | E | A URL from the open web reaches the private network (SSRF) | Discovered URLs pass a guard: https on port 443, a host name that resolves to public addresses only, each redirect checked, TLS verified (worker/discovery/guard.py:1-10) |
 | D | A huge or endless response | Discovered sites: the body is capped as it arrives, after decompression (guard.py:9-10, 29). Curated sources: 30-second timeouts, but the whole body is read before the 32 MiB cap applies (worker/collectors/http.py:126-146), and a gzip body is unpacked in full first. The worker has no memory limit in compose |
-| E | A parser bug gives code execution in the worker | Parsing runs in the worker, which holds every credential and mounts the checkout read-write (docker-compose.yml:21, 26). The container user is UID 1000 (Dockerfile.worker:4, 30). If `deploy-user` is UID 1000 too, as on a default Debian install, the container can change the checkout's scripts and `.git/hooks`, and you run those later as `deploy-user` |
+| E | A parser bug gives code execution in the worker | Parsing runs in the worker, which holds every credential and mounts the checkout read-write (docker-compose.yml:21, 26). The container user is UID 1000 (Dockerfile.worker:4, 30). If the deploy user is UID 1000 too, as on a default Debian install, the container can change the checkout's scripts and `.git/hooks`, and you run those later as that user |
 
 **Residual risk: medium,** almost all of it from the agents in B5 and the read-write mount. Prompt
 injection into enrichment is contained. **You:** check `id -u` on the VM. If it prints 1000, the
-checkout mount is a path from the worker to `deploy-user`. Do not run `git` hooks you did not write:
+checkout mount is a path from the worker to the deploy user. Do not run `git` hooks you did not write:
 `ls .git/hooks` should show only the `*.sample` files. For the lead: mount the checkout read-only
 except for `data/`, and stream the collector's body with a cap, as the discovery guard does.
 
@@ -220,12 +219,12 @@ as well.
 
 ### B6. WHEELJACK to GitHub (engineer token and branch protection)
 
-Not live yet: WHEELJACK is paused, TELETRAAN's pull request checks wait for Stage 6
-(stage-4b-the-crew.md:40, 46), and the token is still to be made (stage-6-self-healing.md:31).
+Not live yet: WHEELJACK has no GitHub connection configured, TELETRAAN's pull request checks are
+not wired up, and the engineer token is still to be made.
 
 | | Threat | Control (where) |
 |---|---|---|
-| E | The token pushes to `main` without review | Branch protection on `main`, still to be set (stage-6-self-healing.md:32). **A fine-grained token acts as your own account.** GitHub does not let a pull request's author approve it, and WHEELJACK's pull requests would be yours. So a required review either blocks every one of them, or you merge by bypassing the rule, and a rule you can bypass the token can bypass too |
+| E | The token pushes to `main` without review | Branch protection on `main`, still to be set. **A fine-grained token acts as your own account.** GitHub does not let a pull request's author approve it, and WHEELJACK's pull requests would be yours. So a required review either blocks every one of them, or you merge by bypassing the rule, and a rule you can bypass the token can bypass too |
 | T | The token rewrites `data` or other branches | Contents write covers every branch the rules do not protect, `data` included |
 | T | A fix that hides a backdoor | TELETRAAN reviews it on a different model vendor, and you merge. No CI runs the tests on a pull request (.github/workflows/ holds only pages.yml), so there is no status check to require. TELETRAAN runs the tests itself, inside the server container: a pull request's code runs there, with the environment in B5, before you have seen it |
 | T | A dependency changes under a merged fix | requirements.txt sets lower bounds only, with no lock file or hashes. A rebuild takes whatever PyPI has that day |
@@ -245,10 +244,10 @@ push, no deletion. Fix B5 first, because TELETRAAN runs pull request code inside
 
 | | Threat | Control (where) |
 |---|---|---|
-| S, I | Someone on the home network reads or replays a Paperclip login | Paperclip is published on `10.0.0.0:3100` only (docker-compose.yml:45-48), in `authenticated` and `private` mode, with sign-up off (vm200-runbook.md:590-594). It is plain HTTP, so passwords and session cookies cross the LAN unencrypted |
-| E | Another device joins the company | **Connection requests → Human only** is still unset (vm200-runbook.md:611) |
+| S, I | Someone on the home network reads or replays a Paperclip login | Paperclip is published on the VM's LAN address only (docker-compose.yml:45-48), in `authenticated` and `private` mode, with sign-up off. It is plain HTTP, so passwords and session cookies cross the LAN unencrypted |
+| E | Another device joins the company | **Connection requests → Human only** is still unset |
 | E | A port is opened wider than meant | Published Docker ports bypass `ufw`, so the bind address is the only limit. The worker and db publish none (docker-compose.yml:28-29). If the VM's DHCP address changes, the bind fails and `server` stops: it fails closed, it does not widen |
-| E | SSH | Key-only as `deploy-user`, who has passwordless sudo and the docker group (vm200-runbook.md:26). The key lives on the WSL box. The laptop's own `.env` on `/mnt/c` is world-readable, but it is not the VM's: the VM's credentials were made fresh (vm200-runbook.md:224-229) |
+| E | SSH | Key-only as the deploy user, who has passwordless sudo and the docker group. The key lives on the WSL box. The laptop's own `.env` is not the VM's: the VM's credentials were made fresh |
 
 The bind in compose is the truth: Paperclip listens on the VM's LAN address only.
 
@@ -256,21 +255,21 @@ The bind in compose is the truth: Paperclip listens on the VM's LAN address only
 **Connection requests → Human only** (company settings). Give the VM a DHCP reservation on the
 router. Keep smart devices and guests on a separate network. NetBird later, for access from
 outside, with nothing forwarded on the router. Check the bind now and then:
-`ss -ltn | grep 3100` should show only `10.0.0.0:3100`.
+`ss -ltn | grep 3100` should show only the VM's own LAN address.
 
 ### B8. Backups on a single-disk host
 
 | | Threat | Control (where) |
 |---|---|---|
-| D | The disk fails and takes everything | **Nothing yet.** The Proxmox host has one 94 GB disk (vm200-runbook.md:636). Paperclip's hourly dumps sit in the `paperclip-data` volume on that disk (stage-7-hardening.md:40-42) |
-| I | A backup leaks | Each `ops/backup.sh` backup holds `env` and Paperclip's secrets folder, so it is every credential in one place. It is written with `umask 077`. `~/env-backup-20261002-signup` is another full copy of `.env`, still on the VM (vm200-runbook.md:592) |
+| D | The disk fails and takes everything | **Nothing yet.** The host has a single disk. Paperclip's hourly dumps sit in the `paperclip-data` volume on that same disk |
+| I | A backup leaks | Each `ops/backup.sh` backup holds `env` and Paperclip's secrets folder, so it is every credential in one place. It is written with `umask 077` |
 | T | A backup is damaged or partial | `SHA256SUMS` and a `COMPLETE` marker, written last. `ops/restore.sh` checks both before it restores anything |
-| D | A backup that has never been restored | `ops/restore.sh rehearse` restores into a throwaway container and compares row counts. Rehearsed on the VM on 2026-10-03: both databases, every row count matched (stage-7-hardening.md) |
+| D | A backup that has never been restored | `ops/restore.sh rehearse` restores into a throwaway container and compares row counts. Rehearsed on 2026-10-03: both databases, every row count matched |
 | D | A scheduled backup fails, or lands on the VM's own disk, and nobody notices | **Nothing automatic.** The watchdog does not watch backups. `ops/backup.sh` refuses a target that does not exist, but an unmounted mount point exists |
 | I | Secrets outlive a rotation in the worker image | `.dockerignore` (since 2026-10-03) keeps `.env` out of new builds. Images built before it hold `.env` as it was then. `vzdump` of the VM carries those layers. A `docker save` or a push to a registry would carry them off the host |
 
 **Residual risk: high** until there is an off-host target and one rehearsed restore. **You:** set
-up the off-host target and the `vzdump` job (stage-7-hardening.md:22-23). Schedule `ops/backup.sh`.
+up the off-host target and the `vzdump` job. Schedule `ops/backup.sh`.
 Rehearse once a month. Keep the target private, and encrypted if you can: it holds every key.
 Delete `~/env-backup-20261002-signup` once a scheduled backup has run. Never `docker save` or push
 the worker image. After a rotation, remove old worker images with `docker image prune`.
@@ -300,7 +299,7 @@ first; rewriting history comes second, because a public push is copied within mi
 | 2 | No off-host backup (a restore was rehearsed on 2026-10-03, from the VM's own disk). Nothing alerts on a failed backup | **High** | Off-host target, `vzdump`, scheduled `ops/backup.sh` behind a `mountpoint` check, a weekly look at its log, monthly rehearsal | [B8](#b8-backups-on-a-single-disk-host) |
 | 3 | GitHub tokens act as your account, so branch protection and "a human merges" do not bind them. The publish token could force-push any unprotected branch; since 2026-10-03 worker/publish/push.py refuses any but `data` and `data-<name>` | **High** once WHEELJACK runs; medium now | A separate identity for WHEELJACK; a no-bypass ruleset on `main` | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection), [B4](#b4-worker-to-the-github-data-branch-publish-token) |
 | 4 | TELETRAAN runs pull request code in the server container, and no CI runs the tests | **High** once Stage 6 runs | Fix #1 first; CI on pull requests (lead) | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
-| 5 | The worker holds every secret and mounts the checkout read-write, a path to `deploy-user` and so to root | **Medium** | Check `id -u`; read-only mount except `data/` (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); docker-compose.yml:21, 26 |
+| 5 | The worker holds every secret and mounts the checkout read-write, a path to the deploy user and so to root | **Medium** | Check `id -u`; read-only mount except `data/` (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); docker-compose.yml:21, 26 |
 | 6 | The whole `data` branch becomes the site | **Medium** | Check what `/data/` serves; copy only `*.json` (lead) | [B4](#b4-worker-to-the-github-data-branch-publish-token); pages.yml:63-67 |
 | 7 | One ops token opens all three writes, and every agent holds it | **Medium** | A token per role (lead) | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); ops_api.py:641-655 |
 | 8 | The OpenRouter key's hard limit is the last spend stop, and the agents hold the same key. `cost-anomaly` counts only the worker's calls | **Medium** (at most US$20 a month) | Never raise the limit to clear a symptom; look at the key's usage on OpenRouter weekly; rotate on unexpected spend | [B3](#b3-worker-to-openrouter-and-tavily) |

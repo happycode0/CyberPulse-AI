@@ -1,7 +1,6 @@
 # Deploy and rollback
 
-[Runbooks](README.md) · [Stage 6, Rollback](../wiki/stage-6-self-healing.md#rollback) ·
-[ops/rollback.sh](../../ops/rollback.sh)
+[Runbooks](README.md) · [ops/rollback.sh](../../ops/rollback.sh)
 
 The worker runs whatever the VM's checkout holds: `~/CyberPulse-AI` is mounted at `/app`
 (docker-compose.yml:26). So a merge on GitHub changes nothing until you pull it on the VM, and
