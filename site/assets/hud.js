@@ -24,7 +24,8 @@ const SEVERITY_WEIGHT = { critical: 10, high: 6, medium: 3, low: 1, info: 0.5, u
 
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
 // ship with the site. Workload per agent comes from data/crew.json and is looked up by
-// callsign at render time; an agent crew.json does not list shows NOT PUBLISHED.
+// callsign at render time; an agent crew.json does not list shows RUNS IN PAPERCLIP, since
+// every such agent runs in Paperclip's control panel, which this data file never reads.
 // Each agent carries a `face`: the key of the one accessory that distinguishes its drawn
 // portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
 // and the names PLAN.md assigns permissions and budgets to. Eight agents since October 2026:
@@ -2128,7 +2129,7 @@ function botFace(agent, klass = 'bot') {
 function crewCard(agent, stat) {
   const status = stat?.status || 'not_active';
   const led = { active: 'ok', idle: 'idle', degraded: 'warn', not_active: 'idle' }[status] || 'idle';
-  const label = { active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED', not_active: 'NOT PUBLISHED' }[status] || status.toUpperCase();
+  const label = { active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED', not_active: 'RUNS IN PAPERCLIP' }[status] || status.toUpperCase();
   const fmtStat = (value, fmt = (v) => String(v)) => (value === null || value === undefined ? '—' : fmt(value));
   return h(
     'li',
@@ -2160,22 +2161,22 @@ function crewCard(agent, stat) {
         h('dt', { text: 'COST THIS MONTH' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
         h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat.last_active_at, formatSydney) }),
       )
-      : h('p', { class: 'crew-card__idle', text: 'No workload published for this agent this month.' }),
+      : h('p', { class: 'crew-card__idle', text: 'Runs in Paperclip’s control panel; the worker does not track its workload here.' }),
     h('span', { class: 'chip crew-card__runtime', text: agent.runtime }),
   );
 }
 
 // Renders the full eight-agent roster every time: personas ship with the site regardless
-// of data, and a card falls back to NOT PUBLISHED when data/crew.json has nothing for that
-// callsign. SERAPH and RIPPERDOC are counted from the worker's own rows; the others appear
-// only when the control panel reported them, and nothing is inferred for one that did not.
+// of data, and a card falls back to RUNS IN PAPERCLIP when data/crew.json has nothing for
+// that callsign. SERAPH and RIPPERDOC are counted from the worker's own rows; the others
+// run in Paperclip's control panel, which this file never reads, so nothing is inferred.
 export function renderCrew(crew) {
   const host = document.getElementById('crew-list');
   if (!host) return;
   clear(host);
   // Only callsigns on the roster count. A feed published before the crew went to eight still
   // names retired agents, and counting them read "5 of 8 agents publish" above eight cards
-  // that mostly said NOT PUBLISHED.
+  // that mostly said RUNS IN PAPERCLIP.
   const rostered = new Set(CREW.map((a) => a.callsign));
   const byCallsign = new Map(
     (crew?.agents || []).filter((a) => rostered.has(a.callsign)).map((a) => [a.callsign, a]),
@@ -3084,8 +3085,8 @@ export async function main() {
   // with the site. So they render whether or not data/ could be read. Gating the roster behind a
   // successful read was a defect, not a simplification — until the data branch existed, THE CREW
   // served an empty grid underneath a count that still read its full size. The roster's own
-  // fallbacks already say NOT PUBLISHED and "No workload published for this agent" per card, which
-  // is the honest statement; reaching them was the problem. SYSTEM and SOURCES take whatever was
+  // fallbacks already say RUNS IN PAPERCLIP and that its workload is not tracked here per card,
+  // which is the honest statement; reaching them was the problem. SYSTEM and SOURCES take whatever was
   // read, nulls included, and say what is missing.
   //
   // Everything below the guard is a reading of the feed, and each one would have to invent a
