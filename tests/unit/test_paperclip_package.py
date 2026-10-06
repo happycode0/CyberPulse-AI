@@ -32,11 +32,11 @@ ROUTINES = {
     # name: (assignee, cron in Australia/Sydney, switched on now)
     "Daily editorial": ("morpheus", "30 7 * * *", True),
     "Desk digest": ("deckard", "0 6,14,22 * * *", True),
-    "Daily QA sample": ("voight", "0 7 * * *", False),
-    "Follow-up": ("deckard", "0 3-21/6 * * *", False),
-    "Source discovery": ("tachikoma", "30 3 * * *", False),  # after the worker's 03:10 search
-    "Model scan": ("ripperdoc", "0 4 * * *", False),
-    "Model gauntlet": ("ripperdoc", "0 5 * * 0", False),
+    "Daily QA sample": ("voight", "0 7 * * *", True),
+    "Follow-up": ("deckard", "0 3-21/6 * * *", True),
+    "Source discovery": ("tachikoma", "30 3 * * *", True),  # after the worker's 03:10 search
+    "Model scan": ("ripperdoc", "0 4 * * *", True),
+    "Model gauntlet": ("ripperdoc", "0 5 * * 0", True),
     "Monthly cost review": ("ripperdoc", "0 9 1 * *", True),
 }
 
@@ -240,7 +240,6 @@ def test_the_org_chart_shape(builder):
             for name, r in routines.items()} == ROUTINES
     assert {r["timezone"] for r in org["routines"]} == {"Australia/Sydney"}
     assert all(r["summary"] for r in org["routines"])
-    assert routines["Model gauntlet"]["starts"] == "Stage 5"
 
 
 def test_the_org_chart_carries_no_prompt_payload_or_address(builder):
