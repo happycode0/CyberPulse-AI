@@ -37,31 +37,35 @@ intelligence — and says plainly that it's a snapshot of the last completed run
 
 ## Architecture
 
-```text
-                          OWNER  (private network only)
-                               │
-                     ┌─────────┴──────────┐
-                     │     PAPERCLIP      │  control plane: agents, goals,
-                     │   control plane    │  issues, delegation, budgets,
-                     └─────────┬──────────┘  approvals, audit
-                               │ agent API key / http+process adapters
-        ┌──────────────────────┼──────────────────────┐
-        ▼                      ▼                      ▼
-  INTELLIGENCE            ENGINEERING              OPERATIONS
-  MORPHEUS · DECKARD       WHEELJACK            TELETRAAN · RIPPERDOC
-  VOIGHT · TACHIKOMA                                  SERAPH
-        └──────────────────────┼──────────────────────┘
-                               ▼
-                    WORKER  (Python, no AI in the collection path)
-                    own scheduler: FAST hourly / NORMAL 4-hourly
-                               │
-             ┌─────────────────┼─────────────────┐
-             ▼                 ▼                 ▼
-        OpenRouter          Tavily         PostgreSQL + pgvector
-       (AI enrichment)    (discovery)
-                               │
-                               ▼
-             git → orphan `data` branch → GitHub Pages
+```mermaid
+flowchart TB
+    OWNER["OWNER<br/>private network only"]
+    PAPERCLIP["PAPERCLIP — control plane<br/>agents · goals · issues · delegation<br/>budgets · approvals · audit"]
+    OWNER --> PAPERCLIP
+
+    subgraph CREW[" "]
+        direction LR
+        A_INT["INTELLIGENCE<br/>MORPHEUS · DECKARD<br/>VOIGHT · TACHIKOMA"]
+        A_ENG["ENGINEERING<br/>WHEELJACK"]
+        A_OPS["OPERATIONS<br/>TELETRAAN · RIPPERDOC · SERAPH"]
+    end
+
+    PAPERCLIP -- "agent API key /<br/>http+process adapters" --> CREW
+
+    WORKER["WORKER — Python<br/>no AI in the collection path<br/>own scheduler: FAST hourly / NORMAL 4-hourly"]
+    CREW --> WORKER
+
+    subgraph DEPS[" "]
+        direction LR
+        OPENROUTER["OpenRouter<br/>AI enrichment"]
+        TAVILY["Tavily<br/>discovery"]
+        DB["PostgreSQL + pgvector<br/>state"]
+    end
+
+    WORKER --> DEPS
+
+    PAGES["git → orphan `data` branch → GitHub Pages"]
+    WORKER --> PAGES
 ```
 
 | | |
