@@ -18,6 +18,13 @@
 #   tier2_strong  minimax/minimax-m2.7 out: no route has structured outputs.
 #   code          xiaomi/mimo-v2.5 out: listed at $0.28, but every capable route is $2.00 or more.
 #   audit         qwen/qwen3.8-flash first: it passed TRON's smoke test; TELETRAAN runs it now.
+#
+# Changed on 2026-10-07, for cost: tier2_strong demoted mimo-v2.6-pro from default to last resort.
+#   Pro runs ~3x the price of flash on both legs ($0.435/$0.83 vs $0.14/$0.27) and tier2_strong
+#   fires on every event's severity judgment and MITRE mapping, not just a handful of agent
+#   wakeups — the biggest lever on the shared OpenRouter key. No golden-set comparison of pro vs
+#   flash on severity/MITRE accuracy exists yet (PLAN.md 13, open question 3). Re-promote pro if
+#   the next gauntlet shows a material accuracy gap on critical/KEV events.
 
 tiers:
   # Classification, entity extraction, tagging, source relevance. :free variants are withdrawn
@@ -35,9 +42,9 @@ tiers:
 
   # Severity, impact, complex correlation, evidence reconciliation, MITRE mapping, editorial pass.
   tier2_strong:
-    - xiaomi/mimo-v2.6-pro                    # $0.435 / $0.83 (bf16)
     - xiaomi/mimo-v2.6-flash                  # $0.14 / $0.27
     - qwen/qwen3.8-flash                      # $0.15 / $0.47
+    - xiaomi/mimo-v2.6-pro                    # $0.435 / $0.83 (bf16) — last resort, not default
 
   # WHEELJACK.
   code:
