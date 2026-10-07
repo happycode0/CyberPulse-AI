@@ -6,9 +6,7 @@
 
 `COLLECT → NORMALISE → CORRELATE → VERIFY → ENRICH → SCORE → PUBLISH → MONITOR → SELF-HEAL`
 
-**[Live site →](https://happycode0.github.io/CyberPulse-AI/)**
-
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/happycode0)
+**[Live site →](https://happycode0.github.io/CyberPulse-AI/)** &nbsp;·&nbsp; **☕ [Buy me a coffee →](https://buymeacoffee.com/happycode0)**
 
 </div>
 
@@ -161,6 +159,18 @@ regardless of any bug on this side. Inside that, the worker degrades progressive
 | < 20% | Free tier only, and only critical / high / known-exploited / developing |
 | Free daily cap hit | Falls through to the cheap paid tier |
 | Exhausted | Paid AI off; free tier and deterministic collection continue |
+
+### ☕ Support this project
+
+None of the above is free to run. The OpenRouter key behind the AI enrichment layer has a hard
+**US$20/month** cap, the Paperclip company budget on top of it is **US$12/month**, and that's
+split across all eight agents' own budgets — before counting the server crawling ~70 sources
+around the clock and the Postgres + pgvector instance holding every event. AI calls cost tokens;
+tokens cost money; this is a solo project, not a funded one.
+
+If CyberPulse-AI is useful to you, **[buying a coffee](https://buymeacoffee.com/happycode0)** —
+one-off or AU$1/month — goes straight toward keeping the compute running. Attach a feature idea
+or source request with your support and I'll try to build it.
 
 ## Secret hygiene
 
