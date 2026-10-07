@@ -8,6 +8,8 @@
 
 **[Live site →](https://happycode0.github.io/CyberPulse-AI/)**
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/happycode0)
+
 </div>
 
 ---
@@ -98,6 +100,49 @@ split.
 See [how the crew works together](docs/wiki/stage-4c-how-the-crew-works.md) for how work moves
 between them, and [the crew](docs/wiki/stage-4b-the-crew.md) for each agent's full configuration.
 
+MORPHEUS sits at the top as CEO and reports to no one but the owner: it decides what the crew
+covers, writes the daily intelligence report, and signs off on every model change. Below that,
+three small departments split the work. **Operations** (TELETRAAN, RIPPERDOC, SERAPH) keeps the
+lights on — incident triage, model cost control, and the zero-token collection pipeline that runs
+whether or not any agent is awake. **Intelligence** (DECKARD, VOIGHT, TACHIKOMA) does the editorial
+work — research, publication veto, source discovery. **Engineering** (WHEELJACK) fixes broken
+parsers on a branch and hands the diff to TELETRAAN, which checks it on a different model vendor
+before a human merges. Each box only has the budget and credentials its job needs — nobody can
+approve their own change.
+
+### Org chart
+
+```mermaid
+flowchart TB
+    MORPHEUS["🤖 MORPHEUS — CEO<br/>Approves model changes · daily report"]
+
+    subgraph OPS["OPERATIONS"]
+        direction TB
+        TELETRAAN["TELETRAAN — Operation<br/>Incident triage · checks WHEELJACK's fixes"]
+        RIPPERDOC["RIPPERDOC — Cheap<br/>Model scout · cost review"]
+        SERAPH["SERAPH — Collector<br/>Ground truth · zero tokens"]
+        TELETRAAN --> RIPPERDOC
+        TELETRAAN --> SERAPH
+    end
+
+    subgraph INT["INTELLIGENCE"]
+        direction TB
+        DECKARD["DECKARD — Researcher<br/>Beats · follow-ups"]
+        VOIGHT["VOIGHT — Publisher<br/>Editorial veto"]
+        TACHIKOMA["TACHIKOMA — Finder<br/>Source discovery"]
+    end
+
+    subgraph ENG["ENGINEERING"]
+        direction TB
+        WHEELJACK["WHEELJACK — Coder<br/>Branch fix + test"]
+    end
+
+    MORPHEUS --> OPS
+    MORPHEUS --> INT
+    MORPHEUS --> ENG
+    TELETRAAN -.checks.-> WHEELJACK
+```
+
 ---
 
 ## Cost control
@@ -129,25 +174,29 @@ about each.
 
 ---
 
-## Honest limitations
+## Work in progress
 
-Stated plainly, because an intelligence product that oversells itself is worthless:
+CyberPulse-AI runs for real every day, but it's still actively evolving — stated plainly, because
+an intelligence product that oversells itself is worthless:
 
-- **The public site is not live.** It shows the last completed collection run, labelled with its
-  timestamp. The FAST lane (critical and time-sensitive feeds) collects and publishes hourly; the
-  NORMAL lane (everything else) every 4 hours — across roughly 70 sources, with the live count and
-  each one's health on the site's own [Sources](https://happycode0.github.io/CyberPulse-AI/index.html?view=sources) page.
-- **AI severity and MITRE mappings are labelled as AI-suggested.** They are not official
-  attribution. CVSS, KEV status and CVE facts always come from authoritative sources, or are
-  recorded as `unknown`.
-- **Missing data is `unknown`, never "low".** An absent CVSS or EPSS score is common for a new
-  CVE and is not evidence of low risk.
-- **Coverage is incomplete by construction.** Some publishers block automated access or offer no
-  feed. Known gaps are tracked in `config/sources.yaml` with reasons.
-- **Self-healing is bounded.** Agents may repair parsers, adapters, transformations and tests. A
-  human approves every merge. A circuit breaker halts after repeated failed attempts.
-- **Summaries are original and short.** Articles are never reproduced. Every event links to its
-  sources.
+- **The public site is not live yet.** It shows the last completed collection run, labelled with
+  its timestamp. The FAST lane (critical and time-sensitive feeds) collects and publishes hourly;
+  the NORMAL lane (everything else) every 4 hours — across roughly 70 sources, with the live count
+  and each one's health on the site's own [Sources](https://happycode0.github.io/CyberPulse-AI/index.html?view=sources) page.
+  True live updates are on the roadmap.
+- **AI severity and MITRE mappings are labelled as AI-suggested**, not official attribution, while
+  the scoring prompts keep being tuned. CVSS, KEV status and CVE facts always come from
+  authoritative sources, or are recorded as `unknown`.
+- **Missing data is `unknown`, never "low"** — a deliberate choice, not a gap. An absent CVSS or
+  EPSS score is common for a new CVE and is not evidence of low risk.
+- **Coverage is still growing.** Some publishers block automated access or offer no feed. Known
+  gaps are tracked in `config/sources.yaml` with reasons, and TACHIKOMA keeps proposing new
+  sources to close them.
+- **Self-healing is bounded, and getting better at it.** Agents may repair parsers, adapters,
+  transformations and tests. A human approves every merge. A circuit breaker halts after repeated
+  failed attempts.
+- **Summaries are original and short**, by design. Articles are never reproduced. Every event
+  links to its sources.
 
 ---
 
