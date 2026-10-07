@@ -6,7 +6,8 @@
 
 `COLLECT → NORMALISE → CORRELATE → VERIFY → ENRICH → SCORE → PUBLISH → MONITOR → SELF-HEAL`
 
-**[Live site →](https://happycode0.github.io/CyberPulse-AI/)** &nbsp;·&nbsp; **☕ [Buy me a coffee →](https://buymeacoffee.com/happycode0)**
+**[Live site →](https://happycode0.github.io/CyberPulse-AI/)** &nbsp;·&nbsp;
+<a href="https://buymeacoffee.com/happycode0"><img src="site/assets/bmc-logo.png" alt="Buy Me a Coffee" height="32"></a>
 
 </div>
 
