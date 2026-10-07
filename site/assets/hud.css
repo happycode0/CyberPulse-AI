@@ -122,12 +122,18 @@ a:hover { color: var(--text-head); }
   .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 15px; letter-spacing: 0.05em; }
   .site-header__controls { gap: 6px; }
   .site-header__controls .btn { padding: 6px 9px; min-height: 30px; font-size: 11px; }
+  .site-header__controls .btn--coffee { padding: 0; }
+  .site-header__controls .btn--coffee img { height: 26px; }
 }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: 600 12px/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); background: var(--bg-surface); border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 12px; min-height: 34px; cursor: pointer; }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn[aria-pressed="true"], .btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
 .btn--small { padding: 6px 10px; min-height: 30px; font-size: 11.5px; }
+/* The Buy Me a Coffee logo is its own white badge; let it fill the button edge to edge and
+   clip it to the same radius instead of framing it with the dark chrome every other .btn gets. */
+.btn--coffee { padding: 0; overflow: hidden; background: #fff; }
+.btn--coffee img { display: block; height: 32px; width: auto; }
 /* A .btn that is a link needs its underline removed. */
 a.btn { text-decoration: none; }
 
