@@ -1,0 +1,229 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2025-11-28",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 2,
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0,
+    "unknown": 1,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 2
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004763",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-11-28T12:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2025-11-28T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ASD Statement regarding reporting by the Australian Financial Review on 27 and 28 November 2025",
+      "summary": "The Director-General of ASD, Ms Abigail Bradshaw CSC, has made all appropriate declarations, including during her previous tenure as Head of the Australian Cyber Security Centre (ACSC).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 3.2805847866149186e-47,
+        "prominence": 3.9094639560379975e-94
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ASD (Australian Signals Directorate))",
+          "names an Australian organisation (ACSC)",
+          "names Australia"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asd",
+          "url": "https://www.asd.gov.au/news/2025-11-28-asd-statement-regarding-reporting-australian-financial-review-27-and-28-november-2025",
+          "published": "2025-11-28T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-11-28T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ASD (Australian Signals Directorate)",
+          "sources": [
+            "asd"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 56,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by Australian Signals Directorate (authoritative)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000380",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-11-28T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2025-11-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-26829: OpenPLC ScadaBR OpenPLC ScadaBR Cross-site Scripting Vulnerability",
+      "summary": "OpenPLC ScadaBR contains a cross-site scripting vulnerability via system_settings.shtm.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.8703862179366643e-47,
+        "prominence": 2.3469000053677288e-94
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-26829",
+          "cvss": {
+            "score": 5.4,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.4805,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-11-28",
+            "due_date": "2025-12-19"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-26829 as exploited in the wild, added 2025-11-28, with US federal agencies due to fix it by 2025-12-19.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2021-26829 is rated 5.4 (medium) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2021-26829"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-26829 being exploited in the next 30 days at 48%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-26829"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-26829",
+          "published": "2025-11-28T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-11-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "medium severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

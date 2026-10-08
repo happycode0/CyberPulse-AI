@@ -1,0 +1,804 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2023-04-07",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 7,
+    "critical": 0,
+    "high": 4,
+    "medium": 0,
+    "low": 1,
+    "unknown": 2,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 7
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000914",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-27876: Veritas Backup Exec Agent Veritas Backup Exec Agent File Access Vulnerability",
+      "summary": "Veritas Backup Exec (BE) Agent contains a file access vulnerability that could allow an attacker to specially craft input parameters on a data management protocol command to access files on the BE Agent machine.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.1493503447155103e-192,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-27876",
+          "cvss": {
+            "score": 8.1,
+            "vector": "CVSS:3.1/AC:L/AV:N/A:N/C:H/I:H/PR:L/S:U/UI:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.13518,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-04-07",
+            "due_date": "2023-04-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-27876 as exploited in the wild, added 2023-04-07, with US federal agencies due to fix it by 2023-04-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2021-27876 is rated 8.1 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2021-27876"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-27876 being exploited in the next 30 days at 14%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-27876"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-27876",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000915",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-27877: Veritas Backup Exec Agent Veritas Backup Exec Agent Improper Authentication Vulnerability",
+      "summary": "Veritas Backup Exec (BE) Agent contains an improper authentication vulnerability that could allow an attacker unauthorized access to the BE Agent via SHA authentication scheme.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.1493503447155103e-192,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-27877",
+          "cvss": {
+            "score": 8.2,
+            "vector": "CVSS:3.1/AC:L/AV:N/A:N/C:H/I:L/PR:N/S:U/UI:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.6491,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-04-07",
+            "due_date": "2023-04-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-27877 as exploited in the wild, added 2023-04-07, with US federal agencies due to fix it by 2023-04-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2021-27877 is rated 8.2 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2021-27877"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-27877 being exploited in the next 30 days at 65%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-27877"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-27877",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000914"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000916",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2021-27878: Veritas Backup Exec Agent Veritas Backup Exec Agent Command Execution Vulnerability",
+      "summary": "Veritas Backup Exec (BE) Agent contains a command execution vulnerability that could allow an attacker to use a data management protocol command to execute a command on the BE Agent machine.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.1493503447155103e-192,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-27878",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AC:L/AV:N/A:H/C:H/I:H/PR:L/S:U/UI:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.23952,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-04-07",
+            "due_date": "2023-04-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-27878 as exploited in the wild, added 2023-04-07, with US federal agencies due to fix it by 2023-04-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2021-27878 is rated 8.8 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2021-27878"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-27878 being exploited in the next 30 days at 24%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-27878"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2021-27878",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000914"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000917",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2019-1388: Microsoft Windows Microsoft Windows Certificate Dialog Privilege Escalation Vulnerability",
+      "summary": "Microsoft Windows Certificate Dialog contains a privilege escalation vulnerability, allowing attackers to run processes in an elevated context.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.1493503447155103e-192,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2019-1388",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.08589,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-04-07",
+            "due_date": "2023-04-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2019-1388 as exploited in the wild, added 2023-04-07, with US federal agencies due to fix it by 2023-04-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2019-1388 is rated 7.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2019-1388"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2019-1388 being exploited in the next 30 days at 8.6%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2019-1388"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2019-1388",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000918",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2023-26083: Arm Mali Graphics Processing Unit (GPU) Arm Mali GPU Kernel Driver Information Disclosure Vulnerability",
+      "summary": "Arm Mali GPU Kernel Driver contains an information disclosure vulnerability that allows a non-privileged user to make valid GPU processing operations that expose sensitive kernel metadata.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.1493503447155103e-192,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2023-26083",
+          "cvss": {
+            "score": 3.3,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.01218,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2023-04-07",
+            "due_date": "2023-04-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2023-26083 as exploited in the wild, added 2023-04-07, with US federal agencies due to fix it by 2023-04-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2023-26083 is rated 3.3 (low) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2023-26083"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2023-26083 being exploited in the next 30 days at 1.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2023-26083"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2023-26083",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-007943",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Do's and Don'ts While Outsourcing IT services",
+      "summary": "Do's and Don'ts While Outsourcing IT services",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 4.3836169802135145e-193,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/business/dos-and-donts-while-outsourcing-it-services",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-007944",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2023-04-07T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2023-04-07T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How to Improve your Virtual Assistant's Productivity",
+      "summary": "How to Improve your Virtual Assistant's Productivity",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 4.3836169802135145e-193,
+        "prominence": 0.0
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/business/how-to-improve-your-virtual-assistants-productivity",
+          "published": "2023-04-07T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2023-04-07T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

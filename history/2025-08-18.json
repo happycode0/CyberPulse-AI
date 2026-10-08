@@ -1,0 +1,466 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2025-08-18",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 5,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 4,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 5
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000442",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-18T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2025-08-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-54948: Trend Micro Apex One Trend Micro Apex One OS Command Injection Vulnerability",
+      "summary": "Trend Micro Apex One Management Console (on-premise) contains an OS command injection vulnerability that could allow a pre-authenticated remote attacker to upload malicious code and execute commands on affected installations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.2747075474880281e-62,
+        "prominence": 4.6284441567441415e-125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-54948",
+          "cvss": {
+            "score": 9.4,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.23919,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-08-18",
+            "due_date": "2025-09-08"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-54948 as exploited in the wild, added 2025-08-18, with US federal agencies due to fix it by 2025-09-08.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-54948 is rated 9.4 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-54948"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-54948 being exploited in the next 30 days at 24%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-54948"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-54948",
+          "published": "2025-08-18T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004564",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-18T19:20:58Z",
+      "last_seen": "2026-10-07T04:00:00.139868Z",
+      "last_material_update": "2025-08-18T19:20:58Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Amazon Q Developer: Secrets Leaked via DNS and Prompt Injection",
+      "summary": "The next three posts will cover high severity vulnerabilities in the Amazon Q Developer VS Code Extension (Amazon Q Developer), which is a very popular coding agent, with over 1 million downloads. It is vulnerable to prompt injection from untrusted data and its security depends heavily on model behavior. At a high level Amazon Q Developer can leak sensitive information from a developer’s machine, e.g. API keys, to external servers via DNS requests. An adversary can also exploit this behavior during an indirect prompt injection attack.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.6199933121714613e-62,
+        "prominence": 4.6125437341168233e-125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/amazon-q-developer-data-exfil-via-dns/",
+          "published": "2025-08-18T19:20:58Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-18T19:20:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Embrace The Red (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-002902",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-18T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2025-08-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Q&A with DoorDash’s CPO, Mariana Garavaglia",
+      "summary": "Learn how DoorDash is scaling AI adoption to empower employees to build, learn, and innovate faster in a conversation with Chief People Officer Mariana Garavaglia.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.2250786993740968e-62,
+        "prominence": 2.6378010163723474e-125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/doordash-mariana-garavaglia",
+          "published": "2025-08-18T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003881",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-18T00:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2025-08-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From Zero to GPU: A Guide to Building and Scaling Production-Ready CUDA Kernels",
+      "summary": "From Zero to GPU: A Guide to Building and Scaling Production-Ready CUDA Kernels",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.2250786993740968e-62,
+        "prominence": 2.6378010163723474e-125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/kernel-builder",
+          "published": "2025-08-18T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003882",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-08-18T00:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2025-08-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "MCP for Research: How to Connect AI to Research Tools",
+      "summary": "MCP for Research: How to Connect AI to Research Tools",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.2250786993740968e-62,
+        "prominence": 2.6378010163723474e-125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/mcp-for-research",
+          "published": "2025-08-18T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-08-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    }
+  ]
+}

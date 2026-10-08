@@ -1,0 +1,504 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2025-05-05",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 5,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 4,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 5
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000506",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-05T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2025-05-05T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-3248: Langflow Langflow Langflow Missing Authentication Vulnerability",
+      "summary": "Langflow contains a missing authentication vulnerability in the /api/v1/validate/code endpoint that allows a remote, unauthenticated attacker to execute arbitrary code via crafted HTTP requests.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 2.0014087073382823e-78,
+        "prominence": 1.1409995772669468e-156
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-3248",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.99993,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-05-05",
+            "due_date": "2025-05-26"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-rvqx-wpfh-mfx7",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "PyPI",
+                  "name": "langflow",
+                  "fixed": [
+                    "1.3.0"
+                  ]
+                },
+                {
+                  "ecosystem": "PyPI",
+                  "name": "langflow-base",
+                  "fixed": [
+                    "0.3.0"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-rvqx-wpfh-mfx7"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-3248 as exploited in the wild, added 2025-05-05, with US federal agencies due to fix it by 2025-05-26.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-3248 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-3248"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-3248 being exploited in the next 30 days at 100%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-3248"
+          ]
+        },
+        {
+          "text": "A fix for langflow (PyPI) is published in 1.3.0, per GHSA-rvqx-wpfh-mfx7.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-rvqx-wpfh-mfx7"
+          ]
+        },
+        {
+          "text": "A fix for langflow-base (PyPI) is published in 0.3.0, per GHSA-rvqx-wpfh-mfx7.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-rvqx-wpfh-mfx7"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-3248",
+          "published": "2025-05-05T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-05T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002982",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-05T11:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2025-05-05T11:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Evolving OpenAI’s structure",
+      "summary": "An update from the OpenAI board on transitioning its for-profit entity to a Public Benefit Corporation, reinforcing its mission-driven structure under nonprofit oversight while enabling greater impact and long-term alignment with the public good.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.2546298738232064e-78,
+        "prominence": 8.934383040614872e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/evolving-our-structure",
+          "published": "2025-05-05T11:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-05T11:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004585",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-05T06:24:56Z",
+      "last_seen": "2026-10-07T04:00:00.139868Z",
+      "last_material_update": "2025-05-05T06:24:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How ChatGPT Remembers You: A Deep Dive into Its Memory and Chat History Features",
+      "summary": "Recently OpenAI added an additional memory feature called “chat history” , which allows ChatGPT to reference past conversations. The details of the implementation are not known. The documentation highlights that: “It uses this to learn about your interests and preferences, helping make future chats more personalized and relevant.” I decided to spend some time to figure out how it works. Update: Video Tutorial Added Based on the interest in this post, I’ve also created a video tutorial.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.1102023638627117e-78,
+        "prominence": 7.826404028915242e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2025/chatgpt-how-does-chat-history-memory-preferences-work/",
+          "published": "2025-05-05T06:24:56Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-05T06:24:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Embrace The Red (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-002983",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-05T05:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2025-05-05T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Lowe’s leverages AI to power home improvement retail",
+      "summary": "A conversation with Chandhu Nair, Senior Vice President of Data, AI, and Innovation.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.067504710225918e-78,
+        "prominence": 7.512890671356628e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/lowes-chandhu-nair",
+          "published": "2025-05-05T05:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-05T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-006635",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2025-05-05T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2025-05-05T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why Precision Fluid Handling Is Essential for Medical Tech",
+      "summary": "Why Precision Fluid Handling Is Essential for Medical Tech",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 7.633363694693881e-79,
+        "prominence": 1.0241084833749383e-157
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/technology/why-precision-fluid-handling-is-essential-for-medical-tech",
+          "published": "2025-05-05T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-05-05T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

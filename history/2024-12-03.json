@@ -1,0 +1,711 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2024-12-03",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 7,
+    "critical": 1,
+    "high": 2,
+    "medium": 0,
+    "low": 0,
+    "unknown": 4,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 7
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000606",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2024-11667: Zyxel Multiple Firewalls Zyxel Multiple Firewalls Path Traversal Vulnerability",
+      "summary": "Multiple Zyxel firewalls contain a path traversal vulnerability in the web management interface that could allow an attacker to download or upload files via a crafted URL.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.873014401278424e-101,
+        "prominence": 9.993005971371488e-203
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-11667",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02929,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2024-12-03",
+            "due_date": "2024-12-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2024-11667 as exploited in the wild, added 2024-12-03, with US federal agencies due to fix it by 2024-12-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2024-11667 is rated 7.5 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2024-11667"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2024-11667 being exploited in the next 30 days at 2.9%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2024-11667"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2024-11667",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000607",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2024-11680: ProjectSend ProjectSend ProjectSend Improper Authentication Vulnerability",
+      "summary": "ProjectSend contains an improper authentication vulnerability that allows a remote, unauthenticated attacker to enable unauthorized modification of the application's configuration via crafted HTTP requests to options.php. Successful exploitation allows attackers to create accounts, upload webshells, and embed malicious JavaScript.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.873014401278424e-101,
+        "prominence": 9.993005971371488e-203
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-11680",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.91697,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2024-12-03",
+            "due_date": "2024-12-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2024-11680 as exploited in the wild, added 2024-12-03, with US federal agencies due to fix it by 2024-12-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2024-11680 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2024-11680"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2024-11680 being exploited in the next 30 days at 92%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2024-11680"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2024-11680",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000608",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2023-45727: North Grid Proself North Grid Proself Improper Restriction of XML External Entity (XXE) Reference Vulnerability",
+      "summary": "North Grid Proself Enterprise/Standard, Gateway, and Mail Sanitize contain an improper restriction of XML External Entity (XXE) reference vulnerability, which could allow a remote, unauthenticated attacker to conduct an XXE attack.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.873014401278424e-101,
+        "prominence": 9.993005971371488e-203
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2023-45727",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.03542,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2024-12-03",
+            "due_date": "2024-12-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2023-45727 as exploited in the wild, added 2024-12-03, with US federal agencies due to fix it by 2024-12-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2023-45727 is rated 7.5 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2023-45727"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2023-45727 being exploited in the next 30 days at 3.5%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2023-45727"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2023-45727",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004037",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Investing in Performance: Fine-tune small models with LLM insights - a CFM case study",
+      "summary": "Investing in Performance: Fine-tune small models with LLM insights - a CFM case study",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.8000913630337433e-101,
+        "prominence": 5.695123548047983e-203
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/cfm-case-study",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-006800",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How Contact Center Software Platforms Improve Customer Experience",
+      "summary": "How Contact Center Software Platforms Improve Customer Experience",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 7.143668396132816e-102,
+        "prominence": 8.96926028159574e-204
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/misc/how-contact-center-software-platforms-improve-customer-experience",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-006801",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Government Launches New Cybersecurity Programs to Safeguard SMEs from Threats",
+      "summary": "Governments around the world are creating robust initiatives to protect small to medium-sized enterprises (SMEs) from the increasing threats of cyberattacks. Financial assistance, educational tools and joint efforts to bolster business cybersecurity resilience are part of the programs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 7.143668396132816e-102,
+        "prominence": 8.96926028159574e-204
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/cybersecurity/government-launches-new-cybersecurity-programs-to-safeguard-smes-from-threats",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)",
+          "government involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-006802",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2024-12-03T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2024-12-03T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why Travel Insurance Is a Must-Have for Your Next Trip?",
+      "summary": "Why Travel Insurance Is a Must-Have for Your Next Trip?",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 7.143668396132816e-102,
+        "prominence": 8.96926028159574e-204
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/misc/why-travel-insurance-is-a-must-have-for-your-next-trip",
+          "published": "2024-12-03T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2024-12-03T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

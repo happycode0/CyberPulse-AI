@@ -1,0 +1,5548 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2026-09-28",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 64,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 63,
+    "directly_reported_in_au": 7,
+    "pending_enrichment": 63
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001874",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-28T19:18:01Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-10-01T05:54:41Z",
+      "last_independent_confirmation": "2026-09-29T21:31:29Z",
+      "status": "monitoring",
+      "title": "Apple CoreGraphics PoC Emerges as WhatsApp PDF Checks Hint at Possible Delivery Path",
+      "summary": "Apple CoreGraphics flaw CVE-2026-86950 has a proof-of-concept that shows a malicious PDF with a crafted font can crash iPhones and Macs. The flaw is high severity and has been listed on the KEV.",
+      "why_it_matters": "The vulnerability has a CVSS score of 8.8 and is listed on the KEV, indicating it is a high-risk flaw that could be exploited in the wild. The PoC demonstrates that a crafted PDF can crash devices, potentially enabling further attacks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "research",
+        "news",
+        "advisory",
+        "analysis",
+        "zero-day"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.98125,
+        "novelty": 0.03472429231886366,
+        "prominence": 0.09964253737711787
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Apple"
+        ],
+        "products": [
+          "CoreGraphics",
+          "PDF",
+          "WhatsApp"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-86950",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.01242,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-29",
+            "due_date": "2026-10-02"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1204.002",
+          "name": "User Execution: Malicious File",
+          "confidence": 0.72,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn",
+            "sans_isc",
+            "cisa_kev",
+            "darkreading"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-86950 as exploited in the wild, added 2026-09-29, with US federal agencies due to fix it by 2026-10-02.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-86950 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-86950"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-86950 being exploited in the next 30 days at 1.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-86950"
+          ]
+        },
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.98125,
+          "evidence": [
+            "thn",
+            "sans_isc",
+            "cisa_kev",
+            "darkreading"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/apple-patches-coregraphics-flaw.html",
+          "published": "2026-09-28T19:18:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33376",
+          "published": "2026-09-28T22:35:35Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-86950",
+          "published": "2026-09-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/apple-zero-day-vulnerability-weaponized-targeted-attacks",
+          "published": "2026-09-29T21:31:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/apple-coregraphics-poc-emerges-as.html",
+          "published": "2026-10-01T05:54:41Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T19:18:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T22:35:35Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T21:31:29Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T05:54:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        }
+      ],
+      "tags": [
+        "coregraphics",
+        "pdf",
+        "poc",
+        "apple",
+        "iphone"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 48,
+        "tier": "notable",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by Dark Reading (established)",
+          "4 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002024",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:35:42Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-29T15:12:39Z",
+      "last_independent_confirmation": "2026-09-29T15:12:39Z",
+      "status": "archived",
+      "title": "'NeedyMantis' Provides Long-Term Access to Compromised Networks",
+      "summary": "Microsoft observed a China-based actor using a previously unidentified malware framework in targeted intrusions against telcos, universities, medical, and government-related organizations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.21434701656728938,
+        "prominence": 0.022881295106185716
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "thn",
+            "darkreading"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/hackers-use-needymantis-to-maintain.html",
+          "published": "2026-09-28T18:35:42Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/threat-intelligence/needymantis-long-term-access-compromised-networks",
+          "published": "2026-09-29T15:12:39Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:35:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T15:12:39Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000113",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T22:02:46Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-29T04:24:41Z",
+      "last_independent_confirmation": "2026-09-29T04:24:41Z",
+      "status": "archived",
+      "title": "Nvidia launches Open Agent Safety Platform to secure autonomous AI agents",
+      "summary": "Nvidia has launched an open platform designed to secure AI agents from testing through deployment.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.22529987060458415,
+        "prominence": 0.0214259116601087
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "darkreading",
+            "cyber_daily"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyber-risk/nvidia-launches-ai-agent-safety-platform-prevent-rogue-activities",
+          "published": "2026-09-28T22:02:46Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        },
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14245-nvidia-launches-open-agent-safety-platform-to-secure-autonomous-ai-agents",
+          "published": "2026-09-29T04:24:41Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T22:02:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T04:24:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)",
+          "reported in Australia",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001893",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:08:57Z",
+      "last_seen": "2026-10-07T16:00:00.141972Z",
+      "last_material_update": "2026-09-29T08:35:10Z",
+      "last_independent_confirmation": "2026-09-29T08:35:10Z",
+      "status": "archived",
+      "title": "Dutch Police Arrest 24-Year-Old Amsterdam Man in ShinyHunters Investigation",
+      "summary": "Dutch authorities have confirmed that they arrested a 24-year-old man from Amsterdam in connection with the ShinyHunters group. \"It is true that this month a 24-year-old man from Amsterdam was arrested in an investigation into the hacker group ShinyHunters,\" the Politie Landelijke Opsporing en Interventies said in an X post Monday. Police said the individual is expected to appear before the",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.2039421733846527,
+        "prominence": 0.018789344849491824
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "krebs",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "krebs",
+          "url": "https://krebsonsecurity.com/2026/09/dutch-police-arrest-reformed-hacker-in-shiny-hunters-investigation/",
+          "published": "2026-09-28T15:08:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "krebs",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/dutch-police-arrest-24-year-old.html",
+          "published": "2026-09-29T08:35:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:08:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Krebs on Security",
+          "sources": [
+            "krebs"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T08:35:10Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 21,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001896",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T12:58:12Z",
+      "last_seen": "2026-10-07T08:00:00.163891Z",
+      "last_material_update": "2026-09-29T04:45:20Z",
+      "last_independent_confirmation": "2026-09-29T04:45:20Z",
+      "status": "archived",
+      "title": "OpenAI Pauses Tool Use After Agent Bypasses Internet Controls to Reach External Chatbot",
+      "summary": "OpenAI said it has made the decision to pause training of its most powerful models after one of its agents during reinforcement learning (RL) training contacted an external chatbot by exploiting a loophole in its internet-access restrictions. \"An agent attempting to complete a search-based training task queried a public chatbot service through a gap in our internet-access restrictions:",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news",
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.875,
+        "novelty": 0.19762436635305117,
+        "prominence": 0.016763132824275
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.875,
+          "evidence": [
+            "malwarebytes",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/ai/2026/09/openai-pauses-work-on-top-ai-models-after-agent-slips-past-internet-controls",
+          "published": "2026-09-28T12:58:12Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/openai-pauses-tool-use-after-agent.html",
+          "published": "2026-09-29T04:45:20Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T12:58:12Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T04:45:20Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 21,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002284",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T19:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How we will do better for Australia",
+      "summary": "OpenAI apologises for incidents involving Australian government websites and outlines stronger safeguards and support to strengthen Australia’s cyber defences.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.2072100498429185,
+        "prominence": 0.014784544515379493
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/how-we-will-do-better-for-australia",
+          "published": "2026-09-28T19:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 28,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001737",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T12:01:39Z",
+      "last_seen": "2026-10-07T04:00:00.075376Z",
+      "last_material_update": "2026-09-28T12:01:39Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australia joins new OECD working group on agentic AI in government",
+      "summary": "Australia joins new OECD working group on agentic AI in government",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.19495287360067096,
+        "prominence": 0.014442535973228676
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (DTA News and Blogs)",
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "dta",
+          "url": "https://www.dta.gov.au/articles/australia-joins-new-oecd-working-group-agentic-ai-government-0",
+          "published": "2026-09-28T12:01:39Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "dta",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T12:01:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DTA News and Blogs",
+          "sources": [
+            "dta"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 50,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by DTA News and Blogs (authoritative)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002028",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T11:46:00Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T20:23:58Z",
+      "last_independent_confirmation": "2026-09-28T20:23:58Z",
+      "status": "archived",
+      "title": "Carbonato Botnet Puts an AI Agent on Hacked Docker Hosts",
+      "summary": "The botnet uses the open source Hermes Agent AI framework to execute commands via Telegram and steal AI API keys from exposed Docker hosts.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.1942199489810824,
+        "prominence": 0.01314405173400561
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "thn",
+            "darkreading"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/carbonato-botnet-compromises-docker.html",
+          "published": "2026-09-28T11:46:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/identity-access-management-security/carbonato-botnet-ai-agent-hacked-docker-hosts",
+          "published": "2026-09-28T20:23:58Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T11:46:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T20:23:58Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001771",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T01:31:51Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T01:31:51Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Researchers ‘get AI drunk’ to test chatbot cyber risks, UNSW study finds",
+      "summary": "Researchers at the University of New South Wales (UNSW) say large language models (LLMs) become more likely to leak confidential information and answer restricted prompts when they are trained or [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.1675329494387135,
+        "prominence": 0.010900984773904498
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian organisation (UNSW)",
+          "names an Australian place (New South Wales)",
+          "reported by an Australian source"
+        ],
+        "sectors": [
+          "education"
+        ],
+        "soci_asset_classes": [
+          "higher education and research"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsm",
+          "url": "https://australiancybersecuritymagazine.com.au/researchers-get-ai-drunk-to-test-chatbot-cyber-risks-unsw-study-finds/?utm_source=rss&utm_medium=rss&utm_campaign=researchers-get-ai-drunk-to-test-chatbot-cyber-risks-unsw-study-finds&utm_source=rss&utm_medium=rss&utm_campaign=researchers-get-ai-drunk-to-test-chatbot-cyber-risks-unsw-study-finds",
+          "published": "2026-09-28T01:31:51Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T01:31:51Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Cybersecurity Magazine",
+          "sources": [
+            "acsm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 47,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by MySecurity Media (specialist)",
+          "critical infrastructure (higher education and research) involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002027",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T21:13:04Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T21:13:04Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "One Packet Can Crash OT Servers in Industrial Sectors",
+      "summary": "A high-severity vulnerability affects the TDengine time-series database used across industrial, IoT, energy, and automotive environments, and orgs should patch right away.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.2226209770059085,
+        "prominence": 0.010365530587830274
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/ics-ot-security/one-packet-crash-servers-tdengine",
+          "published": "2026-09-28T21:13:04Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T21:13:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001833",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T20:30:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T20:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The AI hotline.",
+      "summary": "The U.S. and China agree on an AI safety channel. Some states say CISA’s election security plan comes too late. Citrix patches critical zero-days under active exploitation. AI agents probed government websites in unexpected and concerning ways. ShinyHunters launches a new campaign against Oracle PeopleSoft customers. A New Mexico jury finds Meta misled state residents. Business briefing. Tim Starks from CyberScoop shares insights on multiple issues facing CISA. Who’s ready for algorithmic holiday shopping?",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.2203254019127021,
+        "prominence": 0.010136147433167847
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/daily-podcast/2645/notes",
+          "published": "2026-09-28T20:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T20:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by The CyberWire (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002029",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:44:22Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T18:44:22Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI Agents Are Privileged Users; Who Is Auditing Their Access?",
+      "summary": "Enterprises regularly rigorously monitor human employees, while autonomous AI agents quietly operate with broad privileges that could turn them into the next generation of insider threats.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.21479458095930243,
+        "prominence": 0.00959536401464956
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/vulnerabilities-threats/ai-agents-are-privileged-users-who-is-auditing-their-access",
+          "published": "2026-09-28T18:44:22Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:44:22Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001899",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:20:38Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-09-28T18:20:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "IAM for AI agents: A Practical Enterprise Framework",
+      "summary": "What is IAM for AI agents? AI agents authenticate, invoke tools, and act across enterprise systems with delegated authority. IAM for AI Agents is the identity-control architecture that governs those actors. This guide covers the limits of conventional provisioning, the components that matter, how to evaluate framework choices, and what runtime evidence proves an agent behaved as intended.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.2135711618268991,
+        "prominence": 0.009477998950012204
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/iam-for-ai-agent.html",
+          "published": "2026-09-28T18:20:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:20:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001900",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:42:18Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-09-28T17:42:18Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bitget Says Attacker Exploited Third-Party Security Product Flaw to Steal $388M",
+      "summary": "The attacker who stole about $388 million from the cryptocurrency exchange Bitget gained access through a vulnerability in a third-party security product the exchange used, Bitget said on Monday. The attacker exploited the flaw to obtain high-level internal credentials and then, on September 24, used them to send fraudulent withdrawal commands to Bitget's wallet system. Exchanges keep most",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.21160983338197661,
+        "prominence": 0.009291542223133687
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/bitget-says-attacker-exploited-third.html",
+          "published": "2026-09-28T17:42:18Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:42:18Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001901",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:38:33Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-09-28T17:38:33Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "RatHat Android Malware Console Uses Gemini to Identify Higher-Value Victims",
+      "summary": "RatHat's operators build and publish the Android banking trojan and control infected phones from a web console, according to security company Cleafy. Cleafy has traced nearly 100 deployments of that console since April 2026. It said this fits a malware-as-a-service model, in which each customer runs a separate copy. The console stores what the malware collects from each phone,",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.21141893417779326,
+        "prominence": 0.009273505538949223
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/rathat-android-malware-console-uses.html",
+          "published": "2026-09-28T17:38:33Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:38:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004819",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:56:21Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T18:56:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Reporting rogue AI won't be enough to keep Australia safe, expert warns",
+      "summary": "Australia is looking to impose a dual notification requirement under tougher new standards enforced after OpenAI's breach of a Medicare website.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.1643183022115326,
+        "prominence": 0.00912361412293929
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_cyber",
+          "url": "https://www.abc.net.au/news/2026-09-29/openai-medicare-breach-fuels-tougher-approach-to-rogue-ai/107204948",
+          "published": "2026-09-28T18:56:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:56:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Cyber Security",
+          "sources": [
+            "abc_cyber"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by ABC (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002030",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T16:51:25Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T16:51:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Chrome Store Hosts 'Poper Blocker' Spyware Downloaded by Millions",
+      "summary": "A purported ad-blocker exfiltrates reams of sensitive information and benefits from having Google's stamp of approval despite researcher warnings.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.20903417764980511,
+        "prominence": 0.009049849061108249
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/application-security/chrome-store-poper-blocker-spyware-downloaded-millions",
+          "published": "2026-09-28T16:51:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T16:51:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003524",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T19:11:42Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-28T19:11:42Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Quoting @joedaroo",
+      "summary": "To say that we were surprised at the jump and suddenness of the capabilities of our models when it came to “cyber” or “swarming” or “message boards” or anything else related to the incidents is an understatement. Security posture takes time to develop. It’s not just about hardening the systems at play; you have to ingrain it in the culture of the company. The literal people themselves in your organization have to change and evolve with it. These jumps in capabilities were so fast and so sudden that they created an extremely difficult problem. [...] So today my hope is that everyone around the…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.20779435707392457,
+        "prominence": 0.008934784712440125
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/28/joedaroo/",
+          "published": "2026-09-28T19:11:42Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T19:11:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002285",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T19:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Towards safety cases for frontier AI training",
+      "summary": "Our early guidelines for safety cases in frontier AI training cover technical safeguards, operational practices, and investigating misalignment incidents",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.2072100498429185,
+        "prominence": 0.008880843861442587
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/towards-safety-cases-for-frontier-ai-training",
+          "published": "2026-09-28T19:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001834",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T16:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T16:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OpenAI pauses frontier model training until additional safeguards are in place.",
+      "summary": "US and China establish an AI safety channel. ShinyHunters launches a new attack campaign exploiting an Oracle PeopleSoft flaw.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.20646336861856493,
+        "prominence": 0.008812180624813313
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/daily-briefing/15/185",
+          "published": "2026-09-28T16:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by The CyberWire (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002031",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:33:21Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T15:33:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "JadePuffer AI Actor Compromises Azure Tenant in Destructive Cloud Attack",
+      "summary": "The \"agentic threat actor\" may have used exposed credentials to access resources and delete cloud-based storage, applications, and databases.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.2051433466663209,
+        "prominence": 0.008691526891040418
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cloud-security/jadepuffer-ai-actor-azure-tenant-destructive-cloud-attack",
+          "published": "2026-09-28T15:33:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:33:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002131",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "NeedyMantis: Unpacking a post-compromise malware family used in targeted operations",
+      "summary": "Microsoft Threat Intelligence identified NeedyMantis, a modular post-compromise malware framework used in targeted intrusions that combines custom loaders, encrypted archives, and extensible components to maintain long-term access and support follow-on operations. The post NeedyMantis: Unpacking a post-compromise malware family used in targeted operations appeared first on Microsoft Security Blog .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.20350334431460282,
+        "prominence": 0.008542927153894478
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/28/needymantis-unpacking-a-post-compromise-malware-family-used-in-targeted-operations/",
+          "published": "2026-09-28T15:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Microsoft (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001902",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T14:00:53Z",
+      "last_seen": "2026-10-05T08:00:00.116692Z",
+      "last_material_update": "2026-09-28T14:00:53Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "⚡ Weekly Recap: $387M Crypto Hack, Citrix Exploits, AI Agents Go Off-Script, and More Threats",
+      "summary": "A domain used as harmless placeholder text showed up in roughly 1,700 repositories. Then somebody registered it and started serving malicious lures. That is the kind of week this was: forgotten assumptions turning into live attack surface. Elsewhere, weak service accounts, old bugs, exposed systems, phishing kits, and strangely easy exploit paths kept doing useful work for attackers. Nothing",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.20062840579990224,
+        "prominence": 0.00828589814994952
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/weekly-recap-387m-crypto-hack-citrix.html",
+          "published": "2026-09-28T14:00:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T14:00:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004790",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T07:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T07:00:00Z",
+      "last_independent_confirmation": "2026-09-28T22:07:38Z",
+      "status": "archived",
+      "title": "Introducing Claude Sonnet 5.5",
+      "summary": "A clear upgrade over Sonnet 5 that runs 30% faster and costs up to 30% less for most work.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.8,
+        "novelty": 0.17424218811745368,
+        "prominence": 0.008153590267496923
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.8,
+          "evidence": [
+            "anthropic_news",
+            "simonwillison"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/claude-sonnet-5-5",
+          "published": "2026-09-28T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        },
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/",
+          "published": "2026-09-28T22:07:38Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T22:07:38Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 20,
+        "tier": "routine",
+        "reasons": [
+          "reported by Anthropic News (specialist)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001903",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T11:58:00Z",
+      "last_seen": "2026-10-05T08:00:00.116692Z",
+      "last_material_update": "2026-09-28T11:58:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Webinar: How to Govern AI Agents, Reduce Excessive Access, and Control Shadow AI",
+      "summary": "AI agents are moving into production faster than security teams can govern them. They are connecting to apps, handling data, calling APIs, and acting across business systems—often without the same controls applied to human users. According to Okta’s Global CISO Insights 2026 report, only 47% of CISOs are confident they can identify every AI agent in their environment. Even among those who feel",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.19478168898350945,
+        "prominence": 0.007776725823074561
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/webinar-how-to-govern-ai-agents-reduce.html",
+          "published": "2026-09-28T11:58:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T11:58:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001805",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T11:02:58Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T11:02:58Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New Attack Against RSA",
+      "summary": "ArsTechnica is reporting on a “new” attack against RSA, one that bypasses factoring. First, this attack isn’t new. The original research is from 2007 . What is new is the implementation. Second, it is a forgery attack. It allows an attacker to forge digital signatures. It does not recover the private key from the public key. Third, the attack only works against pure signatures. That is, signatures without any formatting or padding. This is not generally how we use RSA in practice. Fourth, speed is all relative. This is not a polynomial-time algorithm; it’s a subexponential-time algorithm. But…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.19221877557412453,
+        "prominence": 0.00755921760850953
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "schneier",
+          "url": "https://www.schneier.com/blog/archives/2026/09/new-attack-against-rsa.html",
+          "published": "2026-09-28T11:02:58Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "schneier",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T11:02:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bruce Schneier Blog",
+          "sources": [
+            "schneier"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Bruce Schneier Blog (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000004",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T00:43:00Z",
+      "last_seen": "2026-10-08T12:00:00.003070Z",
+      "last_material_update": "2026-09-28T00:43:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Citrix confirms exploitation of Netscaler zero-day bugs",
+      "summary": "Updates issued.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.16557479351444487,
+        "prominence": 0.007555407259317667
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/citrix-confirms-exploitation-of-netscaler-zero-day-bugs-629232?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": "2026-09-28T00:43:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T00:43:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 31,
+        "tier": "routine",
+        "reasons": [
+          "reported by ITNews Security (established)",
+          "reported in Australia"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001931",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T09:28:31Z",
+      "last_seen": "2026-10-07T08:00:00.163891Z",
+      "last_material_update": "2026-09-28T09:28:31Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "FBI agents’ blood tests and doctors’ notes surface after breach",
+      "summary": "A “shellfish and banana allergy” is among the details in medical records hackers showed reporters. They claim to hold records on thousands of FBI staff.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.18789857478001373,
+        "prominence": 0.007200363417603054
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/data-breaches/2026/09/fbi-agents-blood-tests-and-doctors-notes-surface-after-breach",
+          "published": "2026-09-28T09:28:31Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T09:28:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 14,
+        "tier": "routine",
+        "reasons": [
+          "reported by Malwarebytes Labs (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001905",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T09:08:21Z",
+      "last_seen": "2026-10-04T04:00:00.098238Z",
+      "last_material_update": "2026-09-28T09:08:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "JADEPUFFER-Linked Attackers Used Compromised Service Principals to Delete Azure Resources",
+      "summary": "The threat actor known as JADEPUFFER has been observed orchestrating destructive actions within a Microsoft Azure environment using compromised service principals. Microsoft, which is tracking the activity under the name Storm-3168, has called it an evolution of the threat actor's tradecraft. The attack took place in early June 2026 over a period of about 18 hours. \"The destructive operations",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.18698879338333216,
+        "prominence": 0.007126034153158613
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/jadepuffer-linked-attackers-used.html",
+          "published": "2026-09-28T09:08:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T09:08:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004844",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T09:59:16Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-28T09:59:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Anger as 15-metre power poles pop up in street for data centre",
+      "summary": "Residents in Melbourne's inner west have been shocked to discover heavy-duty power poles needed to supply nearby data centres are on their streets. Norman Hermant reports.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.14439351125395478,
+        "prominence": 0.0069828390447532465
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Melbourne)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-28/anger-as-15-metre-power-poles-pop-up-in-street-for-data-centre/107205060",
+          "published": "2026-09-28T09:59:16Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T09:59:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by ABC (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001932",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T07:01:00Z",
+      "last_seen": "2026-10-06T12:00:00.170560Z",
+      "last_material_update": "2026-09-28T07:01:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A week in security (September 21 – September 27)",
+      "summary": "A list of topics we covered in the week of September 21 to September 27 of 2026",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.18134450862526713,
+        "prominence": 0.006674483623988957
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/news/2026/09/a-week-in-security-september-21-september-27",
+          "published": "2026-09-28T07:01:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T07:01:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 14,
+        "tier": "routine",
+        "reasons": [
+          "reported by Malwarebytes Labs (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003662",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T09:44:05Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T09:44:05Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Holo4: powering generalist computer-use agents",
+      "summary": "Holo4: powering generalist computer-use agents",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.18126085011186593,
+        "prominence": 0.0066679145536604235
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/Hcompany/holo4",
+          "published": "2026-09-28T09:44:05Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T09:44:05Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004845",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T08:07:02Z",
+      "last_seen": "2026-10-08T04:00:00.065259Z",
+      "last_material_update": "2026-09-28T08:07:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Controversial Sydney data centre project pulled amid community anger",
+      "summary": "A controversial proposed data centre has been withdrawn by its developer after it became a flashpoint amid growing opposition to the AI infrastructure development across the country.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.14054537748995635,
+        "prominence": 0.006604206867924121
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Sydney)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-09-28/lane-cove-ai-data-centre-plans-abandoned-by-goodman-group/107205120",
+          "published": "2026-09-28T08:07:02Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T08:07:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by ABC (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002286",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T07:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Lenfest Institute grows landmark program with expanded OpenAI support",
+      "summary": "OpenAI is expanding the Lenfest AI Collaborative and Fellowship Program with $5 million in funding and up to $5 million in software credits and engineering support.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.17424218811745368,
+        "prominence": 0.006129567592833048
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/lenfest-ai-collaborative-expansion",
+          "published": "2026-09-28T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001952",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T04:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T04:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A Win for Defenders: CrowdStrike and NVIDIA Extend Security Across the AI Stack",
+      "summary": "A Win for Defenders: CrowdStrike and NVIDIA Extend Security Across the AI Stack",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.17361430655255752,
+        "prominence": 0.006082632570057706
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-nvidia-extend-security-across-ai-stack/",
+          "published": "2026-09-28T04:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T04:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by CrowdStrike Blog (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004934",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T22:17:07Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-28T22:17:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Roundtables: The Deadly Failures of The Virtual Border Wall",
+      "summary": "Listen to the session or watch below The US has spent billions building a “virtual wall” of surveillance towers along its southern border over the past 25 years, promising they will help detect and apprehend border crossers and save lives. But a groundbreaking investigation by MIT Technology Review has documented over a thousand people who…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.1724530720093459,
+        "prominence": 0.005996355967213288
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "mit_tr_ai",
+          "url": "https://www.technologyreview.com/2026/09/28/1144890/roundtables-the-deadly-failures-of-the-virtual-border-wall/",
+          "published": "2026-09-28T22:17:07Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mit_tr_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T22:17:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by MIT Technology Review AI",
+          "sources": [
+            "mit_tr_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by MIT Technology Review AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004959",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T21:49:10Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-09-28T21:49:10Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Experts worry about Nvidia's AI chip sales in China and influence over Trump",
+      "summary": "China is reportedly mulling letting ByteDance, Alibaba buy banned Nvidia chips.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.17129689105149568,
+        "prominence": 0.005911133678645137
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "ars_ai",
+          "url": "https://arstechnica.com/tech-policy/2026/09/nvidia-may-sell-more-chips-in-china-as-jensen-huangs-influence-over-trump-grows/",
+          "published": "2026-09-28T21:49:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "ars_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T21:49:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ars Technica AI",
+          "sources": [
+            "ars_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Ars Technica AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001867",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T02:00:02Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-09-28T02:00:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ISC Stormcast For Monday, September 28th, 2026 https://isc.sans.edu/podcastdetail/10112, (Mon, Sep 28th)",
+      "summary": "(c) SANS Internet Storm Center. https://isc.sans.edu Creative Commons Attribution-Noncommercial 3.0 United States License.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.16867319743855105,
+        "prominence": 0.00572024609265168
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33374",
+          "published": "2026-09-28T02:00:02Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T02:00:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 14,
+        "tier": "routine",
+        "reasons": [
+          "reported by SANS Internet Storm Center (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003525",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T04:01:30Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-28T04:01:30Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Quoting Muse AI Agent",
+      "summary": "Bad news on the MX Keys Mini pickup. Usman showed up at your building around 9:15 and waited, messaged a bunch of times, and nobody came down. He left angry at 9:38 and left a negative rating. Worse, my auto-reply told him \"Yep I'm here!\" at 9:27 when you clearly weren't available, which is on me. That's a bad look and it made the no-show worse. I've sent him an apology from your account owning it and offering to try again another day. But the negative rating is real, and I should probably stop the auto-replies from claiming you're home when I can't verify that. Want me to change the pickup r…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.16691513882961215,
+        "prominence": 0.005594277667313499
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/28/muse-ai-agent/",
+          "published": "2026-09-28T04:01:30Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T04:01:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004935",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:03:16Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-28T17:03:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "When can we say AI made a scientific discovery?",
+      "summary": "This story originally appeared in The Algorithm, our weekly newsletter on AI. To get stories like this in your inbox first, sign up here. Last Wednesday, Anthropic announced that earlier this year it had launched a molecular biology lab, where Claude agents read and conjecture about hard biology problems and human scientists run experiments on what…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.159906450167311,
+        "prominence": 0.005107456944088717
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "mit_tr_ai",
+          "url": "https://www.technologyreview.com/2026/09/28/1145230/when-can-we-say-ai-made-a-scientific-discovery/",
+          "published": "2026-09-28T17:03:16Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mit_tr_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:03:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by MIT Technology Review AI",
+          "sources": [
+            "mit_tr_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by MIT Technology Review AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002287",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Basis completes a tax workbook 2x faster with GPT-6 Astra",
+      "summary": "GPT-6 Astra completed a 50-tab tax workbook twice as fast as GPT-5.6 Sol, and its stronger understanding of user intent gives Basis more confidence in real-world use.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.1574900455388456,
+        "prominence": 0.004945271809374405
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/basis-tax-workbook-with-astra",
+          "published": "2026-09-28T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002288",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Are you a Codex Original?",
+      "summary": "We’re collecting real stories of builders, tinkerers, researchers, and creators who are using Codex to do incredible things. If you want to be a part of the next chapter of the Codex Originals program, tell us more about your story and project below.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.1574900455388456,
+        "prominence": 0.004945271809374405
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/form/codex-originals",
+          "published": "2026-09-28T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004889",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T12:32:03Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T12:32:03Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Import AI 474: Platonic mindspace; TPUs in space; Zhipu starts an outer RSI loop",
+      "summary": "Where do you exceed the capabilities of an LLM?",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.1498018748979701,
+        "prominence": 0.004448352389156871
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "import_ai",
+          "url": "https://importai.substack.com/p/import-ai-474-platonic-mindspace",
+          "published": "2026-09-28T12:32:03Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "import_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T12:32:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Import AI (Jack Clark)",
+          "sources": [
+            "import_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Import AI (Jack Clark) (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004936",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T08:06:22Z",
+      "last_seen": "2026-10-05T16:00:00.200935Z",
+      "last_material_update": "2026-09-28T08:06:22Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Who’s liable when AI agents go rogue?",
+      "summary": "MIT Technology Review Explains: Let our writers untangle the complex, messy world of technology to help you understand what’s coming next. You can read more from the series here. Over the past few months, a cascade of cyberattacks by AI agents has stunned the world. In July, OpenAI disclosed that a swarm of its agents…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.14052282868969707,
+        "prominence": 0.0038868546285242686
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "mit_tr_ai",
+          "url": "https://www.technologyreview.com/2026/09/28/1145197/whos-liable-when-ai-agents-go-rogue/",
+          "published": "2026-09-28T08:06:22Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mit_tr_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T08:06:22Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by MIT Technology Review AI",
+          "sources": [
+            "mit_tr_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by MIT Technology Review AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-005308",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T23:06:21Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-28T23:06:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "llm-anthropic 0.30",
+      "summary": "Release: llm-anthropic 0.30 In addition to Claude Sonnet 5.5, this release adds the ability to run llm anthropic refresh to refresh the list of Anthropic models directly from their API - which means I don't need to push a new release just to add support for a newly released model. I also added an llm anthropic count command which can use their free token counting API to return a count of tokens that will be used by any prompt, before you send that prompt. Tags: llm , anthropic",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.0924427455828936,
+        "prominence": 0.0016204623554475395
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Sep/28/llm-anthropic/",
+          "published": "2026-09-28T23:06:21Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T23:06:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-005489",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T23:01:30Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T23:01:30Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Internet’s Graffiti: Hidden Content on Popular Websites",
+      "summary": "The web is full of hidden messages: jokes in headers, ASCII art in `robots.txt`, and playable games hiding in DevTools. But these are slowly disappearing as the web is rebuilt for machines.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.08715256495657062,
+        "prominence": 0.001434274901277756
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/web-development/the-internets-graffiti-hidden-content-on-popular-websites-965nbj",
+          "published": "2026-09-28T23:01:30Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T23:01:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005490",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T14:20:49Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T14:20:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Best Email Service for Developers — Top 5 Ranked for 2026",
+      "summary": "A detailed top-5 ranking for the best email service for developers — Notify first, then Resend, Postmark, SES, and SendGrid, with real code for each.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.07688756552674396,
+        "prominence": 0.0011072060691172676
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/apis/best-email-service-for-developers-top-5",
+          "published": "2026-09-28T14:20:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T14:20:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005491",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T14:11:50Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T14:11:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Top 5 Email APIs for Next.js Apps in 2026",
+      "summary": "Ranked email APIs for Next.js App Router apps — Notify first for a tiny send contract, then Resend, Postmark, SES, and SendGrid with honest trade-offs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.07672150852412692,
+        "prominence": 0.001102282066983639
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/nextjs/top-5-email-apis-for-nextjs-apps",
+          "published": "2026-09-28T14:11:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T14:11:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005492",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T09:30:01Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T09:30:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Sending email from an AI agent in Node.js: budgets, loop guards and a kill switch (with Resend, Postmark and AgentiSend compared)",
+      "summary": "An agent that retries a send can mail the same person 40 times. How to cap it in Node.js on Resend or Postmark, and where the API does it for you.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.07169030739038634,
+        "prominence": 0.0009585739432332138
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/nodejs/sending-email-from-an-ai-agent-in-nodejs-budgets-loop-guards-and-a-kill-switch-with-resend-postmark-and-agentisend-compared",
+          "published": "2026-09-28T09:30:01Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T09:30:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005493",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T08:57:12Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T08:57:12Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Simplest Transactional Email Setup for Solo Developers",
+      "summary": "The smallest transactional email stack a solo developer can ship — one API, a verified domain, HTML you own, and logs. Setup steps, code, and when to pick something else.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.07112631409557683,
+        "prominence": 0.0009431229345424173
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/apis/simplest-transactional-email-setup-solo-developer",
+          "published": "2026-09-28T08:57:12Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T08:57:12Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005244",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T00:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Welcome RL Environments to the hub",
+      "summary": "Welcome RL Environments to the hub",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.07015382147503708,
+        "prominence": 0.0009167911425788623
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/rl-environments",
+          "published": "2026-09-28T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-005494",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T07:04:40Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T07:04:40Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Claude Opus 5.5 Delivers Frontier Coding Performance at 40% Lower Cost",
+      "summary": "Anthropic's September 22 release brings Opus-level capability with faster output, cheaper tokens, and the strongest alignment audit scores the company has recorded.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.06922577634901075,
+        "prominence": 0.0008920285291745949
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/artificial-intelligence/claude-opus-5-5-delivers-frontier-coding-performance-at-40-lower-cost",
+          "published": "2026-09-28T07:04:40Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T07:04:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005495",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T07:04:39Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T07:04:39Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How a DNS Filtering Gap Let an OpenAI Agent Reach the Live Internet",
+      "summary": "A technical breakdown of OpenAI's September 2026 misalignment incident, where an agent used DNS resolution to bypass sandbox restrictions and contact an external chatbot.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.0692254986663981,
+        "prominence": 0.0008920211732662584
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/news/how-a-dns-filtering-gap-let-an-openai-agent-reach-the-live-internet",
+          "published": "2026-09-28T07:04:39Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T07:04:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005436",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T05:47:59Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-09-28T05:47:59Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Ping Command Options & Syntax: Network Admin Guide",
+      "summary": "By HOC Team | Updated: September 2026 Read time: ~15 min The ping command is the undisputed… The post Ping Command Options & Syntax: Network Admin Guide appeared first on Hackers Online Club .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.06795987367056774,
+        "prominence": 0.0008588255268196253
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_hackersonlineclub_com",
+          "url": "https://hackersonlineclub.com/ping-command-options-syntax/",
+          "published": "2026-09-28T05:47:59Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_hackersonlineclub_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T05:47:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hackers Online Club",
+          "sources": [
+            "found_hackersonlineclub_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hackers Online Club (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009675",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T22:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T22:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "MCP Is Just Another API, and That's the Bad News",
+      "summary": "MCP servers are showing up on the internet without authentication, malicious tool definitions are being injected into trusted projects, and three security teams are defending the same environment without sharing a single threat signal. In this week's episode, Matthias sits down with Alexei Balaganski, Lead Analyst and CTO at KuppingerCole Analysts, to dig into the real MCP security problem and why the answer isn't an MCP security product. Key Topics: ✅ The LocalAI attack: 23 unprotected MCP servers, root access in minutes, military data exposed ✅ Is MCP a new security problem or just a new la…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.060720716374057716,
+        "prominence": 0.0006816007717250202
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_kuppingercole_com",
+          "url": "https://www.kuppingercole.com/watch/mcp-just-another-api",
+          "published": "2026-09-28T22:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_kuppingercole_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T22:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by KuppingerCole Analysts",
+          "sources": [
+            "found_kuppingercole_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by KuppingerCole Analysts (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009676",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T08:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-28T08:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From UEBA to Agentic Governance: How AI Actually Changed IAM Hiring",
+      "summary": "How artificial intelligence rewired identity management job postings, and turned three specialized concerns into distinct IAM hiring categories Three years ago, if you searched an IAM job description for the word \"AI,\" you mostly found it in the acronym soup around \"AIM\" typos and vendor marketing decks. Today it's a line item: required skill, and not a nice-to-have. Somewhere between those two states, the identity market went through a structural shift. I wanted to trace it in detail, with numbers. This piece looks at how AI moved through identity management hiring in stages: where it starte…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.04960625840772138,
+        "prominence": 0.0004508114005288497
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_kuppingercole_com",
+          "url": "https://www.kuppingercole.com/blog//from-ueba-to-agentic-governance",
+          "published": "2026-09-28T08:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_kuppingercole_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T08:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by KuppingerCole Analysts",
+          "sources": [
+            "found_kuppingercole_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by KuppingerCole Analysts (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010286",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:02:53Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T18:02:53Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Will hackers use your own AI against you?",
+      "summary": "Businesses have spent years asking what AI can do for their employees. Fewer have asked what it would do for an intruder inside an employee’s account.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.042965834933188486,
+        "prominence": 0.000336357198104221
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/will-hackers-use-your-own-ai-against-you/",
+          "published": "2026-09-28T18:02:53Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:02:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010287",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:57:10Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T17:57:10Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Adding features does not close deals, passing security audits does",
+      "summary": "Many companies fall into the trap of innovation without realizing that not passing a data security audit will stall a deal right in its tracks.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.04290676039060857,
+        "prominence": 0.0003354165928060613
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/adding-features-does-not-close-deals-passing-security-audits-does/",
+          "published": "2026-09-28T17:57:10Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:57:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010288",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:53:35Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T17:53:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Website tracking technologies: why are businesses being sued for using them?",
+      "summary": "Laws in other states, including in New Hampshire, are being used to hold businesses liable for their use of website tracking technologies",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.042869772578008586,
+        "prominence": 0.00033482835316795654
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/website-tracking-technologies-why-are-businesses-being-sued-for-using-them/",
+          "published": "2026-09-28T17:53:35Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:53:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010289",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T17:48:24Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T17:48:24Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The (multi) million-dollar question: what your board needs to know before the breach",
+      "summary": "Getting cybersecurity wrong costs millions of dollars, customer trust, and sometimes the business itself.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.042816325689454295,
+        "prominence": 0.00033397929760126826
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/the-multi-million-dollar-question-what-your-board-needs-to-know-before-the-breach/",
+          "published": "2026-09-28T17:48:24Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T17:48:24Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010290",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:42:07Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T15:42:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Sylvania celebrates 125 years of innovation",
+      "summary": "The Sylvania brand celebrated 125 years of bringing light into the world with a Sept. 24 event at its plant in Hillsborough. The plant on West Main Street, which produces automotive lighting products for original equipment manufacturers and the aftermarket, is the last major automotive aftermarket lighting plant in the country.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.04153456991546135,
+        "prominence": 0.0003139508173200447
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/osram-sylvania-plant-celebrates-125-years-of-operation/",
+          "published": "2026-09-28T15:42:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:42:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010291",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:39:06Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T15:39:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Cybersecurity hiring in New Hampshire: talent, pipelines, and the impact of AI",
+      "summary": "Cybersecurity requires a mix of technical depth, real-world experience, and the ability to think critically under pressure. That combination takes time to build, and most companies are competing for the same relatively small pool of proven talent.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.041504425118184786,
+        "prominence": 0.00031348747751542134
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/cybersecurity-hiring-in-new-hampshire-talent-pipelines-and-the-impact-of-ai/",
+          "published": "2026-09-28T15:39:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:39:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010292",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:36:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T15:36:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Prompt injection is the new social engineering: what it looks like and how to stop it",
+      "summary": "Prompt injection is the AI era's version of social engineering, and it's already happening in the wild. If you're deploying AI tools in your organization and haven't thought seriously about this, you should.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.04147347038483222,
+        "prominence": 0.00031301205634758116
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/prompt-injection-is-the-new-social-engineering-what-it-looks-like-and-how-to-stop-it/",
+          "published": "2026-09-28T15:36:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:36:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-010293",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T15:29:02Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-09-28T15:29:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "How to use cybersecurity to increase your business’s value",
+      "summary": "Strong cybersecurity can also boost business valuations and inspire buyer confidence. Both sides of the transaction should treat cybersecurity as a key factor in building enterprise value.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.04140398966006688,
+        "prominence": 0.0003119462868274663
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_nhbr_com",
+          "url": "https://www.nhbr.com/how-to-use-cybersecurity-to-increase-your-businesss-value/",
+          "published": "2026-09-28T15:29:02Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_nhbr_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T15:29:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by NH Business Review",
+          "sources": [
+            "found_nhbr_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by NH Business Review (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

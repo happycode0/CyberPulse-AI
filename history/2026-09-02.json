@@ -1,0 +1,2791 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2026-09-02",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 27,
+    "critical": 4,
+    "high": 2,
+    "medium": 0,
+    "low": 0,
+    "unknown": 21,
+    "directly_reported_in_au": 12,
+    "pending_enrichment": 27
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001799",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-09-03T05:37:23Z",
+      "last_independent_confirmation": "2026-09-03T05:37:23Z",
+      "status": "archived",
+      "title": "Critical SonicWall SMA 1000 Zero-Day Vulnerabilities (CVE-2026-83548 & CVE-2026-83549)",
+      "summary": "Published: Thu 03 September 2026",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "research",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.925,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.03123802803173222
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-83548",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.08757,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-05"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-83549",
+          "cvss": {
+            "score": 7.8,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.1076,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-83548 and CVE-2026-83549 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-83548 is rated 10.0 (critical) under CVSS 3.1 by CISA in the CVE record, the highest of the 2 scored CVEs here.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-83548"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-83549 being exploited in the next 30 days at 11%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-83549"
+          ]
+        },
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "found_rapid7_com",
+            "triskele"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-83548",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-83549",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_rapid7_com",
+          "url": "https://www.rapid7.com/blog/post/etr-critical-sonicwall-sma1000-vulnerabilities-cve-2026-83548-cve-2026-83549-exploited-in-the-wild",
+          "published": "2026-09-02T16:58:45Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_rapid7_com",
+          "independent": true
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/critical-sonicwall-sma-1000-zero-day-vulnerabilities-cve-2026-83548-cve-2026-83549",
+          "published": "2026-09-03T05:37:23Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T16:58:45Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Rapid7 Cybersecurity Blog",
+          "sources": [
+            "found_rapid7_com"
+          ]
+        },
+        {
+          "timestamp": "2026-09-03T05:37:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 69,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by Triskele Labs (specialist)",
+          "reported in Australia",
+          "3 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000153",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2026-09-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-49869: Kestra Kestra OSS Kestra OSS OS Command Injection Vulnerability",
+      "summary": "Kestra OSS contains an OS command injection vulnerability that could allow an unauthenticated remote attacker to create and execute arbitrary workflows without credentials.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.021206524431527488
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-49869",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02095,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-49869 as exploited in the wild, added 2026-09-02, with US federal agencies due to fix it by 2026-09-05.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-49869 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-49869"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-49869 being exploited in the next 30 days at 2.1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-49869"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-49869",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000154",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2026-09-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-82329: JFrog Artifactory JFrog Artifactory Improper Authentication Vulnerability",
+      "summary": "JFrog Artifactory contains an improper authentication vulnerability that under default configuration can allow an unauthenticated attacker with network access to obtain administrative privileges.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.021206524431527488
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-82329",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.14121,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-82329 as exploited in the wild, added 2026-09-02, with US federal agencies due to fix it by 2026-09-05.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-82329 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-82329"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-82329 being exploited in the next 30 days at 14%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-82329"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-82329",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000138"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000155",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2026-09-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-9586: Sangoma Switchvox Sangoma Switchvox SQL Injection Vulnerability",
+      "summary": "Sangoma Switchvox contains a SQL injection vulnerability which allows an unauthenticated remote attacker to execute arbitrary SQL statements against the backend PostgreSQL database using a single crafted request, including database operations and remote code execution.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.021206524431527488
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-9586",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.18979,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-05"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-9586 as exploited in the wild, added 2026-09-02, with US federal agencies due to fix it by 2026-09-05.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-9586 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-9586"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-9586 being exploited in the next 30 days at 19%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-9586"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-9586",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000151",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2026-09-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-59822: BerriAI LiteLLM BerriAI LiteLLM Improper Authentication Vulnerability",
+      "summary": "BerriAI LiteLLM contains an improper authentication vulnerability in the MCP Streamable HTTP endpoint that could allow an unauthenticated attacker to establish an authenticated MCP session using an arbitrary Bearer token.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.00029029476846638777
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-59822",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00836,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-16"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-7488-6r32-c95q",
+              "source": "ghsa",
+              "severity": "high",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "PyPI",
+                  "name": "litellm",
+                  "fixed": [
+                    "1.84.0"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-7488-6r32-c95q"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-59822 as exploited in the wild, added 2026-09-02, with US federal agencies due to fix it by 2026-09-16.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-59822 is rated 8.8 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-59822"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-59822 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-59822"
+          ]
+        },
+        {
+          "text": "A fix for litellm (PyPI) is published in 1.84.0, per GHSA-7488-6r32-c95q.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-7488-6r32-c95q"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-59822",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000152",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2026-09-02T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-48710: Kludex Starlette Kludex Starlette HTTP Request/Response Smuggling Vulnerability",
+      "summary": "Kludex Starlette contains a HTTP request/response smuggling vulnerability that could allow attackers to inject paths into the host part, prepending the actual path leading to issues such as authentication bypass when the authentication depends on the reconstructed URL’s path. This vulnerability could be chaned with CVE-2026-42271.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 2.0003672396118634e-05,
+        "prominence": 0.00029029476846638777
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-42271",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.9257,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-06-08",
+            "due_date": "2026-06-22"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-v4p8-mg3p-g94g",
+              "source": "ghsa",
+              "severity": "high",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "PyPI",
+                  "name": "litellm",
+                  "fixed": [
+                    "1.83.7"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-v4p8-mg3p-g94g"
+            }
+          ]
+        },
+        {
+          "id": "CVE-2026-48710",
+          "cvss": {
+            "score": 6.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.07056,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-02",
+            "due_date": "2026-09-16"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-86qp-5c8j-p5mr",
+              "source": "ghsa",
+              "severity": "medium",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "PyPI",
+                  "name": "starlette",
+                  "fixed": [
+                    "1.0.1"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-86qp-5c8j-p5mr"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-42271 and CVE-2026-48710 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-42271 is rated 8.7 (high) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-42271"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-42271 being exploited in the next 30 days at 93%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-42271"
+          ]
+        },
+        {
+          "text": "A fix for starlette (PyPI) is published in 1.0.1, per GHSA-86qp-5c8j-p5mr.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-86qp-5c8j-p5mr"
+          ]
+        },
+        {
+          "text": "A fix for litellm (PyPI) is published in 1.83.7, per GHSA-v4p8-mg3p-g94g.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-v4p8-mg3p-g94g"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-48710",
+          "published": "2026-09-02T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001740",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T16:25:56Z",
+      "last_seen": "2026-10-07T04:00:00.075376Z",
+      "last_material_update": "2026-09-02T16:25:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "DTA distils lessons from major digital projects to strengthen digital delivery",
+      "summary": "Lessons for Digital Leaders was developed to address a gap in how project closure lessons are accessed, analysed and applied across government.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 2.5360845535800807e-05,
+        "prominence": 2.2560006879502695e-10
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (DTA News and Blogs)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "dta",
+          "url": "https://www.dta.gov.au/media-releases/dta-distils-lessons-major-digital-projects-strengthen-digital-delivery",
+          "published": "2026-09-02T16:25:56Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "dta",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T16:25:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DTA News and Blogs",
+          "sources": [
+            "dta"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 42,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by DTA News and Blogs (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001992",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T23:10:47Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-02T23:10:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Smashing Security podcast #483: This AI helps thieves steal your iPhone",
+      "summary": "You've had your iPhone stolen. A day later, you get a text from Apple saying they've found it, and a very helpful woman called Alice from Apple Support calls to walk you through recovering it. She's polite. She's professional. But she is not from Apple. She's not even human. And she's about to break into your iPhone. Meanwhile, OpenAI, Anthropic, and Meta have all announced - with varying degrees of drama - that their AI agents have \"broken out of the sandbox\" and gone hacking. James takes a step back and asks the awkward question: is this really an emergent AI apocalypse, or did they just le…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.7956345134773233e-05,
+        "prominence": 1.3736788206221323e-10
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://grahamcluley.com/smashing-security-podcast-483/",
+          "published": "2026-09-02T23:10:47Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T23:10:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Graham Cluley (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002074",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:18:21Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T02:18:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "HID outlines passwordless authentication and identity convergence at Sydney security conference",
+      "summary": "HID is using this week’s Security Exhibition and Conference (SEC) in Sydney to highlight how identity and authentication tools used for building access can be extended into digital environments, as Australian organisations look to reduce reliance on passwords and better align physical and logical security. In a Q&A circulated ahead of the event, Nick Low, [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 2.0680958869082566e-05,
+        "prominence": 1.3398223717544767e-10
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/hid-outlines-passwordless-authentication-and-identity-convergence-at-sydney-security-conference/?utm_source=rss&utm_medium=rss&utm_campaign=hid-outlines-passwordless-authentication-and-identity-convergence-at-sydney-security-conference",
+          "published": "2026-09-02T02:18:21Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:18:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by MySecurity Media (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002075",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T01:15:03Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T01:15:03Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australian Government releases Industry Data Classification Framework",
+      "summary": "The Australian Government has released the Industry Data Classification Framework (IDCF), a voluntary framework intended to help Australian organisations classify, protect and share data, and to improve cyber security outcomes. According to the Department of Home Affairs, the framework is designed to provide a consistent approach to understanding the value of data, identifying and managing [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 2.0368276524385616e-05,
+        "prominence": 1.2996140064312873e-10
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/australian-government-releases-industry-data-classification-framework/?utm_source=rss&utm_medium=rss&utm_campaign=australian-government-releases-industry-data-classification-framework",
+          "published": "2026-09-02T01:15:03Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T01:15:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by MySecurity Media (specialist)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001993",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T14:48:00Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-02T14:48:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Revolut scam wave steals £180,000 from Jersey residents in just four weeks",
+      "summary": "If you live in Jersey and bank with Revolut, you should be on your guard against scam phone calls. Because local police on the largest of the Channel Islands have warned that over a single four-week period, an astonishing 75% of all scam crime reports they have received have involved Revolut accounts Read more in my article on the Hot for Security blog.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.4770074648848455e-05,
+        "prominence": 1.0783949995020576e-10
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/revolut-scam-jersey",
+          "published": "2026-09-02T14:48:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T14:48:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Graham Cluley (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003555",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T16:24:24Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T16:24:24Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Proactive cyber defense for governments and enterprises",
+      "summary": "Proactive cyber defense for governments and enterprises",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.436446558104605e-05,
+        "prominence": 1.0433664410802312e-10
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "deepmind",
+          "url": "https://deepmind.google/blog/proactive-cyber-defense-for-governments-and-enterprises/",
+          "published": "2026-09-02T16:24:24Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T16:24:24Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DeepMind Blog",
+          "sources": [
+            "deepmind"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 21,
+        "tier": "routine",
+        "reasons": [
+          "reported by Google (specialist)",
+          "government involved"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003556",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T16:18:31Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T16:18:31Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing Gemini 3.8 Flash and 3.8 Flash Cyber",
+      "summary": "Introducing Gemini 3.8 Flash and 3.8 Flash Cyber",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.4329990453724594e-05,
+        "prominence": 1.0404158230812865e-10
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "deepmind",
+          "url": "https://deepmind.google/blog/introducing-gemini-3-8-flash-and-38-flash-cyber/",
+          "published": "2026-09-02T16:18:31Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "google",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T16:18:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DeepMind Blog",
+          "sources": [
+            "deepmind"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Google (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002012",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T10:00:46Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-09-02T10:00:46Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "An AI-Assisted Cyber Attack: Inside a Unit 42 Investigation",
+      "summary": "Using autonomous AI agents, an attacker breached an enterprise network in a matter of hours. Understand how to address and defend against agentic attacks. The post An AI-Assisted Cyber Attack: Inside a Unit 42 Investigation appeared first on Unit 42 .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 2.311556170194905e-05,
+        "prominence": 9.391425628034894e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/ai-assisted-cyber-attack-inside-a-unit-42-investigation/",
+          "published": "2026-09-02T10:00:46Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T10:00:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Unit 42 Palo Alto Networks (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002346",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T12:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "ATV Big Air Tour turned 3 days of work into 3 hours with ChatGPT",
+      "summary": "ATV Big Air Tour uses ChatGPT Work to speed up marketing, merchandising, and more. It even turned merchandise photos into an inventory website in 15 minutes.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.286233919639866e-05,
+        "prominence": 9.186791400531572e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/atv-big-air-tour",
+          "published": "2026-09-02T12:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-001959",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T04:00:00Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-09-02T04:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CrowdStrike Delivers the Next Evolution of the Agentic SOC",
+      "summary": "CrowdStrike Delivers the Next Evolution of the Agentic SOC",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 2.1193152655341474e-05,
+        "prominence": 7.894289368148617e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-delivers-next-evolution-of-agentic-soc/",
+          "published": "2026-09-02T04:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T04:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by CrowdStrike Blog (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001960",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T04:00:00Z",
+      "last_seen": "2026-10-01T20:00:00.076942Z",
+      "last_material_update": "2026-09-02T04:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CrowdStrike Extends Endpoint Security to Stop Software Supply Chain Attacks",
+      "summary": "CrowdStrike Extends Endpoint Security to Stop Software Supply Chain Attacks",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 2.1193152655341474e-05,
+        "prominence": 7.894289368148617e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "crowdstrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-extends-endpoint-security-to-stop-supply-chain-attacks/",
+          "published": "2026-09-02T04:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "crowdstrike",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T04:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CrowdStrike Blog",
+          "sources": [
+            "crowdstrike"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by CrowdStrike Blog (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003647",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T04:59:10Z",
+      "last_seen": "2026-10-05T08:00:00.116692Z",
+      "last_material_update": "2026-09-02T04:59:10Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "OWASP GenAI Security Project Unveils 2026 Top 10 for LLM Applications, New Agent Control Standard and Sponsors as Community Tops 30,000 Members",
+      "summary": "OWASP GenAI Security Project Releases 2026 Top 10 for LLM Applications, Debuts Agent Control Standard and New Resources for Securing Generative and Agentic AI F5, WitnessAI, Evoke Security and Mondoo Inc. join as new sponsors as community expands AI security solutions guidance and surpasses 30,000 members WILMINGTON, Del. — Sept. 2, 2026 — The OWASP […] The post OWASP GenAI Security Project Unveils 2026 Top 10 for LLM Applications, New Agent Control Standard and Sponsors as Community Tops 30,000 Members appeared first on OWASP Gen AI Security Project .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 2.0660144398197164e-05,
+        "prominence": 7.502196176141986e-11
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "owasp_genai",
+          "url": "https://genai.owasp.org/2026/09/01/owasp-genai-security-project-unveils-2026-top-10-for-llm-applications-new-agent-control-standard-and-sponsors-as-community-tops-30000-members/?utm_source=rss&utm_medium=rss&utm_campaign=owasp-genai-security-project-unveils-2026-top-10-for-llm-applications-new-agent-control-standard-and-sponsors-as-community-tops-30000-members",
+          "published": "2026-09-02T04:59:10Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "owasp_genai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T04:59:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OWASP GenAI Security",
+          "sources": [
+            "owasp_genai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "reported by OWASP GenAI Security (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-009820",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Consultation on evolution of Essential Eight",
+      "summary": "We’re consulting ASD network partners on evolving the Essential Eight cyber security framework to increase flexibility and support stronger cyber resilience.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/consultation-on-evolution-of-essential-eight_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/consultation-on-evolution-of-essential-eight",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009821",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Joint advisory on Russian cyber actors exploiting Zimbra Collaboration Suite",
+      "summary": "This joint advisory outlines an ongoing campaign by Russian state-sponsored cyber actors exploiting Zimbra Collaboration Suite to steal sensitive email data and maintain access.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/joint-advisory-on-russian-cyber-actors-exploiting-zimbra-collaboration-suite_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/joint-advisory-on-russian-cyber-actors-exploiting-zimbra-collaboration-suite",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009822",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Joint advisory released on China-nexus covert networks of compromised devices",
+      "summary": "This advisory outlines the shift in tactics, techniques and procedures used by China-nexus cyber actors to target organisations, as well as recommended mitigations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/joint-advisory-released-on-china-nexus-covert-networks-of-compromised-devices_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/joint-advisory-released-on-china-nexus-covert-networks-of-compromised-devices",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009823",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New advice to help organisations isolate their vital OT and enabling systems from other networks",
+      "summary": "Learn how to isolate vital OT and enabling systems from all other networks. This proactive measure can disrupt adversaries' ability to carry out cyber attacks, contain attacks already in progress, and maintain essential services during periods of crisis or service disruption.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/new-advice-to-help-organisations-isolate-their-vital-ot-and-enabling-systems-from-other-networks_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/new-advice-to-help-organisations-isolate-their-vital-ot-and-enabling-systems-from-other-networks",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009824",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New AI frontier cyber threat guidance for boards of directors",
+      "summary": "Questions for boards to ask about AI cyber threats.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/new-ai-frontier-cyber-threat-guidance-for-boards-of-directors_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/new-ai-frontier-cyber-threat-guidance-for-boards-of-directors",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009825",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Updated guidance on the 2026 Minimum Elements for a Software Bill of Materials",
+      "summary": "We've joined international partners to update SBOM minimum elements guidance, helping organisations improve software transparency and supply chain security.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts, ACSC Advisories)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/updated-guidance-on-the-2026-minimum-elements-for-a-software-bill-of-materials_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_advisories",
+          "url": "https://www.cyber.gov.au/news/updated-guidance-on-the-2026-minimum-elements-for-a-software-bill-of-materials",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC Advisories",
+          "sources": [
+            "acsc_advisories"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009826",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T03:00:00.073116Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Using AI to strengthen cyber defence",
+      "summary": "Our latest publication explains how and where organisations can use AI to strengthen their cyber security while mitigating associated risks.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.480359486500191e-06,
+        "prominence": 1.0534797013248034e-11
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/news/using-ai-to-strengthen-cyber-defence_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_news",
+          "url": "https://www.cyber.gov.au/news/using-ai-to-strengthen-cyber-defence",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        },
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ACSC News",
+          "sources": [
+            "acsc_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009830",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T02:05:23Z",
+      "last_seen": "2026-10-08T08:00:00.087636Z",
+      "last_material_update": "2026-09-02T02:05:23Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Active exploitation of a software development platform within Australia",
+      "summary": "Alert on actively exploited vulnerabilities affecting TeamCity On-Premise servers. Assess exposure and apply vendor mitigations for CVE 2026 63077 (Critical, 9.8).",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 5.324344503221638e-06,
+        "prominence": 9.943524422586836e-12
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (ACSC Alerts)",
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/__%3C%21--%20THEME%20DEBUG%20--%3E_%3C%21--%20THEME%20HOOK%3A%20%27views_view_field%27%20--%3E_%3C%21--%20BEGIN%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E_/node/1215_%3C%21--%20END%20OUTPUT%20from%20%27core/modules/views/templates/views-view-field.html.twig%27%20--%3E__",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": true
+        },
+        {
+          "source_id": "acsc_alerts",
+          "url": "https://www.cyber.gov.au/node/1215",
+          "published": "2026-09-02T02:05:23Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "asd",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T02:05:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ACSC Alerts",
+          "sources": [
+            "acsc_alerts"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Australian Signals Directorate (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009708",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-02T22:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-09-02T22:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A Fabric Is Only as Strong as Its Edges | Identity Fabrics Impact Day Speaker Spotlight",
+      "summary": "Everyone's talking about AI agents. Almost nobody is talking about the truck driver at 3AM in freezing rain, wearing gloves, trying to log into a shared device before a load can leave the dock. James Naughton argues these two problems are more connected than the industry realizes and that by ignoring frontline workers and IoT at the edge, we've left the hardest identity problems unsolved for decades. Key questions answered: What are we missing when we focus too heavily on agentic AI in identity? Where do today's identity architectures struggle most at the edge? What makes identity different i…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 7.412196823005092e-06,
+        "prominence": 9.656298603110591e-12
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_kuppingercole_com",
+          "url": "https://www.kuppingercole.com/watch/2026-ifid-speaker-spotlight-james-naughton",
+          "published": "2026-09-02T22:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_kuppingercole_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-02T22:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by KuppingerCole Analysts",
+          "sources": [
+            "found_kuppingercole_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by KuppingerCole Analysts (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

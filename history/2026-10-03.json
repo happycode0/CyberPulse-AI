@@ -1,0 +1,5499 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2026-10-03",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 59,
+    "critical": 1,
+    "high": 3,
+    "medium": 3,
+    "low": 2,
+    "unknown": 50,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 6
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004810",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:36:33Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-10-03T14:36:33Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Warlock Exploits SharePoint Flaws to Disable Security Tools and Deploy Ransomware",
+      "summary": "Warlock, a China-linked threat actor, is exploiting SharePoint vulnerabilities to disable security tools and deploy ransomware, targeting organizations in Portuguese- and Spanish-speaking countries, including critical infrastructure, government, and education sectors.",
+      "why_it_matters": "Defenders should be aware that Warlock is actively weaponizing SharePoint flaws to disable security tools and deploy ransomware, affecting critical infrastructure, government, and education organizations.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "vulnerability",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.18356432653793592,
+        "prominence": 0.2680731183317737
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Targets critical infrastructure, government, and education organizations",
+          "Attacks observed by Symantec and Carbon Black Threat Hunter Team",
+          "Threat actor is China-linked"
+        ],
+        "sectors": [
+          "government",
+          "critical-infrastructure",
+          "education"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Warlock"
+        ],
+        "organisations": [
+          "Microsoft",
+          "Symantec",
+          "Carbon Black"
+        ],
+        "products": [
+          "SharePoint"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "critical-infrastructure",
+          "government",
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 0.75,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1685",
+          "name": "Disable or Modify Tools",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/warlock-exploits-sharepoint-flaws-to.html",
+          "published": "2026-10-03T14:36:33Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:36:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "sharepoint",
+        "vulnerability",
+        "china-linked",
+        "critical-infrastructure",
+        "government"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 63,
+        "tier": "key",
+        "reasons": [
+          "critical severity (AI estimate)",
+          "government target",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004813",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T23:12:34Z",
+      "last_seen": "2026-10-06T08:00:00.129839Z",
+      "last_material_update": "2026-10-03T23:12:34Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Google Gemini could soon get full access to your Mac’s files, apps and the web",
+      "summary": "Google Gemini may soon be able to access all files, apps, and the web on macOS devices without repeated permission prompts.",
+      "why_it_matters": "If Gemini can access all files and apps without permission, it could be used to exfiltrate data or execute malicious actions, increasing risk for macOS users.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.20783781511465252,
+        "prominence": 0.12842792370711786
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Google"
+        ],
+        "products": [
+          "Gemini",
+          "macos"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/google/google-gemini-could-soon-get-full-access-to-your-macs-files-apps-and-the-web/",
+          "published": "2026-10-03T23:12:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T23:12:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "gemini",
+        "macos",
+        "ai-security",
+        "privacy",
+        "ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "medium severity (AI estimate)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004857",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T16:49:10Z",
+      "last_seen": "2026-10-05T16:00:00.200935Z",
+      "last_material_update": "2026-10-03T16:49:10Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Capcom is preparing for a ‘future where we create games together with AI’",
+      "summary": "Capcom is exploring the use of AI in its REX Project and future game development, signalling a shift toward collaborative AI-driven creation.",
+      "why_it_matters": "This indicates a broader industry trend toward integrating AI into creative workflows, which may influence how developers approach game design and production.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.18951777547686738,
+        "prominence": 0.11985887241735263
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Capcom"
+        ],
+        "products": [
+          "Pragmata",
+          "REX Project",
+          "RE Engine"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/games/1004418/capcom-ai-game-development",
+          "published": "2026-10-03T16:49:10Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T16:49:10Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "game-development",
+        "capcom",
+        "rex-project",
+        "re-engine"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "notable AI story",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004870",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T16:30:01Z",
+      "last_seen": "2026-10-06T12:00:00.170560Z",
+      "last_material_update": "2026-10-03T16:30:01Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenAI safety employee resigns, claiming the company’s ‘culture is broken’",
+      "summary": "David Robinson, a safety employee at OpenAI, resigned and publicly stated that the company’s culture is broken.",
+      "why_it_matters": "The resignation draws attention to internal safety concerns at a leading AI firm, potentially influencing future AI governance and safety standards.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.18864630783554132,
+        "prominence": 0.10300183280659812
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/",
+          "published": "2026-10-03T16:30:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T16:30:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "openai",
+        "resignation",
+        "safety",
+        "culture",
+        "ai-governance",
+        "ai-industry"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 27,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-005353",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T15:27:00Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-10-03T15:27:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Anthropic's super bug-hunting model Mythos is hardcore good at math, as latest vuln under attack shows",
+      "summary": "Anthropic’s Mythos model is under active exploitation attempts originating from a China-hosted IP, indicating a vulnerability that attackers are targeting.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.1858067711381476,
+        "prominence": 0.10182693102696923
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic",
+          "VulnCheck"
+        ],
+        "products": [
+          "Mythos"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theregister_com",
+          "url": "https://www.theregister.com/security/2026/10/03/anthropics-super-bug-hunting-model-mythos-is-hardcore-good-at-math-as-latest-vuln-under-attack-shows/5300933",
+          "published": "2026-10-03T15:27:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theregister_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T15:27:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Technology news and analysis | The Register",
+          "sources": [
+            "found_theregister_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "china-hosted",
+        "bug-hunting",
+        "ai-model",
+        "exploitation-attempts",
+        "mythos"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "reported by Technology news and analysis | The Register (community)",
+          "medium severity (AI estimate)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004809",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:38:46Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-10-03T14:38:46Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "MI5 Says China’s MSS Funded Research Involving 100+ U.K.-Linked Academics",
+      "summary": "MI5 has warned that more than 100 academics linked to the U.K. are involved in research funded by China’s MSS through the China General Technology Research Institute, which is intended to support intelligence gathering.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "espionage",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.18366228399490772,
+        "prominence": 0.10093799152098161
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "China’s MSS"
+        ],
+        "organisations": [
+          "MI5",
+          "China General Technology Research Institute (CGTRI)"
+        ],
+        "products": [],
+        "countries": [
+          "GB",
+          "CN"
+        ],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/mi5-says-chinas-mss-funded-research.html",
+          "published": "2026-10-03T14:38:46Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:38:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "espionage",
+        "research-funding",
+        "china-mss",
+        "mi5",
+        "uk-academics"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004807",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:35:20Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T14:35:20Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Danish university DTU breach exposes data of up to 200,000 people",
+      "summary": "A data breach at Denmark’s Technical University of Denmark exposed information for up to 200,000 users when attackers accessed the university’s identity-and-access-management system and downloaded large volumes of data.",
+      "why_it_matters": "The scale of the breach—up to 200,000 individuals—means that a large number of credentials could be compromised, increasing the risk of phishing or credential-replay attacks against other targets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.18351058262483944,
+        "prominence": 0.1008750537044164
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "hackers"
+        ],
+        "organisations": [
+          "Technical University of Denmark"
+        ],
+        "products": [],
+        "countries": [
+          "DK"
+        ],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/danish-university-dtu-breach-exposes-data-of-up-to-200-000-people/",
+          "published": "2026-10-03T14:35:20Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:35:20Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "university",
+        "denmark"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004859",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:31:56Z",
+      "last_seen": "2026-10-05T16:00:00.200935Z",
+      "last_material_update": "2026-10-03T14:31:56Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "An OpenAI safety employee has quit and is sounding the alarm",
+      "summary": "David Robinson, a former OpenAI safety employee, resigned and is now publicly warning about safety concerns in an editorial.",
+      "why_it_matters": "His departure and public warnings highlight ongoing concerns about AI safety practices at OpenAI, prompting developers and regulators to scrutinize safety protocols and oversight.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.18336047756734672,
+        "prominence": 0.100812771059636
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI",
+          "The Atlantic"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1004408/openai-safety-quits-sounding-the-alarm",
+          "published": "2026-10-03T14:31:56Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:31:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "openai",
+        "safety-resignation",
+        "ai-governance",
+        "ai-industry",
+        "editorial",
+        "alarm"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 20,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004871",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:00:00Z",
+      "last_seen": "2026-10-06T12:00:00.170560Z",
+      "last_material_update": "2026-10-03T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "All the AI agents that can live in your text messages",
+      "summary": "A list of AI agents that can operate within text messages was compiled, covering general assistants and specialized agents for families, travel, and work.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.1819566456145512,
+        "prominence": 0.10022993865798199
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/all-the-ai-agents-that-can-live-in-your-text-messages/",
+          "published": "2026-10-03T14:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "text-messaging",
+        "assistants",
+        "product-list"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 27,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004872",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T00:45:39Z",
+      "last_seen": "2026-10-06T08:00:00.129839Z",
+      "last_material_update": "2026-10-03T00:45:39Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Meta wants your next gadget to be Muse-infused",
+      "summary": "Meta is offering free Muse AI code for integration into consumer devices such as TVs and toasters.",
+      "why_it_matters": "Meta’s free Muse AI code could lead to wider deployment of AI in everyday appliances, increasing the potential attack surface for malicious actors.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.15029309951459752,
+        "prominence": 0.09749366148915094
+      },
+      "au": {
+        "relevance": 0.15,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Meta"
+        ],
+        "products": [
+          "Muse"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/",
+          "published": "2026-10-03T00:45:39Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T00:45:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "meta",
+        "muse",
+        "ai-release",
+        "open-code",
+        "tv",
+        "toaster"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002272",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T05:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T05:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Play to win, pay to lose.",
+      "summary": "Play ransomware, also called PlayCrypt, is targeting organizations in various sectors by first exploiting a SonicWall VPN, then moving laterally with tools such as Mimikatz and PsExec, exfiltrating data, and using the victim’s own SentinelOne uninstallation utility to disable security controls before encrypting files.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "malware",
+        "data-breach",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.1597808759774172,
+        "prominence": 0.09093179947812798
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Play"
+        ],
+        "organisations": [
+          "GuidePoint Security",
+          "SonicWall",
+          "SentinelOne"
+        ],
+        "products": [
+          "Mimikatz",
+          "PsExec"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1003",
+          "name": "OS Credential Dumping",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1021",
+          "name": "Remote Services",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 1.0,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/research-saturday/444/notes",
+          "published": "2026-10-03T05:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T05:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "double-extortion",
+        "vpn-access",
+        "lateral-movement",
+        "data-exfiltration",
+        "tool-abuse"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 34,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The CyberWire (established)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004811",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:09:38Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-10-03T19:09:38Z",
+      "last_independent_confirmation": "2026-10-05T19:15:00Z",
+      "status": "archived",
+      "title": "ShinyHunters hacker reportedly detained in Jordan, aiding FBI",
+      "summary": "A suspected ShinyHunters hacker, known as Rey, was detained in Jordan and is helping the FBI track other group members.",
+      "why_it_matters": "The detention and cooperation of a ShinyHunters member with the FBI indicates active law-enforcement pressure on the group, which may help defenders anticipate or mitigate future extortion campaigns.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "fraud",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.8625,
+        "novelty": 0.37544610551749813,
+        "prominence": 0.0499059902733778
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters",
+          "Rey"
+        ],
+        "organisations": [
+          "FBI"
+        ],
+        "products": [],
+        "countries": [
+          "JO"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.8625,
+          "evidence": [
+            "bleepingcomputer",
+            "thn",
+            "therecord"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/shinyhunters-hacker-reportedly-detained-in-jordan-aiding-fbi/",
+          "published": "2026-10-03T19:09:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/shinyhunters-suspect-rey-reportedly.html",
+          "published": "2026-10-04T07:22:05Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/alleged-shinyhunters-member-detained-jordan-fbi",
+          "published": "2026-10-05T19:15:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:09:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-10-04T07:22:05Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-10-05T19:15:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "shinyhunters",
+        "extortion",
+        "jordan",
+        "fbi"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 52,
+        "tier": "notable",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "fraud",
+          "3 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005083",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T09:00:55Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T09:00:55Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bailiffs and 100 unpaid teachers: inside the collapse of ‘groundbreaking’ yoga studio Triyoga",
+      "summary": "Triyoga, a yoga studio chain, abruptly ceased trading, leaving teachers such as Kate Comer unpaid for about £1,500 and customers blindsided.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4328636433871383,
+        "prominence": 0.049782044188618584
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Triyoga"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/2026/oct/03/triyoga-yoga-unpaid-teachers-collapse",
+          "published": "2026-10-03T09:00:55Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T09:00:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "business-collapse",
+        "unpaid-wages",
+        "yoga-studio"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005078",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T05:00:50Z",
+      "last_seen": "2026-10-06T00:00:00.097692Z",
+      "last_material_update": "2026-10-03T05:00:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Henry Harris’s recipe for vegetarian endive au gratin",
+      "summary": "A recipe for a vegetarian endive au gratin presented by Henry Harris, describing its preparation and taste.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4328550188919603,
+        "prominence": 0.04977981807859657
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/food/2026/oct/03/vegetarian-endive-au-gratin-recipe-henry-harris",
+          "published": "2026-10-03T05:00:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T05:00:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005037",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T02:00:46Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T02:00:46Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bangkok at breaking point as floods turn streets into stagnant lakes",
+      "summary": "Bangkok has suffered severe flooding, with 40 deaths and a disaster declared across all 50 districts as heavy rains turned streets into stagnant lakes.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4328479663583398,
+        "prominence": 0.04977799775888158
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "TH"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/world/2026/oct/03/bangkok-thailand-floods-breaking-point-stagnant-lakes",
+          "published": "2026-10-03T02:00:46Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T02:00:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "flood",
+        "bangkok",
+        "thailand",
+        "disaster",
+        "extreme-weather",
+        "south-east-asia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005084",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T12:00:59Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-03T12:00:59Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "My relationship with food was broken. Then I killed my own dinner",
+      "summary": "A 19-year-old in Paris explains how hunting a deer shifted his view of food, leading to guilt and fear that culminated in self-harm during a family vacation.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45203540703839806,
+        "prominence": 0.04976866828465544
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "FR"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/ng-interactive/2026/oct/03/food-diet-weight-hunting",
+          "published": "2026-10-03T12:00:59Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T12:00:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "personal-narrative",
+        "food-relationship",
+        "hunting",
+        "emotional",
+        "paris"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005058",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T11:00:57Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-03T11:00:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘Happy Christmas, Ange’: why we have always loved a dramatic TV divorce",
+      "summary": "A new HBO legal thriller, War, and a BBC drama, The Split Up, are airing this weekend, both focusing on high-profile divorce cases, reflecting the high divorce rate in England and Wales.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45203173351466835,
+        "prominence": 0.04976774679185961
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/tv-and-radio/2026/oct/03/why-loved-dramatic-tv-divorce-war-the-split-up",
+          "published": "2026-10-03T11:00:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T11:00:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005091",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T11:00:57Z",
+      "last_seen": "2026-10-07T08:00:00.163891Z",
+      "last_material_update": "2026-10-03T11:00:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The hill I will die on: not everything is a ‘girl’ thing – stop gendering and infantilising it all | Elle Hunt",
+      "summary": "The Guardian article by Elle Hunt critiques the use of gendered language in everyday life, arguing that such phrasing infantilizes women. She calls for a shift away from labeling routine activities as \"girl\" things.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45203173351466835,
+        "prominence": 0.04976774679185961
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/03/the-hill-i-will-die-on-girl-thing-stop-gendering-infantilising",
+          "published": "2026-10-03T11:00:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T11:00:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "gender",
+        "sexism",
+        "language"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005095",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T10:00:56Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T10:00:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "They embraced the Fiat 500, the Vespa, even tuk-tuks. But will Romans draw the line at the golf cart?",
+      "summary": "A couple from Texas used a golf cart to navigate Rome’s Piazza Navona, prompting authorities to crack down on such vehicles.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4520300262129369,
+        "prominence": 0.04976731852364482
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Fiat 500",
+          "Vespa"
+        ],
+        "countries": [
+          "US",
+          "IT"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/world/2026/oct/03/rome-golf-cart-tours-crackdown-tourism",
+          "published": "2026-10-03T10:00:56Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T10:00:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "golf-cart",
+        "rome",
+        "tourism",
+        "authorities",
+        "crackdown",
+        "travel"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005092",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T09:00:56Z",
+      "last_seen": "2026-10-07T08:00:00.163891Z",
+      "last_material_update": "2026-10-03T09:00:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Fashion designer Henry Holland: ‘I’ve thought about a nose job but everyone says I’ll look different. That’s the point!’",
+      "summary": "Henry Holland, a Manchester-born fashion designer, reflected on his career and personal life, noting his past Olympic aspirations and his current work in ceramics and homewares.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45202991708830625,
+        "prominence": 0.049767291150344846
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "House of Holland",
+          "Henry Holland Studio",
+          "Royal Society of Sculptors",
+          "Smash Hits magazine"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/2026/oct/03/fashion-designer-henry-holland-interview-theres-no-place-like-it-exhibition",
+          "published": "2026-10-03T09:00:56Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T09:00:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "fashion",
+        "designer",
+        "interview",
+        "lifestyle"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005015",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T10:00:55Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T10:00:55Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "We live in a rape-prone society. The horrific Cornell case reveals what that looks like | Rebecca Solnit",
+      "summary": "An alleged gang rape at Cornell University in 2024 has led to a civil lawsuit by Jane Doe against the alleged perpetrators.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4520282130028109,
+        "prominence": 0.049766863691252244
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cornell University"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/03/cornell-rape-case-male-supremacy",
+          "published": "2026-10-03T10:00:55Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T10:00:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "sexual-violence",
+        "campus-rape",
+        "gender-equality"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005067",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T08:00:53Z",
+      "last_seen": "2026-10-05T08:00:00.116692Z",
+      "last_material_update": "2026-10-03T08:00:53Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘I thought, if I’m going to die, I’m going to write a book first’: Pachinko author Min Jin Lee",
+      "summary": "Min Jin Lee, a Korean-American author, quit her corporate law job in 1995 after being diagnosed as a hepatitis B carrier and told she was likely to develop liver cancer. She has since written a bestselling novel and a new epic.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4520245873641059,
+        "prominence": 0.04976595422999027
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "legal"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/books/2026/oct/03/i-thought-if-im-going-to-die-im-going-to-write-a-book-first-pachinko-author-min-jin-lee",
+          "published": "2026-10-03T08:00:53Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T08:00:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "author",
+        "hepatitis-b",
+        "career-change",
+        "legal-profession",
+        "book-writing",
+        "korean-american"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005059",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T06:00:52Z",
+      "last_seen": "2026-10-05T08:00:00.116692Z",
+      "last_material_update": "2026-10-03T06:00:52Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Get Jiro: Anthony Bourdain’s ultraviolent sushi chef makes for wild, pulpy television",
+      "summary": "An article discusses a TV show featuring a violent sushi chef involved in a turf war between restaurants in Los Angeles.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45202283892643896,
+        "prominence": 0.04976551565253146
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/tv-and-radio/2026/oct/03/get-jiro-anthony-bourdains-ultraviolent-sushi-chef-makes-for-wild-pulpy-television",
+          "published": "2026-10-03T06:00:52Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T06:00:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "food",
+        "tv",
+        "chef",
+        "restaurant",
+        "la",
+        "anthony-bourdain"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005099",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T05:00:52Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T05:00:52Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Blind date: ‘He asked if my disco ball tattoo was an onion’",
+      "summary": "A 29-year-old graphic designer and music label manager named Shahar goes on a blind date with a 34-year-old product designer named Stephen.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45202266201945923,
+        "prominence": 0.04976547127737912
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/2026/oct/03/blind-date-shahar-stephen",
+          "published": "2026-10-03T05:00:52Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T05:00:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005061",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T04:00:48Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T04:00:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘My hips can’t help but move’: readers on the songs that always get them dancing",
+      "summary": "A couple at a wedding struggled to get guests dancing, eventually choosing a song that sparked a party.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4520154075529815,
+        "prominence": 0.049763651595423467
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/music/2026/oct/03/my-hips-cant-help-but-move-readers-on-the-songs-that-always-get-them-dancing",
+          "published": "2026-10-03T04:00:48Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T04:00:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "music",
+        "dance",
+        "party",
+        "readers",
+        "wedding",
+        "song"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005100",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:07Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T19:00:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘There’s a lot of silence’: have we created a new ‘Lonely Generation’?",
+      "summary": "A 25-year-old Reddit user reports feeling lonely and lacking physical affection, reflecting a broader trend of increasing loneliness among young people worldwide.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4327803709837606,
+        "prominence": 0.049760552805868205
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/society/ng-interactive/2026/oct/04/young-generation-lonely-silence",
+          "published": "2026-10-03T19:00:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "loneliness",
+        "touch-starvation",
+        "reddit",
+        "forever-alone",
+        "hugs",
+        "cuddles"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T20:00:07Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T20:00:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Black Box: The Chatbots | Life Raft | Ep 4 – podcast",
+      "summary": "A podcast episode explores how people are increasingly interacting with AI chatbots, sharing personal secrets and following their advice, illustrated by stories of a woman leaving a relationship and a man quitting drinking.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.3855633756253876,
+        "prominence": 0.04976043505217883
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "mentions Australian hotline contact"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "National Alcohol and Other Drug Hotline",
+          "Family Drug Support Australia",
+          "Taking Action"
+        ],
+        "products": [],
+        "countries": [
+          "AU",
+          "GB"
+        ],
+        "industries": [
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/audio/2026/oct/04/black-box-the-chatbots-life-raft-episode-4-podcast",
+          "published": "2026-10-03T20:00:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T20:00:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-chatbots",
+        "mental-health",
+        "podcast",
+        "wellbeing",
+        "hotline",
+        "guardian"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004868",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T22:00:31Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-10-03T22:00:31Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "September sponsors-only newsletter",
+      "summary": "A content creator has released a sponsors-only September newsletter covering topics such as new Fable class models, pricing wars, 3D graphics, Blender, pixel art, LLMs applied to mathematics, accidental cyberattacks, and a vulnerability event called the \"vulnapocalypse\" for Datasette. The newsletter is available to sponsors for $10/month, with a free preview of the August edition.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "ai-industry",
+        "research"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.45198470564039533,
+        "prominence": 0.04975595088977823
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Datasette",
+          "Fable",
+          "Blender"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/newsletter/",
+          "published": "2026-10-03T22:00:31Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:00:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "newsletter",
+        "vulnerability",
+        "llm",
+        "cyberattack",
+        "datasette",
+        "blender"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-005066",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T10:59:56Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-03T10:59:56Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘Goodbye Whoniverse. God, that was fun!’: Russell T Davies on writing the end of Doctor Who",
+      "summary": "Russell T Davies discusses wrapping up Doctor Who in his memoir, noting the difficulties of writing amid constant online leaks and the impact of the Disney deal on the series’ future.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.43276120335775137,
+        "prominence": 0.04975560670007756
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Disney"
+        ],
+        "products": [
+          "Doctor Who"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/media/2026/oct/03/russell-t-davies-memoir-the-queerest-of-folk-extract",
+          "published": "2026-10-03T10:59:56Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T10:59:56Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "doctor-who",
+        "memoir",
+        "leaks",
+        "disney",
+        "writing",
+        "tv"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005042",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T07:34:16Z",
+      "last_seen": "2026-10-06T04:00:00.135578Z",
+      "last_material_update": "2026-10-03T07:34:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Flood watch for most of Victoria as heavy rain continues, with storms forecast in parts of NSW",
+      "summary": "A severe weather system is dumping heavy rain across Victoria, prompting a flood watch for most of the state and parts of NSW, with warnings of transport disruption and delays.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.34136753557934024,
+        "prominence": 0.049754730260658825
+      },
+      "au": {
+        "relevance": 0.8,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names an Australian place (NSW)",
+          "Flood watch issued by the Bureau of Meteorology",
+          "Heavy rainfall up to 90mm reported in Victoria",
+          "Transport disruption warnings issued"
+        ],
+        "sectors": [
+          "transport"
+        ],
+        "soci_asset_classes": [
+          "transport"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/03/victoria-flood-watch-weather-rain-thunderstorms-forecast-nsw",
+          "published": "2026-10-03T07:34:16Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T07:34:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "flood",
+        "weather",
+        "rain",
+        "victoria",
+        "nsw"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 39,
+        "tier": "routine",
+        "reasons": [
+          "neither cyber nor AI",
+          "strongly relevant to Australia",
+          "reported by The Guardian (community)",
+          "critical infrastructure (transport) involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005064",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T13:00:02Z",
+      "last_seen": "2026-10-06T00:00:00.097692Z",
+      "last_material_update": "2026-10-03T13:00:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "When is the right time to compare US politics to the Nazi era? This expert on Christian nationalism says: now",
+      "summary": "Robert P Jones argues that the decline of white Christian influence has led to an alliance with Trump, reshaping U.S. democracy.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45193201123748455,
+        "prominence": 0.049742735656681254
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/books/2026/oct/03/robert-p-jones-backslide-interview",
+          "published": "2026-10-03T13:00:02Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T13:00:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "christian-nationalism",
+        "us-politics",
+        "democracy",
+        "trump",
+        "nazism-comparison"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004805",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T11:00:00Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-10-03T11:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations",
+      "summary": "A report titled \"The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations\" discusses how cloud expansion, AI, distributed systems, and complex digital environments are reshaping cybersecurity, highlighting a shift toward continuous visibility, control, and scalable risk response.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.451928391754431,
+        "prominence": 0.04974182800354374
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/the-state-of-cybersecurity-in-2026key.html",
+          "published": "2026-10-03T11:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T11:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "cybersecurity",
+        "ai",
+        "cloud",
+        "distributed-systems",
+        "report",
+        "trend"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 20,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-005075",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T10:59:57Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T10:59:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘One person turned up at my house’: Russell T Davies on fierce fandom, finding love after grief - and the fear that drives him to keep a knife by the door",
+      "summary": "Russell T Davies, a well-known television writer, describes being targeted by hate attacks, including an incident with bus conductors, while reflecting on his career and personal life.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4519229533689144,
+        "prominence": 0.049740464245236954
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Doctor Who"
+        ],
+        "countries": [],
+        "industries": [
+          "media"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/media/2026/oct/03/russell-t-davies-interview-doctor-who-fierce-fandom-love-grief",
+          "published": "2026-10-03T10:59:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T10:59:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "tv",
+        "fandom",
+        "memoir",
+        "personal",
+        "guardian",
+        "media"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T01:57:39Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T01:57:39Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Eliza review – an ambitious, unsettling play about the birth of AI",
+      "summary": "A review of Tom Holloway’s play \"Eliza\", staged by Melbourne Theatre Company, examines the early days of artificial intelligence but is critiqued for feeling less human than expected.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.3853345471651423,
+        "prominence": 0.049696291260806
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Melbourne Theatre Company"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/stage/2026/oct/03/eliza-review-melbourne-theatre-company-birth-of-ai",
+          "published": "2026-10-03T01:57:39Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T01:57:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "theatre",
+        "review",
+        "play",
+        "melbourne",
+        "history"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004909",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T22:56:48Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-10-03T22:56:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Agent Said It Was Done. The Database Disagreed.",
+      "summary": "An AI agent claimed to have completed a task, but a database record indicates otherwise.",
+      "why_it_matters": "This incident underscores the importance of verifying AI-generated claims against authoritative data sources, highlighting a potential risk of misinformation in AI systems.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-security",
+        "ai_security"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4515804647793391,
+        "prominence": 0.049654625166305394
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/microsoft/thinkingbox",
+          "published": "2026-10-03T22:56:48Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:56:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-security",
+        "agent",
+        "database"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-005043",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T00:23:49Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T00:23:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Magnitude 4.8 earthquake hits Victoria with tremors felt across Melbourne",
+      "summary": "A magnitude 4.8 earthquake struck Victoria near Leongatha, shaking Melbourne and waking residents across the region.",
+      "why_it_matters": "The quake could damage buildings and infrastructure in Melbourne, requiring inspections and emergency preparedness. The event highlights the need for seismic resilience in the region.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3660051392154332,
+        "prominence": 0.049318404469198496
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Earthquake occurred in Victoria, Australia",
+          "Tremors felt across Melbourne"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Geoscience Australia"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/world/2026/oct/02/magnitude-48-earthquake-hits-victoria-with-tremors-felt-across-melbourne",
+          "published": "2026-10-03T00:23:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T00:23:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "earthquake",
+        "victoria",
+        "melbourne"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004869",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T18:43:57Z",
+      "last_seen": "2026-10-06T12:00:00.170560Z",
+      "last_material_update": "2026-10-03T18:43:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+      "summary": "Amazon Web Services announced it has stopped using non-disclosure agreements for its data center operations after facing criticism.",
+      "why_it_matters": "AWS’s decision to discontinue NDAs may increase transparency around its data center activities, potentially influencing how customers and regulators evaluate compliance and oversight.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.45018605893356306,
+        "prominence": 0.04930605794708919
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Amazon",
+          "Amazon Web Services"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/",
+          "published": "2026-10-03T18:43:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T18:43:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-center",
+        "nda",
+        "backlash"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004808",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:40:21Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T14:40:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "YARA-X 1.21.0 Release, (Sat, Oct 3rd)",
+      "summary": "YARA-X 1.21.0 was released, adding five improvements and fixing four bugs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.44979615030056513,
+        "prominence": 0.0492088536880651
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "YARA-X"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33392",
+          "published": "2026-10-03T14:40:21Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:40:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "yara-x",
+        "release",
+        "bugfix",
+        "improvement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 14,
+        "tier": "routine",
+        "reasons": [
+          "reported by SANS Internet Storm Center (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004867",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T23:34:02Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-10-03T23:34:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "We're going to need default hard budget caps on pretty much everything",
+      "summary": "The article proposes that pay-by-usage services and APIs should implement hard budget caps that automatically cut off usage and return errors once a monthly threshold is reached, rather than merely issuing warnings.",
+      "why_it_matters": "Hard budget caps would give developers and businesses predictable cost limits for AI services, preventing unexpected charges. This could shape how cloud providers design pricing models and how regulators monitor AI usage.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4491128407439577,
+        "prominence": 0.049038781843038254
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/",
+          "published": "2026-10-03T23:34:02Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T23:34:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "budget-cap",
+        "usage-limit",
+        "api",
+        "cost-control"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004858",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T15:00:00Z",
+      "last_seen": "2026-10-05T16:00:00.200935Z",
+      "last_material_update": "2026-10-03T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Splice CEO Kakul Srivastava thinks AI emails are killing conversations",
+      "summary": "Splice CEO Kakul Srivastava says that AI-generated emails are eroding genuine conversations among people.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.4585018802654621,
+        "prominence": 0.04901776039254842
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Splice"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/entertainment/1004162/splice-ceo-kakul-srivastava-ai-interview",
+          "published": "2026-10-03T15:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-emails",
+        "ceo-statement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004806",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T08:29:54Z",
+      "last_seen": "2026-10-08T00:00:00.164707Z",
+      "last_material_update": "2026-10-03T08:29:54Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "N0n ransomware: what you need to know",
+      "summary": "N0n is a new ransomware group that appeared in September 2026 and has already identified roughly a dozen victims, with the victim count growing over time.",
+      "why_it_matters": "The emergence of N0n represents a fresh ransomware threat that has already impacted multiple victims, signaling potential future attacks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "emerging-threat",
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.6,
+        "novelty": 0.4055302280043691,
+        "prominence": 0.04899942021382882
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "N0n"
+        ],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.fortra.com/blog/n0n-ransomware-what-you-need-know",
+          "published": "2026-10-03T08:29:54Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T08:29:54Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "extortion",
+        "emerging-threat",
+        "cyber-extortion"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "ransomware attack",
+          "reported by Graham Cluley (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005041",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T09:04:42Z",
+      "last_seen": "2026-10-06T04:00:00.135578Z",
+      "last_material_update": "2026-10-03T09:04:42Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "One Nation vows to abolish First Nations treaty and legalise pepper spray at Victorian campaign launch",
+      "summary": "One Nation has launched a Victorian election campaign, pledging to legalise pepper spray, abolish the Indigenous treaty, and cut payroll tax in regional Victoria.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.359101824440578,
+        "prominence": 0.04895393059949116
+      },
+      "au": {
+        "relevance": 0.6,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names an Australian place (Victorian)",
+          "Victorian election campaign",
+          "policy to legalise pepper spray",
+          "policy to abolish treaty with Indigenous people"
+        ],
+        "sectors": [
+          "government",
+          "legal",
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "One Nation"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/03/one-nation-victoria-campaign-launch-abolish-first-nations-treaty-legalise-pepper-spray-ntwnfb",
+          "published": "2026-10-03T09:04:42Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T09:04:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "pepper-spray",
+        "indigenous-treaty",
+        "payroll-tax",
+        "ai-generated",
+        "victorian-election",
+        "one-nation"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005046",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:08Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-03T19:00:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Is now a good time to switch banks for a better home loan rate? Here’s what to know after the latest RBA hike",
+      "summary": "The article discusses how Australian mortgage holders can potentially save money by switching banks after the Reserve Bank of Australia raised its key rate to the highest level in 15 years, noting that large discounts are becoming harder to find.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3385746677960459,
+        "prominence": 0.048895909776951976
+      },
+      "au": {
+        "relevance": 0.8,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "RBA key rate hike",
+          "mortgage holders affected",
+          "article about Australian rates"
+        ],
+        "sectors": [
+          "government",
+          "finance"
+        ],
+        "soci_asset_classes": [
+          "financial services and markets"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Reserve Bank of Australia"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/04/interest-rates-home-loan-mortgage-switch-lenders-australia-rba",
+          "published": "2026-10-03T19:00:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "mortgage",
+        "home-loan",
+        "interest-rate",
+        "rba",
+        "bank-switching"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 39,
+        "tier": "routine",
+        "reasons": [
+          "neither cyber nor AI",
+          "strongly relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005040",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:07Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-10-03T19:00:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "John Makai was unresponsive when dragged from a Victoria police van. Just one of many ‘shortcomings’ inquest has heard so far",
+      "summary": "A 58-year-old man died after being left in a police station cell for hours, raising questions about police procedures.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.358705867161374,
+        "prominence": 0.04883839157758442
+      },
+      "au": {
+        "relevance": 0.6,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australian places (Melbourne, Victorian)",
+          "Victorian police station involved",
+          "Victorian coroner’s court hearing",
+          "Victorian police van used"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Victoria police",
+          "Melbourne police station",
+          "Victorian coroner's court"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/04/john-makai-was-unresponsive-when-dragged-from-a-victoria-police-van-just-one-of-many-shortcomings-inquest-has-heard-so-far-ntwnfb",
+          "published": "2026-10-03T19:00:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "police-custody",
+        "death-investigation",
+        "coroner-inquest",
+        "police-misconduct",
+        "public-safety",
+        "inquest"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005010",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:09Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T19:00:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The interest rate rise is the wrong medicine and an even worse alibi | Yanis Varoufakis",
+      "summary": "The article criticises the Reserve Bank of Australia's recent rate hike, arguing it is an unnecessary measure that harms ordinary Australians.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3639263984974962,
+        "prominence": 0.04871848665055575
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "RBA raised cash rate",
+          "article discusses impact on Australians"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Reserve Bank of Australia"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/04/yanis-varoufakis-australia-interest-rate-rise",
+          "published": "2026-10-03T19:00:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "interest-rate",
+        "inflation",
+        "reserve-bank",
+        "australia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005012",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:08Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T19:00:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australia’s wealth gap is growing and so is the anger over it. How do we fix this absolutely hopeless state of affairs? | Zoe Daniel",
+      "summary": "The article reports that Australia’s wealth gap is widening, fueling public anger over rising costs, climate change, tech influence, crime, and government actions.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.36392493869395964,
+        "prominence": 0.04871806680551589
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Article discusses Australia’s widening wealth gap",
+          "Article highlights economic pressures affecting Australians"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/04/australia-government-cost-of-living-wealth-gap",
+          "published": "2026-10-03T19:00:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "wealth-gap",
+        "cost-of-living",
+        "climate-change",
+        "big-tech",
+        "interest-rates",
+        "government"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005044",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:08Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-03T19:00:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Hegseth calls US-built nuclear submarines the ‘apex predator’ of the seas. But are they right for Australia?",
+      "summary": "US Secretary of Defense praises Virginia-class submarines as a top U.S. warship, while experts question their fit for Australian defense needs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.36392493869395964,
+        "prominence": 0.04871806680551589
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "mentions Australia",
+          "discusses suitability for Australian defense"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Newport News shipyards"
+        ],
+        "products": [
+          "Virginia-class submarine"
+        ],
+        "countries": [
+          "US",
+          "AU"
+        ],
+        "industries": [
+          "government",
+          "defence"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/04/hegseth-apex-predator-nuclear-submarines-right-for-australia-aukus-ntwnfb",
+          "published": "2026-10-03T19:00:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "submarines",
+        "defense-policy",
+        "us-australia",
+        "naval",
+        "procurement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005082",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:08Z",
+      "last_seen": "2026-10-06T04:00:00.135578Z",
+      "last_material_update": "2026-10-03T19:00:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From urban rooftops to working cattle farms: Australia’s best home gardens – in pictures",
+      "summary": "The Landscape Australia awards released a shortlist of 20 top residential gardens, chosen for their responses to climate change, fire and flood resilience, and biodiversity loss, highlighting gardens as part of shared urban infrastructure.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.36392493869395964,
+        "prominence": 0.04871806680551589
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/gallery/2026/oct/04/landscape-australia-residential-garden-award-finalists-in-pictures",
+          "published": "2026-10-03T19:00:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005045",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:07Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T19:00:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Labor may be on the nose in inner Melbourne over public housing – but it’s taking the fight to the Greens",
+      "summary": "A 76-year-old Chinese Hakka immigrant living in Melbourne’s North Richmond public housing is highlighted in a Guardian article that discusses local political strategies such as allowing dogs in pubs and extending trading hours.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3639234788962787,
+        "prominence": 0.0487176469641932
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Article set in Melbourne",
+          "Mentions North Richmond public housing towers"
+        ],
+        "sectors": [
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Labor",
+          "Greens"
+        ],
+        "products": [],
+        "countries": [
+          "ID",
+          "PT",
+          "AU",
+          "TL"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/2026/oct/04/labor-greens-public-housing-battle-2026-victoria-election",
+          "published": "2026-10-03T19:00:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "public-housing",
+        "labor",
+        "greens",
+        "melbourne",
+        "dogs-in-pubs",
+        "trading-hours"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005039",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:06Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T19:00:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Whales on Australia’s ‘humpback highway’ are at growing risk of injury from boat and propellor strikes",
+      "summary": "Images from WWF Australia show humpback whales along the eastern coast suffering deep cuts and missing tail parts after collisions with boats and propellers.",
+      "why_it_matters": "The growing rate of injuries threatens the expanding humpback population that rebounded after the whaling ban, potentially impacting marine ecosystems and tourism. It highlights the need for better regulation of vessel traffic to protect wildlife.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3639220191044534,
+        "prominence": 0.04871722712658768
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Whales on Australia's east coast are injured by boat and propeller strikes",
+          "Population of humpback whales has grown since the ban on whaling"
+        ],
+        "sectors": [
+          "non-profit"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "WWF Australia"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/environment/2026/oct/04/whales-australia-humpback-highway-boat-propellor-strikes",
+          "published": "2026-10-03T19:00:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "whale-injury",
+        "boat-strike",
+        "propeller-strike",
+        "wildlife-conservation",
+        "australia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005054",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:06Z",
+      "last_seen": "2026-10-05T04:00:00.103823Z",
+      "last_material_update": "2026-10-03T19:00:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Ella Hooper: ‘Most embarrassing celebrity encounter? I said the classic thing you don’t ever say to Billy Bragg’",
+      "summary": "...",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3639220191044534,
+        "prominence": 0.04871722712658768
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/culture/2026/oct/04/ella-hooper-interview-i-said-the-thing-you-never-say-to-billy-bragg",
+          "published": "2026-10-03T19:00:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "music",
+        "interview",
+        "celebrity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005097",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:00:06Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T19:00:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The moment I knew: As a reality TV contestant, I was allowed one 15-minute call a week. Even at 3am, Chris would always pick up",
+      "summary": "Conor Curran, a former hospitality professional, joined MasterChef Australia after losing his job due to Covid, was eliminated in 2021, and faced personal and financial challenges while living in Melbourne.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3639220191044534,
+        "prominence": 0.04871722712658768
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Contestant on MasterChef Australia",
+          "Melbourne residence",
+          "Australian TV show"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "hospitality"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/lifeandstyle/2026/oct/04/the-moment-i-knew-as-a-reality-tv-contestant-i-was-allowed-one-15-minute-call-a-week-even-at-3am-chris-would-always-pick-up",
+          "published": "2026-10-03T19:00:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:00:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "personal-story",
+        "reality-tv",
+        "hospitality",
+        "covid-19",
+        "masterchef-australia",
+        "melbourne"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005101",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T05:00:50Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T05:00:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "‘Elon is my prophet’: how Musk’s Doge team took a wrecking ball to Washington",
+      "summary": "A new US ‘department of government efficiency’ dispatched tech staff to federal agencies, prompting an internal email to all federal employees. One employee opposed the directive to protect immigrant data.",
+      "why_it_matters": "The email from HR hr@opm.gov indicates a top-down initiative to deploy tech staff to agencies, raising concerns about internal security and data handling. The employee’s resistance highlights potential conflicts over the protection of sensitive immigrant data.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.47889758938867494,
+        "prominence": 0.048443774833099924
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Department of Government Efficiency"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/us-news/2026/oct/03/elon-is-my-prophet-how-musks-doge-team-took-a-wrecking-ball-to-washington",
+          "published": "2026-10-03T05:00:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T05:00:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "government-policy",
+        "data-protection",
+        "federal-workforce",
+        "immigrant-data"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Guardian (community)",
+          "government involved"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-005354",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T12:02:00Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-10-03T12:02:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Clever database, but can it run Doom?",
+      "summary": "Reg hack learns the meaning of 'Be careful what you wish for'",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.445663537759721,
+        "prominence": 0.048185650353292996
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theregister_com",
+          "url": "https://www.theregister.com/databases/2026/10/03/clever-database-but-can-it-run-doom/5300506",
+          "published": "2026-10-03T12:02:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theregister_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T12:02:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Technology news and analysis | The Register",
+          "sources": [
+            "found_theregister_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Technology news and analysis | The Register (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005355",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T08:02:00Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-10-03T08:02:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Palantir's fondness for French food cooked up tech's latest fad – forward-deployed engineers",
+      "summary": "Embedded consultants who get you up to speed on new tech in a hurry aren’t new, but they meet the AI moment",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4206503653902486,
+        "prominence": 0.04226463427421577
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theregister_com",
+          "url": "https://www.theregister.com/channel/2026/10/03/palantirs-fondness-for-french-food-cooked-up-techs-latest-fad-forward-deployed-engineers/5300360",
+          "published": "2026-10-03T08:02:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theregister_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T08:02:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Technology news and analysis | The Register",
+          "sources": [
+            "found_theregister_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Technology news and analysis | The Register (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005454",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T07:10:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T07:10:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft Research Shows a Single Mild Prompt Can Misled Top AI Models",
+      "summary": "Using Group Relative Policy Optimization, Microsoft found vulnerabilities in models from Google, Meta, and others—including text-to-image systems.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3921031100908643,
+        "prominence": 0.03606439695006964
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/news/microsoft-research-shows-a-single-mild-prompt-can-misled-top-ai-models",
+          "published": "2026-10-03T07:10:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T07:10:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005431",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T04:19:14Z",
+      "last_seen": "2026-10-07T12:00:00.100101Z",
+      "last_material_update": "2026-10-03T04:19:14Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Understanding Golden Ticket Attacks: Detection & Fix",
+      "summary": "By HOC Team | Updated: October 2026| Read time: ~14 min In the realm of enterprise identity security,… The post Understanding Golden Ticket Attacks: Detection & Fix appeared first on Hackers Online Club .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.37631455837326155,
+        "prominence": 0.03288313060441214
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_hackersonlineclub_com",
+          "url": "https://hackersonlineclub.com/understanding-golden-ticket-attacks-detection-fix/",
+          "published": "2026-10-03T04:19:14Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_hackersonlineclub_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T04:19:14Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hackers Online Club",
+          "sources": [
+            "found_hackersonlineclub_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hackers Online Club (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005455",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T00:07:09Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T00:07:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AWS Data Lake Explained for Developers Who Need to Store Everything",
+      "summary": "What an AWS data lake is, how S3, Glue, and Athena fit together, and a practical path to storing analytics-ready data at scale.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.35416218233911456,
+        "prominence": 0.028708851976762165
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/aws/aws-data-lake-explained-for-developers",
+          "published": "2026-10-03T00:07:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T00:07:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005456",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-10-03T00:07:08Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-10-03T00:07:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "What Is a Single Page Application and When Should You Build One",
+      "summary": "Learn how SPAs work, how they differ from multi-page apps, and the tradeoffs teams face when choosing a frontend architecture.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.3541607617023912,
+        "prominence": 0.028708594931327585
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/web-development/what-is-a-single-page-application-and-when-to-build-one",
+          "published": "2026-10-03T00:07:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T00:07:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

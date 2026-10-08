@@ -1,0 +1,3437 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2026-08-25",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 41,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 40,
+    "directly_reported_in_au": 2,
+    "pending_enrichment": 41
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001800",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T12:00:00.072163Z",
+      "last_material_update": "2026-08-27T04:35:53Z",
+      "last_independent_confirmation": "2026-08-27T04:35:53Z",
+      "status": "archived",
+      "title": "Remote Code Execution in Gitea (CVE-2026-60004)",
+      "summary": "Published: Thu 27 Aug 2026",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "research",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.925,
+        "novelty": 1.250229524757416e-06,
+        "prominence": 0.015553028400918534
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-60004",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.23988,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-25",
+            "due_date": "2026-08-28"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-rcr6-4jqh-j84m",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "Go",
+                  "name": "gitea.dev",
+                  "fixed": [
+                    "1.27.1"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-rcr6-4jqh-j84m"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-60004 as exploited in the wild, added 2026-08-25, with US federal agencies due to fix it by 2026-08-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-60004 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-60004"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-60004 being exploited in the next 30 days at 24%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-60004"
+          ]
+        },
+        {
+          "text": "A fix for gitea.dev (Go) is published in 1.27.1, per GHSA-rcr6-4jqh-j84m.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-rcr6-4jqh-j84m"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "triskele"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-60004",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/remote-code-execution-in-gitea-cve-2026-60004",
+          "published": "2026-08-27T04:35:53Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-08-27T04:35:53Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 63,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by Triskele Labs (specialist)",
+          "reported in Australia",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002078",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T05:27:40Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T05:27:40Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Security Exhibition & Conference marks 40 years ahead of Sydney event",
+      "summary": "Security Exhibition & Conference will return to ICC Sydney from 2–4 September 2026, marking the event’s 40th anniversary as organisers prepare for the sector to gather for three days of exhibits and conference sessions. Organised by Diversified Australia and co-located with Fire Security Expo and Integrate, the event is expected to bring together hundreds of [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 1.352816467090925e-06,
+        "prominence": 5.732969431640985e-13
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "asm",
+          "url": "https://australiansecuritymagazine.com.au/security-exhibition-conference-marks-40-years-ahead-of-sydney-event/?utm_source=rss&utm_medium=rss&utm_campaign=security-exhibition-conference-marks-40-years-ahead-of-sydney-event",
+          "published": "2026-08-25T05:27:40Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "mysecuritymedia",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T05:27:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Australian Security Magazine",
+          "sources": [
+            "asm"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by MySecurity Media (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003679",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T15:14:14Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-08-25T15:14:14Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Granite 4.2 LLMs: How They're Built",
+      "summary": "Granite 4.2 LLMs: How They're Built",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.4972791783699335e-06,
+        "prominence": 3.9402173502394476e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/ibm-granite/granite-4-2",
+          "published": "2026-08-25T15:14:14Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T15:14:14Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-000027",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T12:00:00Z",
+      "last_seen": "2026-10-08T12:00:00.003070Z",
+      "last_material_update": "2026-08-25T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA Advisory Highlights Red Team Findings to Help Organizations Assess Risk, Identify Threats and Enable Effective Incident Response",
+      "summary": "CISA Advisory Highlights Red Team Findings to Help Organizations Assess Risk, Identify Threats and Enable Effective Incident Response",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 1.4867818462279898e-06,
+        "prominence": 3.885161747413006e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cisa_news",
+          "url": "https://www.cisa.gov/news-events/news/cisa-advisory-highlights-red-team-findings-help-organizations-assess-risk-identify-threats-and",
+          "published": "2026-08-25T12:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA News",
+          "sources": [
+            "cisa_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 17,
+        "tier": "routine",
+        "reasons": [
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002015",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T10:00:57Z",
+      "last_seen": "2026-10-02T00:00:00.044873Z",
+      "last_material_update": "2026-08-25T10:00:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The State of AI-Enabled Malware August 2026: From Brand Abuse to Agentic Execution",
+      "summary": "Explore Unit 42 research on AI-enabled malware. Learn how existing behavioral detection and endpoint analytics stop AI-authored code before execution. The post The State of AI-Enabled Malware August 2026: From Brand Abuse to Agentic Execution appeared first on Unit 42 .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 1.4447863546498307e-06,
+        "prominence": 3.6687815363257173e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "unit42",
+          "url": "https://unit42.paloaltonetworks.com/ai-enabled-malware-analysis/",
+          "published": "2026-08-25T10:00:57Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "unit42",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T10:00:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Unit 42 Palo Alto Networks",
+          "sources": [
+            "unit42"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Unit 42 Palo Alto Networks (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-003680",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T11:39:24Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-08-25T11:39:24Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Quantization-Aware Healing: a compressed, 4-bit model that outperforms its full-precision original",
+      "summary": "Quantization-Aware Healing: a compressed, 4-bit model that outperforms its full-precision original",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.421829368549568e-06,
+        "prominence": 3.5531172718455564e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/MultiverseComputingCAI/quantization-aware-healing",
+          "published": "2026-08-25T11:39:24Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T11:39:24Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002362",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T07:05:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T07:05:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The full stack behind abundant intelligence",
+      "summary": "OpenAI CFO Sarah Friar explains how advances across chips, compute, models, and products compound to deliver more useful intelligence at greater scale and lower cost.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.3309630888789356e-06,
+        "prominence": 3.1134835108567767e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/the-full-stack-behind-abundant-intelligence",
+          "published": "2026-08-25T07:05:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T07:05:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002363",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T07:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Jalapeño’s first results show industry-leading speed and efficiency in AI inference",
+      "summary": "Jalapeño is a custom inference chip from OpenAI that delivers faster, more power-efficient AI inference, with higher throughput and lower latency for modern models.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.329362397136336e-06,
+        "prominence": 3.105999105984516e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/jalapeno-first-results",
+          "published": "2026-08-25T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004804",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T07:00:00Z",
+      "last_seen": "2026-10-06T16:00:00.165363Z",
+      "last_material_update": "2026-08-25T07:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Funding better evaluations of AI’s impact on wellbeing",
+      "summary": "Funding better evaluations of AI’s impact on wellbeing",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.329362397136336e-06,
+        "prominence": 3.105999105984516e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "anthropic_news",
+          "url": "https://www.anthropic.com/news/wellbeing-research-grants",
+          "published": "2026-08-25T07:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "anthropic_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T07:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Anthropic News",
+          "sources": [
+            "anthropic_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 14,
+        "tier": "routine",
+        "reasons": [
+          "reported by Anthropic News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002364",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Disrupting a new covert influence campaign from Russia",
+      "summary": "OpenAI banned Russia-origin accounts using AI to promote a fake Israel-based think tank and a “sovereignty” index praising Russia and criticizing the West.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.201553692160384e-06,
+        "prominence": 2.5374696917284375e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/disrupting-malicious-uses-of-ai-influence-campaign-russia",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-002365",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Introducing the Admin plugin for ChatGPT Work and Codex",
+      "summary": "Use the Admin plugin for ChatGPT Work and Codex to analyze workspace usage, manage members and permissions, adjust limits, and act on admin requests.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.201553692160384e-06,
+        "prominence": 2.5374696917284375e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/introducing-admin-plugin",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-003681",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-07T20:00:00.129617Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Wire It, Run It, Deploy It: AI Workflows in Gradio",
+      "summary": "Wire It, Run It, Deploy It: AI Workflows in Gradio",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai_security"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 1.201553692160384e-06,
+        "prominence": 2.5374696917284375e-13
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/gradio-workflow-guide",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-005612",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T12:47:06Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T12:47:06Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Seedance Bingo Review: Hands-On with Seedance 2.5 in 2026",
+      "summary": "Seedance Bingo Review: Hands-On with Seedance 2.5 in 2026",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 5.735225713422517e-07,
+        "prominence": 5.781164075371334e-14
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/artificial-intelligence/seedance-bingo-review-hands-on-with-seedance-25-in-2026",
+          "published": "2026-08-25T12:47:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T12:47:06Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005613",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T12:37:25Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T12:37:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Top 10 Best AI Image Generators in 2026: The Ultimate Guide for Every Creator",
+      "summary": "Top 10 Best AI Image Generators in 2026: The Ultimate Guide for Every Creator",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 5.721875063864101e-07,
+        "prominence": 5.75428022301624e-14
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_plainenglish_io",
+          "url": "https://plainenglish.io/artificial-intelligence/top-10-best-ai-image-generators-in-2026-the-ultimate-guide-for-every-creator",
+          "published": "2026-08-25T12:37:25Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_plainenglish_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T12:37:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by In Plain English",
+          "sources": [
+            "found_plainenglish_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by In Plain English (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-009712",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T22:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T22:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Bigger Than Technology - A 360-Degree View of the Modern Threat Landscape",
+      "summary": "Cybersecurity is bigger than technology. For Thomas Tschersich, CSO of Deutsche Telekom, security leaders need to look beyond cyber attacks and understand how people, geopolitics, supply chains, regulation, technology, and physical security all shape an organization’s risk. Recorded at Deutsche Telekom in Bonn, Berthold Kerl speaks with Thomas about what a 360-degree view of cybersecurity means in practice. They discuss why employees should be seen as a first line of defense, how seemingly insignificant supply-chain dependencies can become critical security risks, and why Europe’s growing reg…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 4.6326230143781827e-07,
+        "prominence": 3.771969271973218e-14
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_kuppingercole_com",
+          "url": "https://www.kuppingercole.com/watch/bigger-than-technology",
+          "published": "2026-08-25T22:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_kuppingercole_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T22:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by KuppingerCole Analysts",
+          "sources": [
+            "found_kuppingercole_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by KuppingerCole Analysts (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011134",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A corpus of science journalism for analyzing writing quality",
+      "summary": "Annie Louis and Ani Nenkova in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.6/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011135",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A Discriminative Analysis of Fine-Grained Semantic Relations including Presupposition: Annotation and Classification",
+      "summary": "Galina Tremper and Anette Frank in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.13/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011136",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A few shades of supervision for discourse segmentation: experiments on a French conversational corpus",
+      "summary": "Laurent Prevot and Philippe Muller in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.5/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011137",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A modular architecture for creating multimodal embodied agents with an episodic Knowledge Graph as an explainable and controllable long-term memory",
+      "summary": "Thomas Baier, Selene Báez Santamaría and Piek Vossen in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.10/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011138",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A Uniform Syntax and Discourse Structure: the Copenhagen Dependency Treebanks",
+      "summary": "Daniel Hardt in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.4/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011139",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Annotating the meaning of discourse connectives by looking at their translation: The translation-spotting technique",
+      "summary": "Bruno Cartoni, Sandrine Zufferey and Thomas Meyer in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.5/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011140",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Annotation of negotiation processes in joint-action dialogues",
+      "summary": "Thora Tenbrink, Kathleen Eberhard, Hui Shi, Sandra Kübler and Matthias Scheutz in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.10/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011141",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Annotation upon Annotation: Adding Signalling Information to a Corpus of Discourse Relations",
+      "summary": "Maite Taboada and Debopam Das in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.12/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011142",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Are We There Yet?: The Development of a Corpus Annotated for Social Acts in Multilingual Online Discourse",
+      "summary": "Jonathan T. Morgan, Meghan Oxley, Emily M. Bender, Liyi Zhu, Varya Gracheva and Mark Zachry in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.2/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011143",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Beyond semantics: the challenges of annotating pragmatic and discourse phenomena",
+      "summary": "Stefanie Dipper, Heike Zinsmeister and Bonnie Webber in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.14/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011144",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Calling things by their names: Towards a unified account for name-informing and mixed quotation",
+      "summary": "Holden Härtl in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.7/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011145",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Clarification and generalized quantifiers",
+      "summary": "Robin Cooper in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.1/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011146",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Embodied Conversational Systems in Human–Robot Interaction: Introduction to the Special Issue",
+      "summary": "Dimitra Gkatzia, Hendrik Buschmeier, Mary Ellen Foster and Carl Strathearn in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.8/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011147",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Enhancing Long-term RAG Chatbots with Psychological Models of Memory Importance and Forgetting",
+      "summary": "Ryuichi Sumida, Koji Inoue and Tatsuya Kawahara in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.6/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011148",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Focus Triggers and Focus Types from a Corpus Perspective",
+      "summary": "Arndt Riester and Stefan Baumann in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.11/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011149",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "German Modal Particles as Discourse Signals",
+      "summary": "Hannah Seemann and Tatjana Scheffler in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.1/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011150",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Graph-to-Text Approach to Knowledge-Grounded Response Generation in Human–Robot Interaction",
+      "summary": "Nicholas Thomas Walker, Stefan Ultes and Pierre Lison in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.11/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011151",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Holistic Discourse Coherence Annotation for Noisy Essay Writing",
+      "summary": "Jill Burstein, Joel Tetreault and Martin Chodorow in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.3/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011152",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Identifying \"aboutness topics\": two annotation experiments",
+      "summary": "Philippa Cook and Felix Bildhauer in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.7/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011153",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Investigating Proactivity in Task-Oriented Dialogues",
+      "summary": "Sofia Brenna, Elisabetta Jezek and Bernardo Magnini in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.2/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011154",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Laughter use by virtual agents increases task success",
+      "summary": "Bogdan Ludusan and Petra Wagner in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.9/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011155",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Linguistic Tests for Discourse Relations in the TüBa-D/Z Corpus of Written German",
+      "summary": "Yannick Versley and Anna Gastel in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.8/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011156",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Pragmatic uses of I don’t know, boosters, and hedges in text and talk",
+      "summary": "Allison Nguyen and Jean Fox Tree in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.3/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011157",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Prior Lessons of Incremental Dialogue and Robot Action Management for the Age of Language Models",
+      "summary": "Casey Kennington, Pierre Lison and David Schlangen in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.12/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011158",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Repair of claimed non-understanding of word meaning in online discussion forum interaction",
+      "summary": "Jenny Myrendal in Dialogue Discourse Volume 16",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2025.dnd-16.4/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-011159",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-08-25T00:00:00Z",
+      "last_seen": "2026-10-08T08:00:00.152190Z",
+      "last_material_update": "2026-08-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Turkish Discourse Bank: Porting a discourse annotation style to a morphologically rich language",
+      "summary": "Deniz Zeyrek, Işın Demirşahin and Ayışığı B. Sevdik Çallı in Dialogue & Discourse Volume 4",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 2.124066768334307e-07,
+        "prominence": 7.92958504072796e-15
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_aclanthology_org",
+          "url": "https://aclanthology.org/2013.dnd-4.9/",
+          "published": "2026-08-25T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_aclanthology_org",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-08-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Paper Index on ACL Anthology",
+          "sources": [
+            "found_aclanthology_org"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Paper Index on ACL Anthology (community)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

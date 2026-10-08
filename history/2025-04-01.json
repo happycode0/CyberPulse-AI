@@ -1,0 +1,182 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "date": "2025-04-01",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000525",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2025-04-01T00:00:00Z",
+      "last_seen": "2026-10-04T20:00:00.003793Z",
+      "last_material_update": "2025-04-01T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-24813: Apache Tomcat Apache Tomcat Path Equivalence Vulnerability",
+      "summary": "Apache Tomcat contains a path equivalence vulnerability that allows a remote attacker to execute code, disclose information, or inject malicious content via a partial PUT request. This vulnerability can be chained with CVE‑2026‑34486.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 1.5269536646562823e-83,
+        "prominence": 6.6414916495964095e-167
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-24813",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.99927,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2025-04-01",
+            "due_date": "2025-04-22"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-83qj-6fr2-vhqg",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.apache.tomcat:tomcat-catalina",
+                  "fixed": [
+                    "11.0.3",
+                    "10.1.35",
+                    "9.0.99"
+                  ]
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.apache.tomcat.embed:tomcat-embed-core",
+                  "fixed": [
+                    "11.0.3",
+                    "10.1.35",
+                    "9.0.99"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-83qj-6fr2-vhqg"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-24813 as exploited in the wild, added 2025-04-01, with US federal agencies due to fix it by 2025-04-22.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-24813 is rated 10.0 (critical) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2025-24813"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-24813 being exploited in the next 30 days at 100%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-24813"
+          ]
+        },
+        {
+          "text": "A fix for org.apache.tomcat:tomcat-catalina (Maven) is published in 11.0.3, 10.1.35 and 9.0.99, per GHSA-83qj-6fr2-vhqg.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-83qj-6fr2-vhqg"
+          ]
+        },
+        {
+          "text": "A fix for org.apache.tomcat.embed:tomcat-embed-core (Maven) is published in 11.0.3, 10.1.35 and 9.0.99, per GHSA-83qj-6fr2-vhqg.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-83qj-6fr2-vhqg"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-24813",
+          "published": "2025-04-01T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2025-04-01T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-10-08T12:00:06.108954Z",
+  "last_completed_collection": "2026-10-08T12:00:06.104573Z",
+  "pipeline_version": "1.0.0",
+  "schema_version": "1",
+  "scoring_version": "4",
+  "last_run": {
+    "run_id": "run-normal-20261008T120000Z-e0cc72",
+    "lane": "normal",
+    "started_at": "2026-10-08T12:00:00.072163Z",
+    "finished_at": null,
+    "sources_ok": 0,
+    "sources_failed": 0,
+    "sources_stale": 0,
+    "items_fetched": 0,
+    "new_events": 0,
+    "updated_events": 0,
+    "duplicates": 0,
+    "archived_events": 0,
+    "error_count": 0
+  },
+  "counts": {
+    "events_published": 500,
+    "events_total": 10000,
+    "sources_total": 85,
+    "sources_enabled": 79
+  },
+  "schedule": [
+    {
+      "job": "lane-fast",
+      "label": "Fast lane",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the fast-lane sources (government advisories, the KEV list and the fastest news feeds), merges and scores what is new by rule, and republishes the site's data."
+    },
+    {
+      "job": "lane-normal",
+      "label": "Normal lane",
+      "cron": "0 */4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the normal-lane sources, merges and scores what is new by rule, and republishes the site's data."
+    },
+    {
+      "job": "groundtruth-sync",
+      "label": "Ground-truth sync",
+      "cron": "25 */6 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Reads the public registers (CISA KEV, EPSS, CVE scores, OSV advisories and MITRE ATT&CK) and rescores and republishes any event whose facts changed."
+    },
+    {
+      "job": "ai-enrichment",
+      "label": "AI enrichment",
+      "cron": "5,35 * * * *",
+      "timezone": "UTC",
+      "kind": "ai",
+      "summary": "Asks a model to triage, brief and estimate the severity of a small batch of new events, and to suggest MITRE techniques, within the month's budget; an event it has not reached is published without them."
+    },
+    {
+      "job": "daily-digest",
+      "label": "Daily digest",
+      "cron": "10 7,8,9 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Sends the morning digest to Telegram at 07:10 Sydney time; 08:10 and 09:10 send it only if 07:10 did not."
+    },
+    {
+      "job": "critical-alerts",
+      "label": "Critical alerts",
+      "cron": "3,18,48 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "After each collection and enrichment pass, sends Telegram an alert for a new critical or actively exploited event that matters to Australia, and updates on developing ones."
+    },
+    {
+      "job": "source-discovery",
+      "label": "Discovery search",
+      "cron": "10 3 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Searches the web for feeds worth adding and queues each new one as a candidate; it adds no source itself."
+    },
+    {
+      "job": "source-gate",
+      "label": "Source gate",
+      "cron": "50 3-23/4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Probes each candidate feed; one that passes enough healthy probes in a row becomes a source, and the next normal run collects it."
+    },
+    {
+      "job": "model-scan",
+      "label": "Model scan",
+      "cron": "20 3 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Reads OpenRouter's public model list and checks the enrichment models against the price and capability rules, dropping any that fail; it calls no model."
+    },
+    {
+      "job": "model-gauntlet",
+      "label": "Model gauntlet",
+      "cron": "40 3 * * sun",
+      "timezone": "Australia/Sydney",
+      "kind": "ai",
+      "summary": "Runs the current enrichment models and up to two challengers on a labelled test set; a better challenger is proposed for review, never switched to."
+    },
+    {
+      "job": "watchdog",
+      "label": "Watchdog",
+      "cron": "2-57/5 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Checks that the site, the collections and the other jobs are keeping up, and opens an incident, and tells the crew, when one is not."
+    }
+  ]
+}
