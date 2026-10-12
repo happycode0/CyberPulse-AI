@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import ValidationError
 from sqlalchemy import Connection
@@ -88,6 +89,16 @@ CREW_FRESH = {
 STAGING_PREFIX = ".publish-"
 _SEVERITIES = ("critical", "high", "medium", "low", "unknown")
 
+# (host, query parameter) pairs known, by human review, to carry opaque UI state rather than
+# a credential, so the secret scan trips on them for no reason (INC-22). This is a manual
+# allowlist, never a shortcut like "strip it if it would scan as a secret" — that would blind
+# the scan to a real credential sharing the same shape. Add an entry only after a human has
+# looked at an actual flagged value and confirmed it is not a secret.
+_SAFE_QUERY_PARAMS: frozenset[tuple[str, str]] = frozenset({
+    # Cisco's advisory search encodes its filter state here; the page loads fine without it.
+    ("sec.cloudapps.cisco.com", "vs_f"),
+})
+
 
 def _iso(value: datetime) -> str:
     if value.tzinfo is None:
@@ -107,6 +118,24 @@ def _event_counts(events: list[dict[str, Any]]) -> dict[str, int]:
         "directly_reported_in_au": sum(1 for e in events if e["au"]["directly_reported_in_au"]),
         "pending_enrichment": sum(1 for e in events if e["pending_enrichment"]),
     }
+
+
+def _sanitize_source_url(url: str) -> str:
+    """Drop a query parameter listed in `_SAFE_QUERY_PARAMS`; otherwise return `url` as-is.
+
+    Ground truth keeps the original URL in the database; only this published copy is
+    trimmed, and only for the exact, human-reviewed (host, parameter) pairs on the
+    allowlist. The secret scan itself is never consulted here: a param's value is not
+    evidence of its own safety.
+    """
+    split = urlsplit(url)
+    params = parse_qsl(split.query, keep_blank_values=True)
+    if not params:
+        return url
+    kept = [(key, value) for key, value in params if (split.hostname, key) not in _SAFE_QUERY_PARAMS]
+    if len(kept) == len(params):
+        return url
+    return urlunsplit(split._replace(query=urlencode(kept)))
 
 
 def _load_events(conn: Connection) -> list[Event]:
@@ -432,6 +461,9 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
     voices = _voices(sources)
     all_events = [with_importance(with_fact_claims(e), voices) for e in _load_events(conn)]
     public = [e.model_dump_public() for e in all_events]
+    for p in public:
+        for source in p.get("sources", []):
+            source["url"] = _sanitize_source_url(source["url"])
     live = [
         p
         for e, p in zip(all_events, public, strict=True)

@@ -490,6 +490,34 @@ def test_a_secret_in_a_source_name_blocks_every_write(tmp_path, db):
     assert list(tmp_path.iterdir()) == []
 
 
+def test_an_allowlisted_url_param_is_dropped_from_the_published_source(tmp_path, db):
+    """INC-22: Cisco's advisory search encodes opaque state in `vs_f`, high-entropy enough
+    to read as a secret. The allowlisted (host, param) is dropped so publish does not block;
+    an unlisted param on the same host is left alone, proving the match is on both parts."""
+    secret = "ghp_0123456789abcdefghij0123456789abcdef"  # same shape test_build.py proves blocks
+    db["events"] = [make_event(1, sources=[{
+        "source_id": "acsc-alerts",
+        "url": f"https://sec.cloudapps.cisco.com/security/center/x?vs_f={secret}&id=42",
+        "evidence_class": "NEWS",
+    }])]
+    build_all(None, tmp_path, now=NOW)
+    url = read(tmp_path, "live.json")["events"][0]["sources"][0]["url"]
+    assert "vs_f" not in url
+    assert "id=42" in url
+
+
+def test_a_non_allowlisted_param_on_the_same_host_still_blocks(tmp_path, db):
+    secret = "ghp_0123456789abcdefghij0123456789abcdef"
+    db["events"] = [make_event(1, sources=[{
+        "source_id": "acsc-alerts",
+        "url": f"https://sec.cloudapps.cisco.com/security/center/x?other={secret}",
+        "evidence_class": "NEWS",
+    }])]
+    with pytest.raises(ValidationFailure, match="secret"):
+        build_all(None, tmp_path, now=NOW)
+    assert list(tmp_path.iterdir()) == []
+
+
 def test_a_secret_leaves_previous_output_untouched(tmp_path, db, monkeypatch):
     build_all(None, tmp_path, now=NOW)
     before = snapshot(tmp_path)
