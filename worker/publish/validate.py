@@ -64,6 +64,8 @@ _GENERIC_TOKEN = re.compile(r"[A-Za-z0-9_\-]{32,}")
 _HEX = re.compile(r"[0-9a-fA-F]+")
 # MD5, SHA-1, SHA-224, SHA-256, SHA-384 and SHA-512 digests are ordinary IOC content.
 _HASH_LENGTHS = frozenset({32, 40, 56, 64, 96, 128})
+# Public Cisco advisory IDs: only the suffix, at most 8 characters, is mixed-case.
+_CISCO_ADVISORY_ID = re.compile(r"cisco-sa-(?:[a-z0-9]+-)+[A-Za-z0-9]{4,8}")
 _MIN_TOKEN_ENTROPY = 3.5
 _ALPHA_RUN = re.compile(r"[A-Za-z]+")
 # Title-case words, lower-case words (2+ letters) and acronyms; an acronym directly before
@@ -108,6 +110,8 @@ def _looks_like_words(token: str) -> bool:
 
 def _looks_like_generic_secret(token: str) -> bool:
     if _HEX.fullmatch(token) and len(token) in _HASH_LENGTHS:
+        return False
+    if _CISCO_ADVISORY_ID.fullmatch(token):
         return False
     if _looks_like_words(token):
         return False
