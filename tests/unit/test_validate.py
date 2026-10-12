@@ -200,6 +200,11 @@ ADVISORY_SHAPED = [
     "MicrosoftOutlookElevationOfPrivilegeVulnerabilityCVE202323397Analysis",
     "Barracuda-ESG-0day-CVE-2023-2868-UNC4841-Espionage-Campaign-Analysis",
     "Ivanti-EPMM-CVE-2023-35078-Exploited-Against-Norwegian-Government-2023",
+    # Cisco advisory IDs end in a short random suffix (INC-22, live on 2026-10-12).
+    "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/"
+    "cisco-sa-hardening-nxosw1-cWzSbtR",
+    "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/"
+    "cisco-sa-apic-info-priv-enAdB5vD",
 ]
 
 
@@ -224,6 +229,17 @@ RANDOM_TOKENS = [
 def test_scan_still_flags_random_tokens_with_no_word_structure(token):
     assert scan_for_secrets({"note": token})
     assert scan_for_secrets({"note": f"see https://x.test/{token}/details"})
+
+
+@pytest.mark.parametrize(
+    "token",
+    [
+        "cisco-sa-apic-info-priv-q83JxK2mZp0RvT7yLc9WbN4sHd1GfA6eUo",  # suffix far past 8
+        "cisco-sa-Xk9Lm2Qp7Rt4-Vw8Yz1Bn5Cd3-enAdB5vD",  # mixed case outside the suffix
+    ],
+)
+def test_a_cisco_shaped_token_carrying_more_than_a_short_suffix_is_still_flagged(token):
+    assert scan_for_secrets({"url": f"https://sec.cloudapps.cisco.com/x/{token}"})
 
 
 def test_scan_does_not_hide_a_random_token_inside_advisory_text():
