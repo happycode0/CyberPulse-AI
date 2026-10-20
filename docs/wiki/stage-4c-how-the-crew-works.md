@@ -47,7 +47,7 @@ So the whole history of every decision is in the issue log. You read it the same
 |---|---|---|
 | `[DIGEST]` | a routine | DECKARD |
 | `[EDITORIAL]` | a routine | MORPHEUS |
-| `[FOLLOW-UP]` | MORPHEUS | DECKARD |
+| `[FOLLOW-UP]` | a routine | DECKARD |
 | `[GAP]` | MORPHEUS | TACHIKOMA |
 | `[QA]` | DECKARD, or the daily sample | VOIGHT |
 | `[INCIDENT]` | worker health checks | TELETRAAN |
@@ -91,10 +91,13 @@ never carries all three. It may hand at most two events to subagents in a run, o
 ```text
 07:00  VOIGHT samples yesterday's published events          ──► verdicts
 07:30  MORPHEUS reads the overnight digest + VOIGHT's verdicts
-         ├─ developing story needs watching  ──► [FOLLOW-UP] ──► DECKARD (beside the worker's own queue)
          ├─ topic has gone quiet             ──► [GAP]       ──► TACHIKOMA
-         └─ writes the daily intelligence report
+         └─ writes the daily intelligence report, naming any story to watch more closely
 ```
+
+MORPHEUS opens no follow-up issues. The worker's queue schedules every check on a developing
+story, less often while the checks find nothing, and DECKARD works it on the Follow-up routine
+at 03:00, 09:00, 15:00 and 21:00: one batch a sweep, at most twenty reports a day.
 
 ### 4. Source loop — nightly, from 03:10 Sydney
 

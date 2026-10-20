@@ -366,7 +366,7 @@ callsigns; public-facing copy is written in plain Australian English regardless 
 | Role / adapter | `ceo` · `opencode_local` (OpenRouter, strong tier, 1×/day + on escalation) |
 | Wakes on | Daily editorial routine 07:30 AEST; escalation from DECKARD, VOIGHT or TELETRAAN; a `[MODEL]` proposal from RIPPERDOC; budget or watchdog incident |
 | Owns | Intelligence quality and direction; coverage gaps; what gets promoted; the daily report; approving model changes |
-| Specialised tasks | Read the overnight digest (counts, new/updated/archived, top events by prominence, desk escalations, source-health deltas). Decide which developing events need follow-up and assign DECKARD. Detect coverage gaps ("nothing on AU health sector in 9 days") and task TACHIKOMA. Approve or reject publication of events VOIGHT has flagged. Approve or decline RIPPERDOC's `[MODEL]` proposals, on the worker's own cost and gauntlet figures. Write the human-readable daily intelligence report. |
+| Specialised tasks | Read the overnight digest (counts, new/updated/archived, top events by prominence, desk escalations, source-health deltas). Name any developing event that needs closer watching; the worker's follow-up queue schedules DECKARD's checks, so it opens no follow-up issues of its own. Detect coverage gaps ("nothing on AU health sector in 9 days") and task TACHIKOMA. Approve or reject publication of events VOIGHT has flagged. Approve or decline RIPPERDOC's `[MODEL]` proposals, on the worker's own cost and gauntlet figures. Write the human-readable daily intelligence report. |
 | Never | Collects or enriches anything itself; edits code; raises its own budget |
 | KPI | Coverage gap closure time; % of published events with no QA finding |
 

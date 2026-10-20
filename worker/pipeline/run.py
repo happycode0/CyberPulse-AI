@@ -468,9 +468,10 @@ def settle(
             "status: %d events moved (%s)",
             len(moved), ", ".join(f"{k} {n}" for k, n in sorted(counts.items())),
         )
-    if scheduled.opened or scheduled.cancelled:
+    if scheduled.opened or scheduled.cancelled or scheduled.brought_forward:
         logger.info(
-            "follow-up: %d tasks opened, %d cancelled", len(scheduled.opened), scheduled.cancelled
+            "follow-up: %d tasks opened, %d brought forward, %d cancelled",
+            len(scheduled.opened), scheduled.brought_forward, scheduled.cancelled,
         )
     return moved, []
 

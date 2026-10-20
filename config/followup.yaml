@@ -21,8 +21,18 @@ followup:
   every_hours:
     developing: {critical: 6, high: 12, medium: 24, unknown: 24}
     monitoring: {critical: 24, high: 48, medium: 96, unknown: 96}
-  # The most one GET /ops/followup hands out, most important first. DECKARD sweeps four times a
-  # day, so this caps its work at twenty checks a day; the rest wait their turn.
+  # A quiet story is checked less often. Each no_change report on an event since its last
+  # material change doubles the wait for its next check, up to 2^max_backoff_doublings times its
+  # cadence: at 3, a high developing story whose checks keep finding nothing is checked again
+  # after 24, 48 and then every 96 hours, not every 12. A material change, from DECKARD or from
+  # any source, brings it back to its cadence.
+  max_backoff_doublings: 3
+  # The most one GET /ops/followup hands out, most important first. It is the whole batch for a
+  # sweep: DECKARD reports on each and stops, and the rest wait for the next sweep.
   batch: 5
+  # The day's cap on accepted reports, over the last 24 hours. GET hands out no more tasks than
+  # it has left, and none once it is reached, however often DECKARD is woken. Four sweeps of
+  # `batch` are twenty, so it only holds back extra runs.
+  per_day: 20
   # A resolved event at one of these severities gets a final-summary task.
   final_summary: [critical, high]

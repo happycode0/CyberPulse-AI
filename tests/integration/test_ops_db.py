@@ -13,6 +13,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 
 from worker.ai.budget import KeyStatus
+from worker.db.digest import load_digest
 from worker.db.jobs import JobRun, load_latest_completed_job, load_latest_job, record_job
 from worker.db.migrate import run_migrations
 from worker.ops_api import COLLECTION_FRESH, OpsApi
@@ -270,7 +271,12 @@ def test_the_digest(api, db):
                                 "to": "2026-10-03T08:00:00Z"}
     assert digest["events"] == {"new": 2, "new_archived_on_arrival": 1, "updated": 1,
                                 "merged": 1, "standing": 3}
-    assert [e["event_id"] for e in digest["top"]] == [
+    # The agents' top is what moved in the window: not the old, quiet 000004, however prominent.
+    assert [e["event_id"] for e in digest["top"]] == ["evt-2026-000001", "evt-2026-000002"]
+    # The Telegram digest's "most prominent now" still has it.
+    with db.connect() as conn:
+        standing = load_digest(conn, now=NOW, hours=24)["top"]
+    assert [e["event_id"] for e in standing] == [
         "evt-2026-000001", "evt-2026-000004", "evt-2026-000002"
     ]
     candidates = {e["event_id"]: e for e in digest["escalation_candidates"]}

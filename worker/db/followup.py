@@ -3,9 +3,11 @@ worker/pipeline/followup.py decide; this reads the record and writes the result.
 
 - `settle_statuses`, every collection run: each standing event's status from its record.
 - `schedule_followups`, straight after: one open `check` task per followed-up event, due on its
-  cadence (config/followup.yaml), and a `final_summary` task for each resolved event that should
-  have one. An open task whose event no longer qualifies is cancelled.
-- `load_due` and `submit_report`: what `GET` and `POST /ops/followup` read and write.
+  cadence (config/followup.yaml), backed off while its checks find nothing, and a
+  `final_summary` task for each resolved event that should have one. An open task whose event
+  no longer qualifies is cancelled.
+- `load_due`, `count_accepted`, `load_new_since` and `submit_report`: what `GET` and
+  `POST /ops/followup` read and write.
 
 Like every writer here it takes the caller's connection and never commits.
 """
@@ -19,7 +21,7 @@ from typing import Literal
 from sqlalchemy import Connection, Row, text
 
 from worker.db.ingest import lock_ingest
-from worker.models import EventStatus, MaterialChange
+from worker.models import EventStatus, MaterialChange, SourceRef, TimelineEntry
 from worker.pipeline.followup import (
     EventContext,
     Report,
@@ -116,11 +118,37 @@ def settle_statuses(
 class Scheduled:
     opened: list[str] = field(default_factory=list)  # event ids
     cancelled: int = 0
+    brought_forward: int = 0
 
 
 _CADENCE = (
     "cadence (status, severity, hours) as (select * from unnest("
     "cast(:st as text[]), cast(:sv as text[]), cast(:hr as double precision[])))"
+)
+# A material change, as load_status_facts reads one off the timeline.
+_MATERIAL = (
+    "(not m.type = any(cast(:not_changes as text[])) "
+    "or (m.type = 'NEW_FACT' and m.sources[1] = :agent))"
+)
+# When each followed-up event's next check is due: its cadence after the last check ended,
+# doubled for each no_change report since the event's last material change, at most
+# 2^max_backoff_doublings times; the first check, now. The last material change is the later of
+# `last_material_update` and when the newest material entry was written: a register dates its
+# entry when the change happened, which can be before checks that could not yet have seen it.
+_NEXT_CHECK = (
+    "next_check (event_id, due_at) as ("
+    "  select e.event_id, coalesce(p.ended + c.hours * power(cast(2 as double precision), "
+    "    least(p.quiet_checks, cast(:doublings as integer))) * interval '1 hour', :now) "
+    "  from events e join cadence c on c.status = e.status and c.severity = e.severity "
+    "  cross join lateral (select greatest(coalesce(e.last_material_update, e.first_seen), "
+    "    max(coalesce(m.created_at, m.ts))) as since "
+    f"    from event_timeline m where m.event_id = e.event_id and {_MATERIAL}) r "
+    "  cross join lateral (select max(d.updated_at) as ended, count(*) filter ("
+    "    where d.status = 'done' and d.payload ->> 'outcome' = 'no_change' "
+    "    and d.updated_at > r.since) as quiet_checks "
+    "    from followup_tasks d where d.event_id = e.event_id and d.kind = 'check' "
+    "    and d.status in ('done', 'failed')) p "
+    "  where e.merged_into is null)"
 )
 
 
@@ -134,8 +162,17 @@ def _cadence_params(rule: FollowupRule) -> dict[str, list]:
 
 
 def schedule_followups(conn: Connection, rule: FollowupRule, *, now: datetime) -> Scheduled:
-    """Open the tasks the events now need and cancel the ones they no longer do."""
-    params = {**_cadence_params(rule), "now": now, "final": [s.value for s in rule.final_summary]}
+    """Open the tasks the events now need and cancel the ones they no longer do. A waiting check
+    that is due sooner now (a material change ended its back-off, or its event moved to a faster
+    cadence) is brought forward."""
+    params = {
+        **_cadence_params(rule),
+        "now": now,
+        "final": [s.value for s in rule.final_summary],
+        "doublings": rule.max_backoff_doublings,
+        "not_changes": sorted(NOT_CHANGES),
+        "agent": AGENT_SOURCE,
+    }
     cancelled = conn.execute(
         text(
             f"with {_CADENCE} "
@@ -150,17 +187,21 @@ def schedule_followups(conn: Connection, rule: FollowupRule, *, now: datetime) -
         ),
         params,
     ).all()
-    # The next check is due its cadence after the last one ended; the first, now.
+    sooner = conn.execute(
+        text(
+            f"with {_CADENCE}, {_NEXT_CHECK} "
+            "update followup_tasks t set due_at = n.due_at, updated_at = :now "
+            "from next_check n where n.event_id = t.event_id and t.kind = 'check' "
+            "and t.status = 'pending' and n.due_at < t.due_at "
+            "returning t.id"
+        ),
+        params,
+    ).all()
     checks = conn.execute(
         text(
-            f"with {_CADENCE} "
+            f"with {_CADENCE}, {_NEXT_CHECK} "
             "insert into followup_tasks (event_id, kind, due_at, created_at, updated_at) "
-            "select e.event_id, 'check', coalesce((select max(d.updated_at) "
-            "  from followup_tasks d where d.event_id = e.event_id and d.kind = 'check' "
-            "  and d.status in ('done', 'failed')) + c.hours * interval '1 hour', :now), "
-            ":now, :now "
-            "from events e join cadence c on c.status = e.status and c.severity = e.severity "
-            "where e.merged_into is null "
+            "select n.event_id, 'check', n.due_at, :now, :now from next_check n "
             f"on conflict (event_id, kind) where {_OPEN} do nothing "
             "returning event_id"
         ),
@@ -179,7 +220,7 @@ def schedule_followups(conn: Connection, rule: FollowupRule, *, now: datetime) -
         ),
         params,
     ).all()
-    return Scheduled(sorted(r[0] for r in [*checks, *finals]), len(cancelled))
+    return Scheduled(sorted(r[0] for r in [*checks, *finals]), len(cancelled), len(sooner))
 
 
 @dataclass(frozen=True)
@@ -190,6 +231,7 @@ class DueTask:
     due_at: datetime
     attempts: int
     last_error: str | None
+    last_check_at: datetime | None = None  # when the event's previous check ended
 
 
 def load_due(conn: Connection, *, now: datetime, limit: int) -> list[DueTask]:
@@ -197,7 +239,9 @@ def load_due(conn: Connection, *, now: datetime, limit: int) -> list[DueTask]:
     relevance, then how long they have waited."""
     rows = conn.execute(
         text(
-            "select t.id, t.kind, t.event_id, t.due_at, t.attempts, t.last_error "
+            "select t.id, t.kind, t.event_id, t.due_at, t.attempts, t.last_error, "
+            "(select max(d.updated_at) from followup_tasks d where d.event_id = t.event_id "
+            "  and d.kind = 'check' and d.status in ('done', 'failed')) as last_check_at "
             "from followup_tasks t join events e on e.event_id = t.event_id "
             "where t.status = 'pending' and t.due_at <= :now and e.merged_into is null "
             f"order by {_SEVERITY_RANK}, coalesce(e.au_relevance, 0) desc, t.due_at, t.id "
@@ -205,7 +249,99 @@ def load_due(conn: Connection, *, now: datetime, limit: int) -> list[DueTask]:
         ),
         {"now": now, "limit": limit},
     )
-    return [DueTask(r.id, r.kind, r.event_id, r.due_at, r.attempts, r.last_error) for r in rows]
+    return [
+        DueTask(r.id, r.kind, r.event_id, r.due_at, r.attempts, r.last_error, r.last_check_at)
+        for r in rows
+    ]
+
+
+def count_accepted(conn: Connection, *, since: datetime) -> int:
+    """How many reports were accepted (their tasks done) after `since`. GET /ops/followup hands
+    out no more once a day's worth were."""
+    return conn.execute(
+        text("select count(*) from followup_tasks where status = 'done' and updated_at > :since"),
+        {"since": since},
+    ).scalar_one()
+
+
+@dataclass(frozen=True)
+class NewSince:
+    """What the worker added to an event after its previous check ended: how many sources and
+    timeline entries, and the newest few of each, newest first."""
+
+    since: datetime
+    sources: int = 0
+    timeline: int = 0
+    newest_sources: tuple[SourceRef, ...] = ()
+    newest_timeline: tuple[TimelineEntry, ...] = ()
+
+
+_CHECKED = (
+    "checked (event_id, ended) as (select * from unnest("
+    "cast(:ids as text[]), cast(:ended as timestamptz[])))"
+)
+
+
+def load_new_since(
+    conn: Connection, tasks: Sequence[DueTask], *, most: int
+) -> dict[int, NewSince]:
+    """For each check task whose event has been checked before, what was added to the event
+    since, with at most `most` of each kind; keyed by task id. A source counts from when it was
+    attached, and a timeline entry from when it was written (its date, for one from before
+    migration 012), so a register's entry dated last week but found today is new."""
+    checks = [t for t in tasks if t.kind == "check" and t.last_check_at is not None]
+    if not checks:
+        return {}
+    params = {
+        "ids": [t.event_id for t in checks],
+        "ended": [t.last_check_at for t in checks],
+        "most": most,
+    }
+    sources = conn.execute(
+        text(
+            f"with {_CHECKED} select * from ("
+            "  select s.event_id, s.source_id, s.url, s.published, s.evidence_class, "
+            "  count(*) over (partition by s.event_id) as added, row_number() over ("
+            "    partition by s.event_id order by s.created_at desc, s.id desc) as n "
+            "  from event_sources s join checked c on c.event_id = s.event_id "
+            "  where s.created_at > c.ended) a "
+            "where n <= :most order by event_id, n"
+        ),
+        params,
+    ).all()
+    timeline = conn.execute(
+        text(
+            f"with {_CHECKED} select * from ("
+            "  select t.event_id, t.ts, t.type, t.summary, t.sources, "
+            "  count(*) over (partition by t.event_id) as added, row_number() over ("
+            "    partition by t.event_id order by coalesce(t.created_at, t.ts) desc, t.id desc"
+            "  ) as n "
+            "  from event_timeline t join checked c on c.event_id = t.event_id "
+            "  where coalesce(t.created_at, t.ts) > c.ended) a "
+            "where n <= :most order by event_id, n"
+        ),
+        params,
+    ).all()
+    out = {}
+    for task in checks:
+        mine = [r for r in sources if r.event_id == task.event_id]
+        entries = [r for r in timeline if r.event_id == task.event_id]
+        out[task.task_id] = NewSince(
+            since=task.last_check_at,
+            sources=mine[0].added if mine else 0,
+            timeline=entries[0].added if entries else 0,
+            newest_sources=tuple(
+                SourceRef(source_id=r.source_id, url=r.url, published=r.published,
+                          evidence_class=r.evidence_class)
+                for r in mine
+            ),
+            newest_timeline=tuple(
+                TimelineEntry(timestamp=r.ts, type=r.type, summary=r.summary,
+                              sources=list(r.sources or []))
+                for r in entries
+            ),
+        )
+    return out
 
 
 def load_queue_counts(conn: Connection, *, now: datetime, overdue_after: float) -> dict:
