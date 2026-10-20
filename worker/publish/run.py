@@ -17,7 +17,7 @@ from pathlib import Path
 
 from worker.db.session import get_engine
 from worker.publish.build import build_all
-from worker.publish.push import PushResult, publish_token_configured, push_data
+from worker.publish.push import PushResult, publish_token_configured, push_data, request_deploy
 from worker.settings import get_settings
 
 logger = logging.getLogger(__name__)
@@ -69,7 +69,8 @@ async def push_now() -> PushResult | None:
     holds no publish token (building needs none, so such a host stops at `data/`).
 
     Under the publish lock: the push hashes the files while it runs, and a build moving new ones
-    into place at the same time would push a mix of the two.
+    into place at the same time would push a mix of the two. A push that changed the branch then
+    asks GitHub to deploy the site (`request_deploy`, which never raises).
 
     Raises
     ------
@@ -79,4 +80,8 @@ async def push_now() -> PushResult | None:
     if not publish_token_configured():
         return None
     async with _PUBLISH_LOCK:
-        return await asyncio.to_thread(push_data, get_settings().data_dir)
+        result = await asyncio.to_thread(push_data, get_settings().data_dir)
+    # Outside the lock: the request reads no files, and a slow GitHub must not hold back a build.
+    if result.pushed:
+        await asyncio.to_thread(request_deploy)
+    return result

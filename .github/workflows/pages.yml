@@ -17,15 +17,18 @@ on:
   # using the workflow file as it exists on the ref that was pushed, so a push to
   # `data` alone can never fire this workflow: it isn't there to find. The
   # `branches: [data]` push trigger above only ever fires when a commit to
-  # `main` happens to touch this file. A schedule sidesteps that entirely —
-  # GitHub's own scheduler owns the trigger, not a push to either branch — and
-  # keeps this working even if the worker, Paperclip and LINK are all down.
-  # The FAST lane runs hourly now (worker/cadence.py FAST_INTERVAL_MINUTES), so an
-  # hourly cron matches it 1:1. A tighter schedule bought nothing: GitHub throttles
-  # frequent cron schedules on public repos hard enough that `*/15 * * * *` was
-  # actually firing every 3-8 hours, which is what caused the open site-stale
-  # incident. Redeploying unchanged content is a no-op cost on a public repo
-  # (unlimited included Actions minutes), not a safety issue.
+  # `main` happens to touch this file. So after each push that changed `data`,
+  # the worker sends this event (worker/publish/push.py `request_deploy`), and
+  # GitHub runs this file as it is on `main`.
+  repository_dispatch:
+    types: [data-published]
+  # The backstop, for a worker that pushed but could not reach the API. GitHub's
+  # own scheduler owns the trigger, so it keeps working even if the worker,
+  # Paperclip and LINK are all down. It is hourly on paper only: GitHub throttles
+  # cron schedules on public repos, and `12 * * * *` fired every 4-10 hours in
+  # October 2026, which is why the dispatch above exists. Redeploying unchanged
+  # content is a no-op cost on a public repo (unlimited included Actions
+  # minutes), not a safety issue.
   schedule:
     - cron: "12 * * * *"
 

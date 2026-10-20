@@ -151,8 +151,17 @@ async def test_a_push_sends_the_configured_data_dir(wired, monkeypatch):
     result = PushResult(pushed=True, commit_sha="a" * 40, reason=None)
     monkeypatch.setattr(publish_run, "publish_token_configured", lambda: True)
     monkeypatch.setattr(publish_run, "push_data", lambda d: sent.append(d) or result)
+    monkeypatch.setattr(publish_run, "request_deploy", lambda: sent.append("deploy") or True)
     assert await publish_run.push_now() is result
-    assert sent == [data_dir]
+    assert sent == [data_dir, "deploy"]
+
+
+async def test_an_unchanged_data_branch_asks_for_no_deploy(wired, monkeypatch):
+    result = PushResult(pushed=False, commit_sha=None, reason="no changes")
+    monkeypatch.setattr(publish_run, "publish_token_configured", lambda: True)
+    monkeypatch.setattr(publish_run, "push_data", lambda d: result)
+    monkeypatch.setattr(publish_run, "request_deploy", lambda: pytest.fail("deployed"))
+    assert await publish_run.push_now() is result
 
 
 async def test_a_push_never_overlaps_a_build(wired, monkeypatch):

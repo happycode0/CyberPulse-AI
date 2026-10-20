@@ -20,6 +20,7 @@ Guarantees:
 
 import argparse
 import base64
+import logging
 import os
 import re
 import subprocess
@@ -29,9 +30,19 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
+import httpx
+
 from worker.settings import get_settings
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_BRANCH = "data"
+
+# The event `.github/workflows/pages.yml` deploys on. A push to `data` cannot start that workflow
+# (the orphan branch holds no workflow file), and GitHub throttles its hourly cron to every 4-10
+# hours, so without this the site trails the data branch by most of a day.
+DEPLOY_EVENT = "data-published"
+DEPLOY_TIMEOUT_SECONDS = 30
 
 # The scheduler pushes while holding the publish lock, so a git command stalled on the network
 # would hold back every publish after it. A whole push takes seconds; three minutes is a hang.
@@ -130,6 +141,41 @@ def push_data(
     # the only ref the push writes besides the remote's; `main` is untouched.
     _git(repo, "update-ref", f"refs/heads/{branch}", commit, secrets=secret_values)
     return PushResult(pushed=True, commit_sha=commit, reason=None)
+
+
+def request_deploy(*, transport: httpx.BaseTransport | None = None) -> bool:
+    """Ask GitHub to run the Pages workflow now, and return whether it accepted.
+
+    Never raises: the data is already pushed, and the workflow's cron deploys it anyway, only
+    later. The publish token needs nothing more for this: GitHub's `POST /dispatches` asks for
+    Contents write, which pushing already has. Only the exception's type is logged, so the token
+    cannot reach the log.
+    """
+    settings = get_settings()
+    try:
+        token = _publish_token()
+        with httpx.Client(transport=transport, timeout=DEPLOY_TIMEOUT_SECONDS) as http:
+            response = http.post(
+                f"https://api.github.com/repos/{settings.github_repository}/dispatches",
+                headers={
+                    "Accept": "application/vnd.github+json",
+                    "Authorization": f"Bearer {token}",
+                    "User-Agent": settings.user_agent,
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+                json={"event_type": DEPLOY_EVENT},
+            )
+    except (RuntimeError, httpx.HTTPError) as exc:
+        logger.warning(
+            "could not ask GitHub to deploy the site (%s); the cron will", type(exc).__name__
+        )
+        return False
+    if response.status_code != 204:
+        logger.warning(
+            "GitHub refused to deploy the site (%d); the cron will", response.status_code
+        )
+        return False
+    return True
 
 
 def _publish_token() -> str:
@@ -291,6 +337,9 @@ def main(argv: list[str] | None = None) -> int:
         print("data unchanged; nothing pushed")
     elif result.pushed:
         print(f"pushed {result.commit_sha} to {args.branch}")
+        if args.branch == DEFAULT_BRANCH:
+            deploying = request_deploy()
+            print("site deploy requested" if deploying else "no site deploy; the cron will")
     else:
         print(f"dry run: would push {result.commit_sha} to {args.branch}")
     return 0
