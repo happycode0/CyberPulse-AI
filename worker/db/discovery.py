@@ -1,35 +1,54 @@
 """source_candidates and discovery_searches rows (migration 013): what discovery found and where
-each find stands at SERAPH's gate (worker/discovery/gate.py)."""
+each find stands at SERAPH's gate (worker/discovery/gate.py).
+
+A proposal TACHIKOMA makes while the gate is full is queued: `discovered`, which the schema
+allows with a feed, until `promote_queued` makes it a candidate. A search find without a feed
+is `discovered` too, and is told apart by its missing feed.
+"""
 
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any, Literal
 
 from sqlalchemy import Connection, text
 
-from worker.db.sources import set_lifecycle_state, upsert_registry
+from worker.db.sources import (
+    load_corroboration,
+    load_health_history,
+    set_lifecycle_state,
+    upsert_registry,
+)
 from worker.discovery.gate import (
     DISCOVERED_CLASS,
     EVIDENCE_KEPT,
+    Collected,
     GateConfig,
     Probe,
     Proposal,
+    PruneConfig,
     host_of,
     same_site,
+    weak_reason,
+    weakest,
 )
 from worker.models import Lane, LifecycleState, SourceConfig
+from worker.pipeline.reputation import CORROBORATION_WINDOW, assess_reputation
 
 OPEN_STATES = ("candidate", "testing")
 # A home page with no feed is looked at again after this long, up to the rejection count.
 HOME_RETRY = timedelta(days=7)
 # The gate runs every 4 hours; a probe may come a little early and still count as the next one.
-PROBE_GAP = timedelta(hours=3)
+PROBE_EARLY = timedelta(hours=1)
+PROBE_GAP = timedelta(hours=4) - PROBE_EARLY
 # An active discovered source with no healthy fetch in this long is retired.
 RETIRE_AFTER = timedelta(days=21)
 ERROR_MAX_CHARS = 300
+_EPOCH = datetime.min.replace(tzinfo=UTC)
 # TACHIKOMA's proposals a day. A home page skips the cap on open candidates (it has no feed yet),
-# so this is what bounds the rows a run of the agent can add.
+# and a feed proposed while the gate is full is queued, so this is what bounds the rows a run of
+# the agent can add.
 PROPOSALS_PER_DAY = 20
 
 _CANDIDATE_COLUMNS = (
@@ -118,14 +137,14 @@ def registered_hosts(conn: Connection) -> set[str]:
 
 def add_found(conn: Connection, *, host: str, evidence: dict[str, Any], now: datetime) -> bool:
     """Record a search hit on `host`: a new row, or one more piece of evidence for a host still
-    `discovered`. True when the host is new."""
+    `discovered` without a feed. True when the host is new."""
     row = conn.execute(
         text(
             "insert into source_candidates (host, found_by, evidence, created_at, updated_at) "
             "values (:host, 'search', cast(:evidence as jsonb), :now, :now) "
             "on conflict (host) do update set "
             "evidence = source_candidates.evidence || excluded.evidence "
-            "where source_candidates.state = 'discovered' "
+            "where source_candidates.state = 'discovered' and source_candidates.feed_url is null "
             "and jsonb_array_length(source_candidates.evidence) < :kept "
             "returning (xmax = 0) as inserted"
         ),
@@ -134,17 +153,33 @@ def add_found(conn: Connection, *, host: str, evidence: dict[str, Any], now: dat
     return bool(row and row.inserted)
 
 
-ProposalResult = Literal["created", "updated", "exists", "full"]
+def open_count(conn: Connection) -> int:
+    """Candidates being tested, which `max_open` caps."""
+    return conn.execute(
+        text("select count(*) from source_candidates where state in ('candidate', 'testing')")
+    ).scalar_one()
+
+
+def proposed_since(conn: Connection, *, since: datetime) -> int:
+    """TACHIKOMA's proposals since `since`, which `PROPOSALS_PER_DAY` caps."""
+    return conn.execute(
+        text("select count(*) from source_candidates where proposed_at >= :since"),
+        {"since": since},
+    ).scalar_one()
+
+
+ProposalResult = Literal["created", "updated", "queued", "exists", "daily_limit"]
 
 
 def add_proposal(
     conn: Connection, proposal: Proposal, *, max_open: int, now: datetime
 ) -> tuple[ProposalResult, Candidate | None]:
-    """Queue TACHIKOMA's proposal.
+    """Store TACHIKOMA's proposal for the gate.
 
-    "updated": the host was found by a search and TACHIKOMA has given it its feed. "exists": the
-    host is registered or already past that. "full": `max_open` candidates are being tested, or
-    TACHIKOMA has made `PROPOSALS_PER_DAY` proposals in the last 24 hours.
+    "updated": the host was found by a search and TACHIKOMA has given it its feed. "queued": a
+    feed, stored while `max_open` candidates are being tested; `promote_queued` makes it one when
+    a slot frees. "exists": the host is registered or already past that. "daily_limit":
+    TACHIKOMA has made `PROPOSALS_PER_DAY` proposals in the last 24 hours, and nothing is stored.
     """
     if any(same_site(proposal.host, h) for h in registered_hosts(conn)):
         return "exists", None
@@ -153,25 +188,15 @@ def add_proposal(
         existing.state == "discovered" and existing.feed_url is None and not proposal.is_home
     ):
         return "exists", existing
-    proposed_today = conn.execute(
-        text(
-            "select count(*) from source_candidates where proposed_at >= :since"
-        ),
-        {"since": now - timedelta(days=1)},
-    ).scalar_one()
-    if proposed_today >= PROPOSALS_PER_DAY:
-        return "full", None
-    if not proposal.is_home:
-        open_now = conn.execute(
-            text("select count(*) from source_candidates where state in ('candidate', 'testing')")
-        ).scalar_one()
-        if open_now >= max_open:
-            return "full", None
+    if proposed_since(conn, since=now - timedelta(days=1)) >= PROPOSALS_PER_DAY:
+        return "daily_limit", None
+    # A home page has no feed to test yet, so it never waits for a slot.
+    queued = not proposal.is_home and open_count(conn) >= max_open
     evidence = json.dumps([{"by": "tachikoma", "url": u} for u in proposal.examples])
     params = {
         "host": proposal.host,
         "feed_url": None if proposal.is_home else proposal.url,
-        "state": "discovered" if proposal.is_home else "candidate",
+        "state": "discovered" if proposal.is_home or queued else "candidate",
         "name": proposal.name,
         "reason": proposal.reason,
         "evidence": evidence,
@@ -199,7 +224,28 @@ def add_proposal(
         )
         result = "created"
     [row] = _candidates(conn, "host = :host", {"host": proposal.host})
-    return result, row
+    return ("queued" if queued else result), row
+
+
+def promote_queued(conn: Connection, *, gate: GateConfig, now: datetime) -> list[str]:
+    """Make the oldest queued proposals candidates, as many as there are free slots under
+    `max_open`, and return their hosts."""
+    room = max(gate.max_open - open_count(conn), 0)
+    if room == 0:
+        return []
+    return list(
+        conn.execute(
+            text(
+                "update source_candidates set state = 'candidate', passes = 0, failures = 0, "
+                "last_error = null, updated_at = :now "
+                "where state = 'discovered' and feed_url is not null and id in ("
+                "select id from source_candidates where state = 'discovered' "
+                "and feed_url is not null order by proposed_at nulls last, id limit :room) "
+                "returning host"
+            ),
+            {"room": room, "now": now},
+        ).scalars()
+    )
 
 
 # --- The gate ------------------------------------------------------------------------------------
@@ -251,14 +297,44 @@ def record_home(
     ).scalar_one()
 
 
-def probes_due(conn: Connection, *, limit: int, now: datetime) -> list[Candidate]:
-    """Candidates due a probe, those furthest through the gate first."""
-    return _candidates(
-        conn,
-        "state in ('candidate', 'testing') and (last_probe_at is null or last_probe_at <= :due) "
-        "order by passes desc, last_probe_at nulls first, id limit :limit",
-        {"due": now - PROBE_GAP, "limit": limit},
+def probes_due(
+    conn: Connection, *, limit: int, now: datetime, gate: GateConfig
+) -> list[Candidate]:
+    """The candidates to probe this pass (`pick_probes`). The open ones are few, as `max_open`
+    caps them, so they are all read and picked here."""
+    return pick_probes(
+        _candidates(conn, "state in ('candidate', 'testing')", {}),
+        limit=limit, now=now, gate=gate,
     )
+
+
+def pick_probes(
+    candidates: Iterable[Candidate], *, limit: int, now: datetime, gate: GateConfig
+) -> list[Candidate]:
+    """Up to `limit` of `candidates` due a probe: one probed `PROBE_GAP` ago, or a ready one
+    (`probes_to_activate` healthy probes in a row, waiting for room under `max_active`)
+    `ready_reprobe_hours` ago.
+
+    Not ready first, so a ready one never takes the probes of those still being tested: among
+    them one never probed, then those furthest through the gate, then the longest unprobed. A
+    ready one's daily probe keeps the gate honest: if it fails, the candidate starts again.
+    """
+    ready_gap = timedelta(hours=gate.ready_reprobe_hours) - PROBE_EARLY
+
+    def is_ready(c: Candidate) -> bool:
+        return c.passes >= gate.probes_to_activate
+
+    def due(c: Candidate) -> bool:
+        if c.state not in OPEN_STATES:
+            return False
+        gap = ready_gap if is_ready(c) else PROBE_GAP
+        return c.last_probe_at is None or c.last_probe_at <= now - gap
+
+    def order(c: Candidate) -> tuple:
+        never_probed = c.state == "candidate" and c.failures == 0
+        return (is_ready(c), not never_probed, -c.passes, c.last_probe_at or _EPOCH, c.id)
+
+    return sorted(filter(due, candidates), key=order)[:limit]
 
 
 def record_probe(
@@ -315,15 +391,18 @@ def active_discovered(conn: Connection) -> int:
     ).scalar_one()
 
 
+def source_id_taken(conn: Connection, source_id: str) -> bool:
+    return conn.execute(
+        text("select 1 from source_registry where id = :id"), {"id": source_id}
+    ).first() is not None
+
+
 def activate(
     conn: Connection, candidate: Candidate, source: SourceConfig, *, now: datetime
 ) -> bool:
     """Register `source` for collection and mark its candidate active. False, and nothing
     written, when its id is already taken."""
-    taken = conn.execute(
-        text("select 1 from source_registry where id = :id"), {"id": source.id}
-    ).first()
-    if taken is not None:
+    if source_id_taken(conn, source.id):
         return False
     upsert_registry(conn, [source])
     set_lifecycle_state(conn, source.id, LifecycleState.ACTIVE)
@@ -365,10 +444,75 @@ def retire_silent(conn: Connection, *, now: datetime) -> list[str]:
     return retired
 
 
+@dataclass(frozen=True)
+class Retired:
+    source_id: str
+    reason: str
+
+
+def retire_weak(
+    conn: Connection, *, need: int, prune: PruneConfig, now: datetime
+) -> list[Retired]:
+    """Retire the weakest active discovered sources (worker/discovery/gate.py `weakest`) so
+    `need` ready candidates can be collected, as `retire_silent` does: the registry row is
+    disabled and the candidate `retired`, with the reason. Their reputation is the one
+    source-health.json publishes: the same inputs (worker/publish/build.py) and a discovered
+    source's community standing."""
+    if need <= 0 or prune.per_pass == 0:
+        return []
+    rows = conn.execute(
+        text(
+            "select r.id, r.source_class, (select min(h.checked_at) from source_health h "
+            "where h.source_id = r.id) as first_checked_at from source_registry r "
+            "where r.source_class = :c and r.enabled order by r.id"
+        ),
+        {"c": DISCOVERED_CLASS},
+    ).all()
+    if not rows:
+        return []
+    corroboration = load_corroboration(conn, since=now - CORROBORATION_WINDOW)
+    collected = [
+        Collected(
+            source_id=r.id,
+            source_class=r.source_class,
+            first_checked_at=r.first_checked_at,
+            reputation=assess_reputation(
+                None, load_health_history(conn, r.id), corroboration.get(r.id)
+            ),
+        )
+        for r in rows
+    ]
+    retired = []
+    for source in weakest(collected, need=need, prune=prune, now=now):
+        reason = weak_reason(source, now=now)
+        done = conn.execute(
+            text(
+                "update source_registry set enabled = false, lifecycle_state = 'retired', "
+                "updated_at = :now where id = :id and source_class = :c and enabled returning id"
+            ),
+            {"id": source.source_id, "c": DISCOVERED_CLASS, "now": now},
+        ).first()
+        if done is None:
+            continue
+        conn.execute(
+            text(
+                "update source_candidates set state = 'retired', last_error = :reason, "
+                "updated_at = :now where source_id = :id"
+            ),
+            {"id": source.source_id, "reason": _short(reason), "now": now},
+        )
+        retired.append(Retired(source.source_id, reason))
+    return retired
+
+
 def forget_unfed(conn: Connection, *, now: datetime, gate: GateConfig) -> int:
-    """Forget search finds never given a feed. Rejected and retired rows stay."""
+    """Forget search finds never given a feed, and proposals queued that long since they were
+    made. Rejected and retired rows stay."""
     return conn.execute(
-        text("delete from source_candidates where state = 'discovered' and created_at < :cutoff"),
+        text(
+            "delete from source_candidates where state = 'discovered' "
+            "and coalesce(proposed_at, created_at) < :cutoff"
+        ),
         {"cutoff": now - timedelta(days=gate.forget_after_days)},
     ).rowcount
 
@@ -447,8 +591,14 @@ def load_overview(conn: Connection, *, now: datetime, open_limit: int = 30) -> d
     )
     waiting = _candidates(
         conn,
-        "state = 'discovered' order by (found_by = 'tachikoma') desc, "
+        "state = 'discovered' and feed_url is null order by (found_by = 'tachikoma') desc, "
         "jsonb_array_length(evidence) desc, created_at desc, id limit :n",
+        {"n": open_limit},
+    )
+    queued = _candidates(
+        conn,
+        "state = 'discovered' and feed_url is not null "
+        "order by proposed_at nulls last, id limit :n",
         {"n": open_limit},
     )
     settled = _candidates(
@@ -461,8 +611,12 @@ def load_overview(conn: Connection, *, now: datetime, open_limit: int = 30) -> d
     return {
         "states": states,
         "open": open_rows,
+        "open_count": open_count(conn),
+        # Next to be promoted first (`promote_queued`).
+        "queued_for_a_slot": queued,
         "waiting_for_a_feed": waiting,
         "settled_last_14_days": settled,
+        "proposals_last_24h": proposed_since(conn, since=now - timedelta(days=1)),
         "credits": {
             "last_24h": credits_used(conn, since=now - timedelta(days=1)),
             "this_month": credits_used(conn, since=month_start),

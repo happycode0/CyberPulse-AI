@@ -11,9 +11,11 @@ from worker.discovery.gate import (
     DISCOVERED_CLASS,
     MAX_EXAMPLES,
     NAME_MAX_CHARS,
+    Collected,
     DiscoveryConfig,
     GateConfig,
     ProposalRejected,
+    PruneConfig,
     assess_probe,
     check_proposal,
     clean_name,
@@ -24,16 +26,22 @@ from worker.discovery.gate import (
     same_site,
     skipped,
     source_id_for,
+    weak_reason,
+    weakest,
 )
-from worker.models import Lane, NormalisedItem
+from worker.models import Lane, NormalisedItem, Standing
 from worker.pipeline.assemble import evidence_class_for
+from worker.pipeline.reputation import Reputation
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
 GATE = GateConfig(
     probes_to_activate=6, failures_to_reject=3, recent_days=14, min_recent_items=3,
     min_on_beat=2, max_already_collected=0.6, probes_per_pass=10, homes_per_pass=5, max_open=20,
-    max_active=25, forget_after_days=90, beat=["ransomware", "vulnerab", "breach", "AI safety"],
+    max_active=25, ready_reprobe_hours=24,
+    prune=PruneConfig(per_pass=2, min_days=21, corroboration_below=0.05),
+    forget_after_days=90, beat=["ransomware", "vulnerab", "breach", "AI safety"],
 )
+PRUNE = GATE.prune
 REASON = "Writes up Australian ransomware incidents that no registered source covers."
 
 
@@ -69,6 +77,32 @@ def test_an_unknown_setting_is_refused(tmp_path):
     path.write_text(DiscoveryConfig.load().model_dump_json().replace('"gate":{', '"gate":{"x":1,'))
     with pytest.raises(ValidationError):
         DiscoveryConfig.load(path)
+
+
+def test_the_repositorys_gate_makes_room_slowly_and_reprobes_a_waiting_candidate_daily():
+    gate = DiscoveryConfig.load().gate
+    assert gate.ready_reprobe_hours == 24
+    assert (gate.prune.per_pass, gate.prune.min_days, gate.prune.corroboration_below) == (
+        2, 21, 0.05
+    )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"ready_reprobe_hours": 3},  # under a gate pass: it would be every pass again
+        {"ready_reprobe_hours": 169},
+        {"prune": {"per_pass": -1, "min_days": 21, "corroboration_below": 0.05}},
+        {"prune": {"per_pass": 11, "min_days": 21, "corroboration_below": 0.05}},
+        {"prune": {"per_pass": 2, "min_days": 6, "corroboration_below": 0.05}},
+        {"prune": {"per_pass": 2, "min_days": 21, "corroboration_below": 1.5}},
+        {"prune": {"per_pass": 2, "min_days": 21}},
+        {"prune": {"per_pass": 2, "min_days": 21, "corroboration_below": 0.05, "x": 1}},
+    ],
+)
+def test_a_gate_setting_out_of_range_is_refused(change):
+    with pytest.raises(ValidationError):
+        GateConfig.model_validate({**GATE.model_dump(), **change})
 
 
 # --- Hosts ---------------------------------------------------------------------------------------
@@ -177,6 +211,71 @@ def test_a_feed_that_copies_what_the_worker_already_has_is_not_healthy():
 def test_the_beat_matches_word_starts_only():
     items = [item(i, "Unbreachable cake recipes") for i in range(3)]
     assert assess_probe(items, [], now=NOW, gate=GATE).on_beat == 0
+
+
+# --- Making room ---------------------------------------------------------------------------------
+
+
+def collected(source_id, *, score=40, corroboration=0.0, events=100, days=30,
+              source_class=DISCOVERED_CLASS) -> Collected:
+    return Collected(
+        source_id=source_id,
+        source_class=source_class,
+        first_checked_at=NOW - timedelta(days=days) if days is not None else None,
+        reputation=Reputation(score, Standing.COMMUNITY, 1.0, corroboration, events, "basis"),
+    )
+
+
+def test_the_weakest_go_first_and_no_more_than_the_pass_allows():
+    sources = [
+        collected("found_c", score=34, corroboration=0.01),
+        collected("found_a", score=31, corroboration=0.0),
+        collected("found_b", score=33, corroboration=0.02),
+    ]
+    assert [s.source_id for s in weakest(sources, need=5, prune=PRUNE, now=NOW)] == [
+        "found_a", "found_b",
+    ]
+
+
+def test_no_more_are_retired_than_there_are_candidates_waiting():
+    sources = [collected("found_a"), collected("found_b")]
+    assert [s.source_id for s in weakest(sources, need=1, prune=PRUNE, now=NOW)] == ["found_a"]
+    assert weakest(sources, need=0, prune=PRUNE, now=NOW) == []
+
+
+def test_a_source_corroborated_often_enough_is_kept():
+    sources = [collected("found_a", corroboration=0.05), collected("found_b", corroboration=0.3)]
+    assert weakest(sources, need=2, prune=PRUNE, now=NOW) == []
+
+
+def test_a_source_with_too_few_events_to_judge_is_kept():
+    quiet = collected("found_a", corroboration=None, events=3, score=28)
+    assert weakest([quiet], need=1, prune=PRUNE, now=NOW) == []
+
+
+def test_a_source_collected_for_less_than_the_minimum_is_kept():
+    sources = [collected("found_new", days=20), collected("found_unchecked", days=None)]
+    assert weakest(sources, need=2, prune=PRUNE, now=NOW) == []
+    old = collected("found_old", days=PRUNE.min_days)
+    assert weakest([old], need=1, prune=PRUNE, now=NOW) == [old]
+
+
+def test_a_curated_source_is_never_retired_to_make_room():
+    curated = collected("acsc_alerts", score=20, source_class="authoritative")
+    assert weakest([curated], need=1, prune=PRUNE, now=NOW) == []
+
+
+def test_making_room_can_be_turned_off():
+    off = PRUNE.model_copy(update={"per_pass": 0})
+    assert weakest([collected("found_a")], need=1, prune=off, now=NOW) == []
+
+
+def test_the_reason_says_what_made_the_source_weak():
+    source = collected("found_a", score=31, corroboration=0.004, events=1078, days=30)
+    assert weak_reason(source, now=NOW) == (
+        "retired for a ready candidate: corroboration 0% of 1078 events in 90 days, "
+        "reputation 31, after 30 days collected"
+    )
 
 
 # --- Proposals -----------------------------------------------------------------------------------

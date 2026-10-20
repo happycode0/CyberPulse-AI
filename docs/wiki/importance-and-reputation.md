@@ -39,7 +39,10 @@ is. It is set by hand, and it is the base of the source's reputation.
 | `community` | 40 | Aggregators, social search, personal blogs without editorial review | CVE Details, X security search (2) |
 
 A source the discovery gate added (it lives in the database, not the file) has no standing,
-so it counts as `community`. Its description is null on the Sources page.
+so it counts as `community`. Its description is null on the Sources page. The gate reads this
+same reputation when it needs room for a new find: it retires the found sources with the
+lowest score among those whose corroboration is under `gate.prune.corroboration_below`
+(`config/discovery.yaml`). A source from the file is never retired that way.
 
 ### The formula
 

@@ -5,8 +5,10 @@
   evidence, unless it is registered already or a platform (`skip_hosts`). Nothing is fetched.
 - **SERAPH's gate**, every 4 hours: look for the feed of the hosts found, probe each candidate's
   feed once, activate those with enough healthy probes in a row (worker/discovery/gate.py), and
-  retire activated sources that have gone silent. Every request goes through the URL guard
-  (worker/discovery/guard.py), and a probe's items are counted, never stored.
+  retire activated sources that have gone silent. While `max_active` are collected, the weakest
+  discovered sources make room for the ready candidates (`gate.prune`), and while `max_open` are
+  tested, TACHIKOMA's proposals queue for the slots each pass frees. Every request goes through
+  the URL guard (worker/discovery/guard.py), and a probe's items are counted, never stored.
 
 Neither pass is fatal to the schedule: a failure is logged, and the next pass starts again.
 """
@@ -198,19 +200,21 @@ async def run_search(
 @dataclass
 class GateSummary:
     forgotten: int = 0
-    retired: list[str] = field(default_factory=list)
+    retired: list[str] = field(default_factory=list)  # silent for three weeks
     homes: int = 0
     feeds_found: int = 0
     probes: int = 0
     healthy: int = 0
     rejected: int = 0
+    pruned: list[str] = field(default_factory=list)  # retired to make room for a ready candidate
     activated: list[str] = field(default_factory=list)
     waiting: int = 0  # ready, but the active cap is reached
+    promoted: list[str] = field(default_factory=list)  # queued proposals now candidates
     errors: list[str] = field(default_factory=list)
 
     @property
     def changed_anything(self) -> bool:
-        return bool(self.activated or self.retired)
+        return bool(self.activated or self.retired or self.pruned)
 
 
 def _feed_title(body: bytes) -> str | None:
@@ -326,7 +330,7 @@ async def run_gate(
             summary.rejected += state == "rejected"
 
         due = await asyncio.to_thread(
-            _in, engine, db.probes_due, limit=gate.probes_per_pass, now=now
+            _in, engine, db.probes_due, limit=gate.probes_per_pass, now=now, gate=gate
         )
         for candidate in due:
             summary.probes += 1
@@ -343,35 +347,55 @@ async def run_gate(
             summary.healthy += result is not None and result.healthy
             summary.rejected += state == "rejected"
 
-    summary.activated, summary.waiting = await asyncio.to_thread(
+    summary.activated, summary.waiting, summary.pruned = await asyncio.to_thread(
         _activate_ready, engine, gate, now
     )
+    # After activation, so the slots it freed this pass are filled now. The next pass probes them.
+    summary.promoted = await asyncio.to_thread(_in, engine, db.promote_queued, gate=gate, now=now)
     logger.info(
         "source gate: %d homes read (%d feeds found), %d probes (%d healthy), %d rejected, "
-        "%d activated, %d retired%s",
+        "%d activated, %d retired%s%s%s",
         summary.homes, summary.feeds_found, summary.probes, summary.healthy, summary.rejected,
         len(summary.activated), len(summary.retired),
+        f", {len(summary.pruned)} retired to make room" if summary.pruned else "",
         f", {summary.waiting} ready but the cap of {gate.max_active} is reached"
         if summary.waiting else "",
+        f", {len(summary.promoted)} queued proposals now candidates" if summary.promoted else "",
     )
     return summary
 
 
-def _activate_ready(engine: Engine, gate: GateConfig, now: datetime) -> tuple[list[str], int]:
-    """Activate what is ready, up to `max_active` discovered sources; the rest keep testing."""
+def _activate_ready(
+    engine: Engine, gate: GateConfig, now: datetime
+) -> tuple[list[str], int, list[str]]:
+    """Activate what is ready, up to `max_active` discovered sources. When that many are
+    collected, the weakest of them make room (`gate.prune`, at most `per_pass` and no more than
+    are waiting); the rest keep testing. The activated, the number still waiting, and the
+    sources retired to make room."""
     activated: list[str] = []
+    ready = []
     with engine.begin() as conn:
-        ready = db.ready(conn, gate)
-        room = max(gate.max_active - db.active_discovered(conn), 0)
-        for candidate in ready[:room]:
+        for candidate in db.ready(conn, gate):
             source = discovered_source(
                 host=candidate.host, feed_url=candidate.feed_url or "", name=candidate.name,
                 found_by=candidate.found_by, now=now,
             )
+            # Checked first, so a source is never retired for a candidate that cannot take
+            # its place.
+            if db.source_id_taken(conn, source.id):
+                logger.warning("discovery: %s is already a source id; %s waits", source.id,
+                               candidate.host)
+                continue
+            ready.append((candidate, source))
+        room = max(gate.max_active - db.active_discovered(conn), 0)
+        pruned = []
+        if len(ready) > room:
+            pruned = db.retire_weak(conn, need=len(ready) - room, prune=gate.prune, now=now)
+            for retired in pruned:
+                logger.warning("discovery: %s %s", retired.source_id, retired.reason)
+            room += len(pruned)
+        for candidate, source in ready[:room]:
             if db.activate(conn, candidate, source, now=now):
                 activated.append(source.id)
                 logger.info("discovery: activated %s (%s)", source.id, candidate.host)
-            else:
-                logger.warning("discovery: %s is already a source id; %s waits", source.id,
-                               candidate.host)
-    return activated, max(len(ready) - room, 0)
+    return activated, len(ready) - len(activated), [r.source_id for r in pruned]

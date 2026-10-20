@@ -58,13 +58,30 @@ gate:
   min_on_beat: 2
   # ... and no more than this share of them already collected from another source.
   max_already_collected: 0.6
-  # The most candidates one pass probes, and the most homes it searches for a feed.
+  # The most candidates one pass probes, and the most homes it searches for a feed. A candidate
+  # not yet ready comes first, one never probed before any other, so a new find gets its first
+  # probe at the next pass.
   probes_per_pass: 10
   homes_per_pass: 5
-  # Candidates being tested at once; TACHIKOMA's proposals wait while it is full.
+  # Candidates being tested at once. While it is full, TACHIKOMA's proposals of a feed are
+  # queued (the ops API answers 202), and each pass moves the oldest into the slots that free.
+  # A home page is not counted: it has no feed to test yet.
   max_open: 20
-  # Discovered sources collected at once. Activation waits while it is full.
+  # Discovered sources collected at once. A candidate ready while it is full waits, and is
+  # probed again every `ready_reprobe_hours` rather than every pass, so it does not take the
+  # probes of candidates still being tested. A failed probe sends it back to the start.
   max_active: 25
+  ready_reprobe_hours: 24
+  # Room for a ready candidate while `max_active` is full: each pass retires up to `per_pass`
+  # discovered sources (never a curated one, and never more than there are candidates waiting),
+  # lowest reputation first, among those collected for at least `min_days` that another source
+  # corroborated less than `corroboration_below` of the time. That is source-health.json's
+  # `reputation.corroboration`, over 90 days; a source with too few events to judge is kept.
+  # Retired is final, as for a source gone silent. `per_pass: 0` turns this off.
+  prune:
+    per_pass: 2
+    min_days: 21
+    corroboration_below: 0.05
   # A host found by a search but never given a feed is forgotten after this long.
   forget_after_days: 90
   # Words that put an item on CyberPulse's beat, matched at the start of a word in its title or

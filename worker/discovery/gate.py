@@ -8,7 +8,10 @@ source. `probes_to_activate` healthy probes in a row activate it; `failures_to_r
 in a row reject it for good. One good fetch never activates anything.
 
 An activated source is collected in the NORMAL lane as `community`, the least trusted evidence
-class a real source can have, so on its own it can never confirm an event.
+class a real source can have, so on its own it can never confirm an event. At most `max_active`
+are collected at once. When that many are and a candidate is ready, the weakest of them, those
+other sources seldom corroborate, make room for it (`weakest`); a ready candidate that finds no
+room keeps its place and is probed once a day (`ready_reprobe_hours`) while it waits.
 """
 
 import re
@@ -27,6 +30,7 @@ from worker.ai.tasks import _URL, _clean
 from worker.discovery.guard import Refused, check_url
 from worker.models import Lane, NormalisedItem, SourceConfig
 from worker.pipeline.followup import _BARE_LINK
+from worker.pipeline.reputation import CORROBORATION_WINDOW, Reputation
 from worker.publish.validate import scan_text_for_secrets
 
 DEFAULT_DISCOVERY_PATH = Path(__file__).resolve().parents[2] / "config" / "discovery.yaml"
@@ -62,6 +66,17 @@ class SearchConfig(BaseModel):
     skip_hosts: list[str] = Field(default_factory=list)
 
 
+class PruneConfig(BaseModel):
+    """Which discovered sources make room when `max_active` is reached and a candidate is ready
+    (`weakest`)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    per_pass: int = Field(ge=0, le=10)  # 0: none is ever retired to make room
+    min_days: int = Field(ge=7, le=365)
+    corroboration_below: float = Field(ge=0.0, le=1.0)
+
+
 class GateConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -75,6 +90,9 @@ class GateConfig(BaseModel):
     homes_per_pass: int = Field(ge=0, le=50)
     max_open: int = Field(ge=1, le=200)
     max_active: int = Field(ge=0, le=200)
+    # At least one gate pass: below that it would be every pass, as for a candidate not ready.
+    ready_reprobe_hours: int = Field(ge=4, le=168)
+    prune: PruneConfig
     forget_after_days: int = Field(ge=1, le=3650)
     beat: list[str] = Field(min_length=1)
 
@@ -303,6 +321,55 @@ def discovered_source(
             f"Found by {'the nightly search' if found_by == 'search' else 'TACHIKOMA'}; "
             f"activated by SERAPH's gate on {now:%Y-%m-%d}. Collected through the URL guard."
         ),
+    )
+
+
+# --- Making room ---------------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Collected:
+    """An active source as the pruning sees it: its reputation is the one source-health.json
+    publishes (worker/pipeline/reputation.py)."""
+
+    source_id: str
+    source_class: str
+    first_checked_at: datetime | None  # its first health check: when collection began
+    reputation: Reputation
+
+
+def weakest(
+    sources: Iterable[Collected], *, need: int, prune: PruneConfig, now: datetime
+) -> list[Collected]:
+    """The discovered sources to retire so `need` ready candidates can be collected: at most
+    `prune.per_pass`, lowest reputation first, each collected for at least `prune.min_days`
+    and with less than `prune.corroboration_below` of its events corroborated.
+
+    A source with too few events to judge (no corroboration) is kept: it is quiet, not shown to
+    be weak, and one that stops answering is retired as silent anyway. A curated source is
+    never one: only the gate's own finds make room for its next.
+    """
+    cutoff = now - timedelta(days=prune.min_days)
+    weak = [
+        s for s in sources
+        if s.source_class == DISCOVERED_CLASS
+        and s.first_checked_at is not None
+        and s.first_checked_at <= cutoff
+        and s.reputation.corroboration is not None
+        and s.reputation.corroboration < prune.corroboration_below
+    ]
+    weak.sort(key=lambda s: (s.reputation.score, s.reputation.corroboration, s.source_id))
+    return weak[: max(min(need, prune.per_pass), 0)]
+
+
+def weak_reason(source: Collected, *, now: datetime) -> str:
+    """Why `weakest` chose it, for the candidate's `last_error` and the log."""
+    rep = source.reputation
+    days = (now - source.first_checked_at).days if source.first_checked_at else 0
+    return (
+        f"retired for a ready candidate: corroboration {rep.corroboration or 0:.0%} of "
+        f"{rep.events_90d} events in {CORROBORATION_WINDOW.days} days, reputation {rep.score}, "
+        f"after {days} days collected"
     )
 
 

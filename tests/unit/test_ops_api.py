@@ -757,14 +757,20 @@ def discovery_db(monkeypatch):
 
     def overview(conn, *, now):
         return {
-            "states": {"testing": 1, "discovered": 1},
+            "states": {"testing": 1, "discovered": 2},
             "open": [candidate(state="testing", passes=2,
                                last_result={"healthy": True, "recent": 5})],
+            "open_count": 1,
+            "queued_for_a_slot": [candidate(id=3, host="later.example.org",
+                                            feed_url="https://later.example.org/rss",
+                                            state="discovered")],
             "waiting_for_a_feed": [candidate(id=2, host="news.example.org", feed_url=None,
                                              found_by="search", reason=None, state="discovered")],
             "settled_last_14_days": [],
+            "proposals_last_24h": 4,
             "credits": {"last_24h": 3, "this_month": 41},
             "active_discovered_sources": 0,
+            **seen.get("overview", {}),
         }
 
     def add(conn, proposal, *, max_open, now):
@@ -797,6 +803,32 @@ def test_the_candidates_say_where_discovery_stands(api, discovery_db):
     assert discovery_db["writes"] == 0
 
 
+def test_the_candidates_count_the_free_slots_proposals_and_room_for_the_agent(api, discovery_db):
+    gate = DiscoveryConfig.load().gate
+    body = api.handle("GET", "/ops/candidates", AUTH).json()
+    assert body["slots_free"] == gate.max_open - 1
+    assert body["proposals_left_today"] == ops_api.PROPOSALS_PER_DAY - 4
+    assert body["activation_room"] == gate.max_active
+    assert body["gate"]["hours_between_probes_of_a_ready_candidate"] == gate.ready_reprobe_hours
+    assert f"up to {gate.prune.per_pass} discovered sources" in body["gate"]["making_room"]
+
+
+def test_the_counts_never_go_below_none_left(api, discovery_db):
+    gate = DiscoveryConfig.load().gate
+    # Home pages skip the cap on open candidates, so more can be open than it allows.
+    discovery_db["overview"] = {"open_count": gate.max_open + 5, "proposals_last_24h": 30,
+                                "active_discovered_sources": gate.max_active}
+    body = api.handle("GET", "/ops/candidates", AUTH).json()
+    assert (body["slots_free"], body["proposals_left_today"], body["activation_room"]) == (0, 0, 0)
+
+
+def test_queued_proposals_are_listed_apart_from_finds_waiting_for_a_feed(api, discovery_db):
+    body = api.handle("GET", "/ops/candidates", AUTH).json()
+    assert [c["host"] for c in body["queued_for_a_slot"]] == ["later.example.org"]
+    assert [c["host"] for c in body["waiting_for_a_feed"]] == ["news.example.org"]
+    assert any("queued_for_a_slot" in n for n in body["notes"])
+
+
 def test_the_candidates_need_the_token(api, discovery_db):
     assert api.handle("GET", "/ops/candidates", {}).status == 401
     assert propose(api, PROPOSAL, headers={}).status == 401
@@ -809,7 +841,7 @@ def test_the_candidates_take_get_and_post_only(api, discovery_db, method):
     assert response.status == 405 and ("Allow", "GET, POST") in response.headers
 
 
-def test_a_proposal_is_checked_then_queued(api, discovery_db):
+def test_a_proposal_is_checked_then_stored(api, discovery_db):
     response = propose(api, PROPOSAL)
     assert response.status == 201
     body = response.json()
@@ -849,13 +881,32 @@ def test_a_body_that_is_not_a_proposal_never_reaches_the_writer(api, discovery_d
 
 
 @pytest.mark.parametrize(
-    "result, status", [("created", 201), ("updated", 200), ("exists", 409), ("full", 429)]
+    "result, status",
+    [("created", 201), ("updated", 200), ("queued", 202), ("exists", 409), ("daily_limit", 429)],
 )
 def test_each_proposal_result_has_its_status(api, discovery_db, result, status):
     discovery_db["result"] = result
     response = propose(api, PROPOSAL)
     assert response.status == status and response.json()["result"] == result
     assert response.json()["message"]
+
+
+def test_a_proposal_made_while_the_gate_is_full_is_queued_not_refused(api, discovery_db):
+    discovery_db["result"] = "queued"
+    response = propose(api, PROPOSAL)
+    assert response.status == 202
+    message = response.json()["message"]
+    assert message.startswith("queued: ") and "Nothing more to do" in message
+    assert "tomorrow" not in message
+
+
+def test_only_the_daily_limit_says_stop_until_tomorrow(api, discovery_db):
+    discovery_db["result"] = "daily_limit"
+    response = propose(api, PROPOSAL)
+    assert response.status == 429
+    assert response.json()["message"].startswith(
+        f"daily limit: {ops_api.PROPOSALS_PER_DAY} proposals"
+    )
 
 
 def test_the_index_lists_the_candidates(api):

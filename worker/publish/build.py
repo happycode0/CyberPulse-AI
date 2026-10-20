@@ -32,6 +32,7 @@ from worker.db.events import load_event_dates, load_live_events
 from worker.db.merge import merged_redirects
 from worker.db.runs import load_last_completed_collection, load_latest_run
 from worker.db.sources import (
+    DEFAULT_HISTORY_LIMIT,
     RegistryRow,
     load_corroboration,
     load_health_history,
@@ -69,7 +70,9 @@ LIVE_LIMIT = 500
 # Below every possible prominence (0..1), so this selects every scored event.
 ALL_SCORED = -1.0
 HISTORY_EVENT_LIMIT = 10_000
-HEALTH_HISTORY_LIMIT = 20
+# The checks a source's uptime is over. The discovery gate rates the sources it may retire to
+# make room with the same (worker/db/discovery.py `retire_weak`).
+HEALTH_HISTORY_LIMIT = DEFAULT_HISTORY_LIMIT
 # index.json's `merged` map covers events first seen this recently: a link to one of them that
 # was shared before it was merged still finds the story (site/assets/hud.js, `findEvent`).
 MERGED_REDIRECT_WINDOW = timedelta(days=90)
@@ -313,6 +316,8 @@ def _gate_reason(c: Candidate) -> str:
     """Where a find stands, in the worker's own words. Never the finder's `reason`, which a
     model wrote from pages on the open web."""
     who = _FOUND_BY.get(c.found_by, "Found")
+    if c.state == "discovered" and c.feed_url:
+        return f"{who}; feed found, queued until a testing slot frees."
     if c.state == "discovered":
         return f"{who}; looking for its feed."
     if c.state == "testing":

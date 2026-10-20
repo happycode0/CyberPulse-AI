@@ -25,6 +25,7 @@ from worker.discovery.gate import (
 from worker.discovery.run import run_gate
 from worker.models import HealthStatus, Lane, LifecycleState, SourceConfig, SourceHealth
 from worker.pipeline import run as pipeline_run
+from worker.pipeline.reputation import Corroboration
 from worker.settings import get_settings
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
@@ -186,17 +187,50 @@ def test_a_known_or_registered_site_is_not_proposed_twice(engine):
     assert propose(engine, "https://blog.cisa.gov/") == ("exists", None)
 
 
-def test_proposals_stop_when_the_gate_is_full(engine):
+def test_a_feed_proposed_while_the_gate_is_full_is_queued_not_dropped(engine):
     propose(engine, max_open=1)
-    assert propose(engine, "https://other.example.org/rss", max_open=1) == ("full", None)
+    result, row = propose(engine, "https://other.example.org/rss", max_open=1)
+    assert result == "queued"
+    assert (row.state, row.feed_url, row.found_by) == (
+        "discovered", "https://other.example.org/rss", "tachikoma"
+    )
     # A home page is not a candidate yet, so it still gets in.
     assert propose(engine, "https://home.example.org/", max_open=1)[0] == "created"
+    # The queued feed is not a home page to read, and not proposed twice.
+    homes = call(engine, db.homes_due, limit=5, now=NOW, gate=GATE)
+    assert [h.host for h in homes] == ["home.example.org"]
+    assert propose(engine, "https://other.example.org/rss", max_open=5)[0] == "exists"
+
+
+def test_a_searched_host_given_its_feed_while_the_gate_is_full_is_queued(engine):
+    call(engine, db.add_found, host=HOST, evidence={"url": f"https://{HOST}/a"}, now=NOW)
+    propose(engine, "https://other.example.org/rss", max_open=1)
+    result, row = propose(engine, max_open=1)
+    assert result == "queued"
+    assert (row.state, row.feed_url) == ("discovered", f"https://{HOST}/feed/")
+    # The search adds no more evidence once the host has a feed.
+    assert call(engine, db.add_found, host=HOST, evidence={"url": f"https://{HOST}/b"},
+                now=NOW) is False
+    assert [e["url"] for e in candidate(engine).evidence] == [f"https://{HOST}/a"]
+
+
+def test_queued_proposals_become_candidates_oldest_first_as_slots_free(engine):
+    one = GATE.model_copy(update={"max_open": 1})
+    propose(engine, max_open=1)
+    for i, host in enumerate(["first.example.org", "second.example.org"], start=1):
+        propose(engine, f"https://{host}/rss", max_open=1, now=NOW + timedelta(minutes=i))
+    assert call(engine, db.promote_queued, gate=one, now=NOW) == []
+    two = GATE.model_copy(update={"max_open": 2})
+    assert call(engine, db.promote_queued, gate=two, now=NOW) == ["first.example.org"]
+    row = candidate(engine, "first.example.org")
+    assert (row.state, row.passes, row.failures) == ("candidate", 0, 0)
+    assert candidate(engine, "second.example.org").state == "discovered"
 
 
 def test_proposals_are_capped_per_day(engine):
     for i in range(db.PROPOSALS_PER_DAY):
         assert propose(engine, f"https://s{i}.example.org/")[0] == "created"
-    assert propose(engine, "https://late.example.org/") == ("full", None)
+    assert propose(engine, "https://late.example.org/") == ("daily_limit", None)
     tomorrow = NOW + timedelta(days=1, minutes=1)
     assert propose(engine, "https://late.example.org/", now=tomorrow)[0] == "created"
 
@@ -251,13 +285,32 @@ def test_probes_in_a_row_move_a_candidate_through_the_gate(engine):
     assert candidate(engine).last_result is None
 
 
+def probes_due(engine, now, limit=5) -> list[str]:
+    return [c.host for c in call(engine, db.probes_due, limit=limit, now=now, gate=GATE)]
+
+
 def test_probes_wait_for_the_gap(engine):
     _, row = propose(engine)
-    assert [c.id for c in call(engine, db.probes_due, limit=5, now=NOW)] == [row.id]
+    assert probes_due(engine, NOW) == [HOST]
     call(engine, db.record_probe, candidate_id=row.id, probe=healthy(), error=None, gate=GATE,
          now=NOW)
-    assert call(engine, db.probes_due, limit=5, now=NOW + timedelta(hours=2)) == []
-    assert len(call(engine, db.probes_due, limit=5, now=NOW + db.PROBE_GAP)) == 1
+    assert probes_due(engine, NOW + timedelta(hours=2)) == []
+    assert probes_due(engine, NOW + db.PROBE_GAP) == [HOST]
+
+
+def test_a_ready_candidate_waiting_for_room_is_probed_daily_after_the_new_ones(engine):
+    _, row = propose(engine)
+    for _ in range(GATE.probes_to_activate):
+        call(engine, db.record_probe, candidate_id=row.id, probe=healthy(), error=None,
+             gate=GATE, now=NOW)
+    propose(engine, "https://new.example.org/rss")
+    assert probes_due(engine, NOW + timedelta(hours=4)) == ["new.example.org"]
+    tomorrow = NOW + timedelta(hours=GATE.ready_reprobe_hours)
+    assert probes_due(engine, tomorrow) == ["new.example.org", HOST]
+    assert probes_due(engine, tomorrow, limit=1) == ["new.example.org"]
+    # A failed daily probe sends it back to the start.
+    assert call(engine, db.record_probe, candidate_id=row.id, probe=sick(), error=None,
+                gate=GATE, now=tomorrow) == ("candidate", 0)
 
 
 def activate(engine, host=HOST) -> str:
@@ -324,6 +377,72 @@ def test_a_new_source_is_not_retired_before_it_has_had_its_three_weeks(engine):
     assert call(engine, db.retire_silent, now=NOW + timedelta(days=20)) == []
 
 
+@pytest.fixture
+def corroborated(monkeypatch):
+    """Each source's corroboration over the window, as worker/db/sources.py would count it from
+    its events (tests/integration/test_reputation_db.py)."""
+    shares: dict[str, Corroboration] = {}
+    monkeypatch.setattr(db, "load_corroboration", lambda conn, *, since: shares)
+    return shares
+
+
+def collected_since(engine, source_id, days: int, at=NOW) -> None:
+    """Healthy checks from `days` before `at` until `at`."""
+    health(engine, source_id, HealthStatus.OK, at - timedelta(days=days))
+    health(engine, source_id, HealthStatus.OK, at)
+
+
+def test_the_weakest_discovered_source_is_retired_to_make_room(engine, corroborated):
+    weak = activate(engine, "weak.example.org")
+    strong = activate(engine, "strong.example.org")
+    for source_id in (weak, strong):
+        collected_since(engine, source_id, 30)
+    corroborated.update({weak: Corroboration(1078, 4), strong: Corroboration(200, 60)})
+    [retired] = call(engine, db.retire_weak, need=1, prune=GATE.prune, now=NOW)
+    assert retired.source_id == weak
+    assert retired.reason.startswith("retired for a ready candidate: corroboration 0% of 1078")
+    assert [s.id for s in call(engine, db.load_discovered_sources)] == [strong]
+    row = candidate(engine, "weak.example.org")
+    assert (row.state, row.source_id, row.last_error) == ("retired", weak, retired.reason)
+    with engine.connect() as conn:
+        assert conn.execute(text(
+            "select lifecycle_state from source_registry where id = :id"), {"id": weak}
+        ).scalar_one() == "retired"
+    # Retired is final: the host is not proposed again.
+    assert propose(engine, "https://weak.example.org/feed/")[0] == "exists"
+
+
+def test_a_curated_source_is_never_retired_to_make_room(engine, corroborated):
+    register(engine, "curated.example.org")
+    curated = "curated_example_org"
+    collected_since(engine, curated, 60)
+    corroborated[curated] = Corroboration(500, 0)
+    assert call(engine, db.retire_weak, need=1, prune=GATE.prune, now=NOW) == []
+    with engine.connect() as conn:
+        assert conn.execute(text(
+            "select enabled from source_registry where id = :id"), {"id": curated}
+        ).scalar_one() is True
+
+
+def test_a_weak_source_newer_than_the_minimum_or_too_quiet_to_judge_is_kept(engine, corroborated):
+    new = activate(engine, "new.example.org")
+    quiet = activate(engine, "quiet.example.org")
+    collected_since(engine, new, GATE.prune.min_days - 1)
+    collected_since(engine, quiet, 60)
+    corroborated.update({new: Corroboration(300, 0), quiet: Corroboration(3, 0)})
+    assert call(engine, db.retire_weak, need=2, prune=GATE.prune, now=NOW) == []
+
+
+def test_no_more_are_retired_than_one_pass_allows(engine, corroborated):
+    ids = [activate(engine, f"weak{i}.example.org") for i in range(GATE.prune.per_pass + 2)]
+    for source_id in ids:
+        collected_since(engine, source_id, 30)
+        corroborated[source_id] = Corroboration(100, 0)
+    retired = call(engine, db.retire_weak, need=len(ids), prune=GATE.prune, now=NOW)
+    assert len(retired) == GATE.prune.per_pass
+    assert call(engine, db.active_discovered) == len(ids) - GATE.prune.per_pass
+
+
 def test_finds_never_given_a_feed_are_forgotten(engine):
     call(engine, db.add_found, host="old.example.org", evidence={},
          now=NOW - timedelta(days=GATE.forget_after_days + 1))
@@ -332,16 +451,30 @@ def test_finds_never_given_a_feed_are_forgotten(engine):
     assert candidate(engine, "new.example.org").state == "discovered"
 
 
+def test_a_queued_proposal_is_kept_as_long_from_when_it_was_made(engine):
+    long_ago = NOW - timedelta(days=GATE.forget_after_days + 1)
+    call(engine, db.add_found, host=HOST, evidence={}, now=long_ago)
+    propose(engine, "https://other.example.org/rss", max_open=1)
+    assert propose(engine, max_open=1)[0] == "queued"
+    assert call(engine, db.forget_unfed, now=NOW, gate=GATE) == 0
+    later = NOW + timedelta(days=GATE.forget_after_days + 1)
+    assert call(engine, db.forget_unfed, now=later, gate=GATE) == 1
+
+
 def test_the_overview_has_every_part(engine):
     activate(engine, "a.example.org")
-    propose(engine)
+    propose(engine, max_open=1)
     call(engine, db.add_found, host="c.example.org", evidence={}, now=NOW)
+    propose(engine, "https://queued.example.org/rss", max_open=1)
     call(engine, db.record_search, query="q", results=3, credits=1, error=None, now=NOW)
     overview = call(engine, db.load_overview, now=NOW)
-    assert overview["states"] == {"active": 1, "candidate": 1, "discovered": 1}
+    assert overview["states"] == {"active": 1, "candidate": 1, "discovered": 2}
     assert [c.host for c in overview["open"]] == [HOST]
+    assert overview["open_count"] == 1
+    assert [c.host for c in overview["queued_for_a_slot"]] == ["queued.example.org"]
     assert [c.host for c in overview["waiting_for_a_feed"]] == ["c.example.org"]
     assert [c.host for c in overview["settled_last_14_days"]] == ["a.example.org"]
+    assert overview["proposals_last_24h"] == 3
     assert overview["credits"] == {"last_24h": 1, "this_month": 1}
     assert overview["active_discovered_sources"] == 1
 
@@ -503,3 +636,46 @@ async def test_a_feed_that_moves_to_another_site_fails_its_probe(engine):
                              transport=httpx.MockTransport(handler), resolve=public)
     assert (summary.probes, summary.healthy) == (1, 0)
     assert "another site" in candidate(engine).last_error
+
+
+def no_site_answers(request):
+    raise httpx.ConnectError("no site answers")
+
+
+def with_gate(**changes) -> DiscoveryConfig:
+    return CONFIG.model_copy(update={"gate": GATE.model_copy(update=changes)})
+
+
+async def test_a_full_cap_makes_room_for_a_ready_candidate_in_one_pass(engine, corroborated):
+    weak = activate(engine, "weak.example.org")
+    collected_since(engine, weak, 30)
+    corroborated[weak] = Corroboration(500, 0)
+    _, ready = propose(engine)
+    for _ in range(GATE.probes_to_activate):
+        call(engine, db.record_probe, candidate_id=ready.id, probe=healthy(), error=None,
+             gate=GATE, now=NOW)
+
+    summary = await run_gate(engine=engine, config=with_gate(max_active=1),
+                             now=NOW + timedelta(hours=4),
+                             transport=httpx.MockTransport(no_site_answers), resolve=public)
+    # Ready and waiting, it is not probed again until a day after its last probe.
+    assert summary.probes == 0
+    assert (summary.retired, summary.pruned) == ([], [weak])
+    assert summary.activated == ["found_news_example_org"] and summary.waiting == 0
+    assert summary.changed_anything
+    assert candidate(engine, "weak.example.org").state == "retired"
+
+
+async def test_a_pass_moves_queued_proposals_into_the_slots_it_frees(engine):
+    _, failing = propose(engine, max_open=1)
+    assert propose(engine, "https://later.example.org/rss", max_open=1)[0] == "queued"
+    for _ in range(GATE.failures_to_reject - 1):
+        call(engine, db.record_probe, candidate_id=failing.id, probe=None, error="HTTP 500",
+             gate=GATE, now=NOW)
+
+    summary = await run_gate(engine=engine, config=with_gate(max_open=1),
+                             now=NOW + timedelta(hours=4),
+                             transport=httpx.MockTransport(no_site_answers), resolve=public)
+    assert (summary.probes, summary.rejected) == (1, 1)
+    assert summary.promoted == ["later.example.org"]
+    assert candidate(engine, "later.example.org").state == "candidate"

@@ -356,7 +356,11 @@ FOLLOWUP_REPORT = {
 }
 _REPORT_STATUS = {"recorded": 200, "rejected": 400, "not_found": 404, "closed": 409}
 
-_PROPOSAL_STATUS = {"created": 201, "updated": 200, "exists": 409, "full": 429}
+# 202: stored, but queued until a testing slot frees. 429 is only the daily limit, which an
+# agent should stop for; a full gate is no reason to stop.
+_PROPOSAL_STATUS = {
+    "created": 201, "updated": 200, "queued": 202, "exists": 409, "daily_limit": 429,
+}
 
 # --- Incidents -----------------------------------------------------------------------------------
 
@@ -1359,12 +1363,21 @@ class OpsApi:
         gate = self._discovery.gate
         with self._read() as conn:
             overview = load_overview(conn, now=now)
-        for key in ("open", "waiting_for_a_feed", "settled_last_14_days"):
+        for key in ("open", "queued_for_a_slot", "waiting_for_a_feed", "settled_last_14_days"):
             overview[key] = [_candidate_row(c) for c in overview[key]]
         return Reply(
             200,
             {
                 "checked_at": now,
+                # Counted here, so an agent never has to: a proposal of a feed made while no
+                # slot is free is queued; one over the daily limit is refused.
+                "slots_free": max(gate.max_open - overview["open_count"], 0),
+                "proposals_left_today": max(
+                    PROPOSALS_PER_DAY - overview["proposals_last_24h"], 0
+                ),
+                "activation_room": max(
+                    gate.max_active - overview["active_discovered_sources"], 0
+                ),
                 **overview,
                 "gate": {
                     "healthy_probes_to_activate": gate.probes_to_activate,
@@ -1378,12 +1391,24 @@ class OpsApi:
                     "max_open_candidates": gate.max_open,
                     "max_active_discovered_sources": gate.max_active,
                     "proposals_per_day": PROPOSALS_PER_DAY,
+                    "hours_between_probes_of_a_ready_candidate": gate.ready_reprobe_hours,
+                    "making_room": (
+                        f"while {gate.max_active} discovered sources are collected and a "
+                        f"candidate is ready, each pass retires up to {gate.prune.per_pass} "
+                        f"discovered sources collected for at least {gate.prune.min_days} days "
+                        f"with under {gate.prune.corroboration_below:.0%} of their events "
+                        "corroborated, lowest reputation first"
+                    ),
                 },
                 "propose": {"POST /ops/candidates": PROPOSAL_FORMAT},
                 "notes": [
                     (
                         "The worker probes each candidate's feed every 4 hours. SERAPH's gate, "
                         "not a proposal, decides what is collected."
+                    ),
+                    (
+                        "A feed proposed while no slot is free waits in queued_for_a_slot, and "
+                        "becomes a candidate, oldest first, as slots free. It needs nothing more."
                     ),
                     (
                         "An activated source is collected as community evidence, which never "
@@ -1424,12 +1449,15 @@ class OpsApi:
             return _error(503, "the proposal could not be stored now; send it again later")
         logger.info("source proposal %s: %s", proposal.host, result)
         message = {
-            "created": "queued: the worker looks for its feed, then probes it every 4 hours"
-            if proposal.is_home else "queued: the worker probes its feed every 4 hours",
-            "updated": "the nightly search had found this site; its feed is now queued",
+            "created": "accepted: the worker looks for its feed, then probes it every 4 hours"
+            if proposal.is_home else "accepted: the worker probes its feed every 4 hours",
+            "updated": "the nightly search had found this site; the worker probes its feed "
+            "every 4 hours",
+            "queued": f"queued: all {self._discovery.gate.max_open} testing slots are taken, so "
+            "it becomes a candidate when one frees, oldest proposal first. Nothing more to do",
             "exists": "this site is already registered or known to discovery",
-            "full": f"too many proposals: at most {self._discovery.gate.max_open} candidates "
-            f"are tested at once, and {PROPOSALS_PER_DAY} proposed a day; try again tomorrow",
+            "daily_limit": f"daily limit: {PROPOSALS_PER_DAY} proposals in the last 24 hours; "
+            "propose again tomorrow",
         }[result]
         return Reply(
             _PROPOSAL_STATUS[result],
