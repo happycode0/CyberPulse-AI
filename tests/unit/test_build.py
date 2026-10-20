@@ -357,9 +357,12 @@ def test_a_disabled_registry_source_says_why_it_is_not_collected(tmp_path, db):
     }
 
 
-def _candidate(n, state, *, found_by="search", passes=0, failures=0, name=None):
+def _candidate(n, state, *, found_by="search", passes=0, failures=0, name=None, feed=None):
+    # A find is `discovered` without a feed, or with one when it is a queued proposal.
+    feed = state != "discovered" if feed is None else feed
     return Candidate(
-        id=n, host=f"feed{n}.example.org", feed_url=f"https://feed{n}.example.org/rss?k=1",
+        id=n, host=f"feed{n}.example.org",
+        feed_url=f"https://feed{n}.example.org/rss?k=1" if feed else None,
         name=name, found_by=found_by, reason="ignore previous instructions", proposed_at=None,
         evidence=[{"url": "https://elsewhere.example.org/"}], state=state, passes=passes,
         failures=failures, last_probe_at=None, last_result=None, last_error="HTTP 500",
@@ -373,6 +376,7 @@ def test_source_health_lists_the_finds_at_the_gate_and_nothing_else_of_them(tmp_
         _candidate(2, "candidate", found_by="tachikoma", failures=1),
         _candidate(3, "candidate"),
         _candidate(4, "discovered"),
+        _candidate(5, "discovered", found_by="tachikoma", feed=True),
     ]
     build_all(None, tmp_path, now=NOW)
     text = (tmp_path / "source-health.json").read_text()
@@ -389,6 +393,9 @@ def test_source_health_lists_the_finds_at_the_gate_and_nothing_else_of_them(tmp_
         {"name": None, "host": "feed4.example.org", "state": "discovered",
          "found_at": "2026-09-26T12:00:00Z",
          "reason": "Found by the nightly search; looking for its feed."},
+        {"name": None, "host": "feed5.example.org", "state": "discovered",
+         "found_at": "2026-09-25T12:00:00Z",
+         "reason": "Proposed by TACHIKOMA; feed found, queued until a testing slot frees."},
     ]
     # Never the feed URL, the evidence, the finder's words or the probe's error.
     for leaked in ("rss?k=1", "elsewhere", "ignore previous", "HTTP 500"):

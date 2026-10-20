@@ -107,6 +107,13 @@ never carries all three. It may hand at most two events to subagents in a run, o
 
 The agent that *finds* a source can never *activate* it. That split is the point.
 
+The gate tests at most 20 candidates and collects at most 25 found sources at once
+(`config/discovery.yaml`). A feed TACHIKOMA proposes while 20 are being tested is queued, and
+each pass moves the oldest into the slots that free. A candidate ready while 25 are collected
+is probed once a day, not every pass, so the new ones get the probes. Each pass retires up to
+two of the weakest found sources to make room for it: collected for three weeks or more, with
+under 5% of their events reported by another source too.
+
 ### 5. Money loop — always on
 
 ```text
