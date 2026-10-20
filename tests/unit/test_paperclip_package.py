@@ -85,6 +85,12 @@ def test_read_setup_finds_the_eight_routines(builder):
     assert set(builder.ROUTINE_TEXT) == set(ROUTINES)
 
 
+def test_each_routine_s_issue_text_is_the_wiki_s(builder):
+    page = builder.SETUP_PAGE.read_text(encoding="utf-8")
+    rows = re.findall(r"^\| ([A-Za-z -]+) \| `([^`]+)` \| `([^`]+)` \|$", page, flags=re.M)
+    assert {name: (title, body) for name, title, body in rows} == builder.ROUTINE_TEXT
+
+
 def test_the_package_has_the_eight_agents_and_nothing_else(package, extension):
     agents = {path.split("/")[1] for path in package if path.startswith("agents/")}
     assert agents == CREW
@@ -155,6 +161,25 @@ def test_deckard_has_one_run_slot_and_its_beats_as_skills(builder, package, exte
     assert len(prompt.splitlines()) <= 40
     assert all(name in prompt for name in BEATS)
     assert "SOCI" not in prompt and "AI_CYBER_CONVERGENCE" not in prompt
+
+
+def test_only_the_worker_s_queue_schedules_follow_ups(builder):
+    """MORPHEUS's per-story [FOLLOW-UP] issues repeated the worker's queue and mostly found no
+    task due, so it opens none; DECKARD still works the queue on the Follow-up routine."""
+    _, cards = builder.read_crew()
+    morpheus = cards["morpheus"]["prompt"]
+    assert "[FOLLOW-UP]" not in morpheus
+    editorial = morpheus.split("WHEN THE DAILY EDITORIAL ISSUE ARRIVES", 1)[1].split("\n\n")[0]
+    steps = re.findall(r"^(\d+)\. ", editorial, flags=re.M)
+    assert steps == [str(n) for n in range(1, len(steps) + 1)] and len(steps) == 4
+    assert "follow-up" not in builder.ROUTINE_TEXT["Daily editorial"][1]
+
+    deckard = cards["deckard"]
+    assert "FOLLOW-UP ROUTINE" in deckard["prompt"] and "cyberpulse-follow-up" in deckard["prompt"]
+    [skill] = [s for s in deckard["skills"] if s["name"] == "cyberpulse-follow-up"]
+    assert "FROM MORPHEUS" not in skill["text"]
+    assert "nothing_new is true, report no_change straight away" in skill["text"]
+    assert "GET again" not in skill["text"] and "then stop" in skill["text"]
 
 
 def test_the_ai_budgets_fit_inside_the_company_budget(builder, extension):

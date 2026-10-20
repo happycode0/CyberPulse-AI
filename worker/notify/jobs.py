@@ -113,8 +113,9 @@ def _count(summary: NotifySummary, outcome: Outcome | None) -> None:
 
 
 def _read_digest(engine: Engine, now: datetime) -> dict:
+    # Its "most prominent now" is the standing top, not only what moved in the window.
     with engine.connect() as conn:
-        return load_digest(conn, now=now, hours=DIGEST_HOURS)
+        return load_digest(conn, now=now, hours=DIGEST_HOURS, top_in_window=False)
 
 
 def _read_alerts(engine: Engine, since: datetime) -> list[AlertEvent]:

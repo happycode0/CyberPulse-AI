@@ -523,7 +523,7 @@ slow run never stacks up a queue and a reboot never fires a burst of missed jobs
 
 | Routine | Assigned to | Cron expression | Switch on | What it is for (the site's crew page) |
 |---|---|---|---|---|
-| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest, picks the stories to follow up and the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report. |
+| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest, picks the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report. |
 | Desk digest | DECKARD | `0 6,14,22 * * *` | now | Desk notes on the last 8 hours' candidate events: Australia first, then global, then AI. |
 | Daily QA sample | VOIGHT | `0 7 * * *` | now | Checks a sample of yesterday's published events against their evidence. |
 | Follow-up | DECKARD | `0 3-21/6 * * *` | now | Reports on each follow-up task due on a developing story. |
@@ -541,7 +541,7 @@ Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it
 
 | Routine | Issue title | Issue body |
 |---|---|---|
-| Daily editorial | `[EDITORIAL] Daily — {{date}}` | `Run the daily editorial: overnight digest, follow-ups, gaps, VOIGHT verdicts, daily report.` |
+| Daily editorial | `[EDITORIAL] Daily — {{date}}` | `Run the daily editorial: overnight digest, gaps, VOIGHT verdicts, daily report.` |
 | Desk digest | `[DIGEST] Desk — {{date}}` | `Review the candidate events in the current desk digest: Australia first, then global, then AI.` |
 | Daily QA sample | `[QA] Daily sample` | `QA a sample of yesterday's published events.` |
 | Follow-up | `[FOLLOW-UP] Sweep` | `Work the follow-up queue: report on each task due.` |

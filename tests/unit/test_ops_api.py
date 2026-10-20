@@ -578,11 +578,13 @@ def test_wake_freshness_windows_fit_the_schedules():
 
 @pytest.fixture
 def followup_db(monkeypatch):
-    """The follow-up queries and the report writer, stood in for; what they were asked."""
+    """The follow-up queries and the report writer, stood in for; what they were asked. Set
+    `accepted` for the reports taken in the last day, `due` for the tasks due and `new` for
+    what each task's event gained since its last check."""
     from worker.db.followup import DueTask, Submitted
     from worker.models import Event, SourceRef, TimelineEntry
 
-    seen = {"writes": 0, "reports": []}
+    seen = {"writes": 0, "reports": [], "accepted": 0, "limits": [], "new": {}}
     event = Event(
         event_id="evt-2026-000042", first_seen=NOW - timedelta(days=2), last_seen=NOW,
         last_material_update=NOW - timedelta(hours=36), status="developing", severity="high",
@@ -598,11 +600,19 @@ def followup_db(monkeypatch):
             for i in range(15)
         ],
     )
-    due = [DueTask(7, "check", event.event_id, NOW - timedelta(hours=1), 1, "a refusal")]
+    seen["due"] = [DueTask(7, "check", event.event_id, NOW - timedelta(hours=1), 1, "a refusal")]
 
     @contextmanager
     def connection(self):
         yield None
+
+    def load_due(conn, *, now, limit):
+        seen["limits"].append(limit)
+        return seen["due"][:limit]
+
+    def count_accepted(conn, *, since):
+        assert since == NOW - timedelta(hours=24)
+        return seen["accepted"]
 
     @contextmanager
     def write(self):
@@ -616,7 +626,13 @@ def followup_db(monkeypatch):
 
     monkeypatch.setattr(OpsApi, "_read", connection)
     monkeypatch.setattr(OpsApi, "_write", write)
-    monkeypatch.setattr(ops_api, "load_due", lambda conn, *, now, limit: due[:limit])
+    monkeypatch.setattr(ops_api, "load_due", load_due)
+    monkeypatch.setattr(ops_api, "count_accepted", count_accepted)
+    monkeypatch.setattr(
+        ops_api, "load_new_since",
+        lambda conn, tasks, *, most: {t.task_id: seen["new"][t.task_id] for t in tasks
+                                      if t.task_id in seen["new"]},
+    )
     monkeypatch.setattr(
         ops_api, "load_queue_counts",
         lambda conn, *, now, overdue_after: {"due": 1, "waiting": 3, "overdue": 0, "statuses": {}},
@@ -624,6 +640,8 @@ def followup_db(monkeypatch):
     monkeypatch.setattr(ops_api, "load_events", lambda conn, ids: [event] if ids else [])
     monkeypatch.setattr(ops_api, "submit_report", submit)
     seen["Submitted"] = Submitted
+    seen["DueTask"] = DueTask
+    seen["event"] = event
     return seen
 
 
@@ -643,6 +661,123 @@ def test_the_queue_hands_out_tasks_with_their_events(api, followup_db):
     assert set(body["ask"]) == {"check", "final_summary"}
     assert body["queue"]["waiting"] == 3
     assert followup_db["writes"] == 0
+    # Never checked before, so there is no "since" and something to do.
+    assert task["new_since_last_check"] is None and task["nothing_new"] is False
+
+
+def followup_config(**changes):
+    from worker.pipeline.status import FollowupConfig
+
+    config = FollowupConfig.load()
+    return config.model_copy(update={"followup": config.followup.model_copy(update=changes)})
+
+
+def due_tasks(followup_db, n: int) -> None:
+    task = followup_db["DueTask"]
+    followup_db["due"] = [
+        task(i, "check", "evt-2026-000042", NOW - timedelta(hours=1), 0, None)
+        for i in range(1, n + 1)
+    ]
+
+
+def test_the_queue_hands_out_one_batch_and_says_to_stop(make_api, followup_db):
+    due_tasks(followup_db, 8)
+    api = make_api(followup=followup_config(batch=3, per_day=20))
+    body = api.handle("GET", "/ops/followup", AUTH).json()
+    assert [t["task_id"] for t in body["tasks"]] == [1, 2, 3]
+    assert body["cap"] == {"batch": 3, "per_day": 20, "accepted_last_24h": 0}
+    notes = " ".join(body["notes"])
+    assert "whole batch for this sweep" in notes and "then stop" in notes
+    assert "GET again" not in notes
+
+
+def test_the_queue_hands_out_no_more_than_the_day_has_left(make_api, followup_db):
+    due_tasks(followup_db, 8)
+    followup_db["accepted"] = 18
+    api = make_api(followup=followup_config(batch=5, per_day=20))
+    body = api.handle("GET", "/ops/followup", AUTH).json()
+    assert [t["task_id"] for t in body["tasks"]] == [1, 2]
+    assert followup_db["limits"] == [2]
+
+
+@pytest.mark.parametrize("accepted", [20, 26])
+def test_the_queue_hands_out_nothing_once_the_day_is_full(make_api, followup_db, accepted):
+    due_tasks(followup_db, 8)
+    followup_db["accepted"] = accepted
+    api = make_api(followup=followup_config(batch=5, per_day=20))
+    response = api.handle("GET", "/ops/followup", AUTH)
+    assert response.status == 200
+    body = response.json()
+    assert body["tasks"] == [] and followup_db["limits"] == []
+    assert "its 20 reports for the last 24 hours" in body["notes"][0]
+    assert body["cap"]["accepted_last_24h"] == accepted
+
+
+def test_a_task_says_what_its_event_gained_since_its_last_check(api, followup_db):
+    from worker.db.followup import NewSince
+    from worker.models import SourceRef, TimelineEntry
+
+    followup_db["new"][7] = NewSince(
+        since=NOW - timedelta(hours=6), sources=5, timeline=1,
+        newest_sources=(
+            SourceRef(source_id="s0", url="https://example.org/0",
+                      published=NOW - timedelta(hours=1), evidence_class="NEWS"),
+        ),
+        newest_timeline=(
+            TimelineEntry(timestamp=NOW - timedelta(hours=2), type="NEW_PATCH",
+                          summary="The vendor has released a patch."),
+        ),
+    )
+    [task] = api.handle("GET", "/ops/followup", AUTH).json()["tasks"]
+    assert task["nothing_new"] is False
+    new = task["new_since_last_check"]
+    assert new["since"] == "2026-10-03T02:00:00Z"
+    assert new["sources"] == {"count": 5, "newest": [
+        {"source_id": "s0", "url": "https://example.org/0", "published": "2026-10-03T07:00:00Z"}
+    ]}
+    assert new["timeline"] == {"count": 1, "newest": [
+        {"timestamp": "2026-10-03T06:00:00Z", "type": "NEW_PATCH",
+         "summary": "The vendor has released a patch."}
+    ]}
+
+
+def test_nothing_new_is_said_of_a_checked_event_that_gained_nothing(api, followup_db):
+    from worker.db.followup import NewSince
+
+    # The fixture's event was last materially updated 36 hours ago.
+    followup_db["new"][7] = NewSince(since=NOW - timedelta(hours=6))
+    [task] = api.handle("GET", "/ops/followup", AUTH).json()["tasks"]
+    assert task["nothing_new"] is True
+    assert task["new_since_last_check"]["sources"] == {"count": 0, "newest": []}
+    assert any("nothing_new" in note for note in
+               api.handle("GET", "/ops/followup", AUTH).json()["notes"])
+
+
+def test_a_material_update_since_the_last_check_is_not_nothing_new(api, followup_db):
+    from worker.db.followup import NewSince
+
+    # A merge can move the material update without writing an entry.
+    followup_db["new"][7] = NewSince(since=NOW - timedelta(hours=48))
+    [task] = api.handle("GET", "/ops/followup", AUTH).json()["tasks"]
+    assert task["nothing_new"] is False
+
+
+def test_the_digest_the_agents_read_is_windowed(api, monkeypatch):
+    asked = {}
+
+    @contextmanager
+    def connection(self):
+        yield None
+
+    def load_digest(conn, **kwargs):
+        asked.update(kwargs)
+        return {"top": []}
+
+    monkeypatch.setattr(OpsApi, "_read", connection)
+    monkeypatch.setattr(ops_api, "load_digest", load_digest)
+    body = api.handle("GET", "/ops/digest?hours=8", AUTH).json()
+    assert asked == {"now": NOW, "hours": 8, "top_in_window": True}
+    assert any("new or materially updated in the window" in note for note in body["notes"])
 
 
 def test_the_queue_needs_the_token(api, followup_db):

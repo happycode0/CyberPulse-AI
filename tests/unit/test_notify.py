@@ -1,5 +1,6 @@
 """worker/notify/messages.py and worker/notify/jobs.py, with no database and no bot."""
 
+from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -125,6 +126,24 @@ def test_a_kev_alert_lists_the_cves():
 
 def test_event_urls_do_not_double_the_slash():
     assert event_url("https://x.org/s", "evt-1") == event_url("https://x.org/s/", "evt-1")
+
+
+def test_the_morning_digest_reads_the_standing_top_not_the_agents_window(monkeypatch):
+    """Its "most prominent now" means now: only the agents' copy is limited to the window."""
+    asked = {}
+
+    class Engine:
+        @contextmanager
+        def connect(self):
+            yield None
+
+    def load_digest(conn, **kwargs):
+        asked.update(kwargs)
+        return {}
+
+    monkeypatch.setattr(jobs, "load_digest", load_digest)
+    jobs._read_digest(Engine(), NOW)
+    assert asked == {"now": NOW, "hours": jobs.DIGEST_HOURS, "top_in_window": False}
 
 
 # --- Passes -------------------------------------------------------------------------------------

@@ -73,7 +73,7 @@ AGENT_SKILLS = ["paperclipai/paperclip/paperclip"]
 # Issue text for each routine (stage-4a step 7, second table).
 ROUTINE_TEXT = {
     "Daily editorial": ("[EDITORIAL] Daily — {{date}}",
-                        "Run the daily editorial: overnight digest, follow-ups, gaps, VOIGHT verdicts, daily report."),
+                        "Run the daily editorial: overnight digest, gaps, VOIGHT verdicts, daily report."),
     "Desk digest": ("[DIGEST] Desk — {{date}}",
                     "Review the candidate events in the current desk digest: Australia first, then global, then AI."),
     "Daily QA sample": ("[QA] Daily sample", "QA a sample of yesterday's published events."),

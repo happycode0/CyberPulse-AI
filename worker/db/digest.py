@@ -1,9 +1,12 @@
 """What changed in a window: event counts, the most prominent events, escalation candidates,
 source-health changes, collection runs and the month's AI cost.
 
-Two readers share it. MORPHEUS reads it from the ops API (`GET /ops/digest`), and the daily
-Telegram digest (worker/notify/jobs.py) is written from it, so both describe the same day the
-same way.
+Two readers share it. The agents read it from the ops API (`GET /ops/digest`): MORPHEUS the
+night's, DECKARD the last 8 hours' three times a day. The daily Telegram digest
+(worker/notify/jobs.py) is written from it, so both describe the same day the same way, with
+one difference. The agents' `top` is only the events new or materially updated in the window:
+otherwise every digest hands them the same standing leaders again, and they pay to read them
+each time. The Telegram digest's is the most prominent standing events, as it says.
 """
 
 from collections.abc import Mapping
@@ -70,9 +73,17 @@ def ledger_totals(conn: Connection, start: datetime, end: datetime) -> dict[str,
     return {"calls": calls, "cost_usd": usd(cost), "unknown_cost_calls": unknown}
 
 
-def load_digest(conn: Connection, *, now: datetime, hours: int) -> dict[str, Any]:
-    """The digest of the `hours` before `now`. Datetimes and Decimals are left as they are."""
+def load_digest(
+    conn: Connection, *, now: datetime, hours: int, top_in_window: bool = False
+) -> dict[str, Any]:
+    """The digest of the `hours` before `now`. Datetimes and Decimals are left as they are.
+    `top` is the most prominent standing events or, with `top_in_window`, the most prominent of
+    those first seen or materially updated in the window."""
     since = now - timedelta(hours=hours)
+    in_window = (
+        "and (e.first_seen >= :since or e.last_material_update >= :since) "
+        if top_in_window else ""
+    )
     params = {"since": since}
     start, end = month_bounds(now)
     counts = (
@@ -100,11 +111,11 @@ def load_digest(conn: Connection, *, now: datetime, hours: int) -> dict[str, Any
         text(
             f"select {EVENT_COLUMNS} from events e "
             "where e.status <> 'archived' and e.merged_into is null "
-            "and e.prominence > :min "
+            f"and e.prominence > :min {in_window}"
             "order by e.prominence desc, e.last_material_update desc nulls last, "
             "e.event_id limit :limit"
         ),
-        {"min": LIVE_MIN_PROMINENCE, "limit": TOP_EVENTS},
+        {**params, "min": LIVE_MIN_PROMINENCE, "limit": TOP_EVENTS},
     ).mappings()
     top_events = [event_row(r) for r in top]
     candidates = conn.execute(

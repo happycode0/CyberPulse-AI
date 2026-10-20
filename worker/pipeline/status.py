@@ -55,7 +55,10 @@ class FollowupRule(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     every_hours: dict[EventStatus, dict[Severity, PositiveFloat]]
+    # Each no_change report since the event's last material change doubles the wait, this often.
+    max_backoff_doublings: int = Field(default=3, ge=0, le=6)
     batch: int = Field(ge=1, le=50)
+    per_day: int = Field(default=20, ge=1, le=200)
     final_summary: list[Severity]
 
     @model_validator(mode="after")

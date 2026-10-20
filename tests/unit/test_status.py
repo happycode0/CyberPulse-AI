@@ -113,6 +113,9 @@ def test_the_shipped_config_loads():
         hours = {sev: h for st, sev, h in cadence if st is status}
         assert hours[Severity.CRITICAL] == min(hours.values())
     assert set(config.followup.final_summary) <= set(Severity)
+    # Four sweeps a day of one batch each fit the day's cap; a back-off is never zero.
+    assert config.followup.batch * 4 <= config.followup.per_day
+    assert config.followup.max_backoff_doublings >= 1
 
 
 def write(tmp_path: Path, data: dict) -> Path:
@@ -139,6 +142,9 @@ def base() -> dict:
         (lambda d: d["followup"]["every_hours"]["developing"].update(critical=0), "greater than"),
         (lambda d: d["followup"].update(batch=0), "greater than or equal"),
         (lambda d: d["followup"].update(batch=500), "less than or equal"),
+        (lambda d: d["followup"].update(per_day=0), "greater than or equal"),
+        (lambda d: d["followup"].update(max_backoff_doublings=-1), "greater than or equal"),
+        (lambda d: d["followup"].update(max_backoff_doublings=10), "less than or equal"),
         (lambda d: d["status"].update(resolved_after_days=-1), "greater than"),
         (lambda d: d["followup"].update(extra=1), "Extra inputs"),
     ],
@@ -148,3 +154,8 @@ def test_a_bad_config_is_refused(tmp_path, change, says):
     change(data)
     with pytest.raises(ValidationError, match=says):
         FollowupConfig.load(write(tmp_path, data))
+
+
+def test_the_daily_cap_and_the_back_off_have_defaults(tmp_path):
+    rule = FollowupConfig.load(write(tmp_path, base())).followup
+    assert (rule.per_day, rule.max_backoff_doublings) == (20, 3)
