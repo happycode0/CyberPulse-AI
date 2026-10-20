@@ -12,6 +12,7 @@ from worker.db.digest import ESCALATE_AU_RELEVANCE
 from worker.db.discovery import Activation
 from worker.db.incidents import Incident
 from worker.db.notifications import AlertEvent, UpdateEntry
+from worker.db.scout import Proposal, ScanNotice
 from worker.watchdog.checks import KIND_GUIDE, span
 
 SYDNEY = ZoneInfo("Australia/Sydney")
@@ -213,6 +214,115 @@ def source_activated(source: Activation, *, site_url: str) -> str:
          "event on its own."),
         "",
         site_url,
+    ]
+    return "\n".join(lines)
+
+
+# ─── Models and money (since RIPPERDOC was retired, 2026-10-20) ───────────────────────────────────
+#
+# RIPPERDOC passed these on from the worker's own figures. The worker now says them itself, in
+# its own words: the price guard's reasons, the gauntlet's proposal and the ledger's sums.
+
+COST_ROWS = 6
+
+
+def ladder_changed(notice: ScanNotice) -> str:
+    """What one night's model scan took out of the ladder or let back in. A drop is the price
+    guard's verdict on every route (worker/ai/ladder.py), never a headline price."""
+    dropped = [c for c in notice.changes if c.kind == "dropped"]
+    restored = [c for c in notice.changes if c.kind == "restored"]
+    at = _sydney(notice.scanned_at)
+    lines = [
+        "CyberPulse-AI · model ladder",
+        f"The model scan at {at:%H:%M} Sydney time, {_day(notice.scanned_at)}.",
+    ]
+    if dropped:
+        lines += ["", "DROPPED: no route for it passes the price guard"]
+        lines += [f"- {c.tier} · {c.slug}: {c.reason or 'no reason recorded'}" for c in dropped]
+    if restored:
+        lines += ["", "BACK: it passes the guard again"]
+        lines += [f"- {c.tier} · {c.slug}" for c in restored]
+    lines.append("")
+    if not notice.usable:
+        lines.append(
+            "What is left is not a usable ladder, so AI enrichment is off until "
+            "config/models.yaml is fixed. Collection and publishing carry on without it."
+        )
+    elif dropped:
+        lines.append(
+            "Enrichment already goes down each tier's chain without them, which needs no "
+            "approval. If a tier's default is gone for good, edit config/models.yaml."
+        )
+    else:
+        lines.append("Enrichment can use them again from its next pass.")
+    if dropped:
+        lines.append(
+            "The Paperclip agents' models are set on each agent's page, not by this ladder: if "
+            "an agent runs a dropped model, change it there."
+        )
+    return "\n".join(lines)
+
+
+def model_proposal(proposal: Proposal) -> str:
+    """A model the weekly gauntlet proposes, as it proposed it. The body is the worker's own
+    words and figures (worker/ai/gauntlet.py `proposal_body`), and the owner decides."""
+    return "\n".join(
+        ["CyberPulse-AI · model proposal", "", _title(proposal.title), "", proposal.body.strip()]
+    )
+
+
+def _money(value: float | None) -> str:
+    if value is None:
+        return "an unknown amount"
+    return f"${value:,.2f}" if value >= 1 else f"${value:.4f}"
+
+
+def _cost_rows(rows: list[dict[str, Any]]) -> list[str]:
+    lines = [
+        f"- {r['key']}: {_plural(r['calls'], 'call')}, {_money(r['cost_usd'])}"
+        for r in rows[:COST_ROWS]
+    ]
+    if len(rows) > COST_ROWS:
+        lines.append(f"… and {len(rows) - COST_ROWS} more.")
+    return lines
+
+
+def monthly_cost(report: dict[str, Any]) -> str:
+    """Last month's cost ledger, from `worker.db.digest.cost_report`: what `GET /ops/cost`
+    answers for that month."""
+    month = datetime.strptime(report["month"], "%Y-%m")
+    ledger = report["ledger"]
+    lines = [
+        f"CyberPulse-AI · AI cost · {month:%B %Y}",
+        (
+            "The worker's cost ledger: every model call it made in the month (UTC), as "
+            "OpenRouter billed it."
+        ),
+        "",
+        "TOTAL",
+    ]
+    if not ledger["calls"]:
+        lines.append("No model calls were recorded.")
+    else:
+        lines.append(f"{_plural(ledger['calls'], 'call')}, {_money(ledger['cost_usd'])}.")
+        if ledger["unknown_cost_calls"]:
+            lines.append(
+                f"{_plural(ledger['unknown_cost_calls'], 'call')} with no billed cost, so the "
+                "total is a floor."
+            )
+        lines += [
+            f"{_plural(r['calls'], 'call')} ended {str(r['key']).replace('_', ' ')}."
+            for r in report["by_outcome"]
+            if r["key"] != "ok"
+        ]
+        lines += ["", "BY STAGE", *_cost_rows(report["by_stage"])]
+        lines += ["", "BY MODEL", *_cost_rows(report["by_model"])]
+    lines += [
+        "",
+        (
+            "The Paperclip agents' own runs are not in the ledger: their spend is on "
+            "Paperclip's Budgets page and OpenRouter's activity page."
+        ),
     ]
     return "\n".join(lines)
 

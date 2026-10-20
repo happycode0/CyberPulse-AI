@@ -30,7 +30,8 @@ const SEVERITY_WEIGHT = { critical: 10, high: 6, medium: 3, low: 1, info: 0.5, u
 // portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
 // and the names PLAN.md assigns permissions and budgets to. Eight agents since October 2026:
 // the eight retired callsigns' work was folded into these, so each keeps its own portrait and
-// `title` is its Paperclip role. `desk` only picks the portrait's accent colour.
+// `title` is its Paperclip role. Seven since 20 October 2026, when RIPPERDOC was retired: the
+// worker sends the owner what it reported. `desk` only picks the portrait's accent colour.
 export const CREW = [
   { callsign: 'MORPHEUS', face: 'crown', title: 'CEO', desk: 'INTELLIGENCE', beat: 'Chief executive and chief editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
   { callsign: 'DECKARD', face: 'lens', title: 'RESEARCHER', desk: 'INTELLIGENCE', beat: 'Research, context and developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
@@ -38,7 +39,6 @@ export const CREW = [
   { callsign: 'TACHIKOMA', face: 'tilt', title: 'FINDER', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
   { callsign: 'WHEELJACK', face: 'helmet', title: 'CODER', desk: 'ENGINEERING', beat: 'Collectors, parsers and the platform', runtime: 'CODE agent · wakes on request', quote: '' },
   { callsign: 'TELETRAAN', face: 'dish', title: 'OPERATION', desk: 'OPERATIONS', beat: 'Watchdog, SRE and code checks', runtime: 'Deterministic + LLM triage', quote: '' },
-  { callsign: 'RIPPERDOC', face: 'mirror', title: 'CHEAP', desk: 'OPERATIONS', beat: 'Cost ceiling and model scout', runtime: 'Deterministic scan · daily', quote: 'Better chrome just came in.' },
   { callsign: 'SERAPH', face: 'shield', title: 'COLLECTOR', desk: 'OPERATIONS', beat: 'Collection, the source gate and ground truth', runtime: 'Deterministic', quote: 'I had to be sure.' },
 ];
 
@@ -1935,10 +1935,6 @@ const CREW_JOBS = {
     owns: 'Watching the estate, checking every code change, and opening an incident before a reader notices',
     run: (run) => (run ? (run.error_count ? `${plural(run.error_count, 'error')} recorded during the run` : 'No errors recorded during the run') : null),
   },
-  RIPPERDOC: {
-    owns: 'The US$20/month ceiling and the spend ledger, and assigning every agent its model: cheapest capable, free where possible, never above US$1/M output — re-checked daily, and swapped immediately if a model starts failing an agent',
-    run: () => null,
-  },
   SERAPH: {
     owns: 'Collection: the source gate, fetching every source, matching items to events, and the KEV, CVE, EPSS, OSV and ATT&CK ground truth, looked up and never generated',
     run: (run, feed) => {
@@ -1959,7 +1955,7 @@ const CREW_JOBS = {
 };
 
 // THE CREW IN THE LAST RUN. A table, not cards: the question this answers is "who did what",
-// which is a comparison down a column, and eight cards is the wrong shape for that.
+// which is a comparison down a column, and seven cards is the wrong shape for that.
 export function renderCrewRun(status, feed) {
   const host = document.getElementById('crew-run');
   if (!host) return;
@@ -2013,7 +2009,7 @@ export function renderCrewRun(status, feed) {
 // One accessory per agent, keyed by CREW[].face. `back` is drawn behind the head, so
 // antennae, crowns and dishes sit around the silhouette; `front` is drawn over it, for the
 // accessories that belong on the face itself. Nothing here is decorative-only: the accessory
-// is how you tell the eight portraits apart at 46px.
+// is how you tell the seven portraits apart at 46px.
 const BOT_PARTS = {
   // Director: a low coronet, lit at the centre and tipped at both ends.
   crown: () => ({
@@ -2086,17 +2082,6 @@ const BOT_PARTS = {
       s('path', { class: 'bot-dim', d: 'M39.4 13.8 l2.35 2.1 l2.35 -2.1' }),
     ],
   }),
-  // Model scout: a surgeon's head mirror on a band — worn, not held, which is what keeps it
-  // distinct from DECKARD's magnifier at 30px.
-  mirror: () => ({
-    front: [
-      s('path', { class: 'bot-line', d: 'M11 16.6 H37' }),
-      s('path', { class: 'bot-dim', d: 'M11.6 14.6 H36.4' }),
-      s('circle', { class: 'bot-line', cx: 24, cy: 11.4, r: 4.2 }),
-      s('path', { class: 'bot-glint', d: 'M21.2 9 Q20.3 11 21 13' }),
-      s('circle', { class: 'bot-eye', cx: 24, cy: 11.4, r: 1.5 }),
-    ],
-  }),
 };
 
 
@@ -2166,17 +2151,17 @@ function crewCard(agent, stat) {
   );
 }
 
-// Renders the full eight-agent roster every time: personas ship with the site regardless
-// of data, and a card falls back to RUNS IN PAPERCLIP when data/crew.json has nothing for
-// that callsign. SERAPH and RIPPERDOC are counted from the worker's own rows; the others
-// run in Paperclip's control panel, which this file never reads, so nothing is inferred.
+// Renders the full roster every time: personas ship with the site regardless of data, and a
+// card falls back to RUNS IN PAPERCLIP when data/crew.json has nothing for that callsign.
+// SERAPH is counted from the worker's own rows; the others run in Paperclip's control panel,
+// which this file never reads, so nothing is inferred.
 export function renderCrew(crew) {
   const host = document.getElementById('crew-list');
   if (!host) return;
   clear(host);
   // Only callsigns on the roster count. A feed published before the crew went to eight still
   // names retired agents, and counting them read "5 of 8 agents publish" above eight cards
-  // that mostly said RUNS IN PAPERCLIP.
+  // that mostly said RUNS IN PAPERCLIP. One published before RIPPERDOC's retirement names it.
   const rostered = new Set(CREW.map((a) => a.callsign));
   const byCallsign = new Map(
     (crew?.agents || []).filter((a) => rostered.has(a.callsign)).map((a) => [a.callsign, a]),

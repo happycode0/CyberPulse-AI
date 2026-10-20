@@ -14,8 +14,8 @@ Every request carries the same discipline, so no caller can leave part of it out
 - a ledger row for every billed call, including one whose answer was unusable.
 
 It takes a `VerifiedLadder`, never a bare `Ladder`, so a ladder the guard has not passed cannot
-reach OpenRouter. RIPPERDOC's gauntlet calls models outside the ladder through `trial`, which
-takes a `VerifiedCandidate` for the same reason.
+reach OpenRouter. The gauntlet calls models outside the ladder through `trial`, which takes a
+`VerifiedCandidate` for the same reason.
 """
 
 import asyncio
@@ -379,7 +379,7 @@ class OpenRouterClient:
         max_tokens: int,
         attribution: Attribution,
     ) -> Completion:
-        """One structured call to a single model, for RIPPERDOC's gauntlet (§7.6).
+        """One structured call to a single model, for the gauntlet (§7.6).
 
         The model need not be in the ladder, but it must have passed the guard for this tier,
         and the request carries the tier's whole discipline: the price cap, `require_parameters`

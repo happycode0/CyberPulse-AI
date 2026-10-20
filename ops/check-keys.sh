@@ -64,7 +64,7 @@ else
 
   b=$(curl -sS -m 30 "https://openrouter.ai/api/v1/benchmarks?source=artificial-analysis&max_results=1" \
         -H "Authorization: Bearer ${OPENROUTER_API_KEY}" | jqr '.meta.model_count // empty')
-  [[ -n "$b" ]] && ok "/benchmarks reachable (RIPPERDOC quality signal)" || bad "/benchmarks failed"
+  [[ -n "$b" ]] && ok "/benchmarks reachable (the model scout's quality signal)" || bad "/benchmarks failed"
 
   d=$(curl -sS -m 30 "https://openrouter.ai/api/v1/datasets/rankings-daily?period=week&modality=tool_calling" \
         -H "Authorization: Bearer ${OPENROUTER_API_KEY}" | jqr '.data | length')

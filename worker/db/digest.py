@@ -73,6 +73,51 @@ def ledger_totals(conn: Connection, start: datetime, end: datetime) -> dict[str,
     return {"calls": calls, "cost_usd": usd(cost), "unknown_cost_calls": unknown}
 
 
+# What a month of the ledger is broken down by. The expressions are fixed here, never taken
+# from a request.
+COST_GROUPS = {
+    "by_stage": "stage",
+    "by_model": "coalesce(model, requested_model, 'unknown')",
+    "by_agent": "coalesce(agent, 'none')",
+    "by_outcome": "outcome",
+}
+
+
+def cost_report(conn: Connection, start: datetime, end: datetime) -> dict[str, Any]:
+    """The cost ledger over [start, end): its totals, and its calls, cost and tokens by stage,
+    model, agent and outcome, costliest first.
+
+    Two readers share it, as they share the digest: `GET /ops/cost` answers with it, and the
+    monthly cost summary on Telegram (worker/notify/jobs.py) is written from it, so a month
+    reads the same in both.
+    """
+
+    def grouped(column: str) -> list[dict[str, Any]]:
+        rows = conn.execute(
+            text(
+                f"select {column} as key, count(*) as calls, "
+                "coalesce(sum(cost_usd), 0) as cost_usd, "
+                "count(*) filter (where cost_usd is null) as unknown_cost_calls, "
+                "coalesce(sum(tokens_in), 0) as tokens_in, "
+                "coalesce(sum(tokens_out), 0) as tokens_out "
+                "from cost_ledger where ts >= :start and ts < :end "
+                "group by 1 order by cost_usd desc, calls desc, key"
+            ),
+            {"start": start, "end": end},
+        ).mappings()
+        return [
+            {**dict(r), "cost_usd": usd(r["cost_usd"]), "tokens_in": int(r["tokens_in"]),
+             "tokens_out": int(r["tokens_out"])}
+            for r in rows
+        ]
+
+    return {
+        "month": f"{start:%Y-%m}",
+        "ledger": ledger_totals(conn, start, end),
+        **{name: grouped(column) for name, column in COST_GROUPS.items()},
+    }
+
+
 def load_digest(
     conn: Connection, *, now: datetime, hours: int, top_in_window: bool = False
 ) -> dict[str, Any]:

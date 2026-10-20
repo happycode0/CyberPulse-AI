@@ -280,7 +280,7 @@ export const STORY_STAGES = [
   { id: 'status', name: 'STATUS', kind: 'code', text: 'Marks each story new, developing, contained, resolved and so on. Faded stories are archived.' },
   { id: 'publish', name: 'PUBLISH', kind: 'code', text: 'Checks the schema and scans for secrets, then writes the files this site reads. Any failure stops it.' },
   { id: 'enrich', name: 'AI ENRICHMENT', kind: 'ai', side: true, text: 'Twice an hour, models add summaries and topics, and a severity estimate where no official score exists. Checked, and marked AI.' },
-  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'Agents edit, check quality, look for new sources and watch the cost. Nothing waits for them.' },
+  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'Agents edit, check quality and look for new sources. Nothing waits for them.' },
 ];
 
 export const CODE_DOES = [
@@ -298,7 +298,7 @@ export const AI_DOES = [
   'A first Australian reading, which can raise relevance but never lower it',
   'A severity estimate where no official score exists, replaced when one arrives',
   'MITRE technique suggestions, picked from the loaded catalogue',
-  'The crew: editing, quality checks, source discovery and cost',
+  'The crew: editing, quality checks and source discovery',
 ];
 
 export const BUDGET_SENTENCE =

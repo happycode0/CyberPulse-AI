@@ -323,9 +323,10 @@ def test_the_proposal_shows_both_models_and_what_was_not_checked():
     )
     assert "adoption veto" in body and "0 of 30 have been reviewed" in body
     assert "over 2 Australian and 28 non-Australian events, too few of one kind" in body
-    # RIPPERDOC raises the proposal, so the cost check is the worker's figures, and MORPHEUS
-    # approves: the proposer is never the approver.
-    assert "MORPHEUS's approval" in body and "config/models.yaml" in body
+    # The worker proposes and the owner decides: the proposer is never the approver. The
+    # proposal goes to the owner as it is (worker/notify/messages.py), so it names no agent.
+    assert "the owner's decision" in body and "config/models.yaml" in body
+    assert "RIPPERDOC" not in body and "MORPHEUS" not in body
     assert "price guard (nothing over $1.00 per million output tokens)" in body
     assert "as the cost ledger records it" in body and "ROGUE" not in body
     payload = proposal_payload(d, gauntlet_run=7)

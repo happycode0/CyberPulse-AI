@@ -1,4 +1,4 @@
-"""The Paperclip package builder (ops/build-paperclip-package.py): the 8-agent crew and its
+"""The Paperclip package builder (ops/build-paperclip-package.py): the 7-agent crew and its
 routines, read from the wiki (stage 4a and 4b) and written as the zip the Import page takes."""
 
 import importlib.util
@@ -18,10 +18,12 @@ CREW = {
     "deckard",
     "voight",
     "tachikoma",
-    "ripperdoc",
     "wheeljack",
 }
-RETIRED = {"zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link"}
+# The 16-agent crew's eight, and RIPPERDOC since 2026-10-20: the worker sends its notices itself.
+RETIRED = {
+    "zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link", "ripperdoc",
+}
 BEATS = [
     "cyberpulse-au-desk",
     "cyberpulse-global-desk",
@@ -35,9 +37,6 @@ ROUTINES = {
     "Daily QA sample": ("voight", "0 7 * * *", True),
     "Follow-up": ("deckard", "0 3-21/6 * * *", True),
     "Source discovery": ("tachikoma", "30 3 * * *", True),  # after the worker's 03:10 search
-    "Model scan": ("ripperdoc", "0 4 * * *", True),
-    "Model gauntlet": ("ripperdoc", "0 5 * * 0", True),
-    "Monthly cost review": ("ripperdoc", "0 9 1 * *", True),
 }
 
 
@@ -77,7 +76,7 @@ def agent(package, slug: str) -> tuple[dict, str]:
     return frontmatter(package[f"agents/{slug}/AGENTS.md"])
 
 
-def test_read_setup_finds_the_eight_routines(builder):
+def test_read_setup_finds_the_five_routines(builder):
     description, routines = builder.read_setup()
     assert description
     found = {r["name"]: (r["assignee"], r["cron"], r["active"]) for r in routines}
@@ -91,12 +90,12 @@ def test_each_routine_s_issue_text_is_the_wiki_s(builder):
     assert {name: (title, body) for name, title, body in rows} == builder.ROUTINE_TEXT
 
 
-def test_the_package_has_the_eight_agents_and_nothing_else(package, extension):
+def test_the_package_has_the_seven_agents_and_nothing_else(package, extension):
     agents = {path.split("/")[1] for path in package if path.startswith("agents/")}
     assert agents == CREW
     assert set(extension["agents"]) == CREW
     assert set(extension["sidebar"]["agents"]) == CREW
-    assert len(package) == 24  # 3 company files, 8 agents, 1 project, 4 skills, 8 routines
+    assert len(package) == 20  # 3 company files, 7 agents, 1 project, 4 skills, 5 routines
 
 
 def test_no_retired_agent_is_in_the_package(package, extension):
@@ -108,7 +107,7 @@ def test_no_retired_agent_is_in_the_package(package, extension):
 
 def test_the_routines_in_the_package(package, extension):
     routines = extension["routines"]
-    assert len(routines) == 8
+    assert len(routines) == 5
     for slug, routine in routines.items():
         name = routine["triggers"][0]["label"]
         assignee, cron, active = ROUTINES[name]
@@ -130,7 +129,6 @@ def test_the_org_chart(package):
         "deckard": "morpheus",
         "voight": "morpheus",
         "tachikoma": "morpheus",
-        "ripperdoc": "morpheus",
         "wheeljack": "teletraan",
     }
     titles = {slug: agent(package, slug)[0]["title"] for slug in CREW}
@@ -141,7 +139,6 @@ def test_the_org_chart(package):
         "deckard": "Researcher",
         "voight": "Publisher",
         "tachikoma": "Finder",
-        "ripperdoc": "Cheap",
         "wheeljack": "Coder",
     }
 
@@ -185,8 +182,8 @@ def test_only_the_worker_s_queue_schedules_follow_ups(builder):
 def test_the_ai_budgets_fit_inside_the_company_budget(builder, extension):
     budgets = {slug: ext["budgetMonthlyCents"] for slug, ext in extension["agents"].items()}
     assert budgets.pop("seraph") == 0
-    assert len(budgets) == 7 and all(cents > 0 for cents in budgets.values())
-    assert sum(budgets.values()) == 950
+    assert len(budgets) == 6 and all(cents > 0 for cents in budgets.values())
+    assert sum(budgets.values()) == 900
     assert sum(budgets.values()) < builder.COMPANY_BUDGET_CENTS == 1200
 
 
@@ -210,10 +207,27 @@ def test_seraph_is_the_one_http_agent(builder, extension):
 
 
 def test_the_builder_refuses_budgets_that_reach_the_company_budget(builder, monkeypatch, tmp_path):
-    monkeypatch.setattr(builder, "COMPANY_BUDGET_CENTS", 950)
-    with pytest.raises(SystemExit, match="budgets add up to 950"):
+    monkeypatch.setattr(builder, "COMPANY_BUDGET_CENTS", 900)
+    with pytest.raises(SystemExit, match="budgets add up to 900"):
         builder.build(tmp_path / "crew.zip")
     assert not (tmp_path / "crew.zip").exists()
+
+
+def test_a_retired_agent_keeps_its_number_but_cannot_come_back_by_accident(
+    builder, monkeypatch, tmp_path
+):
+    # RIPPERDOC's card is a retirement note now. Its heading is not a card's, so it is not read.
+    house_rules, cards = builder.read_crew()
+    assert "ripperdoc" not in cards
+    assert "\n## 7. RIPPERDOC (retired 2026-10-20)\n" in builder.CREW_PAGE.read_text("utf-8")
+    # A card put back is refused, even with its old line back in CREW.
+    cards["ripperdoc"] = {**cards["tachikoma"], "name": "RIPPERDOC", "title": "Cheap"}
+    monkeypatch.setattr(builder, "read_crew", lambda: (house_rules, cards))
+    monkeypatch.setattr(
+        builder, "CREW", [*builder.CREW, ("ripperdoc", "cfo", "morpheus", "opencode_local", "x")]
+    )
+    with pytest.raises(SystemExit, match=r"retired agents on the crew page: \['ripperdoc'\]"):
+        builder.build(tmp_path / "crew.zip")
 
 
 def test_the_builder_refuses_one_vendor_for_code_and_its_check(builder, monkeypatch, tmp_path):
@@ -256,10 +270,10 @@ def test_the_org_chart_shape(builder):
     assert {a["callsign"]: a["team"] for a in org["agents"]} == {
         "MORPHEUS": "Intelligence", "DECKARD": "Intelligence", "VOIGHT": "Intelligence",
         "TACHIKOMA": "Intelligence", "TELETRAAN": "Operations", "SERAPH": "Operations",
-        "RIPPERDOC": "Operations", "WHEELJACK": "Engineering",
+        "WHEELJACK": "Engineering",
     }
     assert all(a["summary"] for a in org["agents"])
-    assert sum(a["budget_usd"] for a in org["agents"]) == 9.5
+    assert sum(a["budget_usd"] for a in org["agents"]) == 9.0
     routines = {r["name"]: r for r in org["routines"]}
     assert {name: (r["assignee"].lower(), r["cron"], r["starts"] == "now")
             for name, r in routines.items()} == ROUTINES

@@ -49,12 +49,17 @@ CREW = [
     ("deckard", "researcher", "morpheus", "opencode_local", "search"),
     ("voight", "qa", "morpheus", "opencode_local", "eye"),
     ("tachikoma", "researcher", "morpheus", "opencode_local", "telescope"),
-    ("ripperdoc", "cfo", "morpheus", "opencode_local", "microscope"),
     ("wheeljack", "engineer", "teletraan", "opencode_local", "wrench"),
 ]
-# The 16-agent crew's callsigns, retired when the 8 took over their work. None may come back
-# by accident: the owner terminates them in Paperclip (docs/wiki/stage-4a-paperclip-setup.md).
-RETIRED = ("zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link")
+# Callsigns that are gone, and may not come back by accident: the 16-agent crew's, retired when
+# the 8 took over their work, which the owner terminates in Paperclip
+# (docs/wiki/stage-4a-paperclip-setup.md), and RIPPERDOC, retired on 2026-10-20 when the worker
+# began sending its notices itself, which the owner pauses (docs/runbooks/owner-checklist.md).
+# A retired agent's card keeps its number on the crew page but not the `N. NAME — Title`
+# heading, so it is not read as a card; a full card for one is refused.
+RETIRED = (
+    "zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link", "ripperdoc",
+)
 # The company budget the owner sets after the import (stage-4a step 6). The agents' own budgets
 # must add up to less, so one agent's overrun hits its own budget before the company's.
 COMPANY_BUDGET_CENTS = 1200
@@ -80,12 +85,6 @@ ROUTINE_TEXT = {
     "Follow-up": ("[FOLLOW-UP] Sweep", "Work the follow-up queue: report on each task due."),
     "Source discovery": ("[DISCOVERY] Nightly",
                          "Read the worker's discovery finds and propose sources, plus any open [GAP] topics."),
-    "Model scan": ("[MODEL] Daily scan",
-                   "Do the daily model scan: read /ops/models and report what changed."),
-    "Model gauntlet": ("[MODEL] Weekly gauntlet",
-                       "Do the weekly gauntlet: report the results and raise each new proposal."),
-    "Monthly cost review": ("[COST] Monthly review",
-                            "Reconcile last month from /ops/cost and /ops/jobs, and report to MORPHEUS."),
 }
 
 

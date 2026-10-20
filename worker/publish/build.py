@@ -82,13 +82,6 @@ PIPELINE_LIMIT = 25
 # An `attention` reason quotes at most this much of a check's error or a registry note.
 ATTENTION_DETAIL_MAX_CHARS = 160
 
-# crew.json: how recent an agent's last piece of work must be for it to read ACTIVE: the
-# ledger takes a row whenever the pipeline calls a model. SERAPH needs none, because writing
-# crew.json is its publish job, so it is active whenever the file is written, at any cadence.
-CREW_FRESH = {
-    "ripperdoc": timedelta(hours=24),
-}
-
 STAGING_PREFIX = ".publish-"
 _SEVERITIES = ("critical", "high", "medium", "low", "unknown")
 
@@ -412,36 +405,25 @@ def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[
 
 
 def _crew_payload(conn: Connection, generated_at: str, now: datetime) -> dict[str, Any]:
-    """The work the worker does for the crew this month (worker/db/crew.py).
+    """The work the worker does for the crew this month (worker/db/crew.py): SERAPH's.
 
     SERAPH is doing its job by writing this file, so its last piece of work is now, and it is
-    active unless the newest ground-truth pass failed. It spends no tokens. RIPPERDOC's own
-    model runs are in Paperclip, which the worker never reads, so its cost is null, not 0.
+    active unless the newest ground-truth pass failed. It spends no tokens. RIPPERDOC, counted
+    from the cost ledger until it was retired on 2026-10-20, is no longer listed: the worker's
+    own model calls are `pipeline_ai`.
     """
     month_start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    agents = []
-    for callsign, activity in load_crew_activity(conn, since=month_start).items():
-        last_active = _iso_or_none(activity.last_active)
-        if callsign == "seraph":
-            last_active = generated_at
-        if activity.failing:
-            status = "degraded"
-        elif callsign == "seraph" or (
-            activity.last_active and now - activity.last_active <= CREW_FRESH[callsign]
-        ):
-            status = "active"
-        else:
-            status = "idle"
-        agents.append(
-            {
-                "callsign": callsign.upper(),
-                "status": status,
-                "tasks_completed": activity.tasks,
-                "items_processed": activity.items,
-                "cost_usd": 0.0 if callsign == "seraph" else None,
-                "last_active_at": last_active,
-            }
-        )
+    agents = [
+        {
+            "callsign": callsign.upper(),
+            "status": "degraded" if activity.failing else "active",
+            "tasks_completed": activity.tasks,
+            "items_processed": activity.items,
+            "cost_usd": 0.0,
+            "last_active_at": generated_at,
+        }
+        for callsign, activity in load_crew_activity(conn, since=month_start).items()
+    ]
     ai = load_pipeline_ai(conn, since=month_start)
     return {
         "generated_at": generated_at,

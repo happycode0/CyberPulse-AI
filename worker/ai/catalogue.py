@@ -1,19 +1,20 @@
 """OpenRouter's model list, and what changed in it since the last scan (PLAN.md §7.6).
 
-RIPPERDOC's daily scan reads the public list (`MODELS_URL`, no key, so it can neither spend nor
+The daily scan reads the public list (`MODELS_URL`, no key, so it can neither spend nor
 expose one) and compares it with what the scans have seen before:
 
 - `new`: a model never listed before. A new `:free` model that can do the work is the one to
   look at first, because the ladder prefers a free model that passes.
 - `withdrawn` and `returned`: a model gone from the list, and one back on it.
 - `price`: the headline price moved. The headline is one route's price, not the guard's
-  (worker/ai/ladder.py checks every route), so this is a note for RIPPERDOC, not a verdict.
+  (worker/ai/ladder.py checks every route), so this is a note, not a verdict: the owner is
+  told only of the guard's drops (worker/notify/jobs.py).
 - `capability`: the model gained or lost tools or structured outputs.
 - `expiring`: OpenRouter announced a withdrawal date, or moved it.
 
 Everything in this module is pure. worker/ai/scout.py runs the scan and worker/db/scout.py
 stores it. A model's name is the only text from the list that is kept, and it is clipped:
-the list is not ours, and RIPPERDOC reads what the scan stored.
+the list is not ours, and GET /ops/models shows what the scan stored.
 """
 
 from collections.abc import Iterable, Mapping
