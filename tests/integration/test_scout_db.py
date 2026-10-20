@@ -1,6 +1,7 @@
-"""RIPPERDOC's rows against a real Postgres (migration 014, worker/db/scout.py): the catalogue and
-its withdrawals, the scans, which events may be pinned, the gauntlet's spend and reuse, the
-proposal that is not raised twice, and what GET /ops/models reads."""
+"""The model scout's rows against a real Postgres (migration 014, worker/db/scout.py): the
+catalogue and its withdrawals, the scans, which events may be pinned, the gauntlet's spend and
+reuse, the proposal that is not raised twice, what GET /ops/models reads, and what the owner is
+told on Telegram."""
 
 import hashlib
 from datetime import UTC, date, datetime, timedelta
@@ -14,6 +15,7 @@ from worker.ai.catalogue import Change, parse_listing
 from worker.ai.gauntlet import Attempt, measure
 from worker.ai.golden import GoldenEvent
 from worker.ai.ladder import Tier
+from worker.ai.scout import _store_scan
 from worker.db import scout as db
 from worker.db.digest import month_bounds
 from worker.db.ledger import LedgerEntry, record
@@ -40,7 +42,7 @@ LONG_TEXT = (
 
 @pytest.fixture
 def conn(pg_engine):
-    """A connection in a transaction that is always rolled back, with RIPPERDOC's tables empty."""
+    """A connection in a transaction that is always rolled back, with the scout's tables empty."""
     run_migrations(pg_engine)
     with pg_engine.connect() as c:
         trans = c.begin()
@@ -346,7 +348,7 @@ def test_a_proposal_is_not_raised_again_while_it_is_open(conn):
     assert db.propose(conn, **kwargs) not in (None, first)
 
 
-# ─── What RIPPERDOC reads ─────────────────────────────────────────────────────────────────────────
+# ─── What GET /ops/models reads ───────────────────────────────────────────────────────────────────
 
 
 def test_the_report_before_anything_has_run(conn):
@@ -413,3 +415,64 @@ def test_the_report_shows_the_last_scan_new_free_models_and_the_last_run(conn):
     )
     assert p["body"] == "Why."
     assert report["golden"]["size"] == 1 and report["golden"]["pinned_at"] == NOW.isoformat()
+
+
+# ─── What the owner is told (worker/notify/jobs.py) ───────────────────────────────────────────────
+
+
+def scan_ladder(dropped=(), *, usable=True):
+    """A one-tier-per-model ladder report, as worker/ai/catalogue.py `ladder_report` writes it."""
+    report = {}
+    for tier, slug in (("tier1_cheap", "a/one"), ("audit", "b/two"), ("code", "c/three")):
+        gone = [{"slug": slug, "reason": reason} for s, reason in dropped if s == slug]
+        report[tier] = {
+            "configured": [slug, "z/last"],
+            "effective": (["z/last"] if gone else [slug, "z/last"]) if usable else None,
+            "dropped": gone,
+        }
+    return report
+
+
+def test_each_scan_that_dropped_or_restored_a_model_is_one_notice(conn):
+    over = "cheapest capable route is $1.28/M output, over the $1.00/M ceiling"
+    days = [NOW - timedelta(days=2), NOW - timedelta(days=1), NOW, NOW + timedelta(hours=1)]
+    # As the scan stores them: its changes and its row at its own timestamp.
+    reports = [
+        scan_ladder([("a/one", over)]),  # a/one leaves tier 1
+        scan_ladder([("a/one", over)]),  # still out: nothing changed
+        scan_ladder([("b/two", "not on OpenRouter (withdrawn, or the slug is wrong)")]),
+        scan_ladder([("b/two", "x"), ("c/three", "y")], usable=False),
+    ]
+    for ts, report in zip(days, reports, strict=True):
+        _store_scan(conn, listing=None, catalogue_changes=[], report=report, now=ts, error=None)
+    # A headline price over the ceiling is not the guard's verdict, so it is not told (CYB-90).
+    db.insert_changes(conn, [Change("a/one", "price", {"was": {}, "now": {}})], days[1])
+    db.record_scan(conn, ts=days[1] + timedelta(minutes=1), models_listed=None, changes=0,
+                   ladder=None, error="the ladder could not be checked")
+
+    notices = db.load_ladder_notices(conn, since=NOW - timedelta(days=3))
+    assert [n.scanned_at for n in notices] == [days[0], days[2], days[3]]
+    assert notices[0].changes == (db.LadderChange("tier1_cheap", "a/one", "dropped", over),)
+    assert [(c.tier, c.slug, c.kind) for c in notices[1].changes] == [
+        ("audit", "b/two", "dropped"), ("tier1_cheap", "a/one", "restored"),
+    ]
+    assert notices[1].changes[1].reason is None
+    assert [n.usable for n in notices] == [True, True, False]
+    assert [n.scanned_at for n in db.load_ladder_notices(conn, since=NOW)] == days[2:]
+
+
+def test_open_proposals_are_the_model_proposals_still_open_newest_first(conn):
+    def propose(title, at):
+        return db.propose(conn, title=title, body=f"Why {title}.", payload={"tier": "t"}, now=at)
+
+    old = propose("[MODEL] Proposal: tier0_free -> a/b:free", NOW - timedelta(days=7))
+    new = propose("[MODEL] Proposal: tier1_cheap -> v/cheap", NOW)
+    gone = propose("[MODEL] Proposal: tier2_strong -> v/strong", NOW)
+    conn.execute(
+        text("update agent_proposals set status = 'rejected' where id = :id"), {"id": gone}
+    )
+    proposals = db.open_proposals(conn)
+    assert [p.id for p in proposals] == [new, old]
+    assert (proposals[0].body, proposals[0].payload, proposals[0].created_at) == (
+        "Why [MODEL] Proposal: tier1_cheap -> v/cheap.", {"tier": "t"}, NOW,
+    )

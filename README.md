@@ -46,7 +46,7 @@ flowchart TB
         direction LR
         A_INT["INTELLIGENCE<br/>MORPHEUS · DECKARD<br/>VOIGHT · TACHIKOMA"]
         A_ENG["ENGINEERING<br/>WHEELJACK"]
-        A_OPS["OPERATIONS<br/>TELETRAAN · RIPPERDOC · SERAPH"]
+        A_OPS["OPERATIONS<br/>TELETRAAN · SERAPH"]
     end
 
     PAPERCLIP -- "agent API key /<br/>http+process adapters" --> CREW
@@ -91,40 +91,42 @@ split.
 
 | Callsign | Job | Beat | Runtime |
 |---|---|---|---|
-| **MORPHEUS** · *"I can only show you the door."* | CEO | Chief editor; approves model changes | LLM |
+| **MORPHEUS** · *"I can only show you the door."* | CEO | Chief editor | LLM |
 | **DECKARD** · *"The case stays open until it's patched."* | Researcher | Australian, global and AI beats; follow-up on developing events | LLM |
 | **VOIGHT** · *"Says who?"* | Publisher | Editorial QA, publication veto | LLM |
 | **TACHIKOMA** · *"Ooh — what's this one?"* | Finder | Source discovery | LLM + Tavily |
 | **WHEELJACK** | Coder | Source & platform engineer, branch + PR only | LLM |
 | **TELETRAAN** | Operation | Incidents, self-healing, independent check on every fix (a different model vendor from WHEELJACK) | Deterministic + LLM |
-| **RIPPERDOC** · *"Better chrome just came in."* | Cheap | Model scout (cheapest capable model, free where possible) and the monthly cost review | Deterministic + LLM |
 | **SERAPH** · *"I had to be sure."* | Collector | Ground truth, the source gate, correlation and publishing | Deterministic, zero tokens |
 
 See [how the crew works together](docs/wiki/stage-4c-how-the-crew-works.md) for how work moves
 between them, and [the crew](docs/wiki/stage-4b-the-crew.md) for each agent's full configuration.
 
 MORPHEUS sits at the top as CEO and reports to no one but the owner: it decides what the crew
-covers, writes the daily intelligence report, and signs off on every model change. Below that,
-three small departments split the work. **Operations** (TELETRAAN, RIPPERDOC, SERAPH) keeps the
-lights on — incident triage, model cost control, and the zero-token collection pipeline that runs
-whether or not any agent is awake. **Intelligence** (DECKARD, VOIGHT, TACHIKOMA) does the editorial
-work — research, publication veto, source discovery. **Engineering** (WHEELJACK) fixes broken
-parsers on a branch and hands the diff to TELETRAAN, which checks it on a different model vendor
-before a human merges. Each box only has the budget and credentials its job needs — nobody can
-approve their own change.
+covers and writes the daily intelligence report. Below that, three small departments split the
+work. **Operations** (TELETRAAN, SERAPH) keeps the lights on — incident triage, and the
+zero-token collection pipeline that runs whether or not any agent is awake. **Intelligence**
+(DECKARD, VOIGHT, TACHIKOMA) does the editorial work — research, publication veto, source
+discovery. **Engineering** (WHEELJACK) fixes broken parsers on a branch and hands the diff to
+TELETRAAN, which checks it on a different model vendor before a human merges. Each box only has
+the budget and credentials its job needs — nobody can approve their own change.
+
+The models and the money need no agent. The worker checks every model against the price ceiling
+each night, tests challengers each Sunday and keeps the cost ledger, and it tells the owner on
+Telegram when a model is dropped, when it proposes a better one, and what last month cost. The
+owner decides every model change. RIPPERDOC, the agent that passed these on, was retired on
+2026-10-20.
 
 ### Org chart
 
 ```mermaid
 flowchart TB
-    MORPHEUS["🤖 MORPHEUS — CEO<br/>Approves model changes · daily report"]
+    MORPHEUS["🤖 MORPHEUS — CEO<br/>Editorial direction · daily report"]
 
     subgraph OPS["OPERATIONS"]
         direction TB
         TELETRAAN["TELETRAAN — Operation<br/>Incident triage · checks WHEELJACK's fixes"]
-        RIPPERDOC["RIPPERDOC — Cheap<br/>Model scout · cost review"]
         SERAPH["SERAPH — Collector<br/>Ground truth · zero tokens"]
-        TELETRAAN --> RIPPERDOC
         TELETRAAN --> SERAPH
     end
 

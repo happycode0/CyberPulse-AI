@@ -352,6 +352,27 @@ def no_db(monkeypatch):
     return ledger
 
 
+def test_the_cost_read_is_the_report_the_monthly_summary_is_written_from(api, no_db, monkeypatch):
+    # One function answers GET /ops/cost and writes the 1st's Telegram summary
+    # (worker/notify/jobs.py), so the two can never read a month differently.
+    asked = []
+
+    def report(conn, start, end):
+        asked.append((start, end))
+        return {"month": f"{start:%Y-%m}", "ledger": no_db, "by_stage": []}
+
+    monkeypatch.setattr(ops_api, "cost_report", report)
+    this_month = api.handle("GET", "/ops/cost", AUTH).json()
+    last_month = api.handle("GET", "/ops/cost?month=2026-09", AUTH).json()
+    assert asked == [
+        (datetime(2026, 10, 1, tzinfo=UTC), datetime(2026, 11, 1, tzinfo=UTC)),
+        (datetime(2026, 9, 1, tzinfo=UTC), datetime(2026, 10, 1, tzinfo=UTC)),
+    ]
+    # The key's own usage is this month's, so only this month's answer carries it.
+    assert this_month["key"]["outside_ledger_usd"] == pytest.approx(15.36 - 0.0431)
+    assert last_month == {"month": "2026-09", "ledger": no_db, "by_stage": []}
+
+
 def test_cost_reconcile_names_the_spend_the_ledger_never_saw(api, no_db):
     verdict = api.verdict("cost-reconcile")
     assert verdict.ok is True
@@ -1034,7 +1055,7 @@ def models_db(monkeypatch):
     return seen
 
 
-def test_the_models_report_is_what_ripperdoc_reads(api, models_db):
+def test_the_models_report_is_the_scouts_whole_picture(api, models_db):
     response = api.handle("GET", "/ops/models", AUTH)
     assert response.status == 200
     body = response.json()
@@ -1286,7 +1307,7 @@ def test_the_jobs_read_has_the_watchdog_publish_and_push(api, monkeypatch):
     )
     body = api.handle("GET", "/ops/jobs", AUTH).json()
     assert {"watchdog", "publish", "push"} <= set(body["passes"])
-    # SERAPH's wake, and the cost check RIPPERDOC's monthly review reads (ROGUE's wake once).
+    # SERAPH's wake, and the cost check (ROGUE's wake once).
     assert body["wakes"] == {
         "seraph": {"job": "pipeline", "ok": True, "summary": {"job": "pipeline"}}
     }

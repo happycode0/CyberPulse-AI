@@ -80,7 +80,6 @@ def db(monkeypatch):
         "trends": TrendInputs([], [], {}, NOW - timedelta(days=3)),
         "crew": {
             "seraph": Activity(894, 4045, NOW - timedelta(minutes=50)),
-            "ripperdoc": Activity(0, None, None),
         },
         "pipeline_ai": PipelineAi(12, Decimal("0.0412")),
     }
@@ -654,17 +653,14 @@ def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
     build_all(None, tmp_path, now=NOW)
     crew = read(tmp_path, "crew.json")
     agents = {a["callsign"]: a for a in crew["agents"]}
-    assert set(agents) == {"SERAPH", "RIPPERDOC"}
+    # RIPPERDOC was counted from the cost ledger until it was retired on 2026-10-20; the
+    # worker's own model calls are pipeline_ai.
+    assert set(agents) == {"SERAPH"}
     assert crew["month"] == "2026-09"
     # SERAPH is doing its publish job by writing the file, so its last work is now.
     assert agents["SERAPH"] == {
         "callsign": "SERAPH", "status": "active", "tasks_completed": 894,
         "items_processed": 4045, "cost_usd": 0.0, "last_active_at": "2026-09-30T12:00:00Z",
-    }
-    # RIPPERDOC's model runs are in Paperclip, which the worker never reads: no cost, not 0.
-    assert agents["RIPPERDOC"] == {
-        "callsign": "RIPPERDOC", "status": "idle", "tasks_completed": 0, "items_processed": None,
-        "cost_usd": None, "last_active_at": None,
     }
     assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412}
 
@@ -687,17 +683,8 @@ def test_crew_json_degrades_seraph_when_ground_truth_fails(tmp_path, db):
     assert agents["SERAPH"]["status"] == "degraded"
 
 
-@pytest.mark.parametrize("hours_ago, status", [(2, "active"), (23, "active"), (25, "idle")])
-def test_crew_json_ripperdoc_is_active_for_a_day(tmp_path, db, hours_ago, status):
-    """Active within 24 hours of its last ledger row (CREW_FRESH), idle after."""
-    db["crew"]["ripperdoc"] = Activity(3, None, NOW - timedelta(hours=hours_ago))
-    build_all(None, tmp_path, now=NOW)
-    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
-    assert agents["RIPPERDOC"]["status"] == status
-    assert agents["RIPPERDOC"]["tasks_completed"] == 3
-
-
 def test_the_site_roster_has_every_agent_crew_json_names():
     hud = (Path(__file__).resolve().parents[2] / "site/assets/hud.js").read_text()
-    for callsign in ("SERAPH", "RIPPERDOC"):
-        assert f"callsign: '{callsign}'" in hud
+    assert "callsign: 'SERAPH'" in hud
+    # Retired: an older crew.json that still names it is not counted (hud.js renderCrew).
+    assert "callsign: 'RIPPERDOC'" not in hud

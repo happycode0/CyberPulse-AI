@@ -60,6 +60,7 @@ from worker.cadence import FAST_INTERVAL
 from worker.db.digest import (
     ESCALATE_AU_RELEVANCE,
     EVENT_COLUMNS,
+    cost_report,
     event_row,
     ledger_totals,
     load_digest,
@@ -1008,9 +1009,9 @@ class OpsApi:
                     "/ops/followup": "DECKARD's due follow-up tasks, with each event's record",
                     "/ops/candidates": "source discovery: what was found and where each find "
                     "stands at SERAPH's gate",
-                    "/ops/models": "RIPPERDOC's model scout: the last scan, the ladder as the "
-                    "guard left it, what changed in OpenRouter's list, the last gauntlet and "
-                    "open model proposals",
+                    "/ops/models": "the worker's model scout: the last scan, the ladder as "
+                    "the guard left it, what changed in OpenRouter's list, the last gauntlet "
+                    "and open model proposals",
                     "/ops/incidents?status=open": "the watchdog's incidents: open, or all with "
                     f"those resolved in the last {INCIDENTS_RESOLVED_DAYS} days",
                     "/ops/incidents/<id>": "one incident, with its evidence and TELETRAAN's "
@@ -1140,42 +1141,10 @@ class OpsApi:
         else:
             raise ClientError("month looks like 2026-10")
 
-        def grouped(conn: Connection, column: str) -> list[dict[str, Any]]:
-            rows = conn.execute(
-                text(
-                    f"select {column} as key, count(*) as calls, "
-                    "coalesce(sum(cost_usd), 0) as cost_usd, "
-                    "count(*) filter (where cost_usd is null) as unknown_cost_calls, "
-                    "coalesce(sum(tokens_in), 0) as tokens_in, "
-                    "coalesce(sum(tokens_out), 0) as tokens_out "
-                    "from cost_ledger where ts >= :start and ts < :end "
-                    "group by 1 order by cost_usd desc, calls desc, key"
-                ),
-                {"start": start, "end": end},
-            ).mappings()
-            return [
-                {**dict(r), "cost_usd": usd(r["cost_usd"]), "tokens_in": int(r["tokens_in"]),
-                 "tokens_out": int(r["tokens_out"])}
-                for r in rows
-            ]
-
-        # Column expressions are fixed here, never taken from the request.
         with self._read() as conn:
-            totals = ledger_totals(conn, start, end)
-            by_stage = grouped(conn, "stage")
-            by_model = grouped(conn, "coalesce(model, requested_model, 'unknown')")
-            by_agent = grouped(conn, "coalesce(agent, 'none')")
-            by_outcome = grouped(conn, "outcome")
-        body: dict[str, Any] = {
-            "month": f"{start:%Y-%m}",
-            "ledger": totals,
-            "by_stage": by_stage,
-            "by_model": by_model,
-            "by_agent": by_agent,
-            "by_outcome": by_outcome,
-        }
+            body: dict[str, Any] = cost_report(conn, start, end)
         if start <= now < end:
-            body["key"] = self._key_summary(totals["cost_usd"])
+            body["key"] = self._key_summary(body["ledger"]["cost_usd"])
         return Reply(200, body)
 
     def _jobs(self, query: Mapping[str, list[str]]) -> Reply:
@@ -1184,7 +1153,8 @@ class OpsApi:
         for slug, job in WAKE_JOBS.items():
             verdict = self.verdict(job)
             wakes[slug] = {"job": job, "ok": verdict.ok, "summary": verdict.summary}
-        # ROGUE's wake, retired with it. RIPPERDOC's monthly review reads it here.
+        # ROGUE's wake, retired with it: the ledger against the key, for whoever reviews the
+        # month's spend.
         cost = self.verdict("cost-reconcile")
         with self._read() as conn:
             passes = {
@@ -1212,8 +1182,10 @@ class OpsApi:
         )
 
     def _models(self, query: Mapping[str, list[str]]) -> Reply:
-        """What RIPPERDOC reads (worker/ai/scout.py). Figures and the scout's own words only:
-        the catalogue keeps no text from OpenRouter's list but a clipped model name."""
+        """The model scout's results (worker/ai/scout.py). The worker sends the owner what
+        needs a decision (worker/notify/jobs.py); this is the whole picture, for the owner and
+        any agent that asks. Figures and the scout's own words only: the catalogue keeps no
+        text from OpenRouter's list but a clipped model name."""
         _only(query)
         now = self._clock()
         with self._read() as conn:

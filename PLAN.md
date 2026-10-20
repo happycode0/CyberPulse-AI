@@ -348,7 +348,7 @@ and each job title became plain:
 |---|---|
 | ZION (Australian desk), BLASTER (global desk), WINTERMUTE (AI desk) | DECKARD, the Researcher: one pass over all three beats, each beat a skill |
 | TRON (independent verification) | TELETRAAN, the Operation agent, on the AUDIT model from a different vendor to WHEELJACK |
-| ROGUE (cost) | RIPPERDOC, the Cheap agent: the monthly cost review. The worker keeps the ledger and sets the degradation tier |
+| ROGUE (cost) | RIPPERDOC, the Cheap agent: the monthly cost review. The worker keeps the ledger and sets the degradation tier. Since RIPPERDOC's retirement on 2026-10-20 the worker sends the owner the review itself |
 | LIBRARIAN, PROWL, LINK (ground truth, correlation, publishing) | The worker, with SERAPH, the Collector, reporting on all four jobs in one `http` wake |
 
 Personas are presentation, not licence: an agent's authority comes from its Paperclip role,
@@ -429,7 +429,15 @@ TELETRAAN both asks for a fix and checks it, which is why the rule holds three w
 that writes the code is never the one that passes it, the two run on different vendors'
 models, and a person always merges.
 
-#### RIPPERDOC — Cheap
+#### RIPPERDOC, retired 2026-10-20
+**Retired.** RIPPERDOC only passed on what the worker had measured, and did it unreliably: over
+2–20 October its scan routine finished 10 of 26 runs, its gauntlet routine none of 3, and its one
+alarm (CYB-90) was a headline price over the ceiling on a model whose capable routes were under
+it. The worker now sends the owner, on Telegram, each model the scan drops or restores, each
+gauntlet proposal, and last month's cost ledger on the 1st (`worker/notify/jobs.py`). The owner
+decides model changes, and changes a Paperclip agent's model when one is failing it. The entry
+below is the design as it stood.
+
 > *Cyberpunk 2077.* The street surgeon who knows which chrome is worth fitting and which will cook your nervous system. Watches what just landed on the market, counts every cent it costs, and is unsentimental about ripping out last month's upgrade.
 > **"Better chrome just came in."**
 
@@ -479,7 +487,6 @@ MORPHEUS (ceo)
 ├── DECKARD (researcher: AU, global and AI beats, follow-up)
 ├── VOIGHT (publisher: editorial QA)
 ├── TACHIKOMA (finder: source discovery) ──► the worker's source gate
-├── RIPPERDOC (cheap: models and the monthly cost review)
 └── TELETRAAN (operation: incidents, and the check on every fix)
     ├── WHEELJACK (coder) ──► TELETRAAN verifies, a human merges
     └── SERAPH (collector: ground truth, source gate, correlation, publishing)
@@ -493,7 +500,7 @@ Least privilege, per the source prompts' §60, made concrete:
 | DECKARD | Ops API token (reads, and follow-up reports only) | Write ground truth; publish |
 | VOIGHT | Ops API token (read + verdict) | Edit event facts |
 | TACHIKOMA | Ops API token (the worker holds the Tavily key) | Activate a source |
-| RIPPERDOC | Ops API token (the worker holds the OpenRouter key, makes the gauntlet calls and keeps the ledger) | Change a tier default; approve its own proposal; exceed the price ceiling |
+| RIPPERDOC (retired 2026-10-20) | Ops API token (the worker holds the OpenRouter key, makes the gauntlet calls and keeps the ledger) | Change a tier default; approve its own proposal; exceed the price ceiling |
 | TELETRAAN | Ops API token (reads, health endpoints, incident verdicts). No repo token: the repository is public | Disable security controls; approve as final gate |
 | WHEELJACK | Branch-scoped `GITHUB_TOKEN` **only** | Push to `main`; read any other secret |
 | SERAPH | None. The wake needs no token; the work runs in the worker, which alone holds the publish `GITHUB_TOKEN` and the Telegram token | Read OpenRouter or Tavily keys; run a model |
