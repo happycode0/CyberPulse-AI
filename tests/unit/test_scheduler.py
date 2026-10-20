@@ -23,6 +23,7 @@ from worker.scheduler import (
     GAUNTLET_JOB_ID,
     GROUNDTRUTH_JOB_ID,
     MODEL_SCAN_JOB_ID,
+    MONTHLY_COST_JOB_ID,
     WATCHDOG_JOB_ID,
     alert_minutes,
     build_scheduler,
@@ -54,8 +55,8 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     jobs = {j.id for j in build_scheduler().get_jobs()}
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
-        ALERT_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID, GAUNTLET_JOB_ID,
-        WATCHDOG_JOB_ID,
+        ALERT_JOB_ID, MONTHLY_COST_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID,
+        GAUNTLET_JOB_ID, WATCHDOG_JOB_ID,
     }
 
 
@@ -112,6 +113,42 @@ def test_the_alert_minutes_follow_the_fast_cadence(every, expected):
 def test_asking_for_one_lane_does_not_bring_notifications_along():
     jobs = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
     assert DIGEST_JOB_ID not in jobs and ALERT_JOB_ID not in jobs
+    assert MONTHLY_COST_JOB_ID not in jobs
+
+
+@pytest.mark.parametrize(
+    "month, utc_hour",
+    [(datetime(2026, 11, 1, tzinfo=UTC), 0), (datetime(2027, 7, 1, tzinfo=UTC), 1)],
+)
+def test_the_monthly_cost_summary_goes_on_the_first_once_the_ledgers_month_has_closed(
+    month, utc_hour
+):
+    # RIPPERDOC's review ran at 09:00 Sydney on the 1st, which is still the last day of the month
+    # in UTC, the ledger's months. 11:10 is past midnight UTC in daylight time (November) and
+    # out of it (July); 12:10 and 13:10 send it only if 11:10 did not.
+    job = {j.id: j for j in build_scheduler().get_jobs()}[MONTHLY_COST_JOB_ID]
+    assert str(job.trigger.timezone) == "Australia/Sydney"
+    runs = fire_times(job.trigger, month - timedelta(days=1), month + timedelta(days=1))
+    assert [(at.day, at.hour, at.minute) for at in runs] == [
+        (1, utc_hour, 10), (1, utc_hour + 1, 10), (1, utc_hour + 2, 10)
+    ]
+    assert all(at >= month for at in runs)
+    later = fire_times(job.trigger, month + timedelta(days=1), month + timedelta(days=40))
+    assert {at.astimezone(job.trigger.timezone).day for at in later} == {1}
+
+
+def test_the_monthly_cost_summary_shares_its_minute_with_no_other_job():
+    # The day it runs, across both offsets Sydney keeps.
+    jobs = build_scheduler().get_jobs()
+    for day in (datetime(2026, 11, 1, tzinfo=UTC), datetime(2027, 7, 1, tzinfo=UTC)):
+        window = (day - timedelta(hours=12), day + timedelta(hours=36))
+        cost = set(fire_times(
+            next(j for j in jobs if j.id == MONTHLY_COST_JOB_ID).trigger, *window
+        ))
+        others = {
+            at for j in jobs if j.id != MONTHLY_COST_JOB_ID for at in fire_times(j.trigger, *window)
+        }
+        assert len(cost) == 3 and not cost & others
 
 
 def test_the_discovery_search_runs_nightly_sydney_time():
@@ -183,7 +220,8 @@ async def test_the_gate_sends_new_source_notices_even_after_a_failed_pass(monkey
 
 
 @pytest.mark.parametrize("name, sender", [("_digest_job", "send_daily_digest"),
-                                          ("_alert_job", "send_critical_alerts")])
+                                          ("_alert_job", "send_critical_alerts"),
+                                          ("_monthly_cost_job", "send_monthly_cost")])
 async def test_a_notification_pass_that_raises_does_not_stop_the_schedule(
     monkeypatch, caplog, name, sender
 ):
@@ -227,8 +265,9 @@ def test_asking_for_one_lane_does_not_bring_the_model_scout_along():
 
 @pytest.fixture
 def scout_jobs(monkeypatch):
-    """The scan and gauntlet jobs with the passes stubbed and a fake AI layer."""
-    state = {"scan": ScanSummary(), "gauntlet": GauntletSummary(), "raises": False}
+    """The scan and gauntlet jobs with the passes and their notices stubbed, and a fake AI
+    layer. `state["told"]` lists the notice passes that ran, in order."""
+    state = {"scan": ScanSummary(), "gauntlet": GauntletSummary(), "raises": False, "told": []}
     recorded, adopted = [], []
 
     class Layer:
@@ -248,6 +287,16 @@ def scout_jobs(monkeypatch):
     async def record(run):
         recorded.append(run)
 
+    def notices(name):
+        async def send(engine, settings, *, now):
+            state["told"].append((name, len(recorded)))
+
+        return send
+
+    monkeypatch.setattr(scheduler, "send_ladder_changes", notices("ladder"))
+    monkeypatch.setattr(scheduler, "send_model_proposals", notices("proposals"))
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
     monkeypatch.setattr(scheduler, "scan_models", fake_scan)
     monkeypatch.setattr(scheduler, "run_gauntlet", fake_gauntlet)
     monkeypatch.setattr(scheduler, "_record", record)
@@ -292,6 +341,34 @@ async def test_a_model_scout_pass_that_raises_is_recorded_and_not_fatal(
     await getattr(scheduler, name)()  # must not raise
     assert "failed" in caplog.text
     assert [(r.job, r.completed) for r in recorded] == [(job, False)] and adopted == []
+
+
+@pytest.mark.parametrize("raises", [False, True])
+@pytest.mark.parametrize("name, notice", [("_model_scan_job", "ladder"),
+                                         ("_gauntlet_job", "proposals")])
+async def test_the_owner_is_told_after_each_scout_pass_even_one_that_failed(
+    scout_jobs, name, notice, raises
+):
+    # After the pass is recorded, so a slow Telegram never delays the watchdog's row. A failed
+    # pass still sends: an earlier notice whose message failed is tried again.
+    state, recorded, _ = scout_jobs
+    state["raises"] = raises
+    await getattr(scheduler, name)()
+    assert state["told"] == [(notice, 1)] and len(recorded) == 1
+
+
+async def test_a_scout_notice_that_raises_does_not_stop_the_schedule(scout_jobs, monkeypatch,
+                                                                    caplog):
+    state, recorded, adopted = scout_jobs
+
+    async def boom(engine, settings, *, now):
+        raise RuntimeError("database unreachable")
+
+    monkeypatch.setattr(scheduler, "send_ladder_changes", boom)
+    state["scan"].verified = "the pruned ladder"
+    await scheduler._model_scan_job()  # must not raise
+    assert "model ladder notification pass failed" in caplog.text
+    assert adopted == ["the pruned ladder"] and recorded[0].completed is True
 
 
 async def test_a_gauntlet_is_recorded_with_the_proposals_it_made(scout_jobs):
@@ -359,6 +436,7 @@ def test_the_hourly_jobs_keep_to_their_own_minutes_at_any_fast_cadence(every):
             scheduler.DISCOVERY_SCHEDULE,
             scheduler.MODEL_SCAN_SCHEDULE,
             scheduler.GAUNTLET_SCHEDULE,
+            scheduler.MONTHLY_COST_SCHEDULE,
         )
     }
     groups = [*hourly, daily]

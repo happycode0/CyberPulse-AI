@@ -157,6 +157,8 @@ const out = {
     hourly: m.describeCron('0 * * * *', 'Australia/Sydney'),
     pastTheHour: m.describeCron('15 * * * *', null),
     months: m.describeCron('0 9 1 1,7 *', 'Australia/Sydney'),
+    monthly: m.describeCron('0 9 1 * *', 'Australia/Sydney'),
+    sundays: m.describeCron('0 5 * * 0', 'Australia/Sydney'),
     everyMinute: m.describeCron('* * * * *', 'UTC'),
     bothDays: m.describeCron('0 9 1 * 1', 'UTC'),
     named: m.describeCron('0 9 * * MON', 'UTC'),
@@ -363,9 +365,6 @@ def test_every_crew_schedule_reads_in_plain_english(site):
         "0 7 * * *": "Daily at 07:00 Sydney time",
         "0 3-21/6 * * *": "Daily at 03:00, 09:00, 15:00 and 21:00 Sydney time",
         "30 3 * * *": "Daily at 03:30 Sydney time",
-        "0 4 * * *": "Daily at 04:00 Sydney time",
-        "0 5 * * 0": "Sundays at 05:00 Sydney time",
-        "0 9 1 * *": "Monthly on the 1st at 09:00 Sydney time",
     }
 
 
@@ -375,6 +374,9 @@ def test_a_schedule_it_cannot_say_correctly_is_left_as_the_cron(site):
     assert other["hourly"] == "Every hour on the hour"
     assert other["pastTheHour"] == "Every hour at 15 past"
     assert other["months"] == "Monthly on the 1st in January and July at 09:00 Sydney time"
+    # RIPPERDOC's routines had these shapes until it was retired on 2026-10-20.
+    assert other["monthly"] == "Monthly on the 1st at 09:00 Sydney time"
+    assert other["sundays"] == "Sundays at 05:00 Sydney time"
     # Every minute, both day fields (cron ORs them), names, the wrong field count, nothing.
     for shape in ("everyMinute", "bothDays", "named", "short", "junk"):
         assert other[shape] is None, shape
@@ -389,15 +391,14 @@ def test_the_org_chart_puts_the_ceo_on_top_and_reports_below(site):
         ["Operations", ["TELETRAAN", "SERAPH", "WHEELJACK"]],
         ["Editorial", ["DECKARD", "VOIGHT"]],
         ["Sources", ["TACHIKOMA"]],
-        ["Finance & models", ["RIPPERDOC"]],
     ]
     assert org["managers"]["SERAPH"] == "TELETRAAN" and org["managers"]["DECKARD"] == "MORPHEUS"
     assert org["routines"] == {
         "MORPHEUS": 1, "TELETRAAN": 0, "SERAPH": 0, "DECKARD": 2, "VOIGHT": 1, "TACHIKOMA": 1,
-        "RIPPERDOC": 3, "WHEELJACK": 0,
+        "WHEELJACK": 0,
     }
     # Every agent in the file has a persona on the page and every persona is in the file.
-    assert org["personas"] == 8 and org["unlisted"] == []
+    assert org["personas"] == 7 and org["unlisted"] == []
     assert all(org["schedules"]), "a crew cron the page cannot put into words"
 
 
@@ -407,7 +408,7 @@ def test_an_unpublished_org_chart_is_nothing_not_an_empty_company(site):
     # page says which of its own crew the file does not list.
     partial = site["orgPartial"]
     assert partial["top"] == "DECKARD" and partial["teams"] == []
-    assert partial["unlisted"] == 7
+    assert partial["unlisted"] == 6
 
 
 # renderOrg drawn into a small fake DOM that, like a browser's, writes a null it is given as

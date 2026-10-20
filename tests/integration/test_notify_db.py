@@ -1,12 +1,13 @@
 """worker/db/notifications.py against a real Postgres: claiming a message once, and the alert rule."""
 
 from datetime import UTC, datetime, timedelta
+from typing import get_args
 
 import pytest
 from sqlalchemy import text
 
 from worker.db.migrate import run_migrations
-from worker.db.notifications import MAX_ATTEMPTS, claim, load_alert_events, settle
+from worker.db.notifications import MAX_ATTEMPTS, Kind, claim, load_alert_events, settle
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
@@ -65,6 +66,13 @@ def test_a_withheld_message_stays_withheld(db):
 def test_an_unknown_kind_is_refused_by_the_table(db):
     with pytest.raises(Exception, match="check"):
         claim(db, kind="gossip", key="gossip:1", now=NOW)
+
+
+def test_every_kind_the_worker_sends_is_one_the_table_accepts(db):
+    # Migration 017 added the three RIPPERDOC used to pass on: ladder_change, model_proposal
+    # and monthly_cost.
+    for kind in get_args(Kind):
+        assert claim(db, kind=kind, key=f"{kind}:1", now=NOW) is not None, kind
 
 
 def add_event(db, event_id, *, severity="critical", au=0.8, direct=False, status="new",

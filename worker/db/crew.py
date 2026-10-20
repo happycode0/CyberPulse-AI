@@ -1,9 +1,10 @@
-"""What the deterministic crew did, counted from the rows their jobs leave (data/crew.json).
+"""What the deterministic crew did, counted from the rows its jobs leave (data/crew.json).
 
-Only agents whose work the worker itself does are counted here: SERAPH, the Collector, whose
-wake answers for the collection, source checks, ground truth and publishing, and RIPPERDOC's
-cost ledger (ROGUE's, before the 8-agent crew). The AI agents work in the Paperclip control
-panel, which the worker never reads, so nothing is claimed for them.
+Only an agent whose work the worker itself does is counted here: SERAPH, the Collector, whose
+wake answers for the collection, source checks, ground truth and publishing. The AI agents work
+in the Paperclip control panel, which the worker never reads, so nothing is claimed for them.
+RIPPERDOC was counted from the cost ledger until it was retired on 2026-10-20; the worker's own
+model calls are `PipelineAi`, and the owner gets the month's ledger on Telegram.
 """
 
 from dataclasses import dataclass
@@ -34,12 +35,11 @@ def _one(conn: Connection, sql: str, since: datetime) -> dict:
 
 
 def load_crew_activity(conn: Connection, *, since: datetime) -> dict[str, Activity]:
-    """Activity per callsign (lower case) for SERAPH and RIPPERDOC.
+    """Activity per callsign (lower case): SERAPH's.
 
-    SERAPH's tasks are the sources checked, the finished collection runs, and the completed
+    Its tasks are the sources checked, the finished collection runs, and the completed
     ground-truth and publish passes, added together; its items are what the runs fetched. It
-    is failing while the newest ground-truth pass did not complete. RIPPERDOC's tasks are the
-    ledger's rows: every AI call the worker priced.
+    is failing while the newest ground-truth pass did not complete.
     """
     seraph = _one(
         conn,
@@ -58,12 +58,6 @@ def load_crew_activity(conn: Connection, *, since: datetime) -> dict[str, Activi
         "                 where job in ('groundtruth', 'publish') and completed)) as last_active",
         since,
     )
-    ripperdoc = _one(
-        conn,
-        "select count(*) as tasks, (select max(ts) from cost_ledger) as last_active "
-        "from cost_ledger where ts >= :since",
-        since,
-    )
     return {
         "seraph": Activity(
             seraph["checks"] + seraph["runs"] + seraph["passes"],
@@ -71,7 +65,6 @@ def load_crew_activity(conn: Connection, *, since: datetime) -> dict[str, Activi
             seraph["last_active"],
             bool(seraph["failing"]),
         ),
-        "ripperdoc": Activity(ripperdoc["tasks"], None, ripperdoc["last_active"]),
     }
 
 

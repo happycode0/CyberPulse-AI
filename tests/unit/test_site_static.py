@@ -296,7 +296,8 @@ def test_the_site_roster_covers_every_agent_the_plan_specifies():
     # rather than against a number written here. The site once shipped fifteen cards while the
     # plan specified sixteen agents, and nothing caught it: RIPPERDOC, the model scout, was
     # simply absent from the page that claims to list the crew. The crew is eight since
-    # October 2026; the set comparison holds whatever the number is.
+    # October 2026 and seven since RIPPERDOC's retirement on 2026-10-20; the set comparison
+    # holds whatever the number is.
     plan = read("PLAN.md")
     section = plan[plan.index("### 4.1"):plan.index("### 4.4")]
     specified = set(re.findall(r"^#### ([A-Z]+) \u2014", section, re.MULTILINE))

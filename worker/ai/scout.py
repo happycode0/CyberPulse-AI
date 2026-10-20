@@ -1,6 +1,7 @@
-"""RIPPERDOC's work in the worker (PLAN.md §7.6): the daily model scan, the weekly gauntlet, and
-the golden set the gauntlet judges on. RIPPERDOC itself reads the results (GET /ops/models)
-and raises what they show.
+"""The model scout (PLAN.md §7.6): the daily model scan, the weekly gauntlet, and the golden set
+the gauntlet judges on. The worker tells the owner on Telegram what needs knowing or deciding
+(worker/notify/jobs.py), and GET /ops/models shows the rest. RIPPERDOC, which read the results
+and raised them in Paperclip, was retired on 2026-10-20.
 
 - **The scan**, daily: OpenRouter's model list and what changed in it (worker/ai/catalogue.py),
   then the ladder through the price guard again. A model that drifted over the ceiling or lost
@@ -9,7 +10,7 @@ and raises what they show.
   Going down a chain that was signed off needs nobody's approval (§7.7).
 - **The gauntlet**, on Sundays: each enrichment tier's default and up to two challengers on
   the golden set (worker/ai/gauntlet.py), within `MONTHLY_CAP_USD`. A challenger that is
-  better by §7.6's rules becomes a proposal in `agent_proposals`; promoting it is MORPHEUS's
+  better by §7.6's rules becomes a proposal in `agent_proposals`; promoting it is the owner's
   decision, on the worker's cost figures, and a reviewed edit to config/models.yaml.
 - **The golden set** is pinned the first time the gauntlet finds none, or by
   `--pin-golden-set` (worker/ai/golden.py).
@@ -368,7 +369,7 @@ async def _attempt(
                 schema=task.schema,
                 messages=messages(task, subject),
                 max_tokens=task.max_tokens,
-                # No event_id: the gauntlet's spend is RIPPERDOC's, not the event's.
+                # No event_id: the gauntlet's spend is its own, not the event's.
                 attribution=Attribution(agent=AGENT, stage=STAGE),
             )
         except InvalidOutput as exc:

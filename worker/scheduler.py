@@ -1,6 +1,7 @@
 """Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery, the
-model scan and gauntlet, the Telegram notifications and the watchdog run in the worker; DEEP is a
-Paperclip routine, so it has no schedule here and is only reachable through `--lane deep --once`."""
+model scan and gauntlet, the Telegram notifications (the monthly cost summary among them) and the
+watchdog run in the worker; DEEP is a Paperclip routine, so it has no schedule here and is only
+reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -23,6 +24,9 @@ from worker.notify.jobs import (
     send_critical_alerts,
     send_daily_digest,
     send_developing_updates,
+    send_ladder_changes,
+    send_model_proposals,
+    send_monthly_cost,
     send_source_activations,
 )
 from worker.notify.telegram import Telegram
@@ -64,6 +68,9 @@ from worker.schedule import (  # noqa: F401
     MODEL_SCAN_JOB_ID,
     MODEL_SCAN_MISFIRE_GRACE_SECONDS,
     MODEL_SCAN_SCHEDULE,
+    MONTHLY_COST_JOB_ID,
+    MONTHLY_COST_MISFIRE_GRACE_SECONDS,
+    MONTHLY_COST_SCHEDULE,
     SCHEDULE,
     WATCHDOG_JOB_ID,
     WATCHDOG_MISFIRE_GRACE_SECONDS,
@@ -257,6 +264,14 @@ async def _alert_job() -> None:
         logger.exception("developing update pass failed")
 
 
+async def _monthly_cost_job() -> None:
+    """Never fatal to the schedule; 12:10 and 13:10 try again."""
+    try:
+        await send_monthly_cost(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("monthly cost summary failed")
+
+
 async def _discovery_job() -> None:
     """Never fatal to the schedule; tomorrow night searches again."""
     started = _now()
@@ -301,52 +316,64 @@ async def _gate_job() -> None:
 async def _model_scan_job() -> None:
     """Never fatal to the schedule; tomorrow's scan reads the list again. The ladder it checked
     goes to the AI layer: a pruned one is used as it is, and one that did not pass makes the next
-    enrichment pass check before it calls. One that could not be checked changes nothing."""
+    enrichment pass check before it calls. One that could not be checked changes nothing.
+
+    Then the owner is told what the scan took out of the ladder or let back in. That pass runs
+    after a failed scan too, so last night's notice that could not be sent is tried again."""
     started = _now()
     try:
         summary = await scan_models()
     except Exception:
         logger.exception("scheduled model scan failed")
         await _record(JobRun("model-scan", started, _now(), completed=False))
-        return
-    if summary.verified is not None:
-        _layer().adopt(summary.verified)
-    elif summary.ladder_failed:
-        _layer().adopt(None)
-    await _record(
-        JobRun(
-            "model-scan",
-            started,
-            _now(),
-            completed=True,
-            errors=len(summary.errors),
-            changed=summary.changed_anything,
+    else:
+        if summary.verified is not None:
+            _layer().adopt(summary.verified)
+        elif summary.ladder_failed:
+            _layer().adopt(None)
+        await _record(
+            JobRun(
+                "model-scan",
+                started,
+                _now(),
+                completed=True,
+                errors=len(summary.errors),
+                changed=summary.changed_anything,
+            )
         )
-    )
+    try:
+        await send_ladder_changes(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("model ladder notification pass failed")
 
 
 async def _gauntlet_job() -> None:
-    """Never fatal to the schedule; next Sunday runs again. Nothing is published: a proposal is
-    for RIPPERDOC to raise, and nothing changes until config/models.yaml does."""
+    """Never fatal to the schedule; next Sunday runs again. Nothing is published: a proposal goes
+    to the owner on Telegram, and nothing changes until config/models.yaml does. The proposals
+    are sent after a failed run too, so one whose message failed last week is tried again."""
     started = _now()
     try:
         summary = await run_gauntlet()
     except Exception:
         logger.exception("scheduled model gauntlet failed")
         await _record(JobRun("model-gauntlet", started, _now(), completed=False))
-        return
-    if summary.skipped:
-        logger.info("model gauntlet skipped: %s", summary.skipped)
-    await _record(
-        JobRun(
-            "model-gauntlet",
-            started,
-            _now(),
-            completed=True,
-            errors=sum(m.errors for m in summary.measured if not m.reused),
-            changed=summary.changed_anything,
+    else:
+        if summary.skipped:
+            logger.info("model gauntlet skipped: %s", summary.skipped)
+        await _record(
+            JobRun(
+                "model-gauntlet",
+                started,
+                _now(),
+                completed=True,
+                errors=sum(m.errors for m in summary.measured if not m.reused),
+                changed=summary.changed_anything,
+            )
         )
-    )
+    try:
+        await send_model_proposals(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("model proposal notification pass failed")
 
 
 async def _watchdog_job() -> None:
@@ -366,10 +393,10 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     `max_instances=1` and `coalesce=True` mean a run that outlasts its interval is not
     stacked on top of itself, and missed ticks collapse into one.
 
-    The ground-truth sync, enrichment, discovery, the model scan and gauntlet, notifications and
-    the watchdog are added only for the default schedule. `lanes` comes from `--lane`, which
-    means "schedule this one thing", and silently bringing a register sync or model calls along
-    with it would make the narrow form impossible to ask for.
+    The ground-truth sync, enrichment, discovery, the model scan and gauntlet, notifications (the
+    monthly cost summary too) and the watchdog are added only for the default schedule. `lanes`
+    comes from `--lane`, which means "schedule this one thing", and silently bringing a register
+    sync or model calls along with it would make the narrow form impossible to ask for.
     """
     # Looked up here, not at import, so a test that replaces a handler is the one scheduled.
     handlers = {
@@ -377,6 +404,7 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
         ENRICH_JOB_ID: _enrich_job,
         DIGEST_JOB_ID: _digest_job,
         ALERT_JOB_ID: _alert_job,
+        MONTHLY_COST_JOB_ID: _monthly_cost_job,
         DISCOVERY_JOB_ID: _discovery_job,
         GATE_JOB_ID: _gate_job,
         MODEL_SCAN_JOB_ID: _model_scan_job,
@@ -431,7 +459,7 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
         logger.info("no publish token: data/ is written here and not pushed")
     if lanes is None:
         if Telegram.from_settings(get_settings()) is None:
-            logger.info("no Telegram bot: the digest and alerts are not sent")
+            logger.info("no Telegram bot: the digest, alerts and model notices are not sent")
         else:
             logger.info("Telegram notifications are on")
         settings = get_settings()

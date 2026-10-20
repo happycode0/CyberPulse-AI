@@ -6,6 +6,14 @@
 - **Developing updates**, in the same pass: a material change to such an event after its first
   hour, or one that newly exposes a critical or high event in Australia.
 - **New sources**, after each source-gate pass: a feed SERAPH's gate has just activated.
+- **The model ladder**, after each nightly model scan: a model the price guard took out of the
+  ladder, or let back in, with the guard's reason.
+- **Model proposals**, after each weekly gauntlet: each proposal, title and body, for the owner
+  to decide.
+- **Last month's AI cost**, on the 1st: the cost ledger as `GET /ops/cost` reports the month.
+
+The last three were RIPPERDOC's to pass on, from the same figures, until it was retired on
+2026-10-20 (docs/wiki/stage-4b-the-crew.md, card 7).
 
 Each message is claimed in `notifications` before it is sent, so none is sent twice. With no
 Telegram bot configured, a pass claims nothing and returns, so the first pass after the token is
@@ -20,7 +28,7 @@ from typing import Protocol
 
 from sqlalchemy import Engine
 
-from worker.db.digest import load_digest
+from worker.db.digest import cost_report, load_digest, month_bounds
 from worker.db.discovery import Activation, load_activations
 from worker.db.notifications import (
     AlertEvent,
@@ -32,11 +40,15 @@ from worker.db.notifications import (
     load_update_entries,
     settle,
 )
+from worker.db.scout import Proposal, ScanNotice, load_ladder_notices, open_proposals
 from worker.notify.messages import (
     SYDNEY,
     critical_au_alert,
     daily_digest,
     developing_update,
+    ladder_changed,
+    model_proposal,
+    monthly_cost,
     source_activated,
 )
 from worker.notify.telegram import SendResult, Telegram
@@ -52,6 +64,9 @@ ALERT_WINDOW = timedelta(hours=12)
 MAX_ALERTS_PER_PASS = 5
 # A new source is announced if the gate pass that activated it, or one of the next few, can send.
 ACTIVATION_WINDOW = timedelta(hours=24)
+# A change to the ladder is told if that night's scan, or the next night's, can send it. The scan
+# has already acted on it, so a day late is still worth knowing; two days late is stale.
+LADDER_WINDOW = timedelta(hours=36)
 
 
 class Channel(Protocol):
@@ -225,4 +240,100 @@ async def send_source_activations(
             now=now,
         )
         _count(summary, outcome)
+    return summary
+
+
+# ─── Models and money ─────────────────────────────────────────────────────────────────────────────
+
+
+def _read_ladder(engine: Engine, since: datetime) -> list[ScanNotice]:
+    with engine.connect() as conn:
+        return load_ladder_notices(conn, since=since)
+
+
+async def send_ladder_changes(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """A message for each scan in the last `LADDER_WINDOW` that took a model out of the ladder
+    or let one back in, not yet sent. A scan that changed neither sends nothing."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    notices = await asyncio.to_thread(_read_ladder, engine, now - LADDER_WINDOW)
+    summary = NotifySummary()
+    for notice in notices:
+        if summary.tried >= MAX_ALERTS_PER_PASS:
+            break
+        outcome = await _deliver(
+            engine,
+            channel,
+            kind="ladder_change",
+            key=f"ladder_change:{notice.scanned_at.astimezone(UTC).isoformat()}",
+            message=ladder_changed(notice),
+            now=now,
+        )
+        _count(summary, outcome)
+    return summary
+
+
+def _read_proposals(engine: Engine) -> list[Proposal]:
+    with engine.connect() as conn:
+        return open_proposals(conn)
+
+
+async def send_model_proposals(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """A message for each open model proposal not yet sent, oldest first. One raised before
+    RIPPERDOC's retirement goes too, the first time: it is still open, and the owner's now."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    proposals = await asyncio.to_thread(_read_proposals, engine)
+    summary = NotifySummary()
+    for proposal in reversed(proposals):
+        if summary.tried >= MAX_ALERTS_PER_PASS:
+            break
+        outcome = await _deliver(
+            engine,
+            channel,
+            kind="model_proposal",
+            key=f"model_proposal:{proposal.id}",
+            message=model_proposal(proposal),
+            now=now,
+        )
+        _count(summary, outcome)
+    return summary
+
+
+def last_month(now: datetime) -> tuple[datetime, datetime]:
+    """The calendar month before `now`'s, in UTC, which is how the ledger's months run."""
+    start, _ = month_bounds(now.astimezone(UTC))
+    return month_bounds(start - timedelta(days=1))
+
+
+def _read_cost(engine: Engine, start: datetime, end: datetime) -> dict:
+    with engine.connect() as conn:
+        return cost_report(conn, start, end)
+
+
+async def send_monthly_cost(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """Last month's cost ledger, once per month: the figures `GET /ops/cost` gives for it."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    start, end = last_month(now)
+    report = await asyncio.to_thread(_read_cost, engine, start, end)
+    summary = NotifySummary()
+    outcome = await _deliver(
+        engine,
+        channel,
+        kind="monthly_cost",
+        key=f"monthly_cost:{start:%Y-%m}",
+        message=monthly_cost(report),
+        now=now,
+    )
+    _count(summary, outcome)
     return summary

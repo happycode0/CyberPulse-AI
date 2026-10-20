@@ -8,7 +8,7 @@
       "model": "openrouter/xiaomi/mimo-v2.6-pro",
       "reports_to": null,
       "role": "ceo",
-      "summary": "Decides what the crew covers and follows up, writes the daily intelligence report, and approves or refuses each model change.",
+      "summary": "Decides what the crew covers and follows up, and writes the daily intelligence report.",
       "team": "Intelligence",
       "title": "CEO"
     },
@@ -74,18 +74,6 @@
     },
     {
       "adapter": "model",
-      "budget_usd": 0.5,
-      "callsign": "RIPPERDOC",
-      "max_daily_runs": 4,
-      "model": "openrouter/xiaomi/mimo-v2.6-flash",
-      "reports_to": "MORPHEUS",
-      "role": "cfo",
-      "summary": "Keeps each model tier on the cheapest model that does the job: reports the worker's daily model scan and weekly gauntlet, raises model proposals and reviews each month's costs.",
-      "team": "Operations",
-      "title": "Cheap"
-    },
-    {
-      "adapter": "model",
       "budget_usd": 1.0,
       "callsign": "WHEELJACK",
       "max_daily_runs": 4,
@@ -141,30 +129,6 @@
       "name": "Source discovery",
       "starts": "now",
       "summary": "Reads the night's search finds and proposes sources, plus some for each open coverage gap.",
-      "timezone": "Australia/Sydney"
-    },
-    {
-      "assignee": "RIPPERDOC",
-      "cron": "0 4 * * *",
-      "name": "Model scan",
-      "starts": "now",
-      "summary": "Reports what the worker's nightly scan of the model catalogue found.",
-      "timezone": "Australia/Sydney"
-    },
-    {
-      "assignee": "RIPPERDOC",
-      "cron": "0 5 * * 0",
-      "name": "Model gauntlet",
-      "starts": "now",
-      "summary": "Reports the weekly gauntlet's results and raises each model proposal for MORPHEUS.",
-      "timezone": "Australia/Sydney"
-    },
-    {
-      "assignee": "RIPPERDOC",
-      "cron": "0 9 1 * *",
-      "name": "Monthly cost review",
-      "starts": "now",
-      "summary": "Reconciles last month's AI spend from the worker's cost ledger and reports it to MORPHEUS.",
       "timezone": "Australia/Sydney"
     }
   ]

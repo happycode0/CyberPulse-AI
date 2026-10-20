@@ -179,8 +179,8 @@ class VerifiedLadder:
 class VerifiedCandidate:
     """A model outside the ladder that passed the guard for one tier, and when.
 
-    Only `verify_candidate` makes one, and `OpenRouterClient.trial` takes nothing else, so
-    RIPPERDOC's gauntlet can call a challenger without the guard being skipped for it.
+    Only `verify_candidate` makes one, and `OpenRouterClient.trial` takes nothing else, so the
+    gauntlet can call a challenger without the guard being skipped for it.
     """
 
     tier: Tier

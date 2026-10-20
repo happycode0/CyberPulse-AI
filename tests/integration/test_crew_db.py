@@ -49,7 +49,6 @@ def test_an_empty_database_counts_nothing(db):
         ai = load_pipeline_ai(conn, since=MONTH)
     assert {k: (a.tasks, a.items, a.last_active, a.failing) for k, a in activity.items()} == {
         "seraph": (0, 0, None, False),
-        "ripperdoc": (0, None, None, False),
     }
     assert (ai.calls, ai.cost_usd) == (0, Decimal(0))
 
@@ -99,7 +98,8 @@ def test_each_agent_is_counted_from_its_own_rows(db):
         activity = load_crew_activity(conn, since=MONTH)
         ai = load_pipeline_ai(conn, since=MONTH)
 
-    assert set(activity) == {"seraph", "ripperdoc"}
+    # RIPPERDOC, counted from the ledger until its retirement on 2026-10-20, is not listed.
+    assert set(activity) == {"seraph"}
     # SERAPH: 3 source checks this month + 2 finished runs + 1 completed ground-truth pass +
     # 1 completed publish. Its items are what those runs fetched. The newest ground-truth pass
     # did not complete, so it is failing.
@@ -107,10 +107,5 @@ def test_each_agent_is_counted_from_its_own_rows(db):
     assert (seraph.tasks, seraph.items, seraph.last_active, seraph.failing) == (
         7, 100, NOW - timedelta(minutes=5), True
     )
-    # RIPPERDOC: every ledger row this month, whoever made the call.
-    ripperdoc = activity["ripperdoc"]
-    assert (ripperdoc.tasks, ripperdoc.items, ripperdoc.last_active, ripperdoc.failing) == (
-        3, None, NOW - timedelta(hours=1), False
-    )
-    # Only the worker's own calls: RIPPERDOC's gauntlet is not the pipeline's spend.
+    # Only the worker's own calls: the gauntlet's (labelled ripperdoc) is not the pipeline's.
     assert (ai.calls, ai.cost_usd) == (2, Decimal("0.01"))

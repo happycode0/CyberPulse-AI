@@ -1,5 +1,5 @@
-"""RIPPERDOC's weekly gauntlet: how each model does on the golden set, and when to propose a
-change to the ladder (PLAN.md §7.6, §7.7).
+"""The weekly gauntlet: how each model does on the golden set, and when to propose a change to
+the ladder (PLAN.md §7.6, §7.7).
 
 Each tier is judged on the task it does in production: tier 0 on triage, tier 1 on the brief,
 tier 2 on the severity judgment. The code and audit tiers do no enrichment, so there is
@@ -21,8 +21,9 @@ A challenger is proposed only when it clears every gate and, against an incumben
 clears them, agrees about as well and is better on the order §7.6 sets: in tier 0, where both
 are free, it agrees clearly more; in tiers 1 and 2 it is clearly cheaper per event. Against an
 incumbent that fails a gate, the best challenger that clears them is proposed. A proposal is a
-row for RIPPERDOC to raise, and promoting it is MORPHEUS's decision (§7.7), on the worker's own
-cost figures, which the proposal shows: nothing here changes config/models.yaml.
+row in `agent_proposals` that the worker sends the owner on Telegram (worker/notify/jobs.py),
+and promoting it is the owner's decision (§7.7), on the worker's own cost figures, which the
+proposal shows: nothing here changes config/models.yaml.
 
 The adoption veto in §7.6 needs OpenRouter's authenticated datasets, so it is not checked
 here; every proposal says so.
@@ -51,6 +52,8 @@ from worker.ai.tasks import (
 )
 from worker.models import Severity, beat_of
 
+# The label on the gauntlet's ledger rows and proposals. RIPPERDOC was retired on 2026-10-20,
+# but the label stays: the month's gauntlet spend and the open proposals are found by it.
 AGENT = "ripperdoc"
 STAGE = "gauntlet"
 
@@ -455,8 +458,8 @@ def proposal_body(
     against = failures(inc)
     lines = [
         (
-            f"RIPPERDOC's gauntlet proposes `{ch.slug}` as the default for `{d.tier.value}`, "
-            f"in place of `{inc.slug}`: {d.why}."
+            f"The worker's gauntlet proposes `{ch.slug}` as the default for "
+            f"`{d.tier.value}`, in place of `{inc.slug}`: {d.why}."
         ),
         "",
         (
@@ -497,15 +500,14 @@ def proposal_body(
     lines += [
         "",
         (
-            "The cost figures are the worker's own, not RIPPERDOC's: every call went through "
-            f"the price guard (nothing over ${OUTPUT_CEILING_USD_PER_MTOK} per million output "
-            "tokens), and the cost per event is what OpenRouter billed, as the cost ledger "
-            "records it."
+            "The cost figures are the worker's own: every call went through the price guard "
+            f"(nothing over ${OUTPUT_CEILING_USD_PER_MTOK} per million output tokens), and the "
+            "cost per event is what OpenRouter billed, as the cost ledger records it."
         ),
         "",
         (
-            "A promotion needs MORPHEUS's approval (§7.7). Approving changes nothing by itself: "
-            "the change is a reviewed edit to config/models.yaml."
+            "Promoting it is the owner's decision (§7.7), and nothing changes until then: the "
+            "change is a reviewed edit to config/models.yaml. To decline it, do nothing."
         ),
     ]
     return "\n".join(lines)

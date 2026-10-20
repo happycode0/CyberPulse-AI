@@ -1,5 +1,5 @@
-"""RIPPERDOC's rows (migration 014): the model catalogue and what changed in it, the daily scans,
-the golden set, the gauntlet runs, and model proposals in `agent_proposals`.
+"""The model scout's rows (migration 014): the model catalogue and what changed in it, the daily
+scans, the golden set, the gauntlet runs, and model proposals in `agent_proposals`.
 
 The decisions are worker/ai/catalogue.py's, worker/ai/golden.py's and worker/ai/gauntlet.py's;
 this module only reads and writes. `detail`, `results` and the proposal payload hold figures
@@ -8,6 +8,7 @@ and our own words, never model output.
 
 import json
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
@@ -170,6 +171,57 @@ def record_scan(
     ).scalar_one()
 
 
+@dataclass(frozen=True)
+class LadderChange:
+    """A model the price guard took out of a tier, or let back in."""
+
+    tier: str
+    slug: str
+    kind: str  # "dropped" or "restored"
+    reason: str | None  # why it was dropped (worker/ai/ladder.py `breach_reason`)
+
+
+@dataclass(frozen=True)
+class ScanNotice:
+    """What one scan changed in the ladder, for the owner (worker/notify/jobs.py)."""
+
+    scanned_at: datetime
+    # False when what was left after the drops was not a usable ladder, so the AI layer is off.
+    usable: bool
+    changes: tuple[LadderChange, ...]
+
+
+def load_ladder_notices(conn: Connection, *, since: datetime) -> list[ScanNotice]:
+    """Each scan since `since` that dropped a model from the ladder or restored one, oldest
+    first. Only the guard's verdicts: a change to a model's headline price is not one, because
+    the guard reads every route (CYB-90 was a headline over the ceiling, on a model with capable
+    routes under it). A scan stores its changes at its own timestamp (worker/ai/scout.py)."""
+    rows = conn.execute(
+        text(
+            "select s.ts, s.ladder, c.slug, c.kind, c.detail from model_scans s "
+            "join model_changes c on c.ts = s.ts and c.kind in ('dropped', 'restored') "
+            "where s.ts >= :since and s.ladder is not null "
+            "order by s.ts, s.id, c.id"
+        ),
+        {"since": since},
+    )
+    notices: dict[datetime, ScanNotice] = {}
+    for r in rows:
+        detail = r.detail or {}
+        change = LadderChange(
+            str(detail.get("tier")), r.slug, r.kind, detail.get("reason") or None
+        )
+        if r.ts in notices:
+            notice = notices[r.ts]
+            notices[r.ts] = ScanNotice(r.ts, notice.usable, (*notice.changes, change))
+        else:
+            usable = all(
+                entry.get("effective") is not None for entry in (r.ladder or {}).values()
+            )
+            notices[r.ts] = ScanNotice(r.ts, usable, (change,))
+    return list(notices.values())
+
+
 # ─── The golden set ───────────────────────────────────────────────────────────────────────────────
 
 
@@ -321,6 +373,28 @@ def record_gauntlet(
 # ─── Proposals ────────────────────────────────────────────────────────────────────────────────────
 
 
+@dataclass(frozen=True)
+class Proposal:
+    id: int
+    title: str
+    body: str
+    created_at: datetime
+    payload: dict[str, Any]
+
+
+def open_proposals(conn: Connection) -> list[Proposal]:
+    """Every model proposal still open, newest first."""
+    rows = conn.execute(
+        text(
+            "select id, title, body, created_at, payload from agent_proposals "
+            "where agent = :agent and kind = :kind and status = 'proposed' "
+            "order by created_at desc, id desc"
+        ),
+        {"agent": AGENT, "kind": PROPOSAL_KIND},
+    )
+    return [Proposal(r.id, r.title, r.body, r.created_at, r.payload or {}) for r in rows]
+
+
 def propose(
     conn: Connection, *, title: str, body: str, payload: dict[str, Any], now: datetime
 ) -> int | None:
@@ -350,7 +424,7 @@ def propose(
     ).scalar_one()
 
 
-# ─── What RIPPERDOC reads (GET /ops/models) ───────────────────────────────────────────────────────
+# ─── The whole picture (GET /ops/models) ──────────────────────────────────────────────────────────
 
 
 def _iso(value: datetime | None) -> str | None:
@@ -423,23 +497,16 @@ def models_report(conn: Connection, now: datetime) -> dict[str, Any]:
     )
     proposals = [
         {
-            "id": r.id,
-            "title": r.title,
-            "body": r.body,
-            "created_at": _iso(r.created_at),
-            "tier": (r.payload or {}).get("tier"),
-            "slug": (r.payload or {}).get("slug"),
-            "replaces": (r.payload or {}).get("replaces"),
-            "why": (r.payload or {}).get("why"),
+            "id": p.id,
+            "title": p.title,
+            "body": p.body,
+            "created_at": _iso(p.created_at),
+            "tier": p.payload.get("tier"),
+            "slug": p.payload.get("slug"),
+            "replaces": p.payload.get("replaces"),
+            "why": p.payload.get("why"),
         }
-        for r in conn.execute(
-            text(
-                "select id, title, body, created_at, payload from agent_proposals "
-                "where agent = :agent and kind = :kind and status = 'proposed' "
-                "order by created_at desc, id desc"
-            ),
-            {"agent": AGENT, "kind": PROPOSAL_KIND},
-        )
+        for p in open_proposals(conn)
     ]
     golden = (
         conn.execute(

@@ -135,18 +135,28 @@ GATE_SCHEDULE = "50 3-23/4 * * *"
 GATE_JOB_ID = "source-gate"
 GATE_MISFIRE_GRACE_SECONDS = 1800
 
-# RIPPERDOC's model scan at 03:20 Sydney time, after the discovery search and clear of every
-# other job's minute. A model the guard now refuses leaves its chain from the next enrichment
-# pass, so a day is the longest a price rise goes unnoticed (worker/ai/scout.py).
+# The model scan at 03:20 Sydney time, after the discovery search and clear of every other job's
+# minute. A model the guard now refuses leaves its chain from the next enrichment pass, so a day
+# is the longest a price rise goes unnoticed (worker/ai/scout.py). The owner is told on Telegram
+# when one leaves or comes back (worker/notify/jobs.py).
 MODEL_SCAN_SCHEDULE = "20 3 * * *"
 MODEL_SCAN_JOB_ID = "model-scan"
 MODEL_SCAN_MISFIRE_GRACE_SECONDS = 3600
 
 # The gauntlet on Sunday at 03:40 Sydney time, after that day's scan. A day name, not 0:
-# APScheduler counts the days of the week from Monday.
+# APScheduler counts the days of the week from Monday. A proposal it makes goes to the owner on
+# Telegram straight after.
 GAUNTLET_SCHEDULE = "40 3 * * sun"
 GAUNTLET_JOB_ID = "model-gauntlet"
 GAUNTLET_MISFIRE_GRACE_SECONDS = 3600
+
+# Last month's cost summary on Telegram, on the 1st at 11:10 Sydney time; 12:10 and 13:10 send it
+# only if 11:10 failed or was missed, as the digest's retries do. The ledger's months are UTC
+# (worker/db/digest.py `month_bounds`, as `GET /ops/cost` reads them), and 11:00 on the 1st in
+# Sydney is past midnight UTC in both AEST and AEDT, so the month it reports has closed.
+MONTHLY_COST_SCHEDULE = "10 11,12,13 1 * *"
+MONTHLY_COST_JOB_ID = "monthly-cost"
+MONTHLY_COST_MISFIRE_GRACE_SECONDS = 1800
 
 # The watchdog every five minutes from :02 (worker/watchdog/run.py). Every other job starts on a
 # minute that is a multiple of five, or three past one (:00, :03, :05, :18 and so on), so the
@@ -190,6 +200,13 @@ JOBS: tuple[Job, ...] = (
         ALERT_MISFIRE_GRACE_SECONDS,
     ),
     Job(
+        MONTHLY_COST_JOB_ID, "Monthly cost summary", MONTHLY_COST_SCHEDULE, DIGEST_TIMEZONE,
+        JobKind.CODE,
+        "On the 1st, sends Telegram last month's AI spend from the cost ledger, by stage and "
+        "model; 12:10 and 13:10 send it only if 11:10 did not.",
+        MONTHLY_COST_MISFIRE_GRACE_SECONDS,
+    ),
+    Job(
         DISCOVERY_JOB_ID, "Discovery search", DISCOVERY_SCHEDULE, DIGEST_TIMEZONE, JobKind.CODE,
         "Searches the web for feeds worth adding and queues each new one as a candidate; it "
         "adds no source itself.",
@@ -204,13 +221,14 @@ JOBS: tuple[Job, ...] = (
     Job(
         MODEL_SCAN_JOB_ID, "Model scan", MODEL_SCAN_SCHEDULE, DIGEST_TIMEZONE, JobKind.CODE,
         "Reads OpenRouter's public model list and checks the enrichment models against the "
-        "price and capability rules, dropping any that fail; it calls no model.",
+        "price and capability rules, dropping any that fail and telling Telegram when one is "
+        "dropped or comes back; it calls no model.",
         MODEL_SCAN_MISFIRE_GRACE_SECONDS,
     ),
     Job(
         GAUNTLET_JOB_ID, "Model gauntlet", GAUNTLET_SCHEDULE, DIGEST_TIMEZONE, JobKind.AI,
         "Runs the current enrichment models and up to two challengers on a labelled test set; "
-        "a better challenger is proposed for review, never switched to.",
+        "a better challenger is sent to Telegram for the owner to decide, never switched to.",
         GAUNTLET_MISFIRE_GRACE_SECONDS,
     ),
     Job(

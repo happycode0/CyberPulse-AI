@@ -36,15 +36,16 @@ The worker is already updated, so in its step 1 only try the wake. In short:
 2. Build the package (`python3 ops/build-paperclip-package.py`) and import it: **Company Settings →
    Import → Replace**, with **Start imported agents and routines paused** ticked. Don't press
    **Activate selected**.
-3. Check DECKARD's four desk skills, TELETRAAN on `qwen/qwen3.8-flash`, RIPPERDOC reporting to
-   MORPHEUS, SERAPH's `{"job": "pipeline"}` payload, and 8 paused routines with the crons in
-   [4a step 7](../wiki/stage-4a-paperclip-setup.md#7--create-the-routines).
+3. Check DECKARD's four desk skills, TELETRAAN on `qwen/qwen3.8-flash`, SERAPH's
+   `{"job": "pipeline"}` payload, and 5 paused routines with the crons in
+   [4a step 7](../wiki/stage-4a-paperclip-setup.md#7--create-the-routines). RIPPERDOC is not in
+   the package any more: step 8.
 4. Terminate ZION, BLASTER, WINTERMUTE, TRON, ROGUE, PROWL, LIBRARIAN and LINK (the console
    snippet archives their routines first), then untick them in the OpenRouter connector's
    permissions.
 5. Set the budgets (in cents): MORPHEUS 200, TELETRAAN 100, DECKARD 200, VOIGHT 200, TACHIKOMA
-   100, RIPPERDOC 50, WHEELJACK 100. The company stays at 1200.
-6. Smoke-test DECKARD, TELETRAAN and RIPPERDOC, one at a time, pausing each straight after.
+   100, WHEELJACK 100. The company stays at 1200.
+6. Smoke-test DECKARD and TELETRAAN, one at a time, pausing each straight after.
 7. Leave everything paused.
 
 **Then resume SERAPH.** It is an `http` agent: Paperclip calls the worker, no model runs and no
@@ -61,7 +62,7 @@ docker compose exec -T worker python -m worker --pin-golden-set </dev/null
 
 ## 4. Before any AI agent runs: move the agents off the server
 
-The 7 AI agents run as processes inside the Paperclip server's container and inherit its
+The 6 AI agents run as processes inside the Paperclip server's container and inherit its
 environment: the database superuser password, the auth signing secret and the ops token
 ([threat model, risk 1](../threat-model.md#open-risks-ranked), **Critical** while any of them
 runs). Paperclip's **Environments** feature (experimental) runs agents on another machine
@@ -86,9 +87,9 @@ and pause any agent spending faster than its monthly budget ÷ 30 a day.
 
 | When | Resume | Switch on |
 |---|---|---|
-| Day 1 | MORPHEUS, DECKARD, RIPPERDOC | Daily editorial, Desk digest, Monthly cost review |
-| Day 3 | VOIGHT | Daily QA sample, Follow-up, Model scan |
-| Day 5 | TACHIKOMA | Source discovery (it finds little until the worker has a Tavily key), Model gauntlet |
+| Day 1 | MORPHEUS, DECKARD | Daily editorial, Desk digest |
+| Day 3 | VOIGHT | Daily QA sample, Follow-up |
+| Day 5 | TACHIKOMA | Source discovery (it finds little until the worker has a Tavily key) |
 | Any time | TELETRAAN | Nothing: it wakes on incidents only |
 | Last | WHEELJACK | Only after risks 3 and 4: its own GitHub identity, branch protection on `main`, CI on pull requests |
 
@@ -122,3 +123,25 @@ and pause any agent spending faster than its monthly budget ÷ 30 a day.
 - Keys in the VM's `.env`, never in a Paperclip form: Telegram (alerts), Tavily (source
   discovery), NVD and YouTube ([Tokens](tokens.md)).
 - The incident webhook and its hostname allowlist; the engineer token and branch protection.
+
+## 8. Retire RIPPERDOC (10 minutes)
+
+RIPPERDOC was retired on 2026-10-20
+([4b, card 7](../wiki/stage-4b-the-crew.md#7-ripperdoc-retired-2026-10-20)). Once the worker
+with the change is deployed, it sends you RIPPERDOC's notices on Telegram itself: a model the
+nightly scan drops or lets back in, each model proposal from the Sunday gauntlet, and last
+month's AI cost at 11:10 on the 1st. The code cannot touch Paperclip, so these are yours:
+
+1. **Pause RIPPERDOC**: its page → **Pause agent**. Pause, not terminate: its runs, issues and
+   costs stay in the history either way, and a paused agent costs nothing.
+2. **Archive its three routines**: **Routines** → *Model scan*, *Model gauntlet* and *Monthly
+   cost review* → each one's page → **Archive**. A fresh import no longer has them, but it does
+   not remove the ones already there.
+3. **Close its open tickets**: cancel CYB-90 (the "over the ceiling" alarm was false: the model
+   has capable routes under the ceiling, which is what the guard checks) and CYB-136. Close
+   CYB-91, WHEELJACK's follow-on to CYB-90, for the same reason.
+4. **The OpenRouter connector**: **Connectors → My OpenRouter API → Permissions**, untick
+   RIPPERDOC.
+5. Any `[MODEL]` proposal still open is sent to you on Telegram after the next Sunday gauntlet.
+   It is yours to decide now, not MORPHEUS's: promote it with a reviewed edit to
+   `config/models.yaml`, or do nothing.

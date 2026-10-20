@@ -52,7 +52,6 @@ So the whole history of every decision is in the issue log. You read it the same
 | `[QA]` | DECKARD, or the daily sample | VOIGHT |
 | `[INCIDENT]` | worker health checks | TELETRAAN |
 | `[ENGINEERING]` | TELETRAAN · MORPHEUS | WHEELJACK |
-| `[MODEL]` | RIPPERDOC | MORPHEUS |
 
 ---
 
@@ -115,15 +114,18 @@ The agent that *finds* a source can never *activate* it. That split is the point
 ```text
 every AI call ──► the worker's cost ledger (the real billed cost, from OpenRouter)
                     ├─ spend running ahead of plan ──► cheaper degradation tier, BEFORE spending more
-                    └─ RIPPERDOC's monthly review, 09:00 on the 1st ──► MORPHEUS
+                    └─ last month's summary, 11:10 on the 1st ──► Telegram ──► YOU
 
-RIPPERDOC daily scan + weekly test ──► [MODEL] proposal ──► MORPHEUS approves or declines
-model failing an agent             ──► RIPPERDOC drops that agent down its fallback chain at once
+worker's nightly scan ──► model fails the price guard ──► dropped from its chain at once ──► Telegram
+worker's Sunday test  ──► model proposal              ──► Telegram ──► YOU approve or ignore
+model failing a Paperclip agent ──► TELETRAAN ──► YOU change that agent's model
 ```
 
-A `[MODEL]` proposal carries the worker's own cost figures: every call went through the price
-guard, and the cost per event is what OpenRouter billed. RIPPERDOC passes them on unchanged and
-never approves its own proposal.
+No agent sits in this loop since RIPPERDOC was retired on 2026-10-20
+([4b](stage-4b-the-crew.md#7-ripperdoc-retired-2026-10-20)): it only passed on what the worker had
+measured. A proposal carries the worker's own cost figures: every call went through the price
+guard, and the cost per event is what OpenRouter billed. Nobody approves their own proposal: the
+worker proposes, and you decide.
 
 Three stops are stacked on top of each other, so a runaway agent cannot run up a bill:
 
@@ -165,8 +167,10 @@ The prompt asks nicely. These are the controls that actually enforce it:
 
 ## What you (the board) do
 
-- **Approvals inbox** — new hires, budget changes, and `[MODEL]` proposals MORPHEUS has approved.
-  Approving one changes nothing by itself: the change is a reviewed edit to `config/models.yaml`.
+- **Approvals inbox** — new hires and budget changes.
+- **Telegram** — besides the digest and alerts, the worker's model notices and each month's AI
+  cost. A model proposal is yours to decide: promoting it is a reviewed edit to
+  `config/models.yaml`, and doing nothing declines it.
 - **The daily report** — MORPHEUS's 07:30 comment is the one thing to read each day.
 - **`needs human`** — the circuit breaker or VOIGHT is asking you something.
 - **Pause** — any agent, any time, from its page. Collection and publishing carry on without it.
