@@ -21,6 +21,7 @@ from worker.db.jobs import JobRun
 from worker.db.sources import RegistryRow
 from worker.notify.telegram import Telegram
 from worker.ops_api import OpsApi, Reply
+from worker.publish import run as publish_run
 from worker.publish.build import build_all
 from worker.publish.push import push_data
 from worker.publish.validate import ValidationFailure
@@ -145,7 +146,9 @@ async def test_a_failed_push_keeps_the_data_and_the_next_publish_pushes_it(
     async def published(**kwargs):
         return [repo / "data" / "live.json"]
 
+    deploys = []
     monkeypatch.setattr(scheduler, "publish_now", published)
+    monkeypatch.setattr(publish_run, "request_deploy", lambda: deploys.append(1) or True)
     caplog.set_level(logging.INFO)
     await scheduler._publish("the fast lane", stands="collection is unaffected")
     assert [(r.job, r.completed, r.note) for r in recorded] == [
@@ -154,12 +157,14 @@ async def test_a_failed_push_keeps_the_data_and_the_next_publish_pushes_it(
     ]
     assert (repo / "data" / "live.json").read_text() == '{"events": []}\n'
     assert "fake-publish-token-TESTONLY" not in caplog.text
+    assert deploys == []
 
-    # GitHub is back: the next scheduled publish pushes what was kept.
+    # GitHub is back: the next scheduled publish pushes what was kept, and asks for a deploy.
     await asyncio.to_thread(git, tmp_path, "init", "--bare", str(tmp_path / "remote.git"))
     await scheduler._publish("the fast lane", stands="collection is unaffected")
     assert (recorded[-1].job, recorded[-1].completed, recorded[-1].changed) == ("push", True, True)
     assert git(tmp_path / "remote.git", "rev-parse", "--verify", "refs/heads/data")
+    assert deploys == [1]
 
 
 def test_push_failures_past_their_limit_open_a_push_failure_incident():

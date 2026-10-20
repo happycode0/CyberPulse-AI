@@ -394,8 +394,12 @@ workflow was disabled.
   after a long quiet spell. Enable it from the banner.
 - **To rebuild now:** **Actions → pages → Run workflow** on `main`.
 
-Pushes to `data` do not start the workflow; only its schedule does. That should be hourly, at
-:12 past (`- cron: "12 * * * *"`); until the owner changes it, it is every 15 minutes.
+Pushes to `data` do not start the workflow by themselves. After each push that changed `data`,
+the worker sends GitHub a `data-published` event, and that starts it. In the worker log, `could
+not ask GitHub to deploy the site` or `GitHub refused to deploy the site (403)` means that request
+failed, and the site waits for the schedule (`- cron: "12 * * * *"`). GitHub throttles that cron
+to every 4-10 hours. A 403 or 404 usually means the publish token lost Contents write or this
+repository ([tokens](tokens.md)).
 
 **Stop and decide yourself** if the deploy fails on a permissions error. Do not widen the
 workflow's `permissions:` block without a review.

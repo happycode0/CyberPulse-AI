@@ -6,9 +6,11 @@ network, no real remote. The token is a fake; the point of
 in `.git/config`, real or fake.
 """
 
+import json
 import subprocess
 from pathlib import Path
 
+import httpx
 import pytest
 
 from worker.publish import push as push_mod
@@ -150,3 +152,57 @@ def test_a_host_knows_whether_it_can_push(tmp_repo, monkeypatch):
     assert push_mod.publish_token_configured() is True
     monkeypatch.delenv("CYBERPULSE_PUBLISH_TOKEN")
     assert push_mod.publish_token_configured() is False
+
+
+# ─── Asking GitHub to deploy ──────────────────────────────────────────────────────────────────────
+
+
+def deploy_with(monkeypatch, handler) -> tuple[bool, list[httpx.Request]]:
+    sent: list[httpx.Request] = []
+
+    def record(request):
+        sent.append(request)
+        return handler(request)
+
+    monkeypatch.setenv("CYBERPULSE_PUBLISH_TOKEN", "github_pat_" + "a" * 22)
+    return push_mod.request_deploy(transport=httpx.MockTransport(record)), sent
+
+
+def test_a_deploy_request_sends_the_event_pages_yml_listens_for(monkeypatch):
+    accepted, sent = deploy_with(monkeypatch, lambda r: httpx.Response(204))
+    assert accepted is True
+    (request,) = sent
+    assert request.method == "POST"
+    assert request.url == "https://api.github.com/repos/happycode0/CyberPulse-AI/dispatches"
+    assert request.headers["Authorization"] == "Bearer github_pat_" + "a" * 22
+    assert json.loads(request.content) == {"event_type": push_mod.DEPLOY_EVENT}
+    workflow = (Path(__file__).parents[2] / ".github/workflows/pages.yml").read_text()
+    assert f"types: [{push_mod.DEPLOY_EVENT}]" in workflow
+
+
+def test_a_refused_deploy_request_is_logged_without_the_token(monkeypatch, caplog):
+    accepted, _ = deploy_with(monkeypatch, lambda r: httpx.Response(403, text="github_pat_x"))
+    assert accepted is False
+    assert "refused to deploy the site (403)" in caplog.text
+    assert "github_pat" not in caplog.text
+
+
+def test_an_unreachable_github_is_not_a_failed_push(monkeypatch, caplog):
+    def down(request):
+        raise httpx.ConnectError("no route", request=request)
+
+    accepted, _ = deploy_with(monkeypatch, down)
+    assert accepted is False
+    assert "ConnectError" in caplog.text
+
+
+def test_a_host_without_a_token_asks_for_no_deploy(monkeypatch):
+    monkeypatch.delenv("CYBERPULSE_PUBLISH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.setattr(push_mod, "get_settings", lambda: type("S", (), {
+        "github_token": None, "github_repository": "o/r", "user_agent": "t",
+    })())  # fmt: skip
+    sent = []
+    transport = httpx.MockTransport(lambda r: sent.append(r) or httpx.Response(204))
+    assert push_mod.request_deploy(transport=transport) is False
+    assert sent == []
