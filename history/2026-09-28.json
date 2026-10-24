@@ -1,0 +1,358 @@
+{
+  "generated_at": "2026-10-24T20:01:50.009422Z",
+  "date": "2026-09-28",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 2,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0,
+    "unknown": 1,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001874",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-28T19:18:01Z",
+      "last_seen": "2026-10-23T21:00:00.099696Z",
+      "last_material_update": "2026-10-01T05:54:41Z",
+      "last_independent_confirmation": "2026-09-29T21:31:29Z",
+      "status": "archived",
+      "title": "Apple CoreGraphics PoC Emerges as WhatsApp PDF Checks Hint at Possible Delivery Path",
+      "summary": "Apple CoreGraphics flaw CVE-2026-86950 has a proof-of-concept that shows a malicious PDF with a crafted font can crash iPhones and Macs. The flaw is high severity and has been listed on the KEV.",
+      "why_it_matters": "The vulnerability has a CVSS score of 8.8 and is listed on the KEV, indicating it is a high-risk flaw that could be exploited in the wild. The PoC demonstrates that a crafted PDF can crash devices, potentially enabling further attacks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "research",
+        "news",
+        "advisory",
+        "analysis",
+        "zero-day"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.98125,
+        "novelty": 0.008807338720037803,
+        "prominence": 0.03963418917796126
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Apple"
+        ],
+        "products": [
+          "CoreGraphics",
+          "PDF",
+          "WhatsApp"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-86950",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.01242,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-29",
+            "due_date": "2026-10-13"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1204.002",
+          "name": "User Execution: Malicious File",
+          "confidence": 0.72,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn",
+            "sans_isc",
+            "cisa_kev",
+            "darkreading"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-86950 as exploited in the wild, added 2026-09-29, with US federal agencies due to fix it by 2026-10-13.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-86950 is rated 8.8 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-86950"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-86950 being exploited in the next 30 days at 1.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-86950"
+          ]
+        },
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.98125,
+          "evidence": [
+            "thn",
+            "sans_isc",
+            "cisa_kev",
+            "darkreading"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/apple-patches-coregraphics-flaw.html",
+          "published": "2026-09-28T19:18:01Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33376",
+          "published": "2026-09-28T22:35:35Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-86950",
+          "published": "2026-09-29T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/cyberattacks-data-breaches/apple-zero-day-vulnerability-weaponized-targeted-attacks",
+          "published": "2026-09-29T21:31:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/apple-coregraphics-poc-emerges-as.html",
+          "published": "2026-10-01T05:54:41Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T19:18:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-28T22:35:35Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T21:31:29Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T05:54:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        }
+      ],
+      "tags": [
+        "coregraphics",
+        "pdf",
+        "poc",
+        "apple",
+        "iphone"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "4 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002024",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-28T18:35:42Z",
+      "last_seen": "2026-10-14T20:00:00.081026Z",
+      "last_material_update": "2026-09-29T15:12:39Z",
+      "last_independent_confirmation": "2026-09-29T15:12:39Z",
+      "status": "archived",
+      "title": "'NeedyMantis' Provides Long-Term Access to Compromised Networks",
+      "summary": "Microsoft observed a China-based actor using a previously unidentified malware framework in targeted intrusions against telcos, universities, medical, and government-related organizations.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.21434701656728938,
+        "prominence": 0.022881295106185716
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "thn",
+            "darkreading"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/hackers-use-needymantis-to-maintain.html",
+          "published": "2026-09-28T18:35:42Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/threat-intelligence/needymantis-long-term-access-compromised-networks",
+          "published": "2026-09-29T15:12:39Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-28T18:35:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-29T15:12:39Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "reported by Dark Reading (established)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

@@ -1,0 +1,1848 @@
+{
+  "generated_at": "2026-10-24T20:01:50.009422Z",
+  "date": "2026-09-29",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 12,
+    "critical": 5,
+    "high": 2,
+    "medium": 0,
+    "low": 0,
+    "unknown": 5,
+    "directly_reported_in_au": 3,
+    "pending_enrichment": 5
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000068",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-16T17:00:00.099770Z",
+      "last_material_update": "2026-10-09T00:57:43.261637Z",
+      "last_independent_confirmation": null,
+      "status": "resolved",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added CVE‑2026‑76504, a critical Cisco Catalyst SD‑WAN Manager hex‑encoding vulnerability, to its Known Exploited Vulnerabilities catalog after evidence of active exploitation.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.8 and is actively exploited, posing a high risk to federal agencies that use Cisco SD‑WAN Manager. Defenders should prioritize patching to mitigate potential compromise.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "policy",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.0001537988788373781,
+        "prominence": 0.09769015362158683
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA",
+          "Cisco",
+          "Federal Civilian Executive Branch"
+        ],
+        "products": [
+          "Cisco Catalyst SD-WAN Manager"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-104286",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02201,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-10-01",
+            "due_date": "2026-10-04"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-76504",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01819,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-30",
+            "due_date": "2026-10-03"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-86950",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.01242,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-29",
+            "due_date": "2026-10-13"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_advisories"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-104286, CVE-2026-76504 and CVE-2026-86950 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-76504 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 3 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-76504"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-104286 being exploited in the next 30 days at 2.2%, the highest of the 3 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-104286"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/29/cisa-adds-one-known-exploited-vulnerability-catalog",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/30/cisa-adds-one-known-exploited-vulnerability-catalog",
+          "published": "2026-09-30T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/10/01/cisa-adds-one-known-exploited-vulnerability-catalog",
+          "published": "2026-10-01T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-86950",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-104286",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T00:57:43.261637Z",
+          "type": "NEW_MITIGATION",
+          "summary": "Cisco revised its Catalyst SD-WAN Manager advisory to version 1.1 on 2 October, adding a Live Protect shield that offers temporary partial protection while customers schedule upgrades to fixed releases.",
+          "sources": [
+            "deckard",
+            "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-webauth-xr8beuuU"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "kev-catalog",
+        "cisa",
+        "vulnerability",
+        "cisco-sd-wan",
+        "active-exploitation",
+        "policy"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "government target"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000040",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-22T18:00:00.102224Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Anjvision YSSD-RTMP-H5",
+      "summary": "Anjvision YSSD-RTMP-H5 firmware version 3.3.2.4_build_2024-12-26 is affected by multiple CVEs that allow remote code execution and full device takeover. The flaws have CVSS scores up to 9.8 and could let attackers access sensitive data, user accounts, and execute OS-level commands.",
+      "why_it_matters": "These high-severity flaws (CVSS 9.8) enable attackers to gain full control of affected devices, potentially exposing sensitive data and compromising network security.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0006424326723016682,
+        "prominence": 0.0499185271495431
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anjvision"
+        ],
+        "products": [
+          "Anjvision YSSD-RTMP-H5"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-100291",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00331,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100292",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00288,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100293",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00177,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100294",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00232,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100295",
+          "cvss": {
+            "score": 5.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00206,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100296",
+          "cvss": {
+            "score": 7.2,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:N/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00341,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100297",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00187,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100298",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00286,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-100299",
+          "cvss": {
+            "score": 7.0,
+            "vector": "CVSS:4.0/AV:P/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00087,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.55,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-100291 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 9 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-100291"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-100296 being exploited in the next 30 days at under 1%, the highest of the 9 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-100296"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-05",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "firmware",
+        "cve",
+        "critical",
+        "rce",
+        "multiple-cves"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000043",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-22T18:00:00.102224Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Toptech TMS7 and TopHAT",
+      "summary": "Toptech TMS7 and TopHAT version 7.6.3 are vulnerable to multiple high-severity CVEs, including CVE-2026-71379 with a CVSS of 10.0, potentially allowing attackers to execute arbitrary code or access critical data.",
+      "why_it_matters": "The vulnerabilities have a CVSS score of 10.0 and are rated critical, meaning attackers could gain arbitrary code execution or access critical data.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0006424326723016682,
+        "prominence": 0.0499185271495431
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "no Australian source reported"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Toptech"
+        ],
+        "products": [
+          "TMS7",
+          "TopHAT"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-63713",
+          "cvss": {
+            "score": 8.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00289,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-68068",
+          "cvss": {
+            "score": 8.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00289,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-68954",
+          "cvss": {
+            "score": 8.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00289,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-69662",
+          "cvss": {
+            "score": 2.1,
+            "vector": "CVSS:4.0/AV:A/AC:H/AT:N/PR:L/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00187,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-70356",
+          "cvss": {
+            "score": 9.4,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00395,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-71189",
+          "cvss": {
+            "score": 4.8,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:A/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00186,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-71302",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:A/VC:H/VI:H/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00287,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-71379",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00442,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-72507",
+          "cvss": {
+            "score": 8.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00289,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-72510",
+          "cvss": {
+            "score": 8.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00289,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-71379 is rated 10.0 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 10 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-71379"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-71379 being exploited in the next 30 days at under 1%, the highest of the 10 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-71379"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-02",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "ics",
+        "cisa",
+        "toptech",
+        "tms7",
+        "tophat"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000038",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-20T16:00:00.101497Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Viidure Dashcam Android Application",
+      "summary": "Vulnerabilities in the Viidure Dashcam Android Application allow attackers to access or modify sensitive data and system files, potentially compromising the platform. Affected versions are up to 3.3.1.260403, with CVE-2026-94204 and CVE-2026-96587.",
+      "why_it_matters": "The CVEs have CVSS scores of 8.7 and 10.0, indicating high to critical risk, and could allow attackers to alter or delete critical system files, threatening platform integrity. Defenders should patch affected versions immediately.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0007978100243420608,
+        "prominence": 0.0498518983053988
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Viidure"
+        ],
+        "products": [
+          "Viidure Dashcam Android Application"
+        ],
+        "countries": [],
+        "industries": [
+          "critical-infrastructure"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-94204",
+          "cvss": {
+            "score": 8.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00268,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-96587",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00344,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-96587 is rated 10.0 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-96587"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-96587 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-96587"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-07",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "android-app",
+        "permission-assignment",
+        "hard-coded-credentials",
+        "critical-infrastructure",
+        "critical-severity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000042",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-22T18:00:00.102224Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "VIVOTEK Camera Firmware",
+      "summary": "A critical vulnerability (CVE-2026-22755) in VIVOTEK camera firmware allows remote command execution with root privileges on multiple V and C series models.",
+      "why_it_matters": "The flaw has a CVSS score of 9.3 and permits attackers to run arbitrary code with root privileges, potentially compromising entire camera systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0007978100243420608,
+        "prominence": 0.0498518983053988
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "VIVOTEK"
+        ],
+        "products": [
+          "VIVOTEK Camera Firmware",
+          "V Series model_FD9187",
+          "V Series model_FD9189",
+          "V Series model_FD9365",
+          "V Series model_FD9387",
+          "V Series model_FD9389",
+          "V Series model_FD9391",
+          "C Series model_FE9180",
+          "V Series model_FE9191"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-22755",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P/AU:Y/U:Amber",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.20182,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.65,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-22755 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-22755"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-22755 being exploited in the next 30 days at 20%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-22755"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-03",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "remote-code-execution",
+        "camera-firmware",
+        "critical",
+        "cisa",
+        "vivotek"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000041",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-22T18:00:00.102224Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Baicells Nova 430H",
+      "summary": "A vulnerability in Baicells Nova 430H eNodeB allows attackers to inject malformed messages that can cause a denial-of-service.",
+      "why_it_matters": "The flaw has a CVSS score of 8.3 and can lead to denial-of-service on communications equipment, impacting critical infrastructure sectors.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.06160392464975143,
+        "prominence": 0.049771896236826
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Baicells Technologies"
+        ],
+        "products": [
+          "Baicells Nova 430H"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "telecommunications",
+          "technology"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-96274",
+          "cvss": {
+            "score": 8.3,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00159,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-96274 is rated 8.3 (high) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-96274"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-96274 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-96274"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-04",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "denial-of-service",
+        "critical-infrastructure",
+        "communications",
+        "information-technology"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "high severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000044",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-29T12:00:00Z",
+      "last_seen": "2026-10-22T18:00:00.102224Z",
+      "last_material_update": "2026-09-29T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Lantronix G520 Series Cellular Gateway",
+      "summary": "Lantronix G520 Series Cellular Gateway devices are vulnerable to two CVEs that allow attackers to execute arbitrary code with root privileges via cross-site scripting and improper cryptographic signature verification.",
+      "why_it_matters": "The vulnerabilities have a CVSS score of 7.7 and could allow attackers to gain root privileges, enabling arbitrary code execution on affected gateways.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.85,
+        "novelty": 0.05488285820471539,
+        "prominence": 0.04954741921898338
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "US advisory",
+          "No Australian source reported"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Lantronix"
+        ],
+        "products": [
+          "Lantronix G520 Series Cellular Gateway"
+        ],
+        "countries": [],
+        "industries": [
+          "transport"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-84409",
+          "cvss": {
+            "score": 7.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00391,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-91191",
+          "cvss": {
+            "score": 7.7,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00209,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 1.0,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-91191 is rated 7.7 (high) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-91191"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-84409 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-84409"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-01",
+          "published": "2026-09-29T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "cross-site-scripting",
+        "cryptographic-signature",
+        "transportation",
+        "vulnerability",
+        "high-severity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "high severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004768",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-29T14:00:00Z",
+      "last_seen": "2026-10-24T20:00:00.125539Z",
+      "last_material_update": "2026-09-29T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "New resources on transparency for use of AI and automated decision-making",
+      "summary": "Information that must be included in a privacy policy for APP entities who have arranged for a computer program to make or inform decisions that significantly affect individuals’ rights or interests",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.85,
+        "novelty": 0.27262678481678654,
+        "prominence": 0.02910964716807689
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "published by an Australian government authority (Office of the Australian Information Commissioner)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "oaic",
+          "url": "https://www.oaic.gov.au/news/media-centre/new-resources-on-transparency-for-use-of-ai-and-automated-decision-making",
+          "published": "2026-09-29T14:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "oaic",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Office of the Australian Information Commissioner",
+          "sources": [
+            "oaic"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 42,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Office of the Australian Information Commissioner (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001950",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-29T20:39:11Z",
+      "last_seen": "2026-10-01T11:38:57.997809Z",
+      "last_material_update": "2026-09-29T20:39:11Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Trump, tech executives sign ‘morally binding’ AI document",
+      "summary": "US President Donald Trump says he is considering creating a 10-person committee to oversee the AI sector, after meeting with tech executives at the White House. The president also said the tech executives signed an agreement that is “morally binding,” without providing details. Pressure is mounting on the Trump administration to address risks posed by AI, after OpenAI... The post Trump, tech executives sign ‘morally binding’ AI document appeared first on InnovationAus.com .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.31227660587359546,
+        "prominence": 0.02902087252589546
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/trump-tech-executives-sign-morally-binding-ai-document/",
+          "published": "2026-09-29T20:39:11Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T20:39:11Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 28,
+        "tier": "routine",
+        "reasons": [
+          "reported in Australia",
+          "reported by Innovation Australia (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000112",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-29T04:52:47Z",
+      "last_seen": "2026-10-01T23:30:00.101477Z",
+      "last_material_update": "2026-09-29T04:52:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CommBank warns of criminals using its logo to drive investment scams",
+      "summary": "“They’re using our colour, they’re using our logo, they’re using variations of our name. This is not CommSec,” big four bank says.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.24866671034095852,
+        "prominence": 0.024768531308842
+      },
+      "au": {
+        "relevance": 0.75,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian organisation (CommBank)",
+          "reported by an Australian source"
+        ],
+        "sectors": [
+          "finance"
+        ],
+        "soci_asset_classes": [
+          "financial services and markets"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14246-commbank-warns-of-criminals-using-its-logo-to-drive-investment-scams",
+          "published": "2026-09-29T04:52:47Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T04:52:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 47,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by CyberDaily AU (specialist)",
+          "critical infrastructure (financial services and markets) involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002128",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-29T21:39:27Z",
+      "last_seen": "2026-10-19T00:00:00.177058Z",
+      "last_material_update": "2026-09-29T21:39:27Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Phishing Abuses RMM Tools for Persistent Access",
+      "summary": "Microsoft observed phishing campaigns that abused MSP360 RMM to deploy ScreenConnect, creating redundant remote-access channels for follow-on activity The post Phishing Abuses RMM Tools for Persistent Access appeared first on Microsoft Security Blog .",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.75,
+        "novelty": 0.3168391078738977,
+        "prominence": 0.02241475941371103
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/29/phishing-abuses-rmm-tools-persistent-access/",
+          "published": "2026-09-29T21:39:27Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T21:39:27Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Microsoft (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001756",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-29T21:30:08Z",
+      "last_seen": "2026-10-01T12:00:00.178361Z",
+      "last_material_update": "2026-09-29T21:30:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Signal adds encypted local backup support to iOS, desktop apps",
+      "summary": "Signal, the secure messaging app, released version 8.30, completing the rollout of its secure backups feature across all supported operating systems (Android, iOS, Linux, macOS, and Windows). [...]",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3161294557702593,
+        "prominence": 0.022303825124732283
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/signal-adds-encypted-local-backup-support-to-ios-desktop-apps/",
+          "published": "2026-09-29T21:30:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-29T21:30:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 17,
+        "tier": "routine",
+        "reasons": [
+          "reported by Bleeping Computer (established)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

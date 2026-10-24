@@ -1,0 +1,177 @@
+{
+  "generated_at": "2026-10-24T20:01:50.009422Z",
+  "date": "2026-09-18",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000131",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-18T00:00:00Z",
+      "last_seen": "2026-10-23T21:00:00.099696Z",
+      "last_material_update": "2026-09-18T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2025-39682: Linux Kernel Linux Kernel Improper Check for Unusual or Exceptional Conditions Vulnerability",
+      "summary": "A Linux kernel flaw lets a zero-length TLS record bypass normal checks, potentially causing incorrect handling of subsequent TLS data. The issue targets end-of-life or end-of-service kernel versions, and users are advised to stop using them or upgrade.",
+      "why_it_matters": "The vulnerability carries a CVSS score of 9.8 and is listed in the KEV, indicating active exploitation. It could allow attackers to manipulate TLS processing, potentially leading to data corruption or denial of service.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.00020828300491323852,
+        "prominence": 0.04142119890656312
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Linux Kernel"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2025-39682",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.0288,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-18",
+            "due_date": "2026-09-21"
+          },
+          "advisories": [
+            {
+              "id": "CVE-2025-39682",
+              "source": "osv",
+              "severity": null,
+              "reviewed": false,
+              "packages": [
+                {
+                  "ecosystem": "Linux",
+                  "name": "Kernel",
+                  "fixed": [
+                    "6.1.149",
+                    "6.6.103",
+                    "6.12.44",
+                    "6.16.4"
+                  ]
+                }
+              ],
+              "url": "https://osv.dev/vulnerability/CVE-2025-39682"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2025-39682 as exploited in the wild, added 2026-09-18, with US federal agencies due to fix it by 2026-09-21.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2025-39682 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2025-39682"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2025-39682 being exploited in the next 30 days at 2.9%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2025-39682"
+          ]
+        },
+        {
+          "text": "A fix for Kernel (Linux) is published in 6.1.149, 6.6.103, 6.12.44 and 6.16.4, per CVE-2025-39682.",
+          "confidence": 0.6,
+          "evidence": [
+            "CVE-2025-39682"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-39682",
+          "published": "2026-09-18T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-18T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "linux-kernel",
+        "tls",
+        "zero-length",
+        "kev",
+        "critical",
+        "vulnerability"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

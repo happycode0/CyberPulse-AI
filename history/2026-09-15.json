@@ -1,0 +1,347 @@
+{
+  "generated_at": "2026-10-24T20:01:50.009422Z",
+  "date": "2026-09-15",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 2,
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000065",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Wärtsilä FOS-Onboard (Update A)",
+      "summary": "Wärtsilä FOS-Onboard Update A contains two critical CVEs that could let attackers deliver unauthorized updates, execute code, or steal credentials, impacting transportation systems worldwide.",
+      "why_it_matters": "The vulnerabilities have CVSS scores of 9.5 and 9.3, indicating high risk. Exploitation could allow attackers to execute code or impersonate privileged clients, potentially compromising transportation infrastructure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0006424328090563208,
+        "prominence": 0.049918530188099684
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Affected transportation systems",
+          "No Australian source reported"
+        ],
+        "sectors": [
+          "transport"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Wärtsilä"
+        ],
+        "products": [
+          "Wärtsilä FOS-Onboard (Update A)",
+          "FOS-Onboard 5.07.0923.01"
+        ],
+        "countries": [],
+        "industries": [
+          "transport"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-78225",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00508,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-81855",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00589,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1212",
+          "name": "Exploitation for Credential Access",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-78225 is rated 9.5 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-78225"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-81855 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-81855"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-258-02",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "hardcoded-key",
+        "transportation",
+        "cisa",
+        "wartsila",
+        "fos-onboard"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 66,
+        "tier": "key",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "transport sector target",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000067",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-15T12:00:00Z",
+      "last_seen": "2026-10-01T16:30:00.035602Z",
+      "last_material_update": "2026-09-15T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "mySCADA myPRO Manager",
+      "summary": "Vulnerabilities in mySCADA myPRO Manager allow attackers to gain privileged management access or send arbitrary SMS via the connected GSM modem. Versions up to 2.1 are affected.",
+      "why_it_matters": "The high CVSS score of 9.3 indicates a severe risk, and the missing authentication could let attackers control critical manufacturing, energy, and transportation systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0007978100234011939,
+        "prominence": 0.04985189828858299
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "mySCADA Technologies"
+        ],
+        "products": [
+          "mySCADA myPRO Manager"
+        ],
+        "countries": [],
+        "industries": [
+          "manufacturing",
+          "energy",
+          "agriculture",
+          "transport"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-73807",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00778,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-82567",
+          "cvss": {
+            "score": 5.3,
+            "vector": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00339,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-73807 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-73807"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-73807 being exploited in the next 30 days at under 1%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-73807"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-258-03",
+          "published": "2026-09-15T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-15T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "missing-authorization",
+        "missing-authentication",
+        "ics",
+        "scada",
+        "critical-infrastructure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}
