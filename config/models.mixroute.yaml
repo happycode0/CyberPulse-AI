@@ -22,35 +22,42 @@
 # Models under `models` but in no tier are the Sunday gauntlet's challengers on MixRoute.
 
 tiers:
-  # Classification, entity extraction, tagging. Ends in a paid model: a free one can go.
-  tier0_free:
-    - zhipu/glm-4-flash                   # free
-    - openai/gpt-5-nano                   # $0.05 / $0.40
-    - zhipu/glm-4.7-flashx                # $0.07 / $0.40
+  # Revised by the owner on 2026-10-30 after a live test: one strict-schema call to each model
+  # through MixRouteClient, max_tokens 2500. Only three answered the schema:
+  #   deepseek-v4-flash  ok, 289 in / 101 out, $0.00007 a call
+  #   glm-5.3-flash      ok, 60 in / 26 out
+  #   gpt-5-nano         ok, but 640 of its 676 output tokens were reasoning: ~4x deepseek a call
+  # glm-4-flash and glm-4.7-flashx fenced their JSON in ``` and wrote "High" for "high";
+  # qwen3.5-flash wrote "Critical". MixRoute does not hold them to a strict schema, so they are
+  # challengers only. mimo-v2.5-pro answered 402 "taken offline" and is gone from this file.
 
-  # Short summaries, AU relevance reasoning, ambiguous matching. Free first (owner, 2026-10-30):
-  # a brief is short and every answer still passes the schema and the fact checks, and the
-  # gauntlet measures it. The paid models behind it answer when it is busy or refuses.
-  tier1_cheap:
-    - zhipu/glm-4-flash                   # free
+  # Classification, entity extraction, tagging. Ends in a paid model.
+  tier0_free:
     - deepseek/deepseek-v4-flash          # $0.14 / $0.28
-    - alibaba/qwen3.5-flash               # $0.10 / $0.40
+    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
+    - openai/gpt-5-nano                   # $0.05 / $0.40, reasoning
+
+  # Short summaries, AU relevance reasoning, ambiguous matching.
+  tier1_cheap:
+    - deepseek/deepseek-v4-flash
+    - zhipu/glm-5.3-flash
+    - openai/gpt-5-nano
 
   # Severity, MITRE mapping, editorial judgment.
   tier2_strong:
-    - deepseek/deepseek-v4-flash          # $0.14 / $0.28
-    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
-    - xiaomi/mimo-v2.5-pro                # $0.41 / $0.819, last resort
+    - deepseek/deepseek-v4-flash
+    - zhipu/glm-5.3-flash
+    - openai/gpt-5-nano
 
-  # WHEELJACK.
+  # WHEELJACK, which the crew runs on deepseek-v4-flash too.
   code:
-    - xiaomi/mimo-v2.5-pro                # $0.41 / $0.819
-    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
+    - deepseek/deepseek-v4-flash
+    - openai/gpt-5-nano
 
-  # TELETRAAN. No vendor here may appear under `code` (two-person rule; the loader enforces it).
+  # TELETRAAN, which the crew runs on glm-5.3-flash. No vendor here may appear under `code`
+  # (two-person rule; the loader enforces it).
   audit:
-    - alibaba/qwen3.5-flash               # $0.10 / $0.40
-    - deepseek/deepseek-v4-flash          # $0.14 / $0.28
+    - zhipu/glm-5.3-flash
 
 models:
   zhipu/glm-4-flash:
@@ -97,13 +104,9 @@ models:
     # Its documented values are low, high and max; low keeps reasoning tokens down.
     request:
       reasoning_effort: low
-  xiaomi/mimo-v2.5-pro:
-    id: mimo-v2.5-pro
-    in: 0.41
-    out: 0.819
-    cache_read: 0.003
 
-  # Gauntlet challengers only.
+  # Gauntlet challengers only, with glm-4-flash, glm-4.7-flashx and qwen3.5-flash above, which
+  # are in no tier since the live test.
   google/gemini-2.5-flash-lite:
     id: gemini-2.5-flash-lite
     in: 0.10

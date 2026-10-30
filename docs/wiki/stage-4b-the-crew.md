@@ -76,10 +76,11 @@ there is work.
 |---|---|---|---|
 | 1 — CHEAP | `mixroute/deepseek-v4-flash` | DeepSeek | $0.14 / $0.28 / $0.0028 |
 | 2 — STRONG | `mixroute/glm-5.3-flash` | Zhipu | $0.15 / $0.50 / $0.03 |
-| CODE | `mixroute/mimo-v2.5-pro` | Xiaomi | $0.41 / $0.82 / $0.003 |
+| CODE | `mixroute/deepseek-v4-flash` | DeepSeek | the CHEAP model, a different vendor from AUDIT |
 | AUDIT | `mixroute/glm-5.3-flash` | Zhipu | the STRONG model, a different vendor from CODE on purpose |
 
 MixRoute list prices, checked on its marketplace on 2026-10-30; the owner approved the picks.
+CODE was `mimo-v2.5-pro` until a live call the same day: MixRoute answered 402 "taken offline".
 `mixroute/` is the custom OpenCode provider the package gives every AI agent
 ([4a](stage-4a-paperclip-setup.md#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go)):
 MixRoute's OpenAI-compatible API at `https://api.mixroute.ai/v1`, with the crew's own key. A
@@ -582,7 +583,7 @@ exist. Until then a human fixes code.
 |---|---|
 | Name / Title | `WHEELJACK` / `Coder` |
 | Role · Reports to | Engineer · TELETRAAN |
-| Adapter · Model | `opencode_local` · `mixroute/mimo-v2.5-pro` |
+| Adapter · Model | `opencode_local` · `mixroute/deepseek-v4-flash` |
 | Budget · Max daily runs | US$0.40 · 2 |
 | Environment | `CYBERPULSE_ENGINEER_TOKEN` (branch + PR scope) is the only key it is given. Like every `opencode_local` agent it also runs with the server container's environment, its database URL and auth secrets included: [threat model, risk 1](../threat-model.md#open-risks-ranked) |
 | Wakes on | `[ENGINEERING]` issues from TELETRAAN or MORPHEUS. **Never on a timer** |

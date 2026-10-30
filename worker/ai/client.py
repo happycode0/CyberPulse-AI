@@ -65,12 +65,22 @@ MIXROUTE = "mixroute"
 # to this channel (500, 502, 503) and slow (408, 504). No answer at all counts too. So does a
 # request one model refuses (400, 404, 422): a parameter in its reviewed extras it does not take,
 # an id this channel lacks, a schema it will not follow. A refused key (401) is the same for every
-# model, so it is raised at once.
-MIXROUTE_FALL_THROUGH = frozenset({400, 404, 408, 422, 429, 500, 502, 503, 504})
+# model, so it is raised at once. A 402 or 403 falls through only when it says the model is gone
+# (`_MIXROUTE_MODEL_GONE`); one about the key's quota is a `BudgetExhausted`, raised before this
+# set is looked at.
+MIXROUTE_FALL_THROUGH = frozenset({400, 402, 403, 404, 408, 422, 429, 500, 502, 503, 504})
 
 # What a spent MixRoute key says, as `BudgetExhausted.limit_source`: 403 "Token Group Disabled",
 # usually the key's quota (https://mixroute.ai/docs/faq/error-code.md).
 MIXROUTE_KEY_QUOTA = "mixroute_key_quota"
+# But MixRoute answers 402 for a model it has withdrawn too: "The model associated with the
+# service ID has been taken offline. Please use another available model." (mimo-v2.5-pro,
+# 2026-10-30). Such a refusal is one model's, so it falls through; any other 402 or 403, a bare
+# one included, is still read as the key's quota, the safe reading.
+_MIXROUTE_MODEL_GONE = re.compile(
+    r"taken offline|another available model|model (?:is )?(?:not found|unavailable|not available)",
+    re.IGNORECASE,
+)
 
 # OpenAI's rule for json_schema names, which OpenRouter passes on to providers that apply it.
 _SCHEMA_NAME = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -317,6 +327,9 @@ def _mixroute_failure(status: int, error: Any, retry_after: float | None) -> Cal
     if status in (402, 403):
         details = error if isinstance(error, Mapping) else {}
         message = _safe_message(details.get("message"), f"HTTP {status}")
+        if _MIXROUTE_MODEL_GONE.search(message):
+            # One model withdrawn, not the key's money: the next model is tried.
+            return CallFailed(message, status=status, retry_after=retry_after)
         return BudgetExhausted(message, limit_source=MIXROUTE_KEY_QUOTA, retry_after=retry_after)
     return _failure(status, error, retry_after)
 
@@ -653,8 +666,12 @@ class MixRouteClient(OpenRouterClient):
         max_tokens: int,
         attribution: Attribution,
     ) -> Completion:
-        """Each model in turn until one answers. Raises the last failure when none does, and at
-        once for a failure no other model would change: a spent quota or a refused key."""
+        """Each model in turn until one answers usably. Raises the last failure when none does,
+        and at once for a failure no other model would change: a spent quota or a refused key.
+
+        An answer that fails the schema moves on too, its ledger row written: MixRoute does not
+        hold every model to a strict schema (glm-4-flash fenced its JSON and wrote "High" for
+        "high" on 2026-10-30), so the next model may answer where this one did not."""
         validator = _prepare(schema_name, schema, max_tokens)
         last: CallFailed | None = None
         for slug in chain:
@@ -684,16 +701,21 @@ class MixRouteClient(OpenRouterClient):
             )
             # The configured slug, not MixRoute's echo of the id: the ladder, the task states
             # and the gauntlet all name models by slug.
-            return await self._settle(
-                tier,
-                chain[0],
-                payload,
-                validator,
-                attribution,
-                duration_ms,
-                model=slug,
-                upstream=None,
-                cost_usd=cost,
-            )
+            try:
+                return await self._settle(
+                    tier,
+                    chain[0],
+                    payload,
+                    validator,
+                    attribution,
+                    duration_ms,
+                    model=slug,
+                    upstream=None,
+                    cost_usd=cost,
+                )
+            except InvalidOutput as exc:
+                logger.info("ai %s on MixRoute gave an unusable answer (%s); trying the next model",
+                            slug, exc)
+                last = exc
         assert last is not None  # the chain is never empty
         raise last
