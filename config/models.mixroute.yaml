@@ -28,11 +28,13 @@ tiers:
     - openai/gpt-5-nano                   # $0.05 / $0.40
     - zhipu/glm-4.7-flashx                # $0.07 / $0.40
 
-  # Short summaries, AU relevance reasoning, ambiguous matching.
+  # Short summaries, AU relevance reasoning, ambiguous matching. Free first (owner, 2026-10-30):
+  # a brief is short and every answer still passes the schema and the fact checks, and the
+  # gauntlet measures it. The paid models behind it answer when it is busy or refuses.
   tier1_cheap:
+    - zhipu/glm-4-flash                   # free
     - deepseek/deepseek-v4-flash          # $0.14 / $0.28
     - alibaba/qwen3.5-flash               # $0.10 / $0.40
-    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
 
   # Severity, MITRE mapping, editorial judgment.
   tier2_strong:
@@ -52,6 +54,9 @@ tiers:
 
 models:
   zhipu/glm-4-flash:
+    # At most 4,095 output tokens a request (its marketplace page); the worker asks for 2,500.
+    # Its page also says "pay-as-you-go": the key's quota in the console is the stop if MixRoute
+    # starts charging for it, since the ledger would still count it as free.
     id: glm-4-flash
     in: 0
     out: 0

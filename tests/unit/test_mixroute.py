@@ -137,8 +137,13 @@ def test_the_shipped_mixroute_ladder_loads_and_keeps_the_rules():
     assert ladder.slugs() <= set(config.models)
     assert not config.models[ladder.tiers[Tier.FREE][-1]].free
     assert config.models["zhipu/glm-4-flash"].free
-    # The approved picks, in order.
-    assert ladder.tiers[Tier.CHEAP][0] == "deepseek/deepseek-v4-flash"
+    # The approved picks, in order. Tier 1 starts free (owner, 2026-10-30) and ends paid.
+    assert ladder.tiers[Tier.CHEAP] == (
+        "zhipu/glm-4-flash",
+        "deepseek/deepseek-v4-flash",
+        "alibaba/qwen3.5-flash",
+    )
+    assert not config.models[ladder.tiers[Tier.CHEAP][-1]].free
     assert ladder.tiers[Tier.STRONG] == (
         "deepseek/deepseek-v4-flash",
         "zhipu/glm-5.3-flash",
