@@ -60,8 +60,11 @@ async def publish_now(*, now: datetime | None = None) -> list[Path]:
 
 
 def _build(now: datetime) -> list[Path]:
+    settings = get_settings()
     with get_engine().connect() as conn:
-        return build_all(conn, get_settings().data_dir, now=now)
+        return build_all(
+            conn, settings.data_dir, now=now, ai_budget_usd=settings.ai_monthly_budget_usd
+        )
 
 
 async def push_now() -> PushResult | None:

@@ -462,6 +462,29 @@ def test_the_org_chart_draws_no_stray_null(org, tmp_path):
         assert "null" not in text and "undefined" not in text, part
 
 
+def test_a_routine_the_worker_fires_says_so_not_custom_schedule(tmp_path):
+    """Follow-up, Source discovery and Incident are webhook routines (2026-10-30): no cron, run
+    only when the worker has work for them. The page used to call them "Custom schedule"."""
+    org = json.loads(ORG.read_text(encoding="utf-8"))
+    org["routines"] = [
+        {"name": "Daily editorial", "assignee": "MORPHEUS", "cron": "30 7 * * *",
+         "timezone": "Australia/Sydney", "trigger": "schedule", "summary": "s"},
+        {"name": "Follow-up", "assignee": "DECKARD", "cron": None,
+         "timezone": "Australia/Sydney", "trigger": "webhook", "summary": "w"},
+    ]
+    (tmp_path / "org.json").write_text(json.dumps(org), encoding="utf-8")
+    (tmp_path / "draw.mjs").write_text(DRAW_ORG, encoding="utf-8")
+    done = subprocess.run(
+        [NODE, str(tmp_path / "draw.mjs"), str(HUD), str(tmp_path / "org.json")],
+        capture_output=True, text=True, timeout=60, check=False,
+    )
+    assert done.returncode == 0, done.stderr
+    routines = json.loads(done.stdout)["routines"]
+    assert "Daily at 07:30 Sydney time" in routines
+    assert "Only when there is work" in routines and "fired by the worker" in routines
+    assert "Custom schedule" not in routines and "—" not in routines
+
+
 def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     widen = site["widen"]
     assert widen["view"] == "events" and widen["scope"] == "all"
@@ -474,3 +497,119 @@ def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     assert dropped["tags"] == {"severity": ["medium"]}
     # A story the scope already shows does not move the reader anywhere.
     assert site["inScopeStays"]["scope"] == "au"
+
+
+# The CREW view drawn from crew.json, org.json and system-status.json: what each card says of an
+# agent the worker cannot see, what it runs on, and the run table.
+DRAW_CREW = r"""
+const [hudPath, fixtures, orgPath] = process.argv.slice(2);
+const m = await import(hudPath);
+class FakeNode {}
+class FakeText extends FakeNode {
+  constructor(t) { super(); this.data = String(t); }
+  get textContent() { return this.data; }
+}
+class FakeEl extends FakeNode {
+  constructor(tag) { super(); this.tagName = tag.toUpperCase(); this.childNodes = []; this.dataset = {}; this.attrs = {}; }
+  setAttribute(k, v) { this.attrs[k] = String(v); }
+  set className(v) { this.attrs.class = v; }
+  get textContent() { return this.childNodes.map((c) => c.textContent).join(''); }
+  set textContent(v) { this.childNodes = [new FakeText(v)]; }
+  append(...nodes) { for (const n of nodes) this.childNodes.push(n instanceof FakeNode ? n : new FakeText(n)); }
+  replaceChildren(...nodes) { this.childNodes = []; this.append(...nodes); }
+}
+const hosts = {};
+globalThis.Node = FakeNode;
+globalThis.document = {
+  createElement: (t) => new FakeEl(t),
+  createElementNS: (_, t) => new FakeEl(t),
+  createTextNode: (t) => new FakeText(t),
+  getElementById: (id) => (hosts[id] ||= new FakeEl('div')),
+};
+const { readFileSync } = await import('node:fs');
+const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
+const crew = read(`${fixtures}/next/crew.json`);
+const status = read(`${fixtures}/next/system-status.json`);
+const feed = read(`${fixtures}/next/live.json`);
+const org = read(orgPath);
+const NOW = Date.parse('2026-10-04T10:30:00Z');
+const cards = () => hosts['crew-list'].childNodes.map((li) => li.textContent);
+m.renderCrew(crew, org, status.ai, NOW);
+const withOrg = { cards: cards(), summary: hosts['crew-summary'].textContent };
+m.renderCrew(crew, null, null, NOW);
+const withoutOrg = { cards: cards(), summary: hosts['crew-summary'].textContent };
+m.renderCrewRun(status, feed);
+const run = hosts['crew-run'].textContent;
+// An older snapshot whose last_run is still going: never "finished null".
+m.renderCrewRun({ last_run: { run_id: 'r', lane: 'normal', started_at: '2026-10-28T08:00:00Z', finished_at: null } }, feed);
+const unfinished = hosts['crew-run'].textContent;
+const mixroute = { agents: [{ callsign: 'DECKARD', adapter: 'model', model: 'mixroute/deepseek-v4-flash', max_daily_runs: 8 }] };
+process.stdout.write(JSON.stringify({
+  withOrg, withoutOrg, run, unfinished,
+  seen: [
+    m.seenState(null, NOW),
+    m.seenState({ callsign: 'TELETRAAN', what: 'incident verdict', last_at: null, this_month: 0 }, NOW),
+    m.seenState({ callsign: 'DECKARD', what: 'follow-up report', last_at: '2026-10-04T09:12:00Z', this_month: 4 }, NOW),
+    m.seenState({ callsign: 'TACHIKOMA', what: 'source proposal', last_at: '2026-09-06T03:30:00Z', this_month: 0 }, NOW),
+  ],
+  runtime: [
+    m.cardRuntime({ callsign: 'DECKARD', runtime: 'fallback' }, mixroute),
+    m.cardRuntime({ callsign: 'SERAPH', runtime: 'fallback' }, { agents: [{ callsign: 'SERAPH', adapter: 'http' }] }),
+    m.cardRuntime({ callsign: 'VOIGHT', runtime: 'fallback' }, mixroute),
+  ],
+}));
+"""
+
+
+@pytest.fixture(scope="module")
+def crew_view(tmp_path_factory):
+    work = tmp_path_factory.mktemp("crew")
+    (work / "draw.mjs").write_text(DRAW_CREW, encoding="utf-8")
+    done = subprocess.run(
+        [NODE, str(work / "draw.mjs"), str(HUD), str(ROOT / "tests" / "fixtures" / "site"),
+         str(ORG)],
+        capture_output=True, text=True, timeout=60, check=False,
+    )
+    assert done.returncode == 0, done.stderr
+    return json.loads(done.stdout)
+
+
+def test_a_crew_card_says_only_what_of_the_agents_work_reached_the_worker(crew_view):
+    none, never, recent, old = crew_view["seen"]
+    assert none["label"] == "RUNS IN PAPERCLIP"
+    assert "none of its work reaches the worker" in none["text"]
+    assert never == {"status": "not_seen", "led": "idle", "label": "NOT SEEN YET",
+                     "text": "Works in Paperclip. No incident verdict has reached the worker yet."}
+    assert recent["led"] == "ok" and recent["label"] == "LAST SEEN 4 OCT"
+    assert recent["text"].endswith(" · 4 this month.")
+    # A month-old proposal is not "active": the card says when, and warns.
+    assert old["led"] == "warn" and old["label"] == "LAST SEEN 6 SEPT"
+    text = " ".join(crew_view["withOrg"]["cards"])
+    assert "Last source proposal the worker received" in text
+    assert "NOT SEEN YET" in text, "TELETRAAN: no verdict has reached the worker"
+    for word in ("null", "undefined", "NaN"):
+        assert word not in text
+
+
+def test_a_crew_card_says_what_the_agent_runs_on_from_the_org_chart(crew_view):
+    assert crew_view["runtime"] == ["LLM · deepseek-v4-flash · UP TO 8/DAY", "CODE · NO MODEL", "fallback"]
+    # Without org.json, the roster's own line stands in, and no hard-coded tool is claimed.
+    text = " ".join(crew_view["withoutOrg"]["cards"])
+    assert "Tavily" not in text and "Strands" not in text
+
+
+def test_the_crew_summary_tells_the_two_budgets_apart(crew_view):
+    summary = crew_view["withOrg"]["summary"]
+    assert "the pipeline's own AI is capped at US$12.00 a month" in summary
+    assert "monthly budget in Paperclip" in summary
+    assert "capped" not in crew_view["withoutOrg"]["summary"]
+
+
+def test_the_run_table_credits_the_workers_figures_to_seraph(crew_view):
+    run = crew_view["run"]
+    assert "Last completed run: FAST lane, finished" in run
+    assert "Still going: NORMAL lane since" in run
+    # The fixture's run recorded one error, and the snapshot holds ten stories: SERAPH's figures.
+    assert "1 error recorded; 10 events published in this snapshot" in run
+    unfinished = crew_view["unfinished"]
+    assert "null" not in unfinished and "No completed run has been published (still going: NORMAL lane since" in unfinished

@@ -227,10 +227,12 @@ async def _enrich_job() -> None:
     layer = _layer()
     started = _now()
     changed, completed, errors = False, True, 0
+    mode: str | None = None  # the budget mode, which the SYSTEM page shows (build.py `ai`)
     try:
         enriched = await enrich_pending(layer=layer)
         changed |= enriched.changed_anything
         errors += enriched.failed + len(enriched.errors)
+        mode = enriched.mode
     except Exception:
         logger.exception("scheduled enrichment failed")
         completed = False
@@ -241,7 +243,12 @@ async def _enrich_job() -> None:
     except Exception:
         logger.exception("scheduled MITRE suggestions failed")
         completed = False
-    await _record(JobRun("enrichment", started, _now(), completed, errors, changed))
+    await _record(
+        JobRun(
+            "enrichment", started, _now(), completed, errors, changed,
+            detail={"mode": mode} if mode else None,
+        )
+    )
 
     if not changed:
         return
@@ -291,6 +298,12 @@ async def _discovery_job() -> None:
         JobRun(
             "discovery", started, _now(), completed=True, errors=len(summary.errors),
             changed=summary.new_hosts > 0,
+            # For the Sources page (worker/publish/build.py `_discovery_summary`).
+            detail={
+                "searches": summary.searches, "hits": summary.hits,
+                "new_hosts": summary.new_hosts, "credits": summary.credits,
+                "skipped": summary.skipped is not None,
+            },
         )
     )
 
@@ -309,6 +322,14 @@ async def _gate_job() -> None:
             JobRun(
                 "source-gate", started, _now(), completed=True, errors=len(summary.errors),
                 changed=summary.changed_anything,
+                # What the pass did, for the Sources page: counts and source ids only.
+                detail={
+                    "homes": summary.homes, "feeds_found": summary.feeds_found,
+                    "probes": summary.probes, "healthy": summary.healthy,
+                    "rejected": summary.rejected, "activated": summary.activated,
+                    "retired": summary.retired, "pruned": summary.pruned,
+                    "waiting": summary.waiting, "promoted": len(summary.promoted),
+                },
             )
         )
     try:

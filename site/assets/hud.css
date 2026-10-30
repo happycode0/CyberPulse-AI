@@ -105,6 +105,8 @@ a:hover { color: var(--text-head); }
 .status-strip__label { font: 600 11.5px/1.5 var(--font-mono); letter-spacing: 0.08em; color: var(--text-muted); }
 .status-strip__value { color: var(--text-head); }
 .status-strip__local { color: var(--text-muted); }
+/* A snapshot older than two hours (pages.js `staleSince`): the header says so on every view. */
+.status-strip__stale { font-weight: 600; letter-spacing: 0.04em; color: var(--sev-medium); }
 
 @media (max-width: 1180px) {
   .site-header__row { grid-template-columns: max-content minmax(0, 1fr) max-content; grid-template-areas: "brand tabs controls" "status status status"; }

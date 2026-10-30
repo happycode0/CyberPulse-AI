@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": [
     "generated_at", "last_completed_collection", "pipeline_version", "schema_version",
-    "scoring_version", "last_run", "counts", "schedule"
+    "scoring_version", "last_run", "runs_in_progress", "counts", "schedule", "jobs", "ai"
   ],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
@@ -44,6 +44,20 @@
         { "type": "null" }
       ]
     },
+    "runs_in_progress": {
+      "description": "Runs started in the last two hours that have not finished: still going. `last_run` is the latest finished one.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["run_id", "lane", "started_at"],
+        "properties": {
+          "run_id": { "type": "string" },
+          "lane": { "enum": ["fast", "normal", "deep"] },
+          "started_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
     "counts": {
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }
@@ -66,6 +80,51 @@
           },
           "summary": { "type": "string" }
         }
+      }
+    },
+    "jobs": {
+      "description": "How each job last went: every scheduled job, then the publish and the push after each run. `recorded` is false for a job that leaves no pass to read (the Telegram jobs); `ok` is null for one that never ran.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job", "label", "recorded", "running", "last_run_at", "last_success_at", "ok"
+        ],
+        "properties": {
+          "job": { "type": "string" },
+          "label": { "type": "string" },
+          "recorded": { "type": "boolean" },
+          "running": { "type": "boolean" },
+          "last_run_at": { "type": ["string", "null"], "format": "date-time" },
+          "last_success_at": { "type": ["string", "null"], "format": "date-time" },
+          "ok": { "type": ["boolean", "null"] }
+        }
+      }
+    },
+    "ai": {
+      "description": "Where the worker's AI layer stands. `mode` is what the newest enrichment pass recorded, or null.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider", "monthly_budget_usd", "mode", "calls_this_month", "cost_this_month_usd",
+        "last_call_at", "last_pass_at", "events", "awaiting"
+      ],
+      "properties": {
+        "provider": { "type": ["string", "null"] },
+        "monthly_budget_usd": { "type": ["number", "null"], "minimum": 0 },
+        "mode": {
+          "anyOf": [
+            { "enum": ["full", "conserve", "minimal", "free_only", "off"] },
+            { "type": "null" }
+          ]
+        },
+        "calls_this_month": { "type": "integer", "minimum": 0 },
+        "cost_this_month_usd": { "type": "number", "minimum": 0 },
+        "last_call_at": { "type": ["string", "null"], "format": "date-time" },
+        "last_pass_at": { "type": ["string", "null"], "format": "date-time" },
+        "events": { "type": "integer", "minimum": 0 },
+        "awaiting": { "type": "integer", "minimum": 0 }
       }
     }
   }

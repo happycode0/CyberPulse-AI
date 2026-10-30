@@ -911,7 +911,7 @@ def discovery_db(monkeypatch):
         seen["writes"] += 1
         yield None
 
-    def overview(conn, *, now):
+    def overview(conn, *, now, ready_at):
         return {
             "states": {"testing": 1, "discovered": 2},
             "open": [candidate(state="testing", passes=2,
@@ -929,7 +929,7 @@ def discovery_db(monkeypatch):
             **seen.get("overview", {}),
         }
 
-    def add(conn, proposal, *, max_open, now):
+    def add(conn, proposal, *, max_open, ready_at, now):
         seen["proposals"].append((proposal, max_open, now))
         return seen.get("result", "created"), candidate(host=proposal.host)
 

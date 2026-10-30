@@ -7,6 +7,8 @@ import pytest
 from worker.collectors.http import FetchResult, FetchStatus
 from worker.models import NormalisedItem, SourceConfig, SourceHealth
 from worker.pipeline.health import (
+    DEGRADE_AFTER,
+    RECOVER_AFTER,
     HealthStatus,
     LifecycleState,
     assess,
@@ -318,11 +320,32 @@ def test_broken_source_recovers_to_testing_too():
     assert next_lifecycle_state(broken, [ok_health]) is LifecycleState.TESTING
 
 
-def test_a_testing_source_is_never_promoted_by_health_alone():
-    """Promotion is SERAPH's multi-run gate, not a side effect of one good fetch."""
+def test_a_recovering_source_is_not_promoted_by_one_good_check():
+    """A source back in TESTING after a failure streak earns ACTIVE over several checks."""
     testing = src.model_copy(update={"lifecycle_state": LifecycleState.TESTING})
-    good = [ok_health.model_copy(update={"checked_at": NOW - timedelta(minutes=15 * i)}) for i in range(10)]
+    good = [ok_health.model_copy(update={"checked_at": NOW - timedelta(minutes=15 * i)})
+            for i in range(RECOVER_AFTER - 1)]
     assert next_lifecycle_state(testing, good) is LifecycleState.TESTING
+    assert next_lifecycle_state(testing, []) is LifecycleState.TESTING
+
+
+def test_a_recovering_source_returns_to_active_after_a_run_of_good_checks():
+    """TESTING used to be a dead end: nothing moved a recovered source on, so CISA KEV and the
+    ACSC feeds wore a TESTING chip for weeks after one bad spell."""
+    testing = src.model_copy(update={"lifecycle_state": LifecycleState.TESTING})
+    good = [ok_health.model_copy(update={"checked_at": NOW - timedelta(minutes=15 * i)})
+            for i in range(RECOVER_AFTER)]
+    assert next_lifecycle_state(testing, good) is LifecycleState.ACTIVE
+    # The run has to be unbroken and at the end of the history.
+    broken_run = good[: RECOVER_AFTER - 1] + [err(15 * RECOVER_AFTER)]
+    assert next_lifecycle_state(testing, broken_run) is LifecycleState.TESTING
+    assert next_lifecycle_state(testing, good + [err(-15)]) is LifecycleState.TESTING
+
+
+def test_a_recovering_source_that_keeps_failing_is_degraded_again():
+    testing = src.model_copy(update={"lifecycle_state": LifecycleState.TESTING})
+    assert next_lifecycle_state(testing, errs(DEGRADE_AFTER - 1)) is LifecycleState.TESTING
+    assert next_lifecycle_state(testing, errs(DEGRADE_AFTER)) is LifecycleState.DEGRADED
 
 
 @pytest.mark.parametrize(

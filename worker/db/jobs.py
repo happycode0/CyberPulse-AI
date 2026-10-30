@@ -1,10 +1,11 @@
 """job_runs rows: one per ground-truth, enrichment, discovery search, source-gate, model-scan,
 gauntlet or watchdog pass, and per publish and push after a run, written when it ends
-(migrations 010, 013, 014 and 015)."""
+(migrations 010, 013, 014, 015 and 018)."""
 
+import json
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from sqlalchemy import Connection, Engine, text
 
@@ -30,19 +31,21 @@ class JobRun:
     errors: int = 0  # failures it absorbed
     changed: bool = False
     note: str | None = None  # the exception's type name when it raised
+    # What the pass found, for the site (migration 018): counts and source ids, never a URL or
+    # an error text, since it is published.
+    detail: dict[str, Any] | None = None
 
 
-_COLUMNS = ("job", "started_at", "finished_at", "completed", "errors", "changed", "note")
+_COLUMNS = ("job", "started_at", "finished_at", "completed", "errors", "changed", "note", "detail")
 
 
 def record_job(engine: Engine, run: JobRun) -> None:
+    params = asdict(run)
+    params["detail"] = None if run.detail is None else json.dumps(run.detail)
+    values = ", ".join("cast(:detail as jsonb)" if c == "detail" else f":{c}" for c in _COLUMNS)
     with engine.begin() as conn:
         conn.execute(
-            text(
-                f"insert into job_runs ({', '.join(_COLUMNS)}) "
-                f"values ({', '.join(':' + c for c in _COLUMNS)})"
-            ),
-            asdict(run),
+            text(f"insert into job_runs ({', '.join(_COLUMNS)}) values ({values})"), params
         )
 
 

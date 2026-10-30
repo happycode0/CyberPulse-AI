@@ -4,7 +4,7 @@
   "title": "CyberPulse-AI source-health.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generated_at", "counts", "sources", "pipeline"],
+  "required": ["generated_at", "counts", "sources", "pipeline", "discovery"],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
     "counts": {
@@ -70,9 +70,89 @@
           "reason": { "type": "string" }
         }
       }
+    },
+    "discovery": {
+      "description": "Where discovery stands: the discovered-source slots taken, what waits at the gate and why, and what the newest gate pass and search did (worker/publish/build.py `_discovery_summary`).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "active", "max_active", "ready_waiting", "testing", "queued", "homes_waiting",
+        "at_the_gate", "shown", "rejected_total", "retired_total", "probes_to_activate",
+        "max_open", "last_gate", "last_search", "recent"
+      ],
+      "properties": {
+        "active": { "$ref": "#/$defs/count" },
+        "max_active": { "$ref": "#/$defs/count" },
+        "ready_waiting": { "$ref": "#/$defs/count" },
+        "testing": { "$ref": "#/$defs/count" },
+        "queued": { "$ref": "#/$defs/count" },
+        "homes_waiting": { "$ref": "#/$defs/count" },
+        "at_the_gate": { "$ref": "#/$defs/count" },
+        "shown": { "$ref": "#/$defs/count" },
+        "rejected_total": { "$ref": "#/$defs/count" },
+        "retired_total": { "$ref": "#/$defs/count" },
+        "probes_to_activate": { "$ref": "#/$defs/count" },
+        "max_open": { "$ref": "#/$defs/count" },
+        "last_gate": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["finished_at", "completed"],
+              "properties": {
+                "finished_at": { "type": "string", "format": "date-time" },
+                "completed": { "type": "boolean" },
+                "probes": { "$ref": "#/$defs/count" },
+                "healthy": { "$ref": "#/$defs/count" },
+                "rejected": { "$ref": "#/$defs/count" },
+                "activated": { "type": "array", "items": { "type": "string" } },
+                "retired": { "type": "array", "items": { "type": "string" } },
+                "pruned": { "type": "array", "items": { "type": "string" } },
+                "waiting": { "$ref": "#/$defs/count" },
+                "promoted": { "$ref": "#/$defs/count" }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "last_search": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["finished_at", "completed"],
+              "properties": {
+                "finished_at": { "type": "string", "format": "date-time" },
+                "completed": { "type": "boolean" },
+                "searches": { "$ref": "#/$defs/count" },
+                "new_hosts": { "$ref": "#/$defs/count" },
+                "skipped": { "type": "boolean" }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "recent": {
+          "description": "Finds activated or retired in the last 14 days, newest first.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "host", "state", "at", "found_by"],
+            "properties": {
+              "name": { "type": ["string", "null"] },
+              "host": { "type": "string" },
+              "state": { "enum": ["active", "retired"] },
+              "at": { "type": "string", "format": "date-time" },
+              "found_by": { "enum": ["search", "tachikoma"] }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
     "standing": { "enum": ["authoritative", "established", "specialist", "community"] },
     "unit_share": { "anyOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
     "reputation": {
@@ -97,7 +177,7 @@
       "additionalProperties": false,
       "required": ["kind", "reason"],
       "properties": {
-        "kind": { "enum": ["fix", "watch", "coming"] },
+        "kind": { "enum": ["fix", "watch", "coming", "blocked"] },
         "reason": { "type": "string" }
       }
     },

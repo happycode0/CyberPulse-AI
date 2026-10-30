@@ -1,5 +1,6 @@
 """Pipeline run rows: written by the runner, read by the publisher."""
 
+from collections.abc import Mapping
 from datetime import datetime
 
 from sqlalchemy import Connection, Engine, text
@@ -61,14 +62,45 @@ def load_last_completed_collection(conn: Connection) -> datetime | None:
 def load_latest_run(conn: Connection) -> RunSummary | None:
     """The most recently started run, finished or not."""
     row = (
+        conn.execute(text(f"select {_COLUMNS} from runs order by started_at desc, run_id limit 1"))
+        .mappings()
+        .first()
+    )
+    return RunSummary(**row) if row else None
+
+
+def load_latest_finished_run(conn: Connection) -> RunSummary | None:
+    """The run that finished last, or None. Not `load_latest_run`: the FAST and NORMAL lanes start
+    together, so the newest started is often still going, and its counters are all zero."""
+    row = (
         conn.execute(
             text(
-                "select run_id, lane, started_at, finished_at, sources_ok, sources_failed, "
-                "sources_stale, items_fetched, new_events, updated_events, duplicates, "
-                "archived_events, errors from runs order by started_at desc, run_id limit 1"
+                f"select {_COLUMNS} from runs where finished_at is not null "
+                "order by finished_at desc, run_id limit 1"
             )
         )
         .mappings()
         .first()
     )
     return RunSummary(**row) if row else None
+
+
+def load_unfinished_runs(conn: Connection, *, since: datetime) -> list[RunSummary]:
+    """Runs started since `since` that have not finished, newest first. An older unfinished row
+    is a run that crashed, not one still going (`start_run`)."""
+    rows = conn.execute(
+        text(
+            f"select {_COLUMNS} from runs where finished_at is null and started_at >= :since "
+            "order by started_at desc, run_id"
+        ),
+        {"since": since},
+    ).mappings()
+    return [RunSummary(**r) for r in rows]
+
+
+def load_lane_activity(conn: Connection) -> Mapping[str, tuple[datetime | None, datetime | None]]:
+    """Per lane: when its newest run started, and when its newest finished run finished."""
+    rows = conn.execute(
+        text("select lane, max(started_at), max(finished_at) from runs group by lane")
+    ).all()
+    return {lane: (started, finished) for lane, started, finished in rows}

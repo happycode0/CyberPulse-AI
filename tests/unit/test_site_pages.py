@@ -57,7 +57,7 @@ const [pagesPath, fixtures, cronsJson, NOW] = process.argv.slice(2);
 const m = await import(pathToFileURL(pagesPath).href);
 const load = (shape, name) => JSON.parse(fs.readFileSync(path.join(fixtures, shape, name), 'utf8'));
 const shapes = {};
-for (const shape of ['old', 'new']) {
+for (const shape of ['old', 'new', 'next']) {
   shapes[shape] = {
     status: load(shape, 'system-status.json'), health: load(shape, 'source-health.json'),
     live: load(shape, 'live.json'), crew: load(shape, 'crew.json'),
@@ -141,7 +141,7 @@ function snapshot(host) {
 
 // SYSTEM
 out.system = {};
-for (const shape of ['old', 'new']) {
+for (const shape of ['old', 'new', 'next']) {
   const host = new FakeEl('div');
   const data = { ...shapes[shape], now: NOW };
   const res = m.renderSystemPage(host, data);
@@ -155,8 +155,22 @@ for (const shape of ['old', 'new']) {
     scheduleRows: byClass(host, 'pg-schedule').flatMap((t) => all(t, (n) => n.tagName === 'TR').slice(1).map((tr) => tr.childNodes.map(text))),
     replay: byClass(host, 'pg-step').map((li) => li.childNodes.map(text)),
     versions: all(host, (n) => n.tagName === 'DT').map(text),
+    versionValues: all(host, (n) => n.tagName === 'DD').map(text),
     budget: text(byClass(host, 'pg-budget')[0]),
+    afterRun: text(byClass(host, 'pg-after-run')[0]),
+    going: text(byClass(host, 'pg-run__going')[0]),
+    stale: text(byClass(host, 'pg-stale')[0]),
+    healthStates: byClass(host, 'pg-health').map((n) => n.getAttribute('data-state')),
   };
+}
+// Two days on, nothing published since: both pages say so at the top.
+const LATER = '2026-10-06T10:30:00Z';
+{
+  const sys = new FakeEl('div');
+  m.renderSystemPage(sys, { ...shapes.next, now: LATER });
+  const src = new FakeEl('div');
+  m.renderSourcesPage(src, { ...shapes.next, now: LATER });
+  out.staleLater = { system: text(byClass(sys, 'pg-stale')[0]), sources: text(byClass(src, 'pg-stale')[0]), firstSystem: byClass(sys, 'pg-stale')[0] === sys.childNodes[0] };
 }
 
 // SOURCES
@@ -178,7 +192,7 @@ function sourcesView(host) {
   };
 }
 out.sources = {};
-for (const shape of ['old', 'new']) {
+for (const shape of ['old', 'new', 'next']) {
   const host = new FakeEl('div');
   const data = { ...shapes[shape], now: NOW };
   const res = m.renderSourcesPage(host, data);
@@ -200,6 +214,8 @@ for (const shape of ['old', 'new']) {
     tierBar: byClass(host, 'pg-tierbar').map((s) => s.getAttribute('aria-label')),
     top: byClass(host, 'pg-top__link').map((a) => [text(a), a.getAttribute('href')]),
     candidates: byClass(host, 'pg-card--candidate').map(text),
+    discovery: byClass(host, 'pg-discovery').flatMap((ul) => ul.childNodes.map(text)),
+    stale: text(byClass(host, 'pg-stale')[0]),
   };
   // The controls: each click redraws the lists and moves aria-pressed.
   button(host, 'au').click();
@@ -262,6 +278,24 @@ for (const shape of ['old', 'new']) {
   out.lastGood[shape] = Object.fromEntries(shapes[shape].health.sources.map((s) => [s.source_id, m.lastGoodCheck(s)]));
 }
 out.classifyBad = [m.classifySources(null), m.classifySources({}), m.classifySources({ sources: 'x' })];
+out.classify.next = m.classifySources(shapes.next.health).counts;
+out.attention.next = Object.fromEntries(shapes.next.health.sources.map((s) => [s.source_id, m.attentionOf(s)]));
+out.discoveryOf = {
+  next: m.discoveryOf(shapes.next.health),
+  none: [m.discoveryOf(null), m.discoveryOf({}), m.discoveryOf({ discovery: { active: 'x', max_active: 25 } })],
+};
+out.staleSince = [
+  m.staleSince(NOW, shapes.next.status), m.staleSince(LATER, shapes.next.status),
+  m.staleSince(NOW, null, {}), m.staleSince(LATER, null, shapes.next.live),
+];
+out.jobHealth = Object.fromEntries(shapes.next.status.jobs.map((j) => [j.job, m.jobHealth(j, NOW)]));
+out.jobHealthBad = [m.jobHealth(null, NOW), m.jobHealth({}, NOW)];
+out.aiText = [
+  m.aiStateText(shapes.next.status.ai, NOW),
+  m.aiStateText({ provider: null, monthly_budget_usd: null, mode: null, last_call_at: null, events: 0, awaiting: 0 }, NOW),
+  m.aiStateText({ provider: 'someone', mode: 'weird', events: 2, awaiting: 1 }, NOW),
+  m.aiStateText(null, NOW),
+];
 out.attentionBad = [m.attentionOf(null), m.attentionOf('x'), m.attentionOf({ enabled: true, lifecycle_state: 'retired' })];
 const newSources = shapes.new.health.sources;
 const ids = (list) => list.map((s) => s.source_id);
@@ -488,9 +522,9 @@ def test_attention_handles_junk_and_retired(pages):
 
 
 def test_classify_counts(pages):
-    assert pages["classify"]["old"] == {"total": 9, "healthy": 4, "fix": 1, "watch": 3, "coming": 1, "retired": 0}
+    assert pages["classify"]["old"] == {"total": 9, "healthy": 4, "fix": 1, "watch": 3, "coming": 1, "blocked": 0, "retired": 0}
     # Two discovery candidates join COMING without counting as sources.
-    assert pages["classify"]["new"] == {"total": 10, "healthy": 4, "fix": 2, "watch": 3, "coming": 3, "retired": 0}
+    assert pages["classify"]["new"] == {"total": 10, "healthy": 4, "fix": 2, "watch": 3, "coming": 3, "blocked": 0, "retired": 0}
     assert pages["classifyBad"] == [None, None, None]
 
 
@@ -607,7 +641,8 @@ def test_published_weights_match_the_worker(pages):
     assert c["fallback"] == [
         ["fast", "0 * * * *", "UTC", "code"],
         ["normal", "0 */4 * * *", "UTC", "code"],
-        ["deep", "10 3 * * *", "Australia/Sydney", "mixed"],
+        # The deep lane is gone; the nightly search for new sources is code.
+        ["discovery", "10 3 * * *", "Australia/Sydney", "code"],
     ]
     stages = c["stages"]
     assert 9 <= len(stages) <= 11
@@ -654,12 +689,14 @@ def test_system_page_renders_cleanly_and_idempotently(pages, shape):
     # Every stage carries its marker as a word, not only a colour.
     for kind, name, marker in page["stages"]:
         assert marker.endswith({"code": "CODE", "ai": "AI"}[kind]), name
-    assert "US$20" in page["budget"] and "never depend" in page["budget"]
+    # A snapshot without the AI state names no figure: the cap is the owner's setting.
+    assert "monthly cap" in page["budget"] and "never depend" in page["budget"]
+    assert "US$" not in page["budget"]
 
 
 def test_system_page_old_shape_falls_back_to_the_standing_schedule(pages):
     page = pages["system"]["old"]
-    assert [r[0] for r in page["scheduleRows"]] == ["FAST LANE", "NORMAL LANE", "DEEP LANE AND DISCOVERY"]
+    assert [r[0] for r in page["scheduleRows"]] == ["FAST LANE", "NORMAL LANE", "DISCOVERY SEARCH"]
     assert page["scheduleRows"][0][1] == "every hour on the hour"
     assert page["scheduleRows"][2][1] == "daily 03:10 Sydney"
     assert "standing defaults" in page["text"]
@@ -809,3 +846,103 @@ def test_junk_shapes_degrade_to_sentences(pages):
     assert "custom schedule" in junk2["systemText"]
     assert "Unnamed source" in junk2["sourcesText"]
     assert "Unnamed candidate" in junk2["sourcesText"]
+
+
+# ---------------------------------------------------------------------------------------------
+# The next shape: what the worker publishes since 2026-10-30 (tests/fixtures/site/next)
+
+
+def test_the_next_shape_counts_blocked_sources_apart_from_finds(pages):
+    assert pages["attention"]["next"]["acsc_advice"] == {
+        "kind": "blocked", "reason": "Not collected. Blocked: Cloudflare 403 error on feed endpoint."
+    }
+    assert pages["classify"]["next"] == {"total": 10, "healthy": 4, "fix": 2, "watch": 3, "coming": 2,
+                                         "blocked": 1, "retired": 0}
+    d = pages["discoveryOf"]["next"]
+    assert (d["active"], d["max"], d["ready"], d["atGate"], d["shown"]) == (25, 25, 39, 60, 2)
+    assert pages["discoveryOf"]["none"] == [None, None, None]
+
+
+def test_sources_page_says_where_discovery_stands(pages):
+    """The old COMING 31 was 6 switched-off sources plus a display cap of 25: it could never move."""
+    page = pages["sources"]["next"]
+    _clean(page)
+    assert page["idempotent"]
+    assert page["strip"] == [
+        ["HEALTHY", "●4"], ["NEEDS FIXING", "■2"], ["WATCH", "▲3"], ["BLOCKED", "○1"],
+        ["DISCOVERED · 39 READY, WAITING FOR A SLOT", "○25/25"],
+    ]
+    assert page["sections"] == ["pg-src-fix", "pg-src-watch", "pg-src-active", "pg-src-blocked", "pg-src-coming"]
+    assert page["cards"]["pg-src-blocked"] == ["ACSC Advice"]
+    assert "AT THE GATE 2" in page["h3"] and "DISCOVERY" in page["h3"]
+    lines = page["discovery"]
+    assert lines[0].startswith("25 of 25 discovered-source slots are in use. 39 finds have passed the gate and wait for one;")
+    assert lines[1] == "At the gate now: 4 being tested, 2 queued for a testing slot, 15 sites still to read for a feed."
+    assert lines[2] == (
+        "Last gate pass 4 Oct 18:51 Sydney, 3 h ago: 10 probes, 7 healthy, 1 activated (found_dev_to), "
+        "1 retired to make room (found_spiceworks_com), 3 rejected."
+    )
+    assert lines[3] == "Last search for new sources 4 Oct 03:10 Sydney, 18 h ago: 16 searches, 4 new sites."
+    assert lines[4] == "Last 14 days: activated DEV Community; retired spiceworks.com."
+    assert lines[5] == "Since discovery began: 31 rejected, 8 retired."
+    assert any("Showing 2 of the 60 finds at the gate" in n for n in page["notes"])
+    assert any("passed the gate, waiting for one of the 25" in c for c in page["candidates"])
+    assert page["stale"] is None
+
+
+def test_system_page_next_shape(pages):
+    page = pages["system"]["next"]
+    _clean(page)
+    assert page["idempotent"]
+    assert page["h3"] == ["HOW A STORY GETS HERE", "WHAT IS CODE, WHAT IS AI", "SCHEDULE", "LAST RUN", "VERSIONS"]
+    assert page["budget"] == (
+        "AI runs through MixRoute under a hard US$12.00 monthly cap. Budget mode: free models only, as the "
+        "paid budget is spent or cannot be read. Last model call 2 Oct 09:35 Sydney, 2 days ago. 9 of 10 "
+        "published stories await AI. Collection and publishing never depend on it."
+    )
+    rows = {r[0]: r for r in page["scheduleRows"]}
+    assert rows["FAST LANE"][5] == "OK · 30 min ago"
+    assert rows["NORMAL LANE"][5] == "RUNNING · last OK 4 h ago"
+    assert rows["DAILY DIGEST"][5] == "NOT RECORDED"
+    assert rows["SOURCE GATE"][5] == "FAILING · last OK 2 days ago"
+    assert page["afterRun"] == "After each run: PUBLISH OK · 30 min ago · PUSH FAILING · last OK 2 h ago"
+    assert page["going"] == "Still going: NORMAL lane, started 4 Oct 21:00 Sydney (30 min ago)."
+    assert {"ok", "fail", "idle"} <= set(page["healthStates"])
+    versions = dict(zip(page["versions"], page["versionValues"]))
+    # "0" is the version of a story no model has reached, so it is counted, never reported.
+    # One story still awaits AI, so it is not counted as enriched.
+    assert versions["ENRICHMENT"] == "1 · 9 of 10 stories"
+    assert "on older" not in " ".join(page["versionValues"])
+    assert page["stale"] is None
+
+
+def test_a_snapshot_that_stopped_updating_says_so_at_the_top(pages):
+    stale = pages["staleLater"]
+    assert stale["firstSystem"]
+    want = ("Not updated since 4 Oct 21:00 Sydney, 2 days ago. The worker publishes after every collection, "
+            "about once an hour; until it does again, everything here is as of then.")
+    assert stale["system"] == want and stale["sources"] == want
+    at_now, later, nothing, from_live = pages["staleSince"]
+    assert at_now is None and nothing is None
+    assert later["ago"] == "2 days ago" and from_live["ago"] == "2 days ago"
+
+
+def test_job_health_reads_the_published_rows(pages):
+    health = pages["jobHealth"]
+    assert health["lane-fast"] == {"state": "ok", "text": "OK · 30 min ago"}
+    assert health["lane-normal"] == {"state": "ok", "text": "RUNNING · last OK 4 h ago"}
+    assert health["daily-digest"] == {"state": "idle", "text": "NOT RECORDED"}
+    assert health["push"] == {"state": "fail", "text": "FAILING · last OK 2 h ago"}
+    assert pages["jobHealthBad"] == [None, {"state": "idle", "text": "NOT RUN YET"}]
+
+
+def test_the_ai_state_names_the_provider_only_when_it_is_published(pages):
+    full, bare, odd, none = pages["aiText"]
+    assert full.startswith("AI runs through MixRoute under a hard US$12.00 monthly cap.")
+    assert bare == ("AI runs on the AI key under a hard monthly cap. No model call has been recorded yet. "
+                    "Collection and publishing never depend on it.")
+    assert odd.startswith("AI runs through someone under a hard monthly cap.") and "1 of 2 published stories awaits AI." in odd
+    assert "Budget mode" not in odd, "an unknown mode is not invented"
+    assert none is None
+    assert "OpenRouter" not in full + bare
+

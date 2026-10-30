@@ -5,7 +5,7 @@
   "description": "This month's work the worker does for the crew, counted from the rows its jobs leave: SERAPH's collection, checks and publishing, and the pipeline's own model calls. The AI agents' own runs are in the private control panel and are not counted.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generated_at", "month", "agents", "pipeline_ai"],
+  "required": ["generated_at", "month", "agents", "pipeline_ai", "seen"],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
     "month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
@@ -30,10 +30,27 @@
     "pipeline_ai": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["calls", "cost_usd"],
+      "required": ["calls", "cost_usd", "last_call_at", "provider"],
       "properties": {
         "calls": { "type": "integer", "minimum": 0 },
-        "cost_usd": { "type": "number", "minimum": 0 }
+        "cost_usd": { "type": "number", "minimum": 0 },
+        "last_call_at": { "type": ["string", "null"], "format": "date-time" },
+        "provider": { "type": ["string", "null"] }
+      }
+    },
+    "seen": {
+      "description": "The last piece of each AI agent's work that reached the worker: TACHIKOMA's source proposals, DECKARD's follow-up reports and TELETRAAN's incident verdicts. Never a claim that an agent is running: the agents work in Paperclip, which the worker never reads.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["callsign", "what", "last_at", "this_month"],
+        "properties": {
+          "callsign": { "type": "string", "pattern": "^[A-Z]{2,20}$" },
+          "what": { "type": "string" },
+          "last_at": { "type": ["string", "null"], "format": "date-time" },
+          "this_month": { "type": "integer", "minimum": 0 }
+        }
       }
     }
   }

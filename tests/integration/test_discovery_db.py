@@ -80,7 +80,13 @@ def proposal(url=f"https://{HOST}/feed/", **body):
 
 def propose(engine, url=f"https://{HOST}/feed/", *, max_open=20, now=NOW, **body):
     return call(engine, db.add_proposal, proposal=proposal(url, **body), max_open=max_open,
-                now=now)
+                ready_at=GATE.probes_to_activate, now=now)
+
+
+def make_ready(engine, row) -> None:
+    for _ in range(GATE.probes_to_activate):
+        call(engine, db.record_probe, candidate_id=row.id, probe=healthy(), error=None,
+             gate=GATE, now=NOW)
 
 
 def healthy() -> Probe:
@@ -227,6 +233,25 @@ def test_queued_proposals_become_candidates_oldest_first_as_slots_free(engine):
     assert candidate(engine, "second.example.org").state == "discovered"
 
 
+def test_a_ready_candidate_does_not_hold_a_testing_slot(engine):
+    """A ready find waits for room among the active sources, not for a probe slot. Counting it
+    as open kept 39 ready finds over `max_open` on 2026-10-28, so every proposal queued for good."""
+    _, first = propose(engine, max_open=1)
+    assert propose(engine, "https://second.example.org/rss", max_open=1)[0] == "queued"
+    make_ready(engine, first)
+    assert call(engine, db.open_count, ready_at=GATE.probes_to_activate) == 0
+    assert propose(engine, "https://third.example.org/rss", max_open=1)[0] == "created"
+
+
+def test_a_queued_proposal_is_promoted_when_the_open_ones_are_ready(engine):
+    one = GATE.model_copy(update={"max_open": 1})
+    _, first = propose(engine, max_open=1)
+    propose(engine, "https://second.example.org/rss", max_open=1)
+    assert call(engine, db.promote_queued, gate=one, now=NOW) == []
+    make_ready(engine, first)
+    assert call(engine, db.promote_queued, gate=one, now=NOW) == ["second.example.org"]
+
+
 def test_proposals_are_capped_per_day(engine):
     for i in range(db.PROPOSALS_PER_DAY):
         assert propose(engine, f"https://s{i}.example.org/")[0] == "created"
@@ -266,6 +291,23 @@ def test_a_home_page_with_a_feed_makes_a_candidate(engine):
     row = candidate(engine)
     assert (row.feed_url, row.name, row.passes, row.failures) == (f"https://{HOST}/rss", "News",
                                                                   0, 0)
+
+
+def test_a_home_page_with_a_feed_waits_for_a_slot_while_the_gate_is_full(engine):
+    """A search find obeys `max_open` as TACHIKOMA's proposals do; it used to skip the cap."""
+    one = GATE.model_copy(update={"max_open": 1})
+    propose(engine, "https://busy.example.org/rss", max_open=1)
+    call(engine, db.add_found, host=HOST, evidence={}, now=NOW)
+    [due] = call(engine, db.homes_due, limit=5, now=NOW, gate=one)
+    assert call(engine, db.record_home, candidate_id=due.id, feed_url=f"https://{HOST}/rss",
+                name="News", error=None, gate=one, now=NOW) == "discovered"
+    row = candidate(engine)
+    assert (row.state, row.feed_url, row.name) == ("discovered", f"https://{HOST}/rss", "News")
+    # Queued, so it is not a home page to read again ...
+    assert call(engine, db.homes_due, limit=5, now=NOW + timedelta(days=8), gate=one) == []
+    # ... and it becomes a candidate when a slot frees.
+    two = GATE.model_copy(update={"max_open": 2})
+    assert call(engine, db.promote_queued, gate=two, now=NOW) == [HOST]
 
 
 def test_probes_in_a_row_move_a_candidate_through_the_gate(engine):
@@ -451,6 +493,22 @@ def test_finds_never_given_a_feed_are_forgotten(engine):
     assert candidate(engine, "new.example.org").state == "discovered"
 
 
+def test_a_queued_search_find_is_kept_as_long_from_when_its_feed_was_found(engine):
+    """Found long ago, its feed found today while the gate is full: it waits in the queue, and
+    is not forgotten for how long its home page took to give a feed."""
+    one = GATE.model_copy(update={"max_open": 1})
+    propose(engine, "https://busy.example.org/rss", max_open=1)
+    long_ago = NOW - timedelta(days=GATE.forget_after_days - 5)
+    call(engine, db.add_found, host=HOST, evidence={}, now=long_ago)
+    [due] = call(engine, db.homes_due, limit=5, now=NOW, gate=one)
+    assert call(engine, db.record_home, candidate_id=due.id, feed_url=f"https://{HOST}/rss",
+                name="News", error=None, gate=one, now=NOW) == "discovered"
+    soon = NOW + timedelta(days=10)
+    assert call(engine, db.forget_unfed, now=soon, gate=GATE) == 0
+    later = NOW + timedelta(days=GATE.forget_after_days + 1)
+    assert call(engine, db.forget_unfed, now=later, gate=GATE) == 1
+
+
 def test_a_queued_proposal_is_kept_as_long_from_when_it_was_made(engine):
     long_ago = NOW - timedelta(days=GATE.forget_after_days + 1)
     call(engine, db.add_found, host=HOST, evidence={}, now=long_ago)
@@ -467,7 +525,7 @@ def test_the_overview_has_every_part(engine):
     call(engine, db.add_found, host="c.example.org", evidence={}, now=NOW)
     propose(engine, "https://queued.example.org/rss", max_open=1)
     call(engine, db.record_search, query="q", results=3, credits=1, error=None, now=NOW)
-    overview = call(engine, db.load_overview, now=NOW)
+    overview = call(engine, db.load_overview, now=NOW, ready_at=GATE.probes_to_activate)
     assert overview["states"] == {"active": 1, "candidate": 1, "discovered": 2}
     assert [c.host for c in overview["open"]] == [HOST]
     assert overview["open_count"] == 1
