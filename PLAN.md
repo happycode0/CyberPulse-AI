@@ -806,6 +806,25 @@ cheapest capable route:
 | `deepseek/deepseek-v4.1-flash` | $0.49 |
 | `openai/gpt-5.6-luna` | $1.56 |
 
+**MixRoute (2026-10-30).** The owner moved the AI budget to a MixRoute subscription, an
+OpenAI-compatible gateway, and approved a ladder for it ("Recommended" profile):
+tier 0 `glm-4-flash` (free) → `gpt-5-nano` → `glm-4.7-flashx`; tier 1 `deepseek-v4-flash` →
+`qwen3.5-flash` → `glm-5.3-flash`; tier 2 `deepseek-v4-flash` → `glm-5.3-flash` →
+`mimo-v2.5-pro`; code `mimo-v2.5-pro` → `glm-5.3-flash`; audit `qwen3.5-flash` →
+`deepseek-v4-flash`. It lives in `config/models.mixroute.yaml` and is used when
+`AI_PROVIDER=mixroute`. MixRoute publishes ids only, so three things change against §7.1 to §7.4:
+
+- **Prices are inputs.** Each model's price per million tokens is reviewed into the file (from
+  its marketplace page). The guard checks those against the same US$1.00 ceiling, at the dearest
+  price step a worker prompt can reach, and checks that `GET /v1/models` lists the exact id.
+  There is no quantisation to pin, so tier 2 loses that check.
+- **The client walks the chain** (no `models` array, no `provider` object). Each call is charged
+  at the reviewed prices, since a MixRoute answer carries tokens but no cost.
+- **The budget reading is the ledger.** No endpoint says what a key has spent, so the month's
+  reading is the cost ledger's MixRoute sum against `AI_MONTHLY_BUDGET_USD`. The key's quota,
+  set in MixRoute's console, is the hard stop; a 403 says it is spent and pauses paid calls for
+  an hour.
+
 ### 7.2 Request discipline
 
 Every call: `response_format` `json_schema` with `strict: true`; `provider:

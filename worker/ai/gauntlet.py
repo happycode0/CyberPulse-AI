@@ -38,7 +38,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any, Literal, get_args
 
-from worker.ai.ladder import OUTPUT_CEILING_USD_PER_MTOK, Tier
+from worker.ai.ladder import OUTPUT_CEILING_USD_PER_MTOK, MixRouteConfig, Tier
 from worker.ai.tasks import (
     AU_DESK_RELEVANCE,
     BRIEF,
@@ -370,10 +370,22 @@ class Listed:
     expiration: date | None
     intelligence_index: Decimal | None
     withdrawn: bool
+    # On MixRoute, what the price list says; None: OpenRouter's `:free` suffix decides.
+    priced_free: bool | None = None
 
     @property
     def free(self) -> bool:
-        return self.slug.endswith(":free")
+        return self.priced_free if self.priced_free is not None else self.slug.endswith(":free")
+
+
+def priced(prices: MixRouteConfig, now: datetime) -> list[Listed]:
+    """MixRoute's challengers: every model priced in config/models.mixroute.yaml, as catalogue
+    rows. Its API lists no prices, newness or index, so they rank by price alone, and each is
+    charged at its dearest reachable output price."""
+    return [
+        Listed(slug, now, m.input, m.worst_output(), True, None, None, False, m.free)
+        for slug, m in prices.models.items()
+    ]
 
 
 def challengers(

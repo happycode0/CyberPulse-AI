@@ -4,13 +4,14 @@ The constraints are the point: a missing cost stays null rather than becoming ze
 states its outcome, the tier is one the ladder has, and a sub-cent cost keeps its digits.
 """
 
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from worker.db.ledger import LedgerEntry, record
+from worker.db.ledger import LedgerEntry, provider_spend, record
 from worker.db.migrate import run_migrations
 from worker.version import (
     ENRICHMENT_VERSION,
@@ -136,3 +137,22 @@ def test_spend_that_is_not_a_model_call_needs_no_tier(conn):
     record(conn, LedgerEntry(provider="tavily", stage="search", outcome="ok"))
     [row] = rows(conn)
     assert row["tier"] is None and row["cost_usd"] is None
+
+
+def test_provider_spend_sums_one_providers_calls_in_the_window(conn):
+    """MixRoute's budget reading (worker/ai/budget.py `ledger_key_status`)."""
+    for provider, cost, ts in [
+        ("mixroute", "0.0010", "2026-11-02T10:00:00Z"),
+        ("mixroute", "0.0020", "2026-10-31T23:59:59Z"),  # last month
+        ("mixroute", None, "2026-11-02T11:00:00Z"),  # unreported counts as nothing
+        ("openrouter", "0.0040", "2026-11-02T12:00:00Z"),  # another provider
+    ]:
+        record(conn, entry(provider=provider, cost_usd=Decimal(cost) if cost else None))
+        conn.execute(
+            text("update cost_ledger set ts = :ts where id = (select max(id) from cost_ledger)"),
+            {"ts": ts},
+        )
+    start, end = datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 12, 1, tzinfo=UTC)
+    assert provider_spend(conn, "mixroute", start, end) == Decimal("0.0010")
+    assert provider_spend(conn, "openrouter", start, end) == Decimal("0.0040")
+    assert provider_spend(conn, "tavily", start, end) == Decimal("0")

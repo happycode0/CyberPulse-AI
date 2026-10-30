@@ -552,3 +552,37 @@ def test_the_secret_scan_catches_the_mixroute_key_wherever_it_appears(monkeypatc
     monkeypatch.setenv("MIX_ROUTER_KEY", "mixroute-literal-TESTONLY-123")
     findings = scan_for_secrets({"events": [{"summary": "oops mixroute-literal-TESTONLY-123"}]})
     assert findings and all("TESTONLY" not in f for f in findings)
+
+
+# ─── The ops API's key status ─────────────────────────────────────────────────────────────────────
+
+
+def test_the_ops_api_reads_mixroutes_spend_from_the_ledger(monkeypatch):
+    from worker import ops_api
+
+    seen = []
+
+    def fake_status(engine, now):
+        seen.append(engine)
+        return ledger_key_status(None, T0, spend=lambda p, s, e: Decimal("3"))
+
+    monkeypatch.setattr(ops_api, "ledger_key_status", fake_status)
+    read = ops_api.key_reader(settings(), "engine")
+    assert read().usage_monthly == Decimal("3") and seen == ["engine"]
+
+
+def test_the_ops_api_says_when_no_mixroute_key_is_set():
+    from worker import ops_api
+    from worker.ai.budget import BudgetUnreadable
+
+    read = ops_api.key_reader(settings(mix_router_key=None), "engine")
+    with pytest.raises(BudgetUnreadable, match="MixRoute"):
+        read()
+
+
+def test_the_ops_api_still_reads_openrouters_key_on_openrouter():
+    from worker import ops_api
+
+    s = Settings(_env_file=None, database_url="sqlite://")
+    with pytest.raises(Exception, match="OpenRouter"):
+        ops_api.key_reader(s, "engine")()
