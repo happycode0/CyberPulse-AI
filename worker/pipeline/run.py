@@ -374,6 +374,11 @@ def rescore(
     """
     errors: list[str] = []
     with engine.begin() as conn:
+        # Under the ingest lock, as every other writer of events here is. The FAST and NORMAL
+        # lanes start together at the top of every fourth hour, and a rescore holding score rows
+        # while the other lane's ingest touched the same events deadlocked them (2026-10-28,
+        # 2026-10-30): Postgres killed the ingest, and that source's items were lost for the run.
+        lock_ingest(conn)
         ids = events_needing_score(
             conn, scoring_version=config.version, touched=touched, floor=RESCORE_FLOOR
         )
