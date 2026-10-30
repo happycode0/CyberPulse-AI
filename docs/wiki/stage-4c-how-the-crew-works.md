@@ -45,13 +45,16 @@ So the whole history of every decision is in the issue log. You read it the same
 
 | Prefix | Created by | Assigned to |
 |---|---|---|
-| `[DIGEST]` | a routine | DECKARD |
-| `[EDITORIAL]` | a routine | MORPHEUS |
-| `[FOLLOW-UP]` | a routine | DECKARD |
+| `[EDITORIAL]` | a routine, every morning | MORPHEUS |
+| `[FOLLOW-UP]` | a routine the worker fires when tasks with news are due | DECKARD |
+| `[DISCOVERY]` | a routine the worker fires when found sites have no feed | TACHIKOMA |
 | `[GAP]` | MORPHEUS | TACHIKOMA |
-| `[QA]` | DECKARD, or the daily sample | VOIGHT |
-| `[INCIDENT]` | worker health checks | TELETRAAN |
-| `[ENGINEERING]` | TELETRAAN · MORPHEUS | WHEELJACK |
+| `[INCIDENT]` | the watchdog's routine, for a kind code can fix | TELETRAAN |
+| `[ENGINEERING]` | MORPHEUS, once WHEELJACK has a repository | WHEELJACK |
+
+`[DIGEST]` and `[QA]` issues are gone since 2026-10-30: the desk digest repeated the worker's
+own triage and brief, and VOIGHT's verdicts had nowhere to land
+([4b](stage-4b-the-crew.md#the-crew-since-2026-10-30)).
 
 ---
 
@@ -70,39 +73,37 @@ SERAPH is the one face of it all in Paperclip. Its wake answers 200 when the sou
 correlation, ground truth and publishing all check out, and 503 naming any that do not. It runs
 nothing itself.
 
-### 2. Desk loop — 06:00, 14:00 and 22:00 Sydney
+### 2. Follow-up loop — when the worker says there is news
 
 ```text
-routine "[DIGEST] Desk" ──► DECKARD reads the last 8 hours: escalations first, then the rest
-                             ├─ loads the event's beat skill: AU desk · global desk · AI desk
-                             ├─ AU relevance + reasons, "Why this matters to Australia"
-                             ├─ high / critical?            ──► VOIGHT ──► PASS ──► the worker publishes
-                             │                                         └─ FIX / REJECT ──► back to DECKARD
-                             └─ AU critical infrastructure?  ──► MORPHEUS (immediately)
+worker, every hour at :15 ──► due check, nothing new since the last?  ──► records no_change itself
+                          └─► tasks with news due, cap has room,
+                              6 hours since the last wake?             ──► fires "[FOLLOW-UP] Sweep"
+DECKARD ──► GET /ops/followup (one batch) ──► POST one report per task ──► the worker sets the status
+                                          └─ new Australian exposure?  ──► MORPHEUS (immediately)
 ```
 
-One agent covers all three beats in one pass: Australia first, then global, then AI. Its own
-prompt is short. Each beat's steps are a skill it loads only for an event on that beat, so a run
-never carries all three. It may hand at most two events to subagents in a run, one beat each.
+Until 2026-10-30 this was the desk loop: DECKARD's notes on each candidate event, three times a
+day, and a follow-up sweep four times a day whether or not anything was due. The worker's
+triage and brief already say what the notes said, and most sweeps found nothing.
 
 ### 3. Editorial loop — every morning, 07:30 Sydney
 
 ```text
-07:00  VOIGHT samples yesterday's published events          ──► verdicts
-07:30  MORPHEUS reads the overnight digest + VOIGHT's verdicts
+07:30  MORPHEUS reads the overnight digest and its escalation candidates
          ├─ topic has gone quiet             ──► [GAP]       ──► TACHIKOMA
          └─ writes the daily intelligence report, naming any story to watch more closely
 ```
 
 MORPHEUS opens no follow-up issues. The worker's queue schedules every check on a developing
-story, less often while the checks find nothing, and DECKARD works it on the Follow-up routine
-at 03:00, 09:00, 15:00 and 21:00: one batch a sweep, at most twenty reports a day.
+story, less often while the checks find nothing, and DECKARD works it when the worker fires
+the Follow-up routine: one batch a sweep, at most twenty reports a day.
 
 ### 4. Source loop — nightly, from 03:10 Sydney
 
 ```text
 03:10 worker searches (Tavily) ──┐
-03:30 TACHIKOMA proposes ────────┴─► candidate ──► SERAPH's gate in the worker, every 4 h (deterministic)
+TACHIKOMA proposes, when fired ──┴─► candidate ──► SERAPH's gate in the worker, every 4 h (deterministic)
                                                ├─ 6 healthy probes in a row ──► ACTIVE (community evidence)
                                                └─ 3 failures in a row       ──► rejected, with the reason
 ```

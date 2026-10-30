@@ -9,9 +9,14 @@ the paperclip/v1 .paperclip.yaml extension, release 2026.1001.0).
 A card's `### Skill `<name>`` sections (DECKARD's beats) become package skills,
 `skills/<name>/SKILL.md`, attached to that agent by name, so its own prompt stays short.
 
-The package carries no secret values and declares no secret inputs. Things the importer
-cannot carry are done after the import: agent budget policies, the company budget, and each
-agent's access to the OpenRouter connection (docs/wiki/stage-4a-paperclip-setup.md).
+The package carries no secret values. It declares one secret input, each AI agent's
+MIXROUTE_API_KEY: the import asks for it and Paperclip stores it as a company secret, bound to
+that agent alone, so the key never sits in the server's environment (CYB-36). The crew's models
+run on MixRoute through a custom OpenCode provider, which the opencode_local adapter reads from
+the agent's PAPERCLIP_OPENCODE_PROVIDERS (release 2026.1001.0); Paperclip has no MixRoute
+connection of its own. Things the importer cannot carry are done after the import: agent budget
+policies, the company budget, and the webhook triggers' secrets
+(docs/wiki/stage-4a-paperclip-setup.md).
 
 With `--org-json PATH` it writes the public org chart for the site's crew page instead
 (site/assets/org.json): the same pages, with each card's Summary row and team, and no prompts,
@@ -60,32 +65,63 @@ CREW = [
 RETIRED = (
     "zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link", "ripperdoc",
 )
-# The company budget the owner sets after the import (stage-4a step 6). The agents' own budgets
-# must add up to less, so one agent's overrun hits its own budget before the company's.
-COMPANY_BUDGET_CENTS = 1200
+# The company budget the owner sets after the import (stage-4a step 6): the crew's US$8 of the
+# owner's US$20 a month, the worker having the other US$12. The agents' own budgets must add up
+# to less, so one agent's overrun hits its own budget before the company's.
+COMPANY_BUDGET_CENTS = 800
 
-# MORPHEUS keeps the skills and appearance its hire gave it; replacing it must not change them.
+# MORPHEUS keeps its appearance. Since 2026-10-30 it no longer hires or keeps memory files, so
+# those two skills are gone: each one put its text in every run's context.
 MORPHEUS_SKILLS = [
     "paperclipai/paperclip/paperclip",
     "paperclipai/paperclip/paperclip-board",
     "paperclipai/paperclip/paperclip-converting-plans-to-tasks",
-    "paperclipai/paperclip/paperclip-create-agent",
-    "paperclipai/paperclip/para-memory-files",
 ]
 MORPHEUS_APPEARANCE = {"characterVersion": "cap-v1", "paletteId": "arctic-blue", "schemaVersion": 1}
 AGENT_SKILLS = ["paperclipai/paperclip/paperclip"]
 
+# The crew's models on MixRoute, and whose each one is. A gateway's model id names no vendor, so
+# the two-person rule needs this map; a model not in it is refused until someone says whose it
+# is. Ids are MixRoute's, exactly (mixroute.ai/docs/model-api/<vendor>/<id>.md).
+MODEL_VENDORS = {
+    "deepseek-v4-flash": "deepseek",
+    "glm-4-flash": "zhipu",
+    "glm-5.3-flash": "zhipu",
+    "mimo-v2.5-pro": "xiaomi",
+}
+# OpenCode's small model, for its helper calls (session titles, summaries), never an agent's own
+# work. MixRoute's free model (owner, 2026-10-30); it returns at most 4,095 tokens a request.
+SMALL_MODEL = "mixroute/glm-4-flash"
+MIXROUTE_BASE_URL = "https://api.mixroute.ai/v1"
+# OpenCode's custom-provider shape (MixRoute's OpenCode guide). The adapter bakes the key into
+# the run's opencode.json from the agent's own MIXROUTE_API_KEY, a Paperclip secret.
+MIXROUTE_PROVIDER = {
+    "mixroute": {
+        "npm": "@ai-sdk/openai-compatible",
+        "name": "MixRoute",
+        "options": {"baseURL": MIXROUTE_BASE_URL, "apiKey": "{env:MIXROUTE_API_KEY}"},
+        "models": {model: {"name": model} for model in sorted(MODEL_VENDORS)},
+    },
+}
+MIXROUTE_KEY_INPUT = {
+    "kind": "secret",
+    "requirement": "optional",
+    "description": "The crew's own MixRoute API key, with a monthly quota set in MixRoute's console. "
+    "Paperclip stores it as a secret for this agent alone.",
+}
+
 # Issue text for each routine (stage-4a step 7, second table).
 ROUTINE_TEXT = {
     "Daily editorial": ("[EDITORIAL] Daily — {{date}}",
-                        "Run the daily editorial: overnight digest, gaps, VOIGHT verdicts, daily report."),
-    "Desk digest": ("[DIGEST] Desk — {{date}}",
-                    "Review the candidate events in the current desk digest: Australia first, then global, then AI."),
-    "Daily QA sample": ("[QA] Daily sample", "QA a sample of yesterday's published events."),
+                        "Run the daily editorial: overnight digest and its escalation candidates, gaps, VOIGHT verdicts, daily report."),
     "Follow-up": ("[FOLLOW-UP] Sweep", "Work the follow-up queue: report on each task due."),
-    "Source discovery": ("[DISCOVERY] Nightly",
-                         "Read the worker's discovery finds and propose sources, plus any open [GAP] topics."),
+    "Source discovery": ("[DISCOVERY] Sites waiting for a feed",
+                         "Read the worker's finds that have no feed yet and propose their feeds, plus any open [GAP] topics."),
+    "Incident": ("[INCIDENT] Watchdog",
+                 "The watchdog opened an incident: diagnose it and hand the fix to its owner."),
 }
+# A fire while the routine's issue is still open: an incident joins it, the rest skip.
+ROUTINE_CONCURRENCY = {"Incident": "coalesce_if_active"}
 
 
 def fail(message: str) -> None:
@@ -162,7 +198,7 @@ def read_crew() -> tuple[str, dict[str, dict]]:
         blocks = text_blocks(own)
         if blocks:
             card["prompt"] = blocks[0]
-            model = re.search(r"`(openrouter/[^`]+)`", row(body, "Adapter · Model") or "")
+            model = re.search(r"`(mixroute/[^`]+)`", row(body, "Adapter · Model") or "")
             money = re.match(r"US\$(\d+\.\d\d) · (\d+)$", row(body, "Budget · Max daily runs") or "")
             if not model or not money:
                 fail(f"{name}: model or budget row not found")
@@ -193,13 +229,15 @@ def read_setup() -> tuple[str, list[dict]]:
     if step is None:
         fail("routines step not found")
     routines = []
-    for name, assignee, cron, switch_on, summary in re.findall(
+    for name, assignee, trigger, switch_on, summary in re.findall(
         r"^\| ([A-Za-z -]+) \| ([A-Z]+) \| `([^`]+)`[^|]* \| (now|Stage \d) \| ([^|]+?) \|$", step,
         flags=re.M,
     ):
         if name not in ROUTINE_TEXT:
             fail(f"routine {name!r} has no issue text")
-        routines.append({"name": name, "assignee": assignee.lower(), "cron": cron,
+        # A trigger is a cron line in Australia/Sydney, or `webhook`: the worker fires it.
+        routines.append({"name": name, "assignee": assignee.lower(), "trigger": trigger,
+                         "cron": None if trigger == "webhook" else trigger,
                          "active": switch_on == "now", "starts": switch_on, "summary": summary})
     if len(routines) != len(ROUTINE_TEXT):
         fail(f"found {len(routines)} routines, expected {len(ROUTINE_TEXT)}")
@@ -253,6 +291,14 @@ def http_instructions(card: dict) -> str:
     ]).replace("**", "")
 
 
+def vendor(model: str) -> str:
+    """Whose model `mixroute/<id>` is, from MODEL_VENDORS."""
+    owner = MODEL_VENDORS.get(model.removeprefix("mixroute/"))
+    if owner is None:
+        fail(f"no vendor for {model}: add it to MODEL_VENDORS")
+    return owner
+
+
 def read_wiki() -> tuple[str, dict[str, dict], str, list[dict]]:
     """Both pages, checked against CREW and each other."""
     house_rules, cards = read_crew()
@@ -267,8 +313,11 @@ def read_wiki() -> tuple[str, dict[str, dict], str, list[dict]]:
     budgets = sum(card.get("budget_cents", 0) for card in cards.values())
     if budgets >= COMPANY_BUDGET_CENTS:
         fail(f"the agents' budgets add up to {budgets} cents, not under the company's {COMPANY_BUDGET_CENTS}")
-    # TELETRAAN checks WHEELJACK's code: the two-person rule needs two vendors (config/models.yaml).
-    vendors = {slug: cards[slug]["model"].split("/")[1] for slug in ("teletraan", "wheeljack")}
+    # TELETRAAN checks WHEELJACK's code: the two-person rule needs two vendors.
+    vendors = {slug: vendor(cards[slug]["model"]) for slug in ("teletraan", "wheeljack")}
+    for card in cards.values():
+        if "model" in card:
+            vendor(card["model"])
     if vendors["teletraan"] == vendors["wheeljack"]:
         fail(f"TELETRAAN and WHEELJACK both run a {vendors['wheeljack']} model; they must differ")
     return house_rules, cards, description, routines
@@ -302,9 +351,19 @@ def build(output: Path) -> None:
                 "dangerouslySkipPermissions": True,
                 "graceSec": 20,
                 "timeoutSec": 0,
+                "env": {
+                    "PAPERCLIP_OPENCODE_PROVIDERS": {
+                        "type": "plain", "value": json.dumps(MIXROUTE_PROVIDER, sort_keys=True),
+                    },
+                    # OpenCode's helper calls (session titles) on the agent's own model: its
+                    # default is a model the gateway may not serve, which aborts the run.
+                    "PAPERCLIP_OPENCODE_SMALL_MODEL": {"type": "plain", "value": SMALL_MODEL},
+                },
             }}
+            ext["inputs"] = {"env": {"MIXROUTE_API_KEY": MIXROUTE_KEY_INPUT}}
+            # No aiConnection: Paperclip's are Claude, OpenAI, OpenRouter and Grok, and the
+            # OpenRouter one matches only openrouter/ models.
             ext["runtime"] = {
-                "aiConnection": {"mode": "responsible_user", "method": "api_key", "provider": "openrouter"},
                 "heartbeat": {
                     "enabled": False,
                     "intervalSec": 0,
@@ -333,7 +392,7 @@ def build(output: Path) -> None:
             }}
             ext["budgetMonthlyCents"] = 0
         if slug == "morpheus":
-            ext["permissions"] = {"canCreateAgents": True, "canCreateSkills": True}
+            ext["permissions"] = {"canCreateAgents": False, "canCreateSkills": False}
             ext["permissionGrants"] = [{"permissionKey": "tasks:assign"}]
             ext["appearance"] = MORPHEUS_APPEARANCE
         else:
@@ -348,18 +407,20 @@ def build(output: Path) -> None:
         files[f"tasks/{slug}/TASK.md"] = markdown(
             {"name": title, "assignee": routine["assignee"], "project": PROJECT, "recurring": True}, body
         )
+        if routine["cron"] is None:
+            # Paperclip makes the trigger's secret; the owner rotates it once to read it and
+            # gives it, with the trigger's URL, to the worker (stage 4a step 7).
+            trigger = {"kind": "webhook", "label": routine["name"], "enabled": True,
+                       "signingMode": "bearer", "replayWindowSec": 300}
+        else:
+            trigger = {"kind": "schedule", "label": routine["name"], "enabled": True,
+                       "cronExpression": routine["cron"], "timezone": TIMEZONE}
         routines_ext[slug] = {
             "status": "active" if routine["active"] else "paused",
             "priority": "medium",
-            "concurrencyPolicy": "skip_if_active",
+            "concurrencyPolicy": ROUTINE_CONCURRENCY.get(routine["name"], "skip_if_active"),
             "catchUpPolicy": "skip_missed",
-            "triggers": [{
-                "kind": "schedule",
-                "label": routine["name"],
-                "enabled": True,
-                "cronExpression": routine["cron"],
-                "timezone": TIMEZONE,
-            }],
+            "triggers": [trigger],
         }
 
     files["COMPANY.md"] = markdown(
@@ -400,9 +461,9 @@ def readme(cards: dict[str, dict], routines: list[dict]) -> str:
         money = f"US${card.get('budget_cents', 0) / 100:.2f}"
         reports = cards[manager]["name"] if manager else "—"
         lines.append(f"| {card['name']} | {card['title']} | {reports} | `{adapter}` | {card.get('model', '—')} | {money} |")
-    lines += ["", "| Routine | Agent | Cron (Australia/Sydney) |", "|---|---|---|"]
+    lines += ["", "| Routine | Agent | Trigger (cron in Australia/Sydney) |", "|---|---|---|"]
     for routine in routines:
-        lines.append(f"| {routine['name']} | {cards[routine['assignee']]['name']} | `{routine['cron']}` |")
+        lines.append(f"| {routine['name']} | {cards[routine['assignee']]['name']} | `{routine['trigger']}` |")
     return "\n".join(lines) + "\n"
 
 
@@ -442,6 +503,7 @@ def org_chart() -> dict:
             {
                 "name": routine["name"],
                 "assignee": cards[routine["assignee"]]["name"],
+                "trigger": "webhook" if routine["cron"] is None else "schedule",
                 "cron": routine["cron"],
                 "timezone": TIMEZONE,
                 "summary": routine["summary"],

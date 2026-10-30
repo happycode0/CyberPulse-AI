@@ -1,12 +1,13 @@
-"""Paperclip, from the watchdog's side: the Incident routine's webhook, and whether the server
-answers at all.
+"""Paperclip, from the worker's side: the crew's webhook routines, and whether the server answers
+at all.
 
-The routine is the owner's (docs/runbooks/watchdog-incidents.md). Its webhook trigger signs with
-a bearer secret that Paperclip shows once, and the owner puts that and the trigger's URL in the
-worker's environment. A fire opens TELETRAAN's issue, or joins the one already open
-(`coalesce_if_active`). What it carries is an incident's id, kind, subject, severity and our
-own title: TELETRAAN reads the rest from GET /ops/incidents, so nothing of the evidence goes
-through Paperclip.
+Three routines are webhooks the worker fires (docs/wiki/stage-4a-paperclip-setup.md, step 7):
+Incident, from the watchdog, and Follow-up and Source discovery, from worker/notify/routines.py,
+only when there is work for them. Each trigger signs with a bearer secret that Paperclip shows
+when it is rotated, and the owner puts that and the trigger's URL in the worker's environment.
+A fire opens the routine's issue, or skips or joins the one already open, as the routine's
+concurrency policy says. What it carries is counts, ids and our own titles: the agent reads the
+rest from the ops API, so nothing fetched from the open web goes through Paperclip.
 
 The secret goes in the Authorization header only, and the trigger's public id is redacted from
 httpx's request lines, as the Telegram bot token is. `raise_for_status()` is never called: its
@@ -55,8 +56,10 @@ def install_log_redaction() -> None:
         target.addFilter(_RedactTriggerIds())
 
 
-class IncidentRoutine:
-    """Fires the Incident routine's webhook trigger."""
+class RoutineWebhook:
+    """Fires one routine's webhook trigger."""
+
+    name = "routine"
 
     def __init__(
         self,
@@ -73,40 +76,82 @@ class IncidentRoutine:
         install_log_redaction()
 
     def __repr__(self) -> str:
-        return "IncidentRoutine()"
+        return f"{type(self).__name__}()"
 
     @classmethod
-    def from_settings(cls, settings: Settings) -> "IncidentRoutine | None":
+    def from_parts(
+        cls, url: str | None, secret: SecretStr | None, *, user_agent: str
+    ) -> "RoutineWebhook | None":
         """The routine, or None when its URL or secret is not set."""
-        url = (settings.paperclip_incident_webhook_url or "").strip()
-        secret = settings.paperclip_incident_webhook_secret
+        url = (url or "").strip()
         if not url or secret is None or not secret.get_secret_value().strip():
             return None
-        return cls(
-            url, SecretStr(secret.get_secret_value().strip()), user_agent=settings.user_agent
-        )
+        return cls(url, SecretStr(secret.get_secret_value().strip()), user_agent=user_agent)
 
-    async def fire(self, payload: dict[str, Any]) -> SendResult:
+    async def fire(
+        self, payload: dict[str, Any], *, idempotency_key: str | None = None
+    ) -> SendResult:
+        """Fire it. `idempotency_key`, when given, lets Paperclip refuse a second fire of the
+        same wake, should one ever get past the worker's own claim."""
         findings = scan_text_for_secrets(repr(payload))
         if findings:
-            logger.error("incident fire withheld by the secret scan; %s", "; ".join(findings))
+            logger.error("%s fire withheld by the secret scan; %s", self.name, "; ".join(findings))
             return SendResult(False, withheld=True, error="withheld by the secret scan")
+        headers = {"Authorization": f"Bearer {self._secret.get_secret_value()}"}
+        if idempotency_key is not None:
+            headers["Idempotency-Key"] = idempotency_key
         try:
             async with httpx.AsyncClient(
                 timeout=TIMEOUT_SECONDS,
                 transport=self._transport,
                 headers={"User-Agent": self._user_agent},
             ) as http:
-                response = await http.post(
-                    self._url,
-                    json={"payload": payload},
-                    headers={"Authorization": f"Bearer {self._secret.get_secret_value()}"},
-                )
+                response = await http.post(self._url, json={"payload": payload}, headers=headers)
         except Exception as exc:  # noqa: BLE001 - its message may carry the URL; its type cannot
             return SendResult(False, error=type(exc).__name__)
         if 200 <= response.status_code < 300:
             return SendResult(True)
         return SendResult(False, error=f"HTTP {response.status_code}")
+
+
+class IncidentRoutine(RoutineWebhook):
+    """The Incident routine: TELETRAAN's issue for an incident the watchdog opened."""
+
+    name = "incident"
+
+    @classmethod
+    def from_settings(cls, settings: Settings) -> "IncidentRoutine | None":
+        return cls.from_parts(
+            settings.paperclip_incident_webhook_url,
+            settings.paperclip_incident_webhook_secret,
+            user_agent=settings.user_agent,
+        )
+
+
+class FollowupRoutine(RoutineWebhook):
+    name = "follow-up"
+
+
+class DiscoveryRoutine(RoutineWebhook):
+    name = "source discovery"
+
+
+def followup_routine(settings: Settings) -> RoutineWebhook | None:
+    """DECKARD's Follow-up routine, or None when its URL or secret is not set."""
+    return FollowupRoutine.from_parts(
+        settings.paperclip_followup_webhook_url,
+        settings.paperclip_followup_webhook_secret,
+        user_agent=settings.user_agent,
+    )
+
+
+def discovery_routine(settings: Settings) -> RoutineWebhook | None:
+    """TACHIKOMA's Source discovery routine, or None when its URL or secret is not set."""
+    return DiscoveryRoutine.from_parts(
+        settings.paperclip_discovery_webhook_url,
+        settings.paperclip_discovery_webhook_secret,
+        user_agent=settings.user_agent,
+    )
 
 
 async def probe(

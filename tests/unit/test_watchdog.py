@@ -63,9 +63,18 @@ from worker.watchdog.checks import (
     span,
     volume_findings,
 )
-from worker.watchdog.paperclip import IncidentRoutine, install_log_redaction, probe, redact
+from worker.watchdog.paperclip import (
+    IncidentRoutine,
+    RoutineWebhook,
+    discovery_routine,
+    followup_routine,
+    install_log_redaction,
+    probe,
+    redact,
+)
 from worker.watchdog.reconcile import Known, plan
-from worker.watchdog.run import MAX_REOPEN_NOTICES, Watchdog, routine_payload
+from worker.watchdog.checks import KIND_GUIDE
+from worker.watchdog.run import FOR_THE_CREW, MAX_REOPEN_NOTICES, Watchdog, routine_payload
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
 MIN = timedelta(minutes=1)
@@ -564,6 +573,40 @@ def test_the_routine_exists_only_with_both_url_and_secret(url, secret, configure
     assert (IncidentRoutine.from_settings(s) is not None) is configured
 
 
+async def test_a_fire_with_an_idempotency_key_sends_it():
+    seen = []
+    await routine(lambda r: seen.append(r) or httpx.Response(202)).fire(
+        {"due": 3}, idempotency_key="routine:follow-up:2026-10-30T06"
+    )
+    assert seen[0].headers["Idempotency-Key"] == "routine:follow-up:2026-10-30T06"
+    await routine(lambda r: seen.append(r) or httpx.Response(202)).fire({})
+    assert "Idempotency-Key" not in seen[1].headers
+
+
+@pytest.mark.parametrize(
+    "make, prefix",
+    [(followup_routine, "paperclip_followup"), (discovery_routine, "paperclip_discovery")],
+)
+def test_the_follow_up_and_discovery_routines_need_their_own_url_and_secret(make, prefix):
+    assert make(settings()) is None
+    assert make(settings(**{f"{prefix}_webhook_url": HOOK})) is None
+    assert make(settings(**{f"{prefix}_webhook_url": HOOK, f"{prefix}_webhook_secret": " "})) is None
+    both = make(settings(**{f"{prefix}_webhook_url": HOOK, f"{prefix}_webhook_secret": SECRET}))
+    assert isinstance(both, RoutineWebhook)
+    # The incident routine's settings are not theirs.
+    s = settings(paperclip_incident_webhook_url=HOOK, paperclip_incident_webhook_secret=SECRET)
+    assert make(s) is None
+
+
+def test_no_routine_shows_its_url_or_secret():
+    s = settings(
+        paperclip_followup_webhook_url=HOOK, paperclip_followup_webhook_secret=SECRET,
+        paperclip_discovery_webhook_url=HOOK, paperclip_discovery_webhook_secret=SECRET,
+    )
+    for text in (repr(followup_routine(s)), repr(discovery_routine(s)), repr(s)):
+        assert "pub-TESTONLY" not in text and SECRET not in text
+
+
 def test_neither_the_routine_nor_the_settings_show_the_url_or_secret():
     s = settings(paperclip_incident_webhook_url=HOOK, paperclip_incident_webhook_secret=SECRET)
     for text in (repr(IncidentRoutine.from_settings(s)), repr(s)):
@@ -672,7 +715,7 @@ class FakeRoutine:
         self.fired: list[dict] = []
         self.result = result or SendResult(True)
 
-    async def fire(self, payload) -> SendResult:
+    async def fire(self, payload, *, idempotency_key=None) -> SendResult:
         self.fired.append(payload)
         return self.result
 
@@ -760,6 +803,30 @@ async def test_paperclip_down_is_told_to_telegram_only(db):
     await watchdog(telegram, crew).run_pass(None, NOW)
     assert len(telegram.sent) == 1 and crew.fired == []
     assert "TELETRAAN" not in telegram.sent[0]
+
+
+def test_the_crew_is_woken_only_for_kinds_code_can_fix():
+    """W7: a kind the board fixes (a token, the network, Pages, money, a stuck worker) goes to
+    Telegram alone. Waking TELETRAAN for one cost a run to say "ask the board"."""
+    assert FOR_THE_CREW == {
+        "feed-failing", "parser-drift", "duplicate-explosion", "volume-collapse",
+        "publish-failure", "schema-drift", "job-failing",
+    }
+    assert FOR_THE_CREW <= set(KIND_GUIDE)
+
+
+@pytest.mark.parametrize(
+    "kind",
+    ["no-collection", "zero-volume", "stale-feed", "push-failure", "site-stale", "cost-anomaly"],
+)
+async def test_a_kind_the_board_fixes_is_told_to_telegram_only(db, kind):
+    telegram, crew = FakeTelegram(), FakeRoutine()
+    board = incident(kind=kind)
+    db["result"] = PassResult(opened=[board], unresolved=[board])
+    await watchdog(telegram, crew).run_pass(None, NOW)
+    assert len(telegram.sent) == 1 and crew.fired == []
+    assert list(db["claimed"]) == ["incident:7"]
+    assert "The crew has been told" not in telegram.sent[0]
 
 
 async def test_a_tripped_breaker_tells_a_person_and_not_the_crew(db):

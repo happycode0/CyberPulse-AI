@@ -145,3 +145,31 @@ month's AI cost at 11:10 on the 1st. The code cannot touch Paperclip, so these a
 5. Any `[MODEL]` proposal still open is sent to you on Telegram after the next Sunday gauntlet.
    It is yours to decide now, not MORPHEUS's: promote it with a reviewed edit to
    `config/models.yaml`, or do nothing.
+
+## 9. The leaner crew on MixRoute (about 45 minutes)
+
+Approved on 2026-10-30 ([4b, the crew since 2026-10-30](../wiki/stage-4b-the-crew.md#the-crew-since-2026-10-30)).
+The worker side is deployed with a pull and a restart. Paperclip is yours:
+
+1. **Clear the stale backlog first**, so nothing old runs when a key comes back: the cleanup
+   snippet Claude gave you on 2026-10-30 (dry run, then apply).
+2. **Two MixRoute keys**, in MixRoute's console: one for the worker (`MIX_ROUTER_KEY` in the
+   VM's `.env`, quota US$12 a month) and one for the crew (quota US$8). The crew's never goes in
+   `.env`.
+3. **Import the package** as in [4a, the quick way](../wiki/stage-4a-paperclip-setup.md#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go),
+   pasting the crew's key for MORPHEUS, TELETRAAN, DECKARD and TACHIKOMA. Untick every agent
+   on **Connectors → My OpenRouter API → Permissions**, and untick DECKARD's three old beat
+   skills on its **Skills** tab.
+4. **Budgets**: the snippet in 4a step 5 (US$7.80 in all, company US$8).
+5. **Archive the old routines**: the snippet in
+   [4a step 7](../wiki/stage-4a-paperclip-setup.md#archive-the-routines-an-import-leaves-behind)
+   (dry run, then `APPLY = true`). That takes the desk digest, the QA sample, the two scheduled
+   routines the worker now fires, and RIPPERDOC's three.
+6. **Pause RIPPERDOC** (section 8) if it is not paused yet.
+7. **The three webhooks**: rotate each trigger's secret and put the URLs and secrets in `.env`
+   ([4a step 7](../wiki/stage-4a-paperclip-setup.md#give-the-worker-the-three-webhooks)), then
+   `docker compose up -d --force-recreate worker`.
+8. **Smoke-test** MORPHEUS, DECKARD, TELETRAAN and TACHIKOMA one at a time
+   ([4a, Moving from 16 agents to 8, step 6](../wiki/stage-4a-paperclip-setup.md#moving-from-16-agents-to-8)),
+   then resume them and the four routines. VOIGHT and WHEELJACK stay paused.
+

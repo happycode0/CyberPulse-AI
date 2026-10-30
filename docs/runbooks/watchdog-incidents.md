@@ -20,6 +20,22 @@ Seen 14:07 Sydney time, …
 Medium and low ones only wait in the list. Every entry below assumes the `q` and `ops` helpers from
 [Before you start](README.md#before-you-start).
 
+### The Incident routine
+
+TELETRAAN's *Incident* routine is a webhook routine in the crew package
+([4a, step 7](../wiki/stage-4a-paperclip-setup.md#7--create-the-routines)). The worker fires it
+only for a high or critical incident **of a kind code can fix**: `feed-failing`,
+`parser-drift`, `duplicate-explosion`, `volume-collapse`, `publish-failure`, `schema-drift` and
+`job-failing` (`FOR_THE_CREW`, worker/watchdog/run.py). The rest are yours, and reach you on
+Telegram alone: a stuck worker, the network, a quiet feed, the publish token, Pages, money, and
+Paperclip itself. The Telegram notice says when the crew has been told too.
+
+It needs `PAPERCLIP_INCIDENT_WEBHOOK_URL` and `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` in the VM's
+`.env`; with either blank, incidents go to Telegram only. Telegram needs `TELEGRAM_BOT_TOKEN`
+and `TELEGRAM_CHAT_ID` ([Tokens](tokens.md)). On 2026-10-28 neither was set, and the two
+incidents that said the site had stopped (INC-63, INC-64) reached nobody: check the worker's
+start-up log for "Telegram notifications are on".
+
 ## For every incident
 
 **Check** first, whatever the kind:

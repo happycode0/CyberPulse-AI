@@ -1361,8 +1361,9 @@ class OpsApi:
                 "then stop. The rest wait for the next sweep."
             ),
             (
-                "nothing_new is true when the event has been checked before and the worker has "
-                "added nothing to it since: report no_change for it straight away."
+                "The worker records no_change itself on due checks with nothing new, every hour, "
+                "and wakes you only for the rest. nothing_new is true on one that turned quiet "
+                "since: report no_change for it straight away."
             ),
         ]
         if accepted >= rule.per_day:

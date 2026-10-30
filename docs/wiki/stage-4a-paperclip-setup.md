@@ -304,15 +304,20 @@ That is: the first paragraph (from "Produce the most accurate…" to "…AI indu
 routines into a package for Paperclip's **Import** page. It holds:
 - all 7 agents, each with its title, role, manager, icon, model, budget and max daily runs;
 - every AI agent's instructions, with the house rules first;
-- DECKARD's four beat skills (`cyberpulse-au-desk`, `cyberpulse-global-desk`,
-  `cyberpulse-ai-desk` and `cyberpulse-follow-up`);
+- every AI agent's MixRoute provider for OpenCode (`PAPERCLIP_OPENCODE_PROVIDERS`), so its
+  `mixroute/<model>` resolves to `https://api.mixroute.ai/v1`;
+- DECKARD's `cyberpulse-follow-up` skill;
 - the `http` agent's URL and job;
-- the 5 routines;
+- the 4 routines in step 7, three of them webhook routines the worker fires;
 - the board-approval setting;
 - the short mission. Importing into an existing company leaves the Description as it was
   (2026-10-02), so paste the mission by hand as in step 5.
 
-It holds no secret values and asks for none.
+It holds no secret values. It asks for one: each AI agent's `MIXROUTE_API_KEY`, the crew's own
+MixRoute key. Paperclip stores what you paste as a secret bound to that agent alone, so the key
+is never in the server's environment, where every agent's run could read it (CYB-36). Make a
+**separate key for the crew** in MixRoute's console, not the worker's, and give it a monthly
+quota of US$8 there: it is the crew's hard stop.
 
 ```bash
 python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
@@ -321,17 +326,19 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
 1. **Company Settings → Import**, choose the zip, and target **the existing CyberPulse** (not a
    new company).
 2. Collisions: choose **Replace**. That updates MORPHEUS in place, which is how it gets the house
-   rules, and keeps its OpenRouter connection. It also matches the existing `CyberPulse-AI`
+   rules. It also matches the existing `CyberPulse-AI`
    project, so the routines attach to it.
-3. Keep **Start imported agents and routines paused** ticked. **Preview**, then apply. Expect
-   warnings that the `paperclipai/paperclip/*` skills are "not present in the package". The
-   package leaves them out on purpose: replacing them would swap the built-in copies for ones
-   that track GitHub. The agents keep using the built-in skills. DECKARD's four `cyberpulse-*`
-   skills are in the package, so they raise no warning.
+3. Keep **Start imported agents and routines paused** ticked. **Preview**. The preview asks for
+   `MIXROUTE_API_KEY` once per AI agent: paste the crew's key for MORPHEUS, TELETRAAN, DECKARD
+   and TACHIKOMA. VOIGHT and WHEELJACK stay paused, so leave theirs blank (it is optional).
+   Then apply. Expect warnings that the `paperclipai/paperclip/*` skills are "not present in
+   the package". The package leaves them out on purpose: replacing them would swap the
+   built-in copies for ones that track GitHub. The agents keep using the built-in skills.
+   DECKARD's `cyberpulse-follow-up` skill is in the package, so it raises no warning.
 
    🔴 **On the finish screen, do not press "Activate selected".** Its list, *Activate imported
-   agents and routines*, arrives with all 12 items ticked. Pressing it resumes every agent and
-   switches on all 5 routines. If it was pressed, put everything back to paused with this, in
+   agents and routines*, arrives with all 11 items ticked. Pressing it resumes every agent and
+   switches on all 4 routines. If it was pressed, put everything back to paused with this, in
    the browser console (**F12 → Console**):
 
    ```js
@@ -346,20 +353,18 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
      if (a.status !== 'paused') console.log((await call(`/api/agents/${a.id}/pause`, 'POST')).name, 'paused');
    ```
 
-   It prints each routine and agent it pauses: 5 routines and 7 agents the first time.
-4. **Let the 5 other AI agents use your OpenRouter key.** The importer does not carry this.
-   **Connectors → My OpenRouter API → Permissions → Which agents can use this connection? → Just
-   agents I pick**. Tick TELETRAAN, DECKARD, VOIGHT, TACHIKOMA and WHEELJACK next to MORPHEUS.
-   Leave SERAPH out; it is the `http` agent and never calls a model. Untick RIPPERDOC if it is
-   listed: it was [retired](stage-4b-the-crew.md#7-ripperdoc-retired-2026-10-20) on 2026-10-20.
+   It prints each routine and agent it pauses: 4 routines and 7 agents the first time.
+4. **Take the agents off OpenRouter.** They run on MixRoute now, with the key you pasted in
+   step 3. **Connectors → My OpenRouter API → Permissions**: untick every agent. Paperclip has
+   no MixRoute connector; the agent's own `MIXROUTE_API_KEY` secret is what it runs on.
 5. **Make the budgets real.** The importer writes each agent's budget figure but not the
    hard-stop policy that enforces it, so the Budget tab shows a limit that does nothing. In the
    browser console (**F12 → Console**), run this. It replaces the company-budget snippet in
    step 5:
 
    ```js
-   const cents = { MORPHEUS: 200, TELETRAAN: 100, DECKARD: 200, VOIGHT: 200, TACHIKOMA: 100,
-     WHEELJACK: 100 };
+   const cents = { MORPHEUS: 200, TELETRAAN: 150, DECKARD: 300, VOIGHT: 40, TACHIKOMA: 50,
+     WHEELJACK: 40 };
    const call = (url, body) => fetch(url, body && { method: 'PATCH',
      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
      .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
@@ -367,15 +372,16 @@ python3 ops/build-paperclip-package.py     # writes build/cyberpulse-crew.zip
    for (const a of await call(`/api/companies/${co.id}/agents`))
      if (a.name in cents) console.log((await call(`/api/agents/${a.id}/budgets`,
        { budgetMonthlyCents: cents[a.name] })).name, cents[a.name]);
-   const c = await call(`/api/companies/${co.id}/budgets`, { budgetMonthlyCents: 1200 });
+   const c = await call(`/api/companies/${co.id}/budgets`, { budgetMonthlyCents: 800 });
    console.log(c.name, c.budgetMonthlyCents);
    ```
 
-   It prints 6 agents, then `CyberPulse 1200`. The 6 budgets add up to US$9.00, under the
-   company's US$12. Saving a budget never resumes an agent the import paused.
+   It prints 6 agents, then `CyberPulse 800`. The 6 budgets add up to US$7.80, under the
+   company's US$8: the crew's share of the owner's US$20 a month. Saving a budget never
+   resumes an agent the import paused.
 6. Everything is now paused, MORPHEUS included. **Resume nothing until you choose to.** When you
    do, resume only the agents marked "now" on the crew page, and the routines marked "now" in
-   step 7.
+   step 7. Give the worker the three webhook routines first (step 7), or it has nothing to fire.
 
 What the import cannot set:
 - **Nothing for the `http` agent.** SERAPH's wake needs no auth header. Paperclip refuses to call a private
@@ -417,15 +423,11 @@ apart from the few minutes of each test in step 6.
    managers change, and their history is kept. The 8 retired agents are not in the package, so
    the import does not touch them.
 3. 🔴 **Check what the import did.**
-   - DECKARD's page → **Skills** lists `cyberpulse-au-desk`, `cyberpulse-global-desk`,
-     `cyberpulse-ai-desk` and `cyberpulse-follow-up`, as well as `paperclip`.
-   - TELETRAAN's model is `openrouter/qwen/qwen3.8-flash`.
+   - DECKARD's page → **Skills** lists `cyberpulse-follow-up` and `paperclip`.
+   - TELETRAAN's model is `mixroute/glm-5.3-flash`.
    - SERAPH's payload template is `{"job": "pipeline"}`.
-   - **Routines** lists the 5 routines in step 7, all paused. **Desk digest** belongs to
-     DECKARD at `0 6,14,22 * * *`, **Follow-up** runs at `0 3-21/6 * * *`, and **Source
-     discovery** at `30 3 * * *`, after the worker's 03:10 search. If one still shows its old
-     value, change it on the routine's page. The three old desk digests (AU, Global and AI) are
-     still there too. Step 4 archives them.
+   - **Routines** lists the 4 routines in step 7, all paused. An import always *adds* routines,
+     so the ones from earlier imports are there too: archive them as in step 7.
 4. 🔴 **Terminate the 8 retired agents**: ZION, BLASTER, WINTERMUTE, TRON, ROGUE, PROWL,
    LIBRARIAN and LINK. Terminating cannot be undone, but their runs, issues and costs stay in
    the history. By hand, it is each agent's page → **Terminate**, after archiving the three old
@@ -471,12 +473,13 @@ apart from the few minutes of each test in step 6.
    3. Watch the run on its page. The reply should match its card on the
       [crew page](stage-4b-the-crew.md), and the agent should mark its own ticket done.
    4. Check the run's cost entry, not the agent's own claim. The model is the card's
-      (`xiaomi/mimo-v2.6-flash` for DECKARD, `qwen/qwen3.8-flash` for TELETRAAN),
-      and the cost is well under one cent.
+      (`mixroute/deepseek-v4-flash` for DECKARD, `mixroute/glm-5.3-flash` for TELETRAAN),
+      and the cost is well under one cent. If an agent calls the house rules "injected" and
+      refuses them, leave it paused and tell Claude (4b, the models).
    5. **Pause agent**, straight away.
 
    If a test fails, leave that agent paused and tell Claude.
-7. **Leave everything paused.** All 7 agents and all 5 routines are paused now. **Resume nothing
+7. **Leave everything paused.** All 7 agents and all 4 routines are paused now. **Resume nothing
    until you choose to.** When you do, start with MORPHEUS and DECKARD, and the routines marked
    "now" in step 7.
    The retired agents never come back: a terminated agent cannot be resumed.
@@ -521,34 +524,88 @@ MORPHEUS
 
 ## 7. 🔴 Create the routines
 
-**Routines → New routine** for each row. **Timezone `Australia/Sydney`** for every one.
-**Concurrency policy `skip_if_active`** and **Catch-up policy `skip_missed`** for every one, so a
-slow run never stacks up a queue and a reboot never fires a burst of missed jobs.
+**Routines → New routine** for each row, or import them with the package (step 6), which is
+quicker. **Catch-up policy `skip_missed`** for every one. **Concurrency policy
+`skip_if_active`** for every one but Incident, which is **`coalesce_if_active`**: a second
+incident while TELETRAAN's issue is open joins it. A schedule's timezone is `Australia/Sydney`.
 
-| Routine | Assigned to | Cron expression | Switch on | What it is for (the site's crew page) |
+| Routine | Assigned to | Trigger | Switch on | What it is for (the site's crew page) |
 |---|---|---|---|---|
-| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest, picks the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report. |
-| Desk digest | DECKARD | `0 6,14,22 * * *` | now | Desk notes on the last 8 hours' candidate events: Australia first, then global, then AI. |
-| Daily QA sample | VOIGHT | `0 7 * * *` | now | Checks a sample of yesterday's published events against their evidence. |
-| Follow-up | DECKARD | `0 3-21/6 * * *` | now | Reports on each follow-up task due on a developing story. |
-| Source discovery | TACHIKOMA | `30 3 * * *` (after the worker's 03:10 search) | now | Reads the night's search finds and proposes sources, plus some for each open coverage gap. |
+| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest and its escalation candidates, picks the coverage gaps, settles any open VOIGHT verdict and writes the daily intelligence report. |
+| Follow-up | DECKARD | `webhook` (the worker fires it at most every 6 hours) | now | Fired by the worker only when follow-up tasks with something new are due: reports on each. |
+| Source discovery | TACHIKOMA | `webhook` (the worker fires it at most once a day) | now | Fired by the worker only when its search found sites it has no feed for: proposes their feeds, plus sites for each open coverage gap. |
+| Incident | TELETRAAN | `webhook` (the watchdog fires it) | now | Fired by the watchdog for a high or critical incident code can fix: diagnoses it and hands the fix to its owner. |
 
-The desk digest runs three times a day, at 06:00, 14:00 and 22:00 Sydney time. Each run reads
-the last 8 hours of the worker's digest, so together they cover the day. DECKARD takes the
-Australian events first, then global, then AI. The follow-up sweep runs at 03:00, 09:00, 15:00
-and 21:00, away from the digest hours, so DECKARD's one run at a time is never a queue.
-
-Create the "Stage 5" ones **paused**. Routine text — what goes in the issue it creates:
+The worker decides when the three webhook routines run, from its own data
+(`worker/notify/routines.py` and the watchdog), so none of them wakes an agent to find there is
+nothing to do. Routine text — what goes in the issue it creates:
 
 | Routine | Issue title | Issue body |
 |---|---|---|
-| Daily editorial | `[EDITORIAL] Daily — {{date}}` | `Run the daily editorial: overnight digest, gaps, VOIGHT verdicts, daily report.` |
-| Desk digest | `[DIGEST] Desk — {{date}}` | `Review the candidate events in the current desk digest: Australia first, then global, then AI.` |
-| Daily QA sample | `[QA] Daily sample` | `QA a sample of yesterday's published events.` |
+| Daily editorial | `[EDITORIAL] Daily — {{date}}` | `Run the daily editorial: overnight digest and its escalation candidates, gaps, VOIGHT verdicts, daily report.` |
 | Follow-up | `[FOLLOW-UP] Sweep` | `Work the follow-up queue: report on each task due.` |
-| Source discovery | `[DISCOVERY] Nightly` | `Read the worker's discovery finds and propose sources, plus any open [GAP] topics.` |
+| Source discovery | `[DISCOVERY] Sites waiting for a feed` | `Read the worker's finds that have no feed yet and propose their feeds, plus any open [GAP] topics.` |
+| Incident | `[INCIDENT] Watchdog` | `The watchdog opened an incident: diagnose it and hand the fix to its owner.` |
 
 If the date placeholder is not accepted, drop it — Paperclip records when each issue was created.
+
+### Give the worker the three webhooks
+
+Each webhook trigger has a URL and a bearer secret. Paperclip shows the secret only when it is
+made or rotated, so rotate it once to read it. For each of Follow-up, Source discovery and
+Incident:
+
+1. The routine's page → its webhook trigger → **Rotate secret**. Copy the secret it shows, and
+   the trigger's URL (`…/api/routine-triggers/public/<id>/fire`).
+2. Put them in the VM's `~/CyberPulse-AI/.env`, with `http://server:3100` in front of
+   `/api/routine-triggers/…`, so the worker reaches Paperclip on the compose network:
+
+   ```bash
+   PAPERCLIP_FOLLOWUP_WEBHOOK_URL=http://server:3100/api/routine-triggers/public/<id>/fire
+   PAPERCLIP_FOLLOWUP_WEBHOOK_SECRET=<the secret>
+   PAPERCLIP_DISCOVERY_WEBHOOK_URL=http://server:3100/api/routine-triggers/public/<id>/fire
+   PAPERCLIP_DISCOVERY_WEBHOOK_SECRET=<the secret>
+   PAPERCLIP_INCIDENT_WEBHOOK_URL=http://server:3100/api/routine-triggers/public/<id>/fire
+   PAPERCLIP_INCIDENT_WEBHOOK_SECRET=<the secret>
+   ```
+
+3. `docker compose up -d --force-recreate worker`. Its log says, at start, which routines it
+   can fire. With a URL or secret missing, it fires that routine never, and still records
+   `no_change` for quiet follow-up checks.
+
+### Archive the routines an import leaves behind
+
+An import adds its routines; it never replaces the ones there. Once the new ones are in, archive
+every other routine, including the retired ones:
+
+| Retired routine | Why |
+|---|---|
+| Desk digest (DECKARD) | 2026-10-30: it repeated the worker's triage and brief; MORPHEUS reads the escalation candidates |
+| Daily QA sample (VOIGHT) | 2026-10-30: its verdicts had nowhere to land |
+| Follow-up and Source discovery on a schedule | 2026-10-30: the worker fires them now |
+| Model scan, Model gauntlet, Monthly cost review (RIPPERDOC) | 2026-10-20: the worker runs them and tells you itself |
+
+In the browser console (**F12 → Console**), this lists every routine that is not one of the
+newest four, then archives them when you set `APPLY = true`:
+
+```js
+const APPLY = false;
+const keep = ['[EDITORIAL] Daily — {{date}}', '[FOLLOW-UP] Sweep',
+  '[DISCOVERY] Sites waiting for a feed', '[INCIDENT] Watchdog'];
+const call = (url, method, body) => fetch(url, method && { method,
+  headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) })
+  .then(r => r.ok ? r.json() : Promise.reject(`${url} ${r.status}`));
+const [co] = await call('/api/companies?scope=accessible');
+const all = (await call(`/api/companies/${co.id}/routines`)).filter(r => r.status !== 'archived');
+const newest = new Map();
+for (const r of all) if (keep.includes(r.title) && !(newest.get(r.title)?.createdAt > r.createdAt))
+  newest.set(r.title, r);
+const keepIds = new Set([...newest.values()].map(r => r.id));
+for (const r of all.filter(r => !keepIds.has(r.id))) {
+  console.log(APPLY ? 'archiving' : 'would archive', r.title, r.status);
+  if (APPLY) await call(`/api/routines/${r.id}`, 'PATCH', { status: 'archived' });
+}
+```
 
 **What is *not* a routine, on purpose:** the hourly and 4-hour collection lanes, the
 ground-truth sync and publishing. The worker owns those. As Paperclip routines they would create
@@ -556,8 +613,7 @@ about 8,800 issues a year from the hourly lane alone, all noise, and would stop 
 Paperclip was down (PLAN.md §2.3).
 
 Nor, since 2026-10-20, are the model scan, the gauntlet and the monthly cost review. The worker
-runs them and tells you on Telegram itself, so RIPPERDOC's three routines (*Model scan*, *Model
-gauntlet* and *Monthly cost review*) are gone
+runs them and tells you on Telegram itself
 ([4b](stage-4b-the-crew.md#7-ripperdoc-retired-2026-10-20)).
 
 ## 8. 🔴 First test — one ticket, one agent
@@ -569,8 +625,8 @@ gauntlet* and *Monthly cost review*) are gone
 3. Check the reply follows the prompt, then check the cost on the run. It should be well under
    one cent.
 
-If it fails with "opencode not found" or a model error, the Stage 4 OpenCode piece is not in yet —
-tell Claude.
+If it fails with "opencode not found", "Model not found" or a 401 from MixRoute, the agent's
+MixRoute provider or key is missing — check its `MIXROUTE_API_KEY` secret, then tell Claude.
 
 ## 9. Day to day
 
@@ -580,7 +636,7 @@ tell Claude.
 | Approve a hire or proposal | **Approvals** |
 | Stop one agent | its page → **Pause agent** (and **Resume agent** to undo) |
 | Stop all AI spend at once | pause the company, which stops the agents. The worker's own enrichment is separate: set `AI_MONTHLY_BUDGET_USD=0` in `.env`, then `docker compose up -d --force-recreate worker`. It keeps collecting and publishing |
-| See spend | **Budgets**, plus the worker's AI cost message on Telegram on the 1st |
+| See spend | **Budgets**, MixRoute's console for the crew's key, plus the worker's AI cost message on Telegram on the 1st |
 | Decide a model change | the worker's model proposal on Telegram: promote it with a reviewed edit to `config/models.yaml`, or do nothing |
 | Wake an agent by hand | assign it an issue, or @-mention it in a comment |
 
