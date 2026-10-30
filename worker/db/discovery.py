@@ -515,12 +515,14 @@ def retire_weak(
 
 
 def forget_unfed(conn: Connection, *, now: datetime, gate: GateConfig) -> int:
-    """Forget search finds never given a feed, and proposals queued that long since they were
-    made. Rejected and retired rows stay."""
+    """Forget search finds never given a feed, and proposals and search finds queued that long
+    since they were made or their feed was found (`record_home` stamps `last_probe_at` when it
+    queues one). Rejected and retired rows stay."""
     return conn.execute(
         text(
             "delete from source_candidates where state = 'discovered' "
-            "and coalesce(proposed_at, created_at) < :cutoff"
+            "and coalesce(proposed_at, case when feed_url is not null then last_probe_at end, "
+            "created_at) < :cutoff"
         ),
         {"cutoff": now - timedelta(days=gate.forget_after_days)},
     ).rowcount

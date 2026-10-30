@@ -493,6 +493,22 @@ def test_finds_never_given_a_feed_are_forgotten(engine):
     assert candidate(engine, "new.example.org").state == "discovered"
 
 
+def test_a_queued_search_find_is_kept_as_long_from_when_its_feed_was_found(engine):
+    """Found long ago, its feed found today while the gate is full: it waits in the queue, and
+    is not forgotten for how long its home page took to give a feed."""
+    one = GATE.model_copy(update={"max_open": 1})
+    propose(engine, "https://busy.example.org/rss", max_open=1)
+    long_ago = NOW - timedelta(days=GATE.forget_after_days - 5)
+    call(engine, db.add_found, host=HOST, evidence={}, now=long_ago)
+    [due] = call(engine, db.homes_due, limit=5, now=NOW, gate=one)
+    assert call(engine, db.record_home, candidate_id=due.id, feed_url=f"https://{HOST}/rss",
+                name="News", error=None, gate=one, now=NOW) == "discovered"
+    soon = NOW + timedelta(days=10)
+    assert call(engine, db.forget_unfed, now=soon, gate=GATE) == 0
+    later = NOW + timedelta(days=GATE.forget_after_days + 1)
+    assert call(engine, db.forget_unfed, now=later, gate=GATE) == 1
+
+
 def test_a_queued_proposal_is_kept_as_long_from_when_it_was_made(engine):
     long_ago = NOW - timedelta(days=GATE.forget_after_days + 1)
     call(engine, db.add_found, host=HOST, evidence={}, now=long_ago)
