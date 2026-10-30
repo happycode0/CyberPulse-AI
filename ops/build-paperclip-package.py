@@ -87,7 +87,6 @@ MODEL_VENDORS = {
     "deepseek-v4-flash": "deepseek",
     "glm-4-flash": "zhipu",
     "glm-5.3-flash": "zhipu",
-    "mimo-v2.5-pro": "xiaomi",
 }
 # OpenCode's small model, for its helper calls (session titles, summaries), never an agent's own
 # work. MixRoute's free model (owner, 2026-10-30); it returns at most 4,095 tokens a request.

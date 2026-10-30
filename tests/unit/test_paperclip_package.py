@@ -43,7 +43,7 @@ MODELS = {
     "deckard": "mixroute/deepseek-v4-flash",
     "voight": "mixroute/deepseek-v4-flash",
     "tachikoma": "mixroute/deepseek-v4-flash",
-    "wheeljack": "mixroute/mimo-v2.5-pro",
+    "wheeljack": "mixroute/deepseek-v4-flash",
 }
 DAILY_RUNS = {"morpheus": 4, "teletraan": 4, "deckard": 8, "voight": 2, "tachikoma": 2,
               "wheeljack": 2}
@@ -282,7 +282,8 @@ def test_the_crew_runs_on_mixroute(builder, extension):
 def test_teletraan_checks_wheeljack_on_another_vendors_model(builder, extension):
     models = {slug: ext["adapter"]["config"].get("model") for slug, ext in extension["agents"].items()}
     vendor = {slug: builder.vendor(models[slug]) for slug in ("teletraan", "wheeljack")}
-    assert vendor == {"teletraan": "zhipu", "wheeljack": "xiaomi"}
+    assert vendor == {"teletraan": "zhipu", "wheeljack": "deepseek"}
+    assert vendor["teletraan"] != vendor["wheeljack"]
 
 
 def test_seraph_is_the_one_http_agent(builder, extension):
