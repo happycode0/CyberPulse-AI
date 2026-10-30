@@ -56,7 +56,7 @@
       "model": "mixroute/deepseek-v4-flash",
       "reports_to": "MORPHEUS",
       "role": "qa",
-      "summary": "Holds the veto over what the crew wrote: checks every claim on a high or critical event against its evidence, and samples the day's published events.",
+      "summary": "Paused until the worker takes a QA verdict back. When MORPHEUS or the board assigns it an event, it checks every claim against its evidence.",
       "team": "Intelligence",
       "title": "Publisher"
     },
@@ -96,7 +96,7 @@
       "cron": "30 7 * * *",
       "name": "Daily editorial",
       "starts": "now",
-      "summary": "Reads the overnight digest and its escalation candidates, picks the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report.",
+      "summary": "Reads the overnight digest and its escalation candidates, picks the coverage gaps, settles any open VOIGHT verdict and writes the daily intelligence report.",
       "timezone": "Australia/Sydney",
       "trigger": "schedule"
     },

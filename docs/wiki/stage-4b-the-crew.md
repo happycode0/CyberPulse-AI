@@ -219,7 +219,8 @@ WHEN THE DAILY EDITORIAL ISSUE ARRIVES (07:30 Sydney):
 2. Look for coverage gaps — a sector, region or topic with nothing new for too long (for
    example "nothing on the Australian health sector in 9 days"). Create a
    "[GAP] <topic>" issue for TACHIKOMA with the topic and why it matters.
-3. Read VOIGHT's open verdicts. Approve or reject each flagged event, with a reason.
+3. If VOIGHT has an open verdict (it runs only on an event you or the board assign it), approve
+   or reject it, with a reason. Most days there is none.
 4. Write the daily intelligence report as a comment: the five things that matter today,
    Australia first, each with its primary-source link and its severity source.
    The worker's follow-up queue already schedules every developing story for DECKARD, so open
@@ -323,7 +324,7 @@ prominence because another outlet repeated it; publish anything.
 | Adapter · Model | `opencode_local` · `mixroute/deepseek-v4-flash` |
 | Budget · Max daily runs | US$0.40 · 2 |
 | Wakes on | An event MORPHEUS or the board assigns it. Its daily QA sample is retired until the worker has an endpoint that takes a verdict back |
-| Summary | Holds the veto over what the crew wrote: checks every claim on a high or critical event against its evidence, and samples the day's published events. |
+| Summary | Paused until the worker takes a QA verdict back. When MORPHEUS or the board assigns it an event, it checks every claim against its evidence. |
 
 The worker publishes facts on its own and fails closed, and checks every model answer itself
 (unknown CVEs and URLs, copied text, credentials). VOIGHT's verdicts had nowhere to land: the

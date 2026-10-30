@@ -531,7 +531,7 @@ incident while TELETRAAN's issue is open joins it. A schedule's timezone is `Aus
 
 | Routine | Assigned to | Trigger | Switch on | What it is for (the site's crew page) |
 |---|---|---|---|---|
-| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest and its escalation candidates, picks the coverage gaps, rules on VOIGHT's verdicts and writes the daily intelligence report. |
+| Daily editorial | MORPHEUS | `30 7 * * *` | now | Reads the overnight digest and its escalation candidates, picks the coverage gaps, settles any open VOIGHT verdict and writes the daily intelligence report. |
 | Follow-up | DECKARD | `webhook` (the worker fires it at most every 6 hours) | now | Fired by the worker only when follow-up tasks with something new are due: reports on each. |
 | Source discovery | TACHIKOMA | `webhook` (the worker fires it at most once a day) | now | Fired by the worker only when its search found sites it has no feed for: proposes their feeds, plus sites for each open coverage gap. |
 | Incident | TELETRAAN | `webhook` (the watchdog fires it) | now | Fired by the watchdog for a high or critical incident code can fix: diagnoses it and hands the fix to its owner. |
