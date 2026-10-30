@@ -96,6 +96,7 @@ def db(monkeypatch):
         "settled": [],
         "active_discovered": 0,
         "seen": {name: Seen(None, 0) for name in ("tachikoma", "deckard", "teletraan")},
+        "daily_report": None,
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
@@ -111,6 +112,7 @@ def db(monkeypatch):
     monkeypatch.setattr(build, "load_settled", lambda conn, **kw: state["settled"][:kw["limit"]])
     monkeypatch.setattr(build, "active_discovered", lambda conn: state["active_discovered"])
     monkeypatch.setattr(build, "load_crew_seen", lambda conn, **kw: state["seen"])
+    monkeypatch.setattr(build, "load_latest_report", lambda conn: state["daily_report"])
     monkeypatch.setattr(build, "load_registry_rows", lambda conn: state["registry"])
     monkeypatch.setattr(
         build, "load_health_history", lambda conn, sid, limit=20: state["health"].get(sid, [])
@@ -141,7 +143,7 @@ def test_build_emits_expected_files(tmp_path, db):
     names = {p.relative_to(tmp_path).as_posix() for p in build_all(None, tmp_path, now=NOW)}
     assert names == {
         "live.json", "index.json", "source-health.json", "system-status.json", "trends.json",
-        "crew.json", "history/2026-09-30.json",
+        "crew.json", "daily-report.json", "history/2026-09-30.json",
     }
     assert {p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*") if p.is_file()} == names
 
@@ -943,3 +945,35 @@ def test_the_site_roster_has_every_agent_crew_json_names():
     assert "callsign: 'SERAPH'" in hud
     # Retired: an older crew.json that still names it is not counted (hud.js renderCrew).
     assert "callsign: 'RIPPERDOC'" not in hud
+
+
+# ─── daily-report.json (worker/ai/report.py) ──────────────────────────────────────────────────────
+
+
+def test_no_report_yet_publishes_none(tmp_path, db):
+    build_all(None, tmp_path, now=NOW)
+    assert read(tmp_path, "daily-report.json")["report"] is None
+
+
+def test_the_latest_report_is_published_with_only_the_events_the_site_has(tmp_path, db):
+    db["daily_report"] = {
+        "report_date": NOW.date(),
+        "generated_at": NOW - timedelta(minutes=20),
+        "window_hours": 24,
+        "summary": "A quiet day apart from one breach.",
+        "items": [
+            {"event_id": "evt-2026-000001", "why": "It matters for defenders."},
+            {"event_id": "evt-2026-999999", "why": "Held back, so not on the site."},
+        ],
+        "gaps": [{"id": "category:ddos", "topic": "ddos", "kind": "category", "quiet_days": 30.0}],
+        "model": "deepseek/deepseek-v4-flash",
+    }
+    build_all(None, tmp_path, now=NOW)
+    report = read(tmp_path, "daily-report.json")["report"]
+    assert report["date"] == NOW.date().isoformat()
+    assert report["summary"] == "A quiet day apart from one breach."
+    [item] = report["items"]
+    assert item["event_id"] == "evt-2026-000001" and item["why"] == "It matters for defenders."
+    assert item["title"] and item["severity"] in {"critical", "high", "medium", "low", "unknown"}
+    assert report["gaps"] == [{"topic": "ddos", "kind": "category", "quiet_days": 30.0}]
+    assert report["model"] == "deepseek/deepseek-v4-flash"

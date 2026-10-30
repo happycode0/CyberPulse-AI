@@ -19,6 +19,7 @@ import os
 import shutil
 import tempfile
 from collections import Counter, defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
@@ -40,6 +41,7 @@ from worker.db.discovery import (
 from worker.db.events import load_event_dates, load_live_events
 from worker.db.jobs import JobRun, load_latest_jobs
 from worker.db.merge import merged_redirects
+from worker.db.reports import load_latest_report
 from worker.db.runs import (
     load_lane_activity,
     load_last_completed_collection,
@@ -635,6 +637,39 @@ def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[
     return {"generated_at": generated_at, "pipeline_version": PIPELINE_VERSION, **trends}
 
 
+def _daily_report_payload(
+    conn: Connection, generated_at: str, published: Mapping[str, dict[str, Any]]
+) -> dict[str, Any]:
+    """The latest daily report (worker/ai/report.py), naming only events this snapshot
+    publishes: one held back since (worker/publish/hold.py) or gone is left out."""
+    report = load_latest_report(conn)
+    if report is None:
+        body = None
+    else:
+        body = {
+            "date": report["report_date"].isoformat(),
+            "written_at": _iso(report["generated_at"]),
+            "window_hours": report["window_hours"],
+            "summary": report["summary"],
+            "items": [
+                {
+                    "event_id": i["event_id"],
+                    "title": published[i["event_id"]]["title"],
+                    "severity": published[i["event_id"]]["severity"],
+                    "why": i["why"],
+                }
+                for i in report["items"]
+                if i["event_id"] in published
+            ],
+            "gaps": [
+                {"topic": g["topic"], "kind": g["kind"], "quiet_days": g["quiet_days"]}
+                for g in report["gaps"]
+            ],
+            "model": report["model"],
+        }
+    return {"generated_at": generated_at, "pipeline_version": PIPELINE_VERSION, "report": body}
+
+
 # What the worker receives from an AI agent, in crew.json's `seen` (worker/db/crew.py).
 _SEEN = (("tachikoma", "source proposal"), ("deckard", "follow-up report"),
          ("teletraan", "incident verdict"))
@@ -763,6 +798,10 @@ def build_payloads(
     )
     out["trends.json"] = ("trends", _trends_payload(conn, generated_at, now))
     out["crew.json"] = ("crew", _crew_payload(conn, generated_at, now, jobs))
+    out["daily-report.json"] = (
+        "daily-report",
+        _daily_report_payload(conn, generated_at, {p["event_id"]: p for p in public}),
+    )
     out["index.json"] = (
         "index",
         {

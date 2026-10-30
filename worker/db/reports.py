@@ -14,8 +14,6 @@ from typing import Any
 
 from sqlalchemy import Connection, text
 
-from worker.db.digest import load_digest
-
 # Events the call is shown: the window's most prominent and its escalation candidates.
 MAX_INPUT_EVENTS = 15
 SUMMARY_MAX_CHARS = 400
@@ -112,6 +110,9 @@ def _quiet(conn: Connection, *, now: datetime) -> list[dict[str, Any]]:
 def load_report_input(conn: Connection, *, now: datetime, hours: int) -> ReportInput:
     """The events of the `hours` before `now` the report may name, most prominent first with the
     escalation candidates among them, and the quiet topics it may point to."""
+    # Imported here: worker/db/digest.py imports the publisher, which imports this module.
+    from worker.db.digest import load_digest
+
     digest = load_digest(conn, now=now, hours=hours, top_in_window=True)
     ids = list(dict.fromkeys(
         e["event_id"] for e in [*digest["escalation_candidates"], *digest["top"]]

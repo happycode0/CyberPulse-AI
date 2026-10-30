@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "daily-report.schema.json",
+  "title": "CyberPulse-AI daily-report.json",
+  "description": "The worker's daily intelligence report (worker/ai/report.py): written by a model from the worker's own records, once per Sydney date. Every event it names is one this site publishes, and each quiet topic's days are counted from stored events, not estimated. `report` is null until the first one is written.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "pipeline_version", "report"],
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "title", "severity", "why"],
+      "properties": {
+        "event_id": { "type": "string", "pattern": "^evt-[0-9]{4}-[0-9]{6}$" },
+        "title": { "type": "string", "minLength": 1 },
+        "severity": { "enum": ["critical", "high", "medium", "low", "unknown"] },
+        "why": { "type": "string", "minLength": 1, "maxLength": 200 }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topic", "kind", "quiet_days"],
+      "properties": {
+        "topic": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["category", "au_sector"] },
+        "quiet_days": { "type": "number", "minimum": 0 }
+      }
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "written_at", "window_hours", "summary", "items", "gaps", "model"],
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "written_at": { "type": "string", "format": "date-time" },
+        "window_hours": { "type": "integer", "exclusiveMinimum": 0 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 600 },
+        "items": { "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/item" } },
+        "gaps": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/gap" } },
+        "model": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "pipeline_version": { "type": "string" },
+    "report": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/report" }] }
+  }
+}
