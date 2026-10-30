@@ -62,8 +62,11 @@ PROVIDER = "openrouter"
 MIXROUTE = "mixroute"
 
 # MixRoute statuses after which the next model in the chain is tried: busy (429), down or unknown
-# to this channel (500, 502, 503) and slow (408, 504). No answer at all counts too.
-MIXROUTE_FALL_THROUGH = frozenset({408, 429, 500, 502, 503, 504})
+# to this channel (500, 502, 503) and slow (408, 504). No answer at all counts too. So does a
+# request one model refuses (400, 404, 422): a parameter in its reviewed extras it does not take,
+# an id this channel lacks, a schema it will not follow. A refused key (401) is the same for every
+# model, so it is raised at once.
+MIXROUTE_FALL_THROUGH = frozenset({400, 404, 408, 422, 429, 500, 502, 503, 504})
 
 # What a spent MixRoute key says, as `BudgetExhausted.limit_source`: 403 "Token Group Disabled",
 # usually the key's quota (https://mixroute.ai/docs/faq/error-code.md).
@@ -651,7 +654,7 @@ class MixRouteClient(OpenRouterClient):
         attribution: Attribution,
     ) -> Completion:
         """Each model in turn until one answers. Raises the last failure when none does, and at
-        once for a failure no other model would change: a spent quota or a bad request."""
+        once for a failure no other model would change: a spent quota or a refused key."""
         validator = _prepare(schema_name, schema, max_tokens)
         last: CallFailed | None = None
         for slug in chain:

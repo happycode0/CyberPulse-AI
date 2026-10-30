@@ -374,11 +374,22 @@ async def test_every_model_rate_limited_is_rate_limited(respx_mock, client):
     assert route.call_count == 2
 
 
-async def test_a_bad_request_is_not_retried_on_another_model(respx_mock, client):
-    route = respx_mock.post(CHAT).mock(return_value=httpx.Response(400, json={"error": {"message": "bad"}}))
+@pytest.mark.parametrize("status", [400, 404, 422])
+async def test_a_request_one_model_refuses_falls_through_to_the_next(respx_mock, client, status):
+    """An unsupported parameter, an id this channel lacks, a schema the model will not take: one
+    model's refusal, which the next model may not share."""
+    route = respx_mock.post(CHAT).mock(
+        side_effect=[httpx.Response(status, json={"error": {"message": "no"}}), answer(model="cheap-two")]
+    )
+    assert (await call(client)).model == "vb/cheap-two"
+    assert route.call_count == 2
+
+
+async def test_a_refused_key_is_not_retried_on_another_model(respx_mock, client):
+    route = respx_mock.post(CHAT).mock(return_value=httpx.Response(401, json={"error": {"message": "bad key"}}))
     with pytest.raises(CallFailed) as exc:
         await call(client)
-    assert exc.value.status == 400 and route.call_count == 1
+    assert exc.value.status == 401 and route.call_count == 1
 
 
 @pytest.mark.parametrize("status", [403, 402])
