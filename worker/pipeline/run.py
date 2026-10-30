@@ -294,9 +294,9 @@ def _ingest(
 def _apply_lifecycle(conn: Connection, source: SourceConfig) -> None:
     """Move the source along its lifecycle if its recorded health says it should.
 
-    `next_lifecycle_state` only demotes an ACTIVE source after repeated failures or lets a
-    DEGRADED/BROKEN one back in through TESTING; it never promotes, so this cannot activate
-    anything (that gate belongs to SERAPH).
+    `next_lifecycle_state` demotes an ACTIVE source after repeated failures, lets a
+    DEGRADED/BROKEN one back in through TESTING, and returns a recovered TESTING one to ACTIVE.
+    It never activates a find: that gate belongs to SERAPH.
     """
     current = source.lifecycle_state or (
         LifecycleState.ACTIVE if source.enabled else LifecycleState.DISCOVERED

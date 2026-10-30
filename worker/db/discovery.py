@@ -153,10 +153,16 @@ def add_found(conn: Connection, *, host: str, evidence: dict[str, Any], now: dat
     return bool(row and row.inserted)
 
 
-def open_count(conn: Connection) -> int:
-    """Candidates being tested, which `max_open` caps."""
+def open_count(conn: Connection, *, ready_at: int) -> int:
+    """Candidates still being tested, which `max_open` caps. A ready one (`ready_at` healthy
+    probes in a row) waits for room among the active sources, not for a probe slot, so it is
+    not counted: on 2026-10-28, 39 ready finds held every slot and each proposal queued for good."""
     return conn.execute(
-        text("select count(*) from source_candidates where state in ('candidate', 'testing')")
+        text(
+            "select count(*) from source_candidates "
+            "where state in ('candidate', 'testing') and passes < :ready"
+        ),
+        {"ready": ready_at},
     ).scalar_one()
 
 
@@ -172,13 +178,13 @@ ProposalResult = Literal["created", "updated", "queued", "exists", "daily_limit"
 
 
 def add_proposal(
-    conn: Connection, proposal: Proposal, *, max_open: int, now: datetime
+    conn: Connection, proposal: Proposal, *, max_open: int, ready_at: int, now: datetime
 ) -> tuple[ProposalResult, Candidate | None]:
     """Store TACHIKOMA's proposal for the gate.
 
     "updated": the host was found by a search and TACHIKOMA has given it its feed. "queued": a
-    feed, stored while `max_open` candidates are being tested; `promote_queued` makes it one when
-    a slot frees. "exists": the host is registered or already past that. "daily_limit":
+    feed, stored while `max_open` candidates are being tested (`open_count`); `promote_queued`
+    makes it one when a slot frees. "exists": the host is registered or already past that. "daily_limit":
     TACHIKOMA has made `PROPOSALS_PER_DAY` proposals in the last 24 hours, and nothing is stored.
     """
     if any(same_site(proposal.host, h) for h in registered_hosts(conn)):
@@ -191,7 +197,7 @@ def add_proposal(
     if proposed_since(conn, since=now - timedelta(days=1)) >= PROPOSALS_PER_DAY:
         return "daily_limit", None
     # A home page has no feed to test yet, so it never waits for a slot.
-    queued = not proposal.is_home and open_count(conn) >= max_open
+    queued = not proposal.is_home and open_count(conn, ready_at=ready_at) >= max_open
     evidence = json.dumps([{"by": "tachikoma", "url": u} for u in proposal.examples])
     params = {
         "host": proposal.host,
@@ -230,7 +236,7 @@ def add_proposal(
 def promote_queued(conn: Connection, *, gate: GateConfig, now: datetime) -> list[str]:
     """Make the oldest queued proposals candidates, as many as there are free slots under
     `max_open`, and return their hosts."""
-    room = max(gate.max_open - open_count(conn), 0)
+    room = max(gate.max_open - open_count(conn, ready_at=gate.probes_to_activate), 0)
     if room == 0:
         return []
     return list(
@@ -274,17 +280,20 @@ def record_home(
     gate: GateConfig,
     now: datetime,
 ) -> str:
-    """The home page was read: with a feed the host becomes a candidate; without one it waits a
-    week to be read again, and is rejected after `failures_to_reject` tries."""
+    """The home page was read: with a feed the host becomes a candidate, or is queued as
+    TACHIKOMA's proposals are while `max_open` are being tested; without one it waits a week to
+    be read again, and is rejected after `failures_to_reject` tries."""
     if feed_url is not None:
+        full = open_count(conn, ready_at=gate.probes_to_activate) >= gate.max_open
         return conn.execute(
             text(
                 "update source_candidates set feed_url = :feed_url, name = coalesce(name, :name), "
-                "state = 'candidate', passes = 0, failures = 0, last_probe_at = :now, "
+                "state = :state, passes = 0, failures = 0, last_probe_at = :now, "
                 "last_result = null, last_error = null, updated_at = :now "
                 "where id = :id returning state"
             ),
-            {"id": candidate_id, "feed_url": feed_url, "name": name, "now": now},
+            {"id": candidate_id, "feed_url": feed_url, "name": name,
+             "state": "discovered" if full else "candidate", "now": now},
         ).scalar_one()
     return conn.execute(
         text(
@@ -563,7 +572,52 @@ def load_activations(conn: Connection, *, since: datetime) -> list[Activation]:
     return [Activation(**r) for r in rows]
 
 
-# --- What the ops API shows ----------------------------------------------------------------------
+# --- What the ops API and the site show ----------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class GateCounts:
+    """Where the finds stand, for source-health.json's `discovery`."""
+
+    ready_waiting: int  # passed the gate, waiting for room among the active sources
+    testing: int  # being probed, not yet through
+    queued: int  # a feed, waiting for a testing slot
+    homes_waiting: int  # a site whose feed is still to be found
+    at_the_gate: int  # all of the above: what `load_at_the_gate` lists
+    rejected: int
+    retired: int
+
+
+def load_gate_counts(conn: Connection, *, gate: GateConfig) -> GateCounts:
+    row = conn.execute(
+        text(
+            "select "
+            "count(*) filter (where state = 'testing' and passes >= :ready) as ready_waiting, "
+            "count(*) filter (where state in ('candidate', 'testing') and passes < :ready) "
+            "as testing, "
+            "count(*) filter (where state = 'discovered' and feed_url is not null) as queued, "
+            "count(*) filter (where state = 'discovered' and feed_url is null "
+            "and failures < :reject) as homes_waiting, "
+            "count(*) filter (where state in ('discovered', 'candidate', 'testing')) "
+            "as at_the_gate, "
+            "count(*) filter (where state = 'rejected') as rejected, "
+            "count(*) filter (where state = 'retired') as retired "
+            "from source_candidates"
+        ),
+        {"ready": gate.probes_to_activate, "reject": gate.failures_to_reject},
+    ).mappings().one()
+    return GateCounts(**row)
+
+
+def load_settled(conn: Connection, *, since: datetime, limit: int) -> list[Candidate]:
+    """Finds activated or retired since `since`, newest first. Rejections are left out: a site
+    with no feed or a weak one is the gate working, not news."""
+    return _candidates(
+        conn,
+        "state in ('active', 'retired') and updated_at >= :since "
+        "order by updated_at desc, id limit :n",
+        {"since": since, "n": limit},
+    )
 
 
 def load_at_the_gate(conn: Connection, *, limit: int) -> list[Candidate]:
@@ -579,7 +633,9 @@ def load_at_the_gate(conn: Connection, *, limit: int) -> list[Candidate]:
     )
 
 
-def load_overview(conn: Connection, *, now: datetime, open_limit: int = 30) -> dict[str, Any]:
+def load_overview(
+    conn: Connection, *, now: datetime, ready_at: int, open_limit: int = 30
+) -> dict[str, Any]:
     """Where discovery stands, for GET /ops/candidates."""
     states = dict(
         conn.execute(text("select state, count(*) from source_candidates group by state")).all()
@@ -611,7 +667,7 @@ def load_overview(conn: Connection, *, now: datetime, open_limit: int = 30) -> d
     return {
         "states": states,
         "open": open_rows,
-        "open_count": open_count(conn),
+        "open_count": open_count(conn, ready_at=ready_at),
         # Next to be promoted first (`promote_queued`).
         "queued_for_a_slot": queued,
         "waiting_for_a_feed": waiting,

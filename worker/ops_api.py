@@ -1403,7 +1403,7 @@ class OpsApi:
         now = self._clock()
         gate = self._discovery.gate
         with self._read() as conn:
-            overview = load_overview(conn, now=now)
+            overview = load_overview(conn, now=now, ready_at=gate.probes_to_activate)
         for key in ("open", "queued_for_a_slot", "waiting_for_a_feed", "settled_last_14_days"):
             overview[key] = [_candidate_row(c) for c in overview[key]]
         return Reply(
@@ -1482,8 +1482,10 @@ class OpsApi:
             return Reply(400, {"result": "rejected", "error": str(exc), "format": PROPOSAL_FORMAT})
         try:
             with self._write() as conn:
+                gate = self._discovery.gate
                 result, candidate = add_proposal(
-                    conn, proposal, max_open=self._discovery.gate.max_open, now=self._clock()
+                    conn, proposal, max_open=gate.max_open, ready_at=gate.probes_to_activate,
+                    now=self._clock(),
                 )
         except SQLAlchemyError:
             logger.exception("ops proposal of %s: it could not be stored", proposal.host)

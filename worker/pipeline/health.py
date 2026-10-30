@@ -21,6 +21,7 @@ __all__ = [
     "DEGRADE_AFTER",
     "HealthStatus",
     "LifecycleState",
+    "RECOVER_AFTER",
     "WARN_AFTER",
     "assess",
     "consecutive_failures",
@@ -46,6 +47,9 @@ FUTURE_TOLERANCE = timedelta(days=1)
 # PLAN.md section 4.2 (SERAPH): 3 failures warn, 5 consecutive degrade.
 WARN_AFTER = 3
 DEGRADE_AFTER = 5
+# A recovering (TESTING) source is collected again: this many good checks in a row at the end of
+# its history make it ACTIVE, the same length of run that degraded it.
+RECOVER_AFTER = DEGRADE_AFTER
 
 _SECONDS_PER_DAY = 86_400
 _FAILURES = frozenset(
@@ -188,12 +192,24 @@ def consecutive_failures(history: Iterable[SourceHealth]) -> int:
     return count
 
 
+def consecutive_successes(history: Iterable[SourceHealth]) -> int:
+    """Length of the run of OK checks at the end of `history`."""
+    count = 0
+    for h in reversed(_meaningful(history)):
+        if h.status is not HealthStatus.OK:
+            break
+        count += 1
+    return count
+
+
 def next_lifecycle_state(source: SourceConfig, history: Sequence[SourceHealth]) -> LifecycleState:
     """The lifecycle state `source` should be in given its health history.
 
-    Health alone only ever demotes an ACTIVE source (5 consecutive failures) or lets a
-    DEGRADED/BROKEN one back in through TESTING. It never promotes: reaching ACTIVE stays
-    SERAPH's gate, and the states before it are untouched here.
+    Health demotes an ACTIVE source (5 consecutive failures), lets a DEGRADED/BROKEN one back in
+    through TESTING, and returns a TESTING one to ACTIVE after `RECOVER_AFTER` good checks in a
+    row, or to DEGRADED if it fails as long again. TESTING here only ever means "recovering": a
+    find reaches the registry through SERAPH's gate, which activates it directly, and the states
+    before ACTIVE are untouched here.
     """
     current = source.lifecycle_state or (
         LifecycleState.ACTIVE if source.enabled else LifecycleState.DISCOVERED
@@ -207,5 +223,11 @@ def next_lifecycle_state(source: SourceConfig, history: Sequence[SourceHealth]) 
     if current in (LifecycleState.DEGRADED, LifecycleState.BROKEN):
         if recent and recent[-1].status is HealthStatus.OK:
             return LifecycleState.TESTING
+        return current
+    if current is LifecycleState.TESTING:
+        if consecutive_successes(recent) >= RECOVER_AFTER:
+            return LifecycleState.ACTIVE
+        if consecutive_failures(recent) >= DEGRADE_AFTER:
+            return LifecycleState.DEGRADED
         return current
     return current
