@@ -23,6 +23,7 @@ from worker.ai.client import (
     Attribution,
     BudgetExhausted,
     CallFailed,
+    InvalidOutput,
     MixRouteClient,
     RateLimited,
 )
@@ -136,19 +137,15 @@ def test_the_shipped_mixroute_ladder_loads_and_keeps_the_rules():
     # Every model a tier names is priced, and tier 0 ends in a paid one.
     assert ladder.slugs() <= set(config.models)
     assert not config.models[ladder.tiers[Tier.FREE][-1]].free
-    assert config.models["zhipu/glm-4-flash"].free
-    # The approved picks, in order. Tier 1 starts free (owner, 2026-10-30) and ends paid.
-    assert ladder.tiers[Tier.CHEAP] == (
-        "zhipu/glm-4-flash",
-        "deepseek/deepseek-v4-flash",
-        "alibaba/qwen3.5-flash",
-    )
-    assert not config.models[ladder.tiers[Tier.CHEAP][-1]].free
-    assert ladder.tiers[Tier.STRONG] == (
-        "deepseek/deepseek-v4-flash",
-        "zhipu/glm-5.3-flash",
-        "xiaomi/mimo-v2.5-pro",
-    )
+    # The owner's picks of 2026-10-30, after the live test: only the models that answered the
+    # strict schema. glm-4-flash, qwen3.5-flash and glm-4.7-flashx did not; mimo-v2.5-pro is
+    # offline and gone from the file.
+    passed = ("deepseek/deepseek-v4-flash", "zhipu/glm-5.3-flash", "openai/gpt-5-nano")
+    for tier in (Tier.FREE, Tier.CHEAP, Tier.STRONG):
+        assert ladder.tiers[tier] == passed, tier
+    assert ladder.tiers[Tier.CODE] == ("deepseek/deepseek-v4-flash", "openai/gpt-5-nano")
+    assert ladder.tiers[Tier.AUDIT] == ("zhipu/glm-5.3-flash",)
+    assert "xiaomi/mimo-v2.5-pro" not in config.models
     # Ids are sent exactly as written; the vendor prefix is ours.
     assert config.models["deepseek/deepseek-v4-flash"].id == "deepseek-v4-flash"
 
@@ -404,6 +401,50 @@ async def test_a_spent_key_quota_is_budget_exhausted_and_not_retried(respx_mock,
         await call(client)
     assert exc.value.limit_source == "mixroute_key_quota" and not exc.value.transient
     assert route.call_count == 1
+
+
+@pytest.mark.parametrize("message", ["Token Group Disabled", "insufficient quota for this key"])
+async def test_a_quota_message_is_budget_exhausted(respx_mock, client, message):
+    route = respx_mock.post(CHAT).mock(
+        return_value=httpx.Response(403, json={"error": {"message": message}})
+    )
+    with pytest.raises(BudgetExhausted):
+        await call(client)
+    assert route.call_count == 1
+
+
+async def test_a_model_taken_offline_falls_through_and_is_not_the_budget(respx_mock, client, ledger):
+    """What MixRoute said for mimo-v2.5-pro on 2026-10-30, as a 402. Read as a spent quota, it
+    paused every paid call for an hour; it is one model gone."""
+    offline = {"error": {"message": "The model associated with the service ID has been taken "
+                         "offline. Please use another available model.",
+                         "type": "permission_error", "code": "401010"}}
+    route = respx_mock.post(CHAT).mock(
+        side_effect=[httpx.Response(402, json=offline), answer(model="cheap-two")]
+    )
+    assert (await call(client)).model == "vb/cheap-two"
+    assert route.call_count == 2
+
+
+async def test_an_answer_that_fails_the_schema_falls_through_and_is_still_billed(
+    respx_mock, client, ledger
+):
+    """MixRoute does not hold every model to a strict schema: glm-4-flash fenced its JSON and
+    wrote "High" on 2026-10-30. The next model is asked; the bad answer's row is kept."""
+    fenced = '```json\n{"label": "High"}\n```'
+    route = respx_mock.post(CHAT).mock(
+        side_effect=[answer(content=fenced), answer(model="cheap-two")]
+    )
+    done = await call(client)
+    assert done.model == "vb/cheap-two" and route.call_count == 2
+    assert [e.outcome for e in ledger] == ["invalid_output", "ok"]
+
+
+async def test_every_model_failing_the_schema_is_invalid_output(respx_mock, client, ledger):
+    respx_mock.post(CHAT).mock(return_value=answer(content="not json at all"))
+    with pytest.raises(InvalidOutput):
+        await call(client)
+    assert [e.outcome for e in ledger] == ["invalid_output", "invalid_output"]
 
 
 async def test_the_cost_is_our_tokens_at_the_reviewed_price(respx_mock, client, ledger):
