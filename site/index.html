@@ -116,6 +116,16 @@
       <p class="view__desc">The shape of the last completed collection at the scope, beat and tags chosen above. Choose a headline to open it in the Events view.</p>
 
       <div class="dash-grid">
+        <!-- The worker's daily intelligence report (worker/ai/report.py), from daily-report.json:
+             written by a model from the worker's own records, and labelled as such. -->
+        <section class="panel panel--brief" id="sec-brief" aria-labelledby="h-brief">
+          <header class="panel__head">
+            <h3 class="panel__title" id="h-brief">TODAY'S BRIEF</h3>
+            <span class="panel-count mono" id="brief-count">AWAITING DATA</span>
+          </header>
+          <div id="daily-brief"></div>
+        </section>
+
         <section class="panel panel--map" aria-labelledby="h-map">
           <header class="panel__head">
             <h3 class="panel__title" id="h-map">WORLD MAP</h3>

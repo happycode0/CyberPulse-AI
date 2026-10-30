@@ -14,11 +14,15 @@ from worker.cadence import FAST_INTERVAL_MINUTES, fast_minutes
 from worker.models import Lane
 from worker.publish.push import PushResult
 from worker.schedule import public_schedule
+from worker.ai.followup_writer import FollowupSummary
+from worker.ai.report import ReportSummary
 from worker.scheduler import (
     ALERT_JOB_ID,
+    DAILY_REPORT_JOB_ID,
     DIGEST_JOB_ID,
     DISCOVERY_JOB_ID,
     ENRICH_JOB_ID,
+    FOLLOWUP_WRITER_JOB_ID,
     GATE_JOB_ID,
     GAUNTLET_JOB_ID,
     GROUNDTRUTH_JOB_ID,
@@ -56,7 +60,8 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
         ALERT_JOB_ID, MONTHLY_COST_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID,
-        GAUNTLET_JOB_ID, WATCHDOG_JOB_ID,
+        GAUNTLET_JOB_ID, WATCHDOG_JOB_ID, DAILY_REPORT_JOB_ID,
+        FOLLOWUP_WRITER_JOB_ID,
     }
 
 
@@ -470,6 +475,7 @@ def test_the_hourly_jobs_keep_to_their_own_minutes_at_any_fast_cadence(every):
         set(alert_minutes(fast, scheduler.ENRICH_MINUTES)),
         set(scheduler.ENRICH_MINUTES),
         minutes(scheduler.WATCHDOG_SCHEDULE),
+        minutes(scheduler.FOLLOWUP_WRITER_SCHEDULE),
     ]
     daily = {
         int(spec.split()[0])
@@ -481,6 +487,7 @@ def test_the_hourly_jobs_keep_to_their_own_minutes_at_any_fast_cadence(every):
             scheduler.MODEL_SCAN_SCHEDULE,
             scheduler.GAUNTLET_SCHEDULE,
             scheduler.MONTHLY_COST_SCHEDULE,
+            scheduler.DAILY_REPORT_SCHEDULE,
         )
     }
     groups = [*hourly, daily]
@@ -854,7 +861,7 @@ async def test_the_watchdog_is_kept_between_passes(monkeypatch):
     made, passes = [], []
 
     class Fake:
-        def __init__(self, settings):
+        def __init__(self, settings, **kwargs):
             made.append(settings)
 
         async def run_pass(self, engine, now):
@@ -862,6 +869,7 @@ async def test_the_watchdog_is_kept_between_passes(monkeypatch):
 
     monkeypatch.setattr(scheduler, "Watchdog", Fake)
     monkeypatch.setattr(scheduler, "_watchdog", None)
+    monkeypatch.setattr(scheduler, "_layer", lambda: "the layer")
     monkeypatch.setattr(scheduler, "get_settings", lambda: "settings")
     monkeypatch.setattr(scheduler, "get_engine", lambda: None)
     await scheduler._watchdog_job()
@@ -886,6 +894,119 @@ def test_the_published_schedule_is_the_one_that_runs():
 def test_only_the_jobs_that_call_a_model_are_ai():
     kinds = {entry["job"]: entry["kind"] for entry in public_schedule()}
     assert {job for job, kind in kinds.items() if kind != "code"} == {
-        ENRICH_JOB_ID, GAUNTLET_JOB_ID,
+        ENRICH_JOB_ID, GAUNTLET_JOB_ID, DAILY_REPORT_JOB_ID, FOLLOWUP_WRITER_JOB_ID,
     }
-    assert kinds[ENRICH_JOB_ID] == kinds[GAUNTLET_JOB_ID] == "ai"
+    assert kinds[ENRICH_JOB_ID] == kinds[GAUNTLET_JOB_ID] == kinds[DAILY_REPORT_JOB_ID] == "ai"
+    # It closes quiet checks by rule and asks a model only about the rest.
+    assert kinds[FOLLOWUP_WRITER_JOB_ID] == "mixed"
+
+
+# ─── The worker's own AI jobs ─────────────────────────────────────────────────────────────────────
+
+
+def test_the_daily_report_runs_at_07_40_sydney_with_two_retries():
+    jobs = {j.id: j for j in build_scheduler().get_jobs()}
+    trigger = fields(jobs[DAILY_REPORT_JOB_ID].trigger)
+    assert (trigger["minute"], trigger["hour"]) == ("40", "7,8,9")
+    assert str(jobs[DAILY_REPORT_JOB_ID].trigger.timezone) == "Australia/Sydney"
+
+
+def test_the_follow_up_writer_runs_hourly_on_its_own_minute():
+    jobs = {j.id: j for j in build_scheduler().get_jobs()}
+    assert fields(jobs[FOLLOWUP_WRITER_JOB_ID].trigger)["minute"] == "55"
+
+
+def test_asking_for_one_lane_does_not_bring_the_ai_jobs_along():
+    ids = {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+    assert DAILY_REPORT_JOB_ID not in ids and FOLLOWUP_WRITER_JOB_ID not in ids
+
+
+@pytest.fixture
+def ai_jobs(monkeypatch):
+    log = {"published": [], "recorded": [], "sent": 0}
+
+    async def publish(after, *, stands):
+        log["published"].append(after)
+
+    async def record(run):
+        log["recorded"].append(run)
+
+    async def send(engine, settings, *, now):
+        log["sent"] += 1
+
+    monkeypatch.setattr(scheduler, "_publish", publish)
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "send_daily_report", send)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
+    monkeypatch.setattr(scheduler, "_layer", lambda: "the layer")
+    return log
+
+
+async def test_a_written_report_is_published_sent_and_recorded(ai_jobs, monkeypatch):
+    async def write(*, layer):
+        return ReportSummary(written=True, mode="full")
+
+    monkeypatch.setattr(scheduler, "write_daily_report", write)
+    await scheduler._daily_report_job()
+    assert ai_jobs["published"] == ["the daily report"] and ai_jobs["sent"] == 1
+    [run] = ai_jobs["recorded"]
+    assert run.job == "daily-report" and run.completed and run.changed
+    assert run.detail == {"mode": "full"}
+
+
+async def test_a_report_already_written_is_still_sent_if_it_was_not(ai_jobs, monkeypatch):
+    async def write(*, layer):
+        return ReportSummary(skipped="the report for 2026-11-01 is written")
+
+    monkeypatch.setattr(scheduler, "write_daily_report", write)
+    await scheduler._daily_report_job()
+    assert ai_jobs["published"] == [] and ai_jobs["sent"] == 1
+
+
+async def test_a_report_pass_that_raises_does_not_stop_the_schedule(ai_jobs, monkeypatch, caplog):
+    async def boom(*, layer):
+        raise RuntimeError("database unreachable")
+
+    monkeypatch.setattr(scheduler, "write_daily_report", boom)
+    with caplog.at_level(logging.ERROR):
+        await scheduler._daily_report_job()
+    [run] = ai_jobs["recorded"]
+    assert not run.completed and "daily report failed" in caplog.text
+    assert ai_jobs["sent"] == 1
+
+
+async def test_follow_up_reports_are_recorded_and_published(ai_jobs, monkeypatch):
+    async def write(*, layer):
+        return FollowupSummary(mode="full", quiet=2, recorded=1, failed=1)
+
+    monkeypatch.setattr(scheduler, "write_followups", write)
+    await scheduler._followup_writer_job()
+    [run] = ai_jobs["recorded"]
+    assert (run.job, run.completed, run.changed, run.errors) == ("followup-writer", True, True, 1)
+    assert run.detail == {"mode": "full", "quiet": 2, "recorded": 1}
+    assert ai_jobs["published"] == ["the follow-up writer"]
+
+
+async def test_a_follow_up_pass_that_raises_is_recorded_and_not_fatal(ai_jobs, monkeypatch):
+    async def boom(*, layer):
+        raise RuntimeError("database unreachable")
+
+    monkeypatch.setattr(scheduler, "write_followups", boom)
+    await scheduler._followup_writer_job()
+    [run] = ai_jobs["recorded"]
+    assert not run.completed and ai_jobs["published"] == []
+
+
+def test_the_watchdog_is_given_the_diagnosis(monkeypatch):
+    monkeypatch.setattr(scheduler, "_watchdog", None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: _settings_for_watchdog())
+    monkeypatch.setattr(scheduler, "_layer", lambda: "the layer")
+    dog = scheduler._the_watchdog()
+    assert dog._diagnose is not None and dog._diagnose.keywords == {"layer": "the layer"}
+
+
+def _settings_for_watchdog():
+    from worker.settings import Settings
+
+    return Settings(_env_file=None, database_url="postgresql://x")

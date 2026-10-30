@@ -4,6 +4,10 @@ incidents (reconcile.py), its messages, and one pass (run.py) with the database 
 The SQL is exercised against Postgres in tests/integration/test_watchdog_db.py.
 """
 
+import asyncio
+import json
+import logging
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
@@ -607,6 +611,7 @@ def watchdog(telegram=None, *, token=False, site=None):
         telegram=lambda s: telegram,
         token_configured=lambda: token,
         site_transport=httpx.MockTransport(site) if site else None,
+        diagnose=kwargs.pop("diagnose", None),
     )
 
 
@@ -752,3 +757,72 @@ async def test_site_reads_count_only_after_three_failures_in_a_row(db):
     assert kinds(db["passes"][-1][0]) == [("site-stale", "", "high")]
 
 
+# ─── The worker's diagnosis (worker/ai/diagnosis.py) ──────────────────────────────────────────────
+
+DIAGNOSIS = {
+    "likely_cause": "The ACSC alerts feed has moved.",
+    "suggested_fix": "Point the registry at its new address.",
+    "owner": "code",
+    "model": "vendor-b/cheap",
+    "at": NOW.isoformat(),
+}
+
+
+def test_an_opened_incident_carries_its_diagnosis():
+    text = incident_opened(incident(diagnosis=DIAGNOSIS))
+    assert "Likely cause (AI): The ACSC alerts feed has moved." in text
+    assert "Suggested fix: Point the registry at its new address." in text
+    assert "Whose: a code change" in text
+    assert "Likely cause" not in incident_opened(incident())
+
+
+async def test_an_opened_high_incident_is_diagnosed_before_telegram_is_told(db):
+    telegram, asked = FakeTelegram(), []
+
+    async def diagnose(engine, inc, now):
+        asked.append(inc.id)
+        return DIAGNOSIS
+
+    db["result"] = PassResult(opened=[incident()], unresolved=[incident()])
+    await watchdog(telegram, diagnose=diagnose).run_pass(None, NOW)
+    assert asked == [7]
+    assert "Likely cause (AI): The ACSC alerts feed has moved." in telegram.sent[0]
+
+
+async def test_only_high_and_critical_incidents_that_opened_this_pass_are_diagnosed(db):
+    asked = []
+
+    async def diagnose(engine, inc, now):
+        asked.append(inc.id)
+        return DIAGNOSIS
+
+    low = incident(id=1, severity="low")
+    standing = incident(id=2)
+    db["result"] = PassResult(opened=[low], unresolved=[low, standing])
+    await watchdog(FakeTelegram(), diagnose=diagnose).run_pass(None, NOW)
+    assert asked == []
+
+
+async def test_a_diagnosis_that_fails_leaves_the_pass_and_its_notice_alone(db, caplog):
+    telegram = FakeTelegram()
+
+    async def diagnose(engine, inc, now):
+        raise RuntimeError("the model is down")
+
+    db["result"] = PassResult(opened=[incident()], unresolved=[incident()])
+    with caplog.at_level(logging.WARNING):
+        summary = await watchdog(telegram, diagnose=diagnose).run_pass(None, NOW)
+    assert summary.sent == 1 and "Likely cause" not in telegram.sent[0]
+    assert db["jobs"] and "no diagnosis" in caplog.text
+
+
+async def test_a_diagnosis_that_hangs_is_given_up(db, monkeypatch):
+    monkeypatch.setattr(watchdog_run, "DIAGNOSIS_TIMEOUT_SECONDS", 0.01)
+    telegram = FakeTelegram()
+
+    async def diagnose(engine, inc, now):
+        await asyncio.sleep(5)
+
+    db["result"] = PassResult(opened=[incident()], unresolved=[incident()])
+    summary = await watchdog(telegram, diagnose=diagnose).run_pass(None, NOW)
+    assert summary.sent == 1 and "Likely cause" not in telegram.sent[0]

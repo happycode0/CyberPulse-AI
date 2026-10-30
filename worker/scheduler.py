@@ -4,6 +4,7 @@ and the watchdog run in the worker. DEEP has no schedule (it was a Paperclip rou
 the crew on 2026-10-31) and is only reachable through `--lane deep --once`."""
 
 import asyncio
+import functools
 import logging
 import signal
 from datetime import UTC, datetime
@@ -12,8 +13,11 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from worker import ops_api
+from worker.ai.diagnosis import diagnose_incident
 from worker.ai.enrich import AiLayer, enrich_pending
+from worker.ai.followup_writer import write_followups
 from worker.ai.mitre import suggest_techniques
+from worker.ai.report import write_daily_report
 from worker.ai.scout import run_gauntlet, scan_models
 from worker.db.jobs import JobRun, record_job
 from worker.db.session import get_engine
@@ -23,6 +27,7 @@ from worker.models import Lane
 from worker.notify.jobs import (
     send_critical_alerts,
     send_daily_digest,
+    send_daily_report,
     send_developing_updates,
     send_ladder_changes,
     send_model_proposals,
@@ -41,6 +46,9 @@ from worker.schedule import (  # noqa: F401
     ALERT_JOB_ID,
     ALERT_MISFIRE_GRACE_SECONDS,
     ALERT_SCHEDULE,
+    DAILY_REPORT_JOB_ID,
+    DAILY_REPORT_MISFIRE_GRACE_SECONDS,
+    DAILY_REPORT_SCHEDULE,
     DIGEST_JOB_ID,
     DIGEST_MISFIRE_GRACE_SECONDS,
     DIGEST_SCHEDULE,
@@ -52,6 +60,9 @@ from worker.schedule import (  # noqa: F401
     ENRICH_MINUTES,
     ENRICH_MISFIRE_GRACE_SECONDS,
     ENRICH_SCHEDULE,
+    FOLLOWUP_WRITER_JOB_ID,
+    FOLLOWUP_WRITER_MISFIRE_GRACE_SECONDS,
+    FOLLOWUP_WRITER_SCHEDULE,
     FAST_MINUTES,
     GATE_JOB_ID,
     GATE_MISFIRE_GRACE_SECONDS,
@@ -101,7 +112,11 @@ def _layer() -> AiLayer:
 def _the_watchdog() -> Watchdog:
     global _watchdog
     if _watchdog is None:
-        _watchdog = Watchdog(get_settings())
+        # The watchdog asks the AI layer, the enrichment's own, for a first diagnosis of each
+        # high or critical incident it opens (worker/ai/diagnosis.py).
+        _watchdog = Watchdog(
+            get_settings(), diagnose=functools.partial(diagnose_incident, layer=_layer())
+        )
     return _watchdog
 
 
@@ -408,6 +423,52 @@ async def _watchdog_job() -> None:
         await _record(JobRun("watchdog", started, _now(), False, note=type(exc).__name__))
 
 
+async def _daily_report_job() -> None:
+    """Write today's report if it is not written, publish it, and send it to Telegram if no
+    earlier pass did. Never fatal to the schedule; 08:40 and 09:40 try again."""
+    started = _now()
+    try:
+        summary = await write_daily_report(layer=_layer())
+    except Exception:
+        logger.exception("daily report failed")
+        await _record(JobRun("daily-report", started, _now(), completed=False))
+    else:
+        await _record(
+            JobRun(
+                "daily-report", started, _now(), completed=True,
+                errors=int(bool(summary.failed)), changed=summary.written,
+                detail={"mode": summary.mode} if summary.mode else None,
+            )
+        )
+        if summary.written:
+            await _publish("the daily report", stands="the report itself stands")
+    try:
+        await send_daily_report(get_engine(), get_settings(), now=_now())
+    except Exception:
+        logger.exception("daily report notice failed")
+
+
+async def _followup_writer_job() -> None:
+    """Never fatal to the schedule; the next pass is an hour away."""
+    started = _now()
+    try:
+        summary = await write_followups(layer=_layer())
+    except Exception:
+        logger.exception("follow-up writer pass failed")
+        await _record(JobRun("followup-writer", started, _now(), completed=False))
+        return
+    await _record(
+        JobRun(
+            "followup-writer", started, _now(), completed=True, errors=summary.failed,
+            changed=summary.changed_anything,
+            detail={"mode": summary.mode, "quiet": summary.quiet + summary.no_reports,
+                    "recorded": summary.recorded},
+        )
+    )
+    if summary.changed_anything:
+        await _publish("the follow-up writer", stands="the reports themselves stand")
+
+
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler, with the jobs worker/schedule.py lists.
 
@@ -431,6 +492,8 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
         MODEL_SCAN_JOB_ID: _model_scan_job,
         GAUNTLET_JOB_ID: _gauntlet_job,
         WATCHDOG_JOB_ID: _watchdog_job,
+        DAILY_REPORT_JOB_ID: _daily_report_job,
+        FOLLOWUP_WRITER_JOB_ID: _followup_writer_job,
     }
     scheduler = AsyncIOScheduler(timezone="UTC")
     if lanes is None:

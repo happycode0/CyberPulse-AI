@@ -26,9 +26,10 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Protocol
 
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 
 from worker.db.digest import cost_report, load_digest, month_bounds
+from worker.db.reports import load_latest_report
 from worker.db.discovery import Activation, load_activations
 from worker.db.notifications import (
     AlertEvent,
@@ -45,6 +46,7 @@ from worker.notify.messages import (
     SYDNEY,
     critical_au_alert,
     daily_digest,
+    daily_report,
     developing_update,
     ladder_changed,
     model_proposal,
@@ -158,6 +160,45 @@ async def send_daily_digest(
         kind="daily_digest",
         key=f"daily_digest:{now.astimezone(SYDNEY).date().isoformat()}",
         message=daily_digest(digest, site_url=settings.site_url),
+        now=now,
+    )
+    _count(summary, outcome)
+    return summary
+
+
+def _read_report(engine: Engine) -> tuple[dict | None, dict[str, tuple[str, str]]]:
+    """The latest daily report, and the severity and title of each event it names."""
+    with engine.connect() as conn:
+        report = load_latest_report(conn)
+        if report is None:
+            return None, {}
+        ids = [i["event_id"] for i in report["items"]]
+        rows = conn.execute(
+            text("select event_id, severity, title from events "
+                 "where event_id = any(cast(:ids as text[])) and merged_into is null"),
+            {"ids": ids},
+        ).all()
+    return report, {r.event_id: (r.severity, r.title) for r in rows}
+
+
+async def send_daily_report(
+    engine: Engine, settings: Settings, *, now: datetime, channel: Channel | None = None
+) -> NotifySummary:
+    """Today's daily report (worker/ai/report.py), once per Sydney date, as the digest is."""
+    channel = channel or Telegram.from_settings(settings)
+    if channel is None:
+        return NotifySummary(skipped="no Telegram bot is configured")
+    day = now.astimezone(SYDNEY).date()
+    report, titles = await asyncio.to_thread(_read_report, engine)
+    if report is None or report["report_date"] != day:
+        return NotifySummary(skipped=f"no report for {day.isoformat()}")
+    summary = NotifySummary()
+    outcome = await _deliver(
+        engine,
+        channel,
+        kind="daily_report",
+        key=f"daily_report:{day.isoformat()}",
+        message=daily_report(report, titles, site_url=settings.site_url),
         now=now,
     )
     _count(summary, outcome)

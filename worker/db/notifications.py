@@ -9,7 +9,8 @@ from sqlalchemy import Connection, Engine, text
 from worker.pipeline.status import AGENT_SOURCE, NOT_CHANGES
 
 Kind = Literal[
-    "critical_au_alert", "daily_digest", "developing_update", "incident", "ladder_change",
+    "critical_au_alert", "daily_digest", "daily_report", "developing_update", "incident",
+    "ladder_change",
     "model_proposal", "monthly_cost", "routine_wake", "source_discovery", "system_failure",
     "weekly_trends",
 ]

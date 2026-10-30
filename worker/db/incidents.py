@@ -27,7 +27,7 @@ _LOCK = 726202606
 
 _COLUMNS = (
     "id, kind, subject, severity, status, title, evidence, opened_at, last_seen, checks, "
-    "clear_since, resolved_at, fix_failures, needs_human, reopened"
+    "clear_since, resolved_at, fix_failures, needs_human, reopened, diagnosis"
 )
 
 
@@ -48,6 +48,8 @@ class Incident:
     fix_failures: int
     needs_human: bool
     reopened: int
+    # What worker/ai/diagnosis.py made of it when it opened or reopened (migration 020).
+    diagnosis: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -109,6 +111,25 @@ def load_incident(conn: Connection, incident_id: int) -> Incident | None:
         .first()
     )
     return _incident(row) if row else None
+
+
+def set_diagnosis(conn: Connection, incident_id: int, diagnosis: dict[str, Any]) -> None:
+    """Keep the diagnosis worker/ai/diagnosis.py made of the incident (migration 020)."""
+    conn.execute(
+        text("update incidents set diagnosis = cast(:d as jsonb) where id = :id"),
+        {"id": incident_id, "d": json.dumps(diagnosis)},
+    )
+
+
+def count_diagnoses_since(conn: Connection, since: datetime) -> int:
+    """How many diagnoses were made after `since`, which bounds how many a day are asked for."""
+    return conn.execute(
+        text(
+            "select count(*) from incidents where diagnosis is not null "
+            "and cast(diagnosis ->> 'at' as timestamptz) > :since"
+        ),
+        {"since": since},
+    ).scalar_one()
 
 
 def load_verdicts(conn: Connection, ids: Sequence[int]) -> dict[int, list[Verdict]]:

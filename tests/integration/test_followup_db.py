@@ -15,9 +15,12 @@ from worker.db.followup import (
     close_quiet_checks,
     count_accepted,
     count_due,
+    event_context,
     load_due,
+    load_followup_evidence,
     load_new_since,
     load_queue_counts,
+    refuse_task,
     schedule_followups,
     settle_statuses,
     submit_report,
@@ -635,3 +638,75 @@ def test_the_developing_update_rule(db):
         entries = load_update_entries(conn, since=since)
     assert [e.entry_id for e in entries] == [kev, exposure, patch, deckard]
     assert entries[-1].link == URL and entries[0].link is None
+
+
+# --- The worker's follow-up writer (worker/ai/followup_writer.py) ------------------------------
+
+
+def titled_source(db, event_id, name, *, added, title):
+    add_source(db, event_id, name, added=added)
+    with db.begin() as conn:
+        conn.execute(
+            text("update event_sources set title = :t where url = :u"),
+            {"t": title, "u": f"https://example.org/{name}"},
+        )
+
+
+def test_the_evidence_is_the_reports_added_since_the_last_check_newest_first(db):
+    task_id = open_check(db)
+    with db.begin() as conn:
+        conn.execute(text("update followup_tasks set status = 'done', updated_at = :t "
+                          "where id = :id"), {"t": ago(hours=6), "id": task_id})
+        new_task = conn.execute(
+            text("insert into followup_tasks (event_id, kind, due_at) "
+                 "values ('evt-2026-000001', 'check', :now) returning id"),
+            {"now": NOW},
+        ).scalar_one()
+    titled_source(db, "evt-2026-000001", "old", added=ago(hours=9), title="Old report")
+    titled_source(db, "evt-2026-000001", "a", added=ago(hours=4), title="Vendor patches it")
+    titled_source(db, "evt-2026-000001", "b", added=ago(hours=2), title="Hospitals hit")
+    with db.connect() as conn:
+        [due] = load_due(conn, now=NOW, limit=5)
+        assert due.task_id == new_task
+        evidence = load_followup_evidence(conn, due, most=5)
+    assert [(e.ref, e.title) for e in evidence] == [("s1", "Hospitals hit"),
+                                                     ("s2", "Vendor patches it")]
+    assert evidence[0].url == "https://example.org/b" and evidence[0].evidence_class == "NEWS"
+
+
+def test_a_first_check_reads_the_events_newest_reports(db):
+    open_check(db)
+    titled_source(db, "evt-2026-000001", "a", added=ago(hours=30), title="First report")
+    with db.connect() as conn:
+        [due] = load_due(conn, now=NOW, limit=5)
+        assert due.last_check_at is None
+        assert [e.title for e in load_followup_evidence(conn, due, most=5)] == ["First report"]
+
+
+def test_the_writers_report_is_marked_and_counts_towards_the_days_cap(db):
+    task_id = open_check(db)
+    with db.begin() as conn:
+        done = submit_report(conn, task_id, {"outcome": "no_change"}, rule=CONFIG.status,
+                             now=NOW, by="worker-ai")
+    assert done.result == "recorded"
+    with db.connect() as conn:
+        payload = conn.execute(text("select payload from followup_tasks")).scalar_one()
+        assert payload["by"] == "worker-ai"
+        assert count_accepted(conn, since=ago(days=1)) == 1
+
+
+def test_an_answer_the_writer_could_not_use_counts_an_attempt(db):
+    task_id = open_check(db)
+    for attempt in range(1, MAX_REPORT_ATTEMPTS + 1):
+        with db.begin() as conn:
+            attempts, status = refuse_task(conn, task_id, "the answer did not match", now=NOW)
+        assert attempts == attempt
+    assert status == "failed"
+
+
+def test_the_event_context_is_what_the_report_checks_read(db):
+    open_check(db, kev="CVE-2026-1111")
+    with db.connect() as conn:
+        context = event_context(conn, "evt-2026-000001")
+    assert context.cves == frozenset({"CVE-2026-1111"})
+    assert MaterialChange.NEW_FACT in context.types and context.agent_entries == 0

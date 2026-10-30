@@ -240,6 +240,12 @@ a.btn { text-decoration: none; }
 .dash-grid > .panel { grid-column: span 6; }
 .dash-grid > .panel--map, .dash-grid > .panel--signals { grid-column: span 8; }
 .dash-grid > .panel--severity, .dash-grid > .panel--pulse { grid-column: span 4; }
+.dash-grid > .panel--brief { grid-column: 1 / -1; }
+.brief__summary { margin: 0 0 var(--gap); max-width: 80ch; }
+.brief__items { margin: 0 0 var(--gap); padding-left: 1.4em; }
+.brief__items li { margin-bottom: 0.5em; }
+.brief__why { display: block; color: var(--muted, inherit); }
+.brief__gaps { margin: 0 0 var(--gap); padding-left: 1.4em; }
 .panel--severity .gauges { grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); }
 @media (max-width: 1120px) { .dash-grid > .panel, .dash-grid > .panel--map, .dash-grid > .panel--signals, .dash-grid > .panel--severity, .dash-grid > .panel--pulse { grid-column: 1 / -1; } }
 .pulse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--gap); align-items: start; }
