@@ -85,9 +85,13 @@ AGENT_SKILLS = ["paperclipai/paperclip/paperclip"]
 # is. Ids are MixRoute's, exactly (mixroute.ai/docs/model-api/<vendor>/<id>.md).
 MODEL_VENDORS = {
     "deepseek-v4-flash": "deepseek",
+    "glm-4-flash": "zhipu",
     "glm-5.3-flash": "zhipu",
     "mimo-v2.5-pro": "xiaomi",
 }
+# OpenCode's small model, for its helper calls (session titles, summaries), never an agent's own
+# work. MixRoute's free model (owner, 2026-10-30); it returns at most 4,095 tokens a request.
+SMALL_MODEL = "mixroute/glm-4-flash"
 MIXROUTE_BASE_URL = "https://api.mixroute.ai/v1"
 # OpenCode's custom-provider shape (MixRoute's OpenCode guide). The adapter bakes the key into
 # the run's opencode.json from the agent's own MIXROUTE_API_KEY, a Paperclip secret.
@@ -353,7 +357,7 @@ def build(output: Path) -> None:
                     },
                     # OpenCode's helper calls (session titles) on the agent's own model: its
                     # default is a model the gateway may not serve, which aborts the run.
-                    "PAPERCLIP_OPENCODE_SMALL_MODEL": {"type": "plain", "value": card["model"]},
+                    "PAPERCLIP_OPENCODE_SMALL_MODEL": {"type": "plain", "value": SMALL_MODEL},
                 },
             }}
             ext["inputs"] = {"env": {"MIXROUTE_API_KEY": MIXROUTE_KEY_INPUT}}

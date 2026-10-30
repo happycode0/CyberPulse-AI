@@ -267,7 +267,12 @@ def test_the_crew_runs_on_mixroute(builder, extension):
         assert provider["options"] == {"baseURL": "https://api.mixroute.ai/v1",
                                        "apiKey": "{env:MIXROUTE_API_KEY}"}
         assert MODELS[slug].split("/", 1)[1] in provider["models"]
-        assert env["PAPERCLIP_OPENCODE_SMALL_MODEL"] == {"type": "plain", "value": MODELS[slug]}
+        # OpenCode's helper calls (titles, summaries) go to the free model (owner, 2026-10-30),
+        # which the provider must list for OpenCode to resolve it.
+        assert env["PAPERCLIP_OPENCODE_SMALL_MODEL"] == {
+            "type": "plain", "value": "mixroute/glm-4-flash"
+        }
+        assert "glm-4-flash" in provider["models"]
         # The key is a secret the import asks for and Paperclip stores; never a plain value,
         # and never the server's environment (CYB-36).
         assert ext["inputs"]["env"]["MIXROUTE_API_KEY"]["kind"] == "secret"
