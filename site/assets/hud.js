@@ -2552,6 +2552,58 @@ export function renderHeadlines(events) {
 
 const WATCH_ROWS = 5;
 
+// TODAY'S BRIEF: the worker's daily intelligence report (worker/ai/report.py, data/daily-report.json).
+// A model writes it from the worker's own records, so it says AI-WRITTEN and names the model; every
+// event it names is one the site publishes, and each quiet topic's days are counted, not estimated.
+const BRIEF_MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+function briefDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+  return m ? `${Number(m[3])} ${BRIEF_MONTHS[Number(m[2]) - 1]}` : '';
+}
+
+function briefGap(gap) {
+  const topic = String(gap.topic || '').replace(/-/g, ' ');
+  const name = gap.kind === 'au_sector' ? `Australian ${topic} sector` : topic;
+  return `${name}: nothing new for ${Math.round(Number(gap.quiet_days) || 0)} days`;
+}
+
+export function renderBrief(doc) {
+  const host = document.getElementById('daily-brief');
+  const count = document.getElementById('brief-count');
+  if (!host) return;
+  const report = doc && doc.report && typeof doc.report.summary === 'string' ? doc.report : null;
+  if (!report) {
+    host.replaceChildren(h('p', { class: 'hint', text: 'No report yet: the worker writes one each morning at 07:40 Sydney time.' }));
+    if (count) count.textContent = 'NO REPORT YET';
+    return;
+  }
+  const items = (Array.isArray(report.items) ? report.items : []).filter((i) => i && i.event_id);
+  const gaps = Array.isArray(report.gaps) ? report.gaps : [];
+  const parts = [h('p', { class: 'brief__summary', text: report.summary })];
+  if (items.length) {
+    parts.push(h('ol', { class: 'brief__items' }, ...items.map((i) => h(
+      'li',
+      {},
+      severityBadge(i.severity || 'unknown'),
+      ' ',
+      h('a', { href: `event.html?id=${encodeURIComponent(i.event_id)}`, text: i.title || i.event_id }),
+      h('span', { class: 'brief__why', text: i.why || '' }),
+    ))));
+  }
+  if (gaps.length) {
+    parts.push(h('p', { class: 'hint', text: 'QUIET' }));
+    parts.push(h('ul', { class: 'brief__gaps' }, ...gaps.map((g) => h('li', { text: briefGap(g) }))));
+  }
+  const written = report.written_at ? `, ${formatSydneyStamp(report.written_at)}` : '';
+  parts.push(h('p', {
+    class: 'hint',
+    text: `AI-WRITTEN · ${report.model || 'a model'}${written} · from the worker's own records; every event it names is checked, the judgement is the model's.`,
+  }));
+  host.replaceChildren(...parts);
+  if (count) count.textContent = briefDate(report.date) || 'TODAY';
+}
+
 // DEVELOPING EVENTS and EMERGING THREATS on the dashboard: the first few of each feed in the
 // current scope, and a link to the whole feed in the Events view.
 function renderWatch(id, events) {
@@ -3167,6 +3219,7 @@ export async function main() {
   // Before the first refresh: EMERGING THREATS reads which events the trends say are rising.
   // Trends count stored reports over days, so they are not narrowed by the scope or the tags.
   renderTrends(await getJson(`${data.base}trends.json`, globalThis.fetch), data.events);
+  renderBrief(await getJson(`${data.base}daily-report.json`, globalThis.fetch));
 
   const total = data.events.length;
   const scored = data.events.some((e) => importanceOf(e));
