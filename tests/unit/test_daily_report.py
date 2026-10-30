@@ -136,6 +136,29 @@ def test_a_url_or_an_unknown_cve_in_the_summary_is_refused(summary):
         parse_report(answer(summary=summary), GIVEN)
 
 
+def test_an_item_whose_why_fails_its_checks_is_dropped_not_the_whole_report():
+    """The first live report (2026-10-31 09:40) was refused twice for one "why" a little over
+    200 characters, and no report was written that day. An item is the model's word on one event:
+    a bad one goes, as an invented entity name does, and the others stand."""
+    long_why = "Australian customers' data was taken in a breach that " + "matters a lot " * 14
+    assert len(long_why) > 200
+    items = [
+        {"event_id": "evt-2026-000003", "why": "CVE-2026-1234 is exploited, so patch now."},
+        {"event_id": "evt-2026-000002", "why": long_why},
+        {"event_id": "evt-2026-000001", "why": "CVE-2026-9999 is the one to patch first."},
+    ]
+    out = parse_report(answer(items=items), GIVEN)
+    assert [i["event_id"] for i in out.items] == ["evt-2026-000003"]
+    assert out.dropped == 2
+
+
+def test_a_report_whose_every_item_fails_its_checks_is_refused():
+    """Then the answer as a whole is unusable, and the pass's retry asks again."""
+    items = [{"event_id": "evt-2026-000002", "why": "See https://evil.example/fix today."}]
+    with pytest.raises(Rejected, match="every item"):
+        parse_report(answer(items=items), GIVEN)
+
+
 def test_at_most_five_items_and_three_gaps_each_once():
     many = ReportInput(events=[ev(n) for n in range(1, 9)], gaps=GAPS, window_hours=24)
     items = [{"event_id": f"evt-2026-{n:06d}", "why": f"Reason {n} for the reader."}
