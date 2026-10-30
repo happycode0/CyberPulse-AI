@@ -27,7 +27,7 @@ _LOCK = 726202606
 
 _COLUMNS = (
     "id, kind, subject, severity, status, title, evidence, opened_at, last_seen, checks, "
-    "clear_since, resolved_at, fix_failures, needs_human, reopened"
+    "clear_since, resolved_at, fix_failures, needs_human, reopened, diagnosis"
 )
 
 
@@ -48,6 +48,8 @@ class Incident:
     fix_failures: int
     needs_human: bool
     reopened: int
+    # What worker/ai/diagnosis.py made of it when it opened or reopened (migration 020).
+    diagnosis: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

@@ -451,6 +451,8 @@ _JOB_ROWS = {
     "model-scan": "model-scan",
     "model-gauntlet": "model-gauntlet",
     "watchdog": "watchdog",
+    "daily-report": "daily-report",
+    "followup-writer": "followup-writer",
 }
 # Not scheduled: they follow each run, and the site is only as fresh as they are.
 _AFTER_EACH_RUN = (("publish", "Publish"), ("push", "Push"))
