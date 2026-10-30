@@ -40,9 +40,11 @@ class ValidationFailure(Exception):
 
 # --- Secret detection --------------------------------------------------------------------
 
+_OPENAI_STYLE = "OpenAI-style API key"
+
 _CREDENTIAL_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("OpenRouter API key", re.compile(r"sk-or-[A-Za-z0-9_\-]{16,}")),
-    ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_\-]{20,}")),
+    (_OPENAI_STYLE, re.compile(r"\bsk-([A-Za-z0-9_\-]{20,})")),
     ("Tavily API key", re.compile(r"tvly-[A-Za-z0-9_\-]{16,}")),
     ("GitHub token", re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}")),
     ("GitHub fine-grained token", re.compile(r"github_pat_[A-Za-z0-9_]{20,}")),
@@ -66,6 +68,10 @@ _HEX = re.compile(r"[0-9a-fA-F]+")
 _HASH_LENGTHS = frozenset({32, 40, 56, 64, 96, 128})
 # Public Cisco advisory IDs: only the suffix, at most 8 characters, is mixed-case.
 _CISCO_ADVISORY_ID = re.compile(r"cisco-sa-(?:[a-z0-9]+-)+[A-Za-z0-9]{4,8}")
+# What follows "sk-" in a slug about a company called SK ("sk-capital-partners-data-breach"):
+# three or more lower-case words or numbers, none longer than a word. A key's body is random
+# base62 or base64url: mixed case, or one long run.
+_SK_SLUG_BODY = re.compile(r"[a-z0-9]{1,20}(?:-[a-z0-9]{1,20}){2,}")
 _MIN_TOKEN_ENTROPY = 3.5
 _ALPHA_RUN = re.compile(r"[A-Za-z]+")
 # Title-case words, lower-case words (2+ letters) and acronyms; an acronym directly before
@@ -106,6 +112,16 @@ def _looks_like_words(token: str) -> bool:
     # titles are made of longer ones.
     pieces = [p for r in word_runs for p in _WORD_PIECE.findall(r)]
     return sum(map(len, pieces)) / len(pieces) >= _MIN_AVG_WORD_LENGTH
+
+
+def _is_sk_slug(body: str) -> bool:
+    return bool(_SK_SLUG_BODY.fullmatch(body)) and _looks_like_words(body)
+
+
+def _matches(label: str, pattern: re.Pattern[str], text: str) -> bool:
+    if label != _OPENAI_STYLE:
+        return pattern.search(text) is not None
+    return any(not _is_sk_slug(m.group(1)) for m in pattern.finditer(text))
 
 
 def _looks_like_generic_secret(token: str) -> bool:
@@ -214,7 +230,7 @@ def _scan_string(text: str, literals: list[tuple[str, str]]) -> list[str]:
 
     for view in _views(text):
         for label, pattern in _CREDENTIAL_PATTERNS:
-            if pattern.search(view):
+            if _matches(label, pattern, view):
                 hit(label)
         if any(_looks_like_generic_secret(t) for t in _GENERIC_TOKEN.findall(view)):
             hit("high-entropy token")
