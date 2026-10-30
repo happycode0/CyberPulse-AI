@@ -605,13 +605,13 @@ def db(monkeypatch):
     return state
 
 
-def watchdog(telegram=None, *, token=False, site=None):
+def watchdog(telegram=None, *, token=False, site=None, diagnose=None):
     return Watchdog(
         settings(),
         telegram=lambda s: telegram,
         token_configured=lambda: token,
         site_transport=httpx.MockTransport(site) if site else None,
-        diagnose=kwargs.pop("diagnose", None),
+        diagnose=diagnose,
     )
 
 

@@ -112,7 +112,7 @@ def db(monkeypatch):
     monkeypatch.setattr(build, "load_settled", lambda conn, **kw: state["settled"][:kw["limit"]])
     monkeypatch.setattr(build, "active_discovered", lambda conn: state["active_discovered"])
     monkeypatch.setattr(build, "load_job_activity", lambda conn, **kw: state["job_activity"])
-        "daily_report": None,
+    monkeypatch.setattr(build, "load_latest_report", lambda conn: state["daily_report"])
     monkeypatch.setattr(build, "load_registry_rows", lambda conn: state["registry"])
     monkeypatch.setattr(
         build, "load_health_history", lambda conn, sid, limit=20: state["health"].get(sid, [])
