@@ -2328,7 +2328,11 @@ export function orgModel(org) {
   };
   const routines = (Array.isArray(org?.routines) ? org.routines : [])
     .filter((r) => r && typeof r.name === 'string' && r.name)
-    .map((r) => ({ ...r, schedule: describeCron(r.cron, r.timezone) }));
+    // A webhook routine has no cron: the worker fires it when it has work for the agent.
+    .map((r) => ({
+      ...r,
+      schedule: r.trigger === 'webhook' ? 'Only when there is work' : describeCron(r.cron, r.timezone),
+    }));
   const node = (a) => ({
     ...a,
     persona: CREW.find((c) => c.callsign === a.callsign) || null,
@@ -2404,7 +2408,12 @@ function routineRow(r) {
       'td',
       {},
       h('span', { class: 'routine__when', text: r.schedule || 'Custom schedule' }),
-      h('span', { class: 'routine__cron mono', text: `${r.cron || '—'}${r.timezone ? ` · ${r.timezone}` : ''}` }),
+      h('span', {
+        class: 'routine__cron mono',
+        text: r.trigger === 'webhook'
+          ? 'webhook · fired by the worker'
+          : `${r.cron || '—'}${r.timezone ? ` · ${r.timezone}` : ''}`,
+      }),
     ),
     h('td', { text: r.summary || '' }),
   );

@@ -462,6 +462,29 @@ def test_the_org_chart_draws_no_stray_null(org, tmp_path):
         assert "null" not in text and "undefined" not in text, part
 
 
+def test_a_routine_the_worker_fires_says_so_not_custom_schedule(tmp_path):
+    """Follow-up, Source discovery and Incident are webhook routines (2026-10-30): no cron, run
+    only when the worker has work for them. The page used to call them "Custom schedule"."""
+    org = json.loads(ORG.read_text(encoding="utf-8"))
+    org["routines"] = [
+        {"name": "Daily editorial", "assignee": "MORPHEUS", "cron": "30 7 * * *",
+         "timezone": "Australia/Sydney", "trigger": "schedule", "summary": "s"},
+        {"name": "Follow-up", "assignee": "DECKARD", "cron": None,
+         "timezone": "Australia/Sydney", "trigger": "webhook", "summary": "w"},
+    ]
+    (tmp_path / "org.json").write_text(json.dumps(org), encoding="utf-8")
+    (tmp_path / "draw.mjs").write_text(DRAW_ORG, encoding="utf-8")
+    done = subprocess.run(
+        [NODE, str(tmp_path / "draw.mjs"), str(HUD), str(tmp_path / "org.json")],
+        capture_output=True, text=True, timeout=60, check=False,
+    )
+    assert done.returncode == 0, done.stderr
+    routines = json.loads(done.stdout)["routines"]
+    assert "Daily at 07:30 Sydney time" in routines
+    assert "Only when there is work" in routines and "fired by the worker" in routines
+    assert "Custom schedule" not in routines and "—" not in routines
+
+
 def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     widen = site["widen"]
     assert widen["view"] == "events" and widen["scope"] == "all"
