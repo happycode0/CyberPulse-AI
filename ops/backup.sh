@@ -33,6 +33,11 @@ bad_usage() { [[ -z ${1:-} ]] || echo "backup: $1" >&2; usage >&2; exit 2; }
 DATABASES=(cyber_intel paperclip)
 SECRETS=/paperclip/instances/default/secrets
 
+# The server is under the "paperclip" compose profile since Paperclip was retired (2026-10-31),
+# and Compose ignores a service whose profile is off. Its database and secrets are still backed
+# up and restored, so the profile is on for this script's compose commands.
+export COMPOSE_PROFILES=paperclip
+
 # Every table's exact row count, one "<rows> <schema>.<table>" line each, in C order.
 # ops/restore.sh runs the same query; tests/unit/test_ops_scripts.py keeps the two identical.
 ROW_COUNTS_SQL=$(cat <<'SQL'

@@ -36,9 +36,14 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # Paperclip — the agents' control plane (Stage 4). Optional by design: if it is
-  # stopped or broken, the worker keeps collecting and publishing (PLAN.md §2.3).
+  # Paperclip — the agents' control plane (Stage 4), RETIRED on 2026-10-31: the crew's AI jobs
+  # run in the worker now (docs/runbooks/owner-checklist.md §9). The service stays for the
+  # rollback, under the "paperclip" profile, so `docker compose up -d` no longer starts it.
+  # Its database and volume are kept. To bring it back:
+  #   docker compose --profile paperclip up -d server
+  # The worker never needed it: stopped or broken, collection and publishing carry on.
   server:
+    profiles: ["paperclip"]
     # Pinned by digest. Bump the tag and the digest together, on purpose.
     image: ghcr.io/paperclipai/paperclip:2026.1001.0@sha256:08dbadebd4d40550eb336c25c3691f582322a88bae3f1cca101c5dd096bdc9d3
     # No `init: true`: the image already runs tini as PID 1. pids_limit is upstream's backstop.
@@ -67,11 +72,13 @@ services:
       PAPERCLIP_TELEMETRY_DISABLED: ${PAPERCLIP_TELEMETRY_DISABLED:-1}
       PAPERCLIP_ANNOUNCEMENTS_ENABLED: ${PAPERCLIP_ANNOUNCEMENTS_ENABLED:-false}
       PAPERCLIP_SECRETS_STRICT_MODE: ${PAPERCLIP_SECRETS_STRICT_MODE:-true}
-      # The five http agents wake the worker's ops API, a private address Paperclip refuses
-      # unless it is listed here.
+      # SERAPH, the one http agent, woke the worker's ops API, a private address Paperclip
+      # refuses unless it is listed here.
       PAPERCLIP_HTTP_ADAPTER_PRIVATE_ENDPOINT_ALLOWLIST: http://worker:8700
-      # For the AI agents, which inherit this environment: the ops API's read endpoints
-      # (GET $CYBERPULSE_OPS_URL/ops). The token opens reads only; nothing there writes.
+      # For the AI agents, which inherited this environment: the ops API's endpoints
+      # (GET $CYBERPULSE_OPS_URL/ops). The token opened the reads and the three writes (follow-up
+      # reports, source proposals, incident verdicts). Every agent saw it, and the database URL
+      # beside it, which is how CYB-35 and CYB-169 came about.
       CYBERPULSE_OPS_URL: http://worker:8700
       CYBERPULSE_OPS_TOKEN: ${CYBERPULSE_OPS_TOKEN:-}
     volumes:
