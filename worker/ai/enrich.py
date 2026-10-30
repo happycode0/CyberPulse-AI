@@ -25,18 +25,36 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
+from pydantic import SecretStr
 from sqlalchemy import Engine
 
-from worker.ai.budget import BudgetUnreadable, Governor, Mode, Route, Work, fetch_key_status
+from worker.ai import provider
+from worker.ai.budget import (
+    BudgetUnreadable,
+    Governor,
+    KeyStatus,
+    Mode,
+    Route,
+    Work,
+    fetch_key_status,
+    ledger_key_status,
+)
 from worker.ai.client import (
     Attribution,
     BudgetExhausted,
     CallFailed,
     InvalidOutput,
+    MixRouteClient,
     OpenRouterClient,
     RateLimited,
 )
-from worker.ai.ladder import LadderUnusable, Tier, VerifiedLadder, verify_ladder
+from worker.ai.ladder import (
+    LadderUnusable,
+    Tier,
+    VerifiedLadder,
+    verify_ladder,
+    verify_mixroute_ladder,
+)
 from worker.ai.tasks import (
     TASKS,
     Brief,
@@ -188,7 +206,7 @@ async def run_task(
         except (BudgetExhausted, RateLimited) as exc:
             # The governor tightens, and the next turn of the loop asks it again.
             governor.on_failure(exc, route)
-            outcome = Waiting(f"OpenRouter turned the call away ({_status(exc)})")
+            outcome = Waiting(f"{client.label} turned the call away ({_status(exc)})")
             continue
         except InvalidOutput as exc:
             reason, model = "the answer did not match the schema", exc.model
@@ -196,7 +214,7 @@ async def run_task(
             if exc.status is None or exc.status >= 500 or exc.status == 408:
                 return Waiting(f"the call failed ({_status(exc)})")
             # A 4xx: the request itself is wrong, and sending it again will not fix it.
-            return Failed(f"OpenRouter refused the request ({_status(exc)})")
+            return Failed(f"{client.label} refused the request ({_status(exc)})")
         else:
             try:
                 return Done(task.parse(completion.data, subject), completion.model)
@@ -225,12 +243,24 @@ class AiLayer:
         self,
         settings: Settings | None = None,
         *,
-        verify: Callable[[], Awaitable[VerifiedLadder]] = verify_ladder,
+        verify: Callable[[], Awaitable[VerifiedLadder]] | None = None,
         clock: Callable[[], datetime] = _utcnow,
+        ledger_status: Callable[[], KeyStatus] | None = None,
     ):
         self.settings = settings or get_settings()
+        mixroute = provider.is_mixroute(self.settings)
+        if verify is None:
+            verify = (
+                functools.partial(verify_mixroute_ladder, settings=self.settings)
+                if mixroute
+                else verify_ladder
+            )
         self._verify = verify
         self._clock = clock
+        # MixRoute's budget reading is our own ledger (worker/ai/budget.py `ledger_key_status`).
+        self._ledger_status = ledger_status or (
+            lambda: ledger_key_status(get_engine(), self._clock())
+        )
         self.verified: VerifiedLadder | None = None
         self.governor: Governor | None = None
 
@@ -248,9 +278,12 @@ class AiLayer:
     async def ready(self, http: httpx.AsyncClient) -> Governor | None:
         """The governor, with the ladder checked and the budget read, or None if the AI layer is
         off: no key, or a ladder that does not pass."""
-        key = self.settings.openrouter_api_key
+        key = provider.api_key(self.settings)
         if key is None:
-            logger.info("enrichment: OPENROUTER_API_KEY is not set, so the AI layer is off")
+            logger.info(
+                "enrichment: %s is not set, so the AI layer is off",
+                provider.key_name(self.settings),
+            )
             return None
         if self.verified is None or self._clock() - self.verified.checked_at > LADDER_MAX_AGE:
             try:
@@ -266,11 +299,16 @@ class AiLayer:
                 self.verified, self.settings.ai_monthly_budget_usd, now=self._clock
             )
         try:
-            self.governor.observe(await fetch_key_status(http, key, self.settings.user_agent))
+            self.governor.observe(await self._read_status(http, key))
         except BudgetUnreadable as exc:
             # The last reading stands until it is stale; then only free models run.
             logger.warning("enrichment: no budget reading this pass: %s", exc)
         return self.governor
+
+    async def _read_status(self, http: httpx.AsyncClient, key: SecretStr) -> KeyStatus:
+        if provider.is_mixroute(self.settings):
+            return await asyncio.to_thread(self._ledger_status)
+        return await fetch_key_status(http, key, self.settings.user_agent)
 
 
 # ─── One pass ─────────────────────────────────────────────────────────────────────────────────────
@@ -293,6 +331,14 @@ class EnrichSummary:
     def changed_anything(self) -> bool:
         """Whether anything the site publishes moved, and so whether to republish."""
         return bool(sum(self.done.values()) or self.completed)
+
+
+def _client(layer: AiLayer, http: httpx.AsyncClient, engine: Engine) -> OpenRouterClient:
+    """The pass's client, on whichever provider checked the ladder."""
+    key = provider.api_key(layer.settings)
+    assert layer.verified is not None and key is not None
+    make = MixRouteClient if provider.is_mixroute(layer.settings) else OpenRouterClient
+    return make(layer.verified, key, http, functools.partial(record_to, engine), layer.settings)
 
 
 def _is_done(state: TaskState | None) -> bool:
@@ -441,14 +487,7 @@ async def enrich_pending(
         work = routable[: max(batch, 0)]
         summary.events = len(work)
 
-        assert layer.verified is not None and layer.settings.openrouter_api_key is not None
-        client = OpenRouterClient(
-            layer.verified,
-            layer.settings.openrouter_api_key,
-            http,
-            functools.partial(record_to, engine),
-            layer.settings,
-        )
+        client = _client(layer, http, engine)
         gate = asyncio.Semaphore(MAX_CONCURRENT_EVENTS)
 
         async def one(subject: Subject, tasks: Sequence[Task]) -> None:

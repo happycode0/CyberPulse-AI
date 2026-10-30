@@ -1,6 +1,7 @@
 """cost_ledger rows: one per billed call, written by worker/ai/client.py (migration 005)."""
 
 from dataclasses import asdict, dataclass, fields
+from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
@@ -46,3 +47,16 @@ def record_to(engine: Engine, entry: LedgerEntry) -> None:
     """`record` in its own transaction: the sink the AI client is given in production."""
     with engine.begin() as conn:
         record(conn, entry)
+
+
+def provider_spend(conn: Connection, provider: str, start: datetime, end: datetime) -> Decimal:
+    """What the ledger charged `provider`'s calls in [start, end). Calls with no recorded cost
+    count as nothing, which only happens on OpenRouter, where its key endpoint is read instead."""
+    total = conn.execute(
+        text(
+            "select coalesce(sum(cost_usd), 0) from cost_ledger "
+            "where provider = :provider and ts >= :start and ts < :end"
+        ),
+        {"provider": provider, "start": start, "end": end},
+    ).scalar_one()
+    return Decimal(str(total))

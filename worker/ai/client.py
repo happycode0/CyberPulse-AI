@@ -16,6 +16,13 @@ Every request carries the same discipline, so no caller can leave part of it out
 It takes a `VerifiedLadder`, never a bare `Ladder`, so a ladder the guard has not passed cannot
 reach OpenRouter. The gauntlet calls models outside the ladder through `trial`, which takes a
 `VerifiedCandidate` for the same reason.
+
+`MixRouteClient` is the same discipline on MixRoute (worker/ai/provider.py), where the gateway
+does less of it. A request names one model, so the client walks the chain itself, moving on when
+a model is busy, unavailable or slow. There is no `provider` object to cap the price with: the
+guard's reviewed prices are the cap, and each call is charged at them, since MixRoute reports
+tokens but no cost. A 403 or 402 means the key's quota is spent, which no other model would
+change.
 """
 
 import asyncio
@@ -37,6 +44,7 @@ from pydantic import SecretStr
 from worker.ai.ladder import (
     OUTPUT_CEILING_USD_PER_MTOK,
     TIER2_QUANTIZATIONS,
+    MixRouteModel,
     Tier,
     VerifiedCandidate,
     VerifiedLadder,
@@ -51,6 +59,18 @@ CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # The cost_ledger `provider`: whose API billed the call.
 PROVIDER = "openrouter"
+MIXROUTE = "mixroute"
+
+# MixRoute statuses after which the next model in the chain is tried: busy (429), down or unknown
+# to this channel (500, 502, 503) and slow (408, 504). No answer at all counts too. So does a
+# request one model refuses (400, 404, 422): a parameter in its reviewed extras it does not take,
+# an id this channel lacks, a schema it will not follow. A refused key (401) is the same for every
+# model, so it is raised at once.
+MIXROUTE_FALL_THROUGH = frozenset({400, 404, 408, 422, 429, 500, 502, 503, 504})
+
+# What a spent MixRoute key says, as `BudgetExhausted.limit_source`: 403 "Token Group Disabled",
+# usually the key's quota (https://mixroute.ai/docs/faq/error-code.md).
+MIXROUTE_KEY_QUOTA = "mixroute_key_quota"
 
 # OpenAI's rule for json_schema names, which OpenRouter passes on to providers that apply it.
 _SCHEMA_NAME = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -212,6 +232,28 @@ def request_body(
     }
 
 
+def mixroute_request_body(
+    model: MixRouteModel,
+    *,
+    schema_name: str,
+    schema: Mapping[str, Any],
+    messages: Sequence[Mapping[str, str]],
+    max_tokens: int,
+) -> dict[str, Any]:
+    """One request to one MixRoute model: its id as written, the strict schema, and the model's
+    reviewed extras (which may not override any of these)."""
+    return {
+        **model.request,
+        "model": model.id,
+        "messages": [dict(m) for m in messages],
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {"name": schema_name, "strict": True, "schema": schema},
+        },
+        model.max_tokens_field: max_tokens,
+    }
+
+
 def _usd(value: Any) -> Decimal | None:
     """`usage.cost` as a Decimal, or None if OpenRouter did not report a usable figure."""
     if value is None or isinstance(value, bool):
@@ -271,6 +313,20 @@ def _failure(status: int, error: Any, retry_after: float | None) -> CallFailed:
     return CallFailed(message, status=status, retry_after=retry_after)
 
 
+def _mixroute_failure(status: int, error: Any, retry_after: float | None) -> CallFailed:
+    if status in (402, 403):
+        details = error if isinstance(error, Mapping) else {}
+        message = _safe_message(details.get("message"), f"HTTP {status}")
+        return BudgetExhausted(message, limit_source=MIXROUTE_KEY_QUOTA, retry_after=retry_after)
+    return _failure(status, error, retry_after)
+
+
+def _cached_tokens(usage: Mapping[str, Any]) -> int:
+    """Cached prompt tokens, where the answer says (OpenAI's `prompt_tokens_details`)."""
+    details = usage.get("prompt_tokens_details")
+    return _count(details.get("cached_tokens")) if isinstance(details, Mapping) else 0
+
+
 def _answer(choice: Mapping[str, Any], validator: jsonschema.Draft202012Validator) -> Any:
     """The parsed answer, or `_Unusable` saying why there is none. Never quotes the output."""
     message = choice.get("message")
@@ -296,6 +352,23 @@ def _answer(choice: Mapping[str, Any], validator: jsonschema.Draft202012Validato
     return data
 
 
+def _prepare(
+    schema_name: str, schema: Mapping[str, Any], max_tokens: int
+) -> jsonschema.Draft202012Validator:
+    """Refuse a request that is wrong before it is sent, and return the answer's validator."""
+    if not _SCHEMA_NAME.match(schema_name):
+        raise ValueError(f"schema name {schema_name!r} must match {_SCHEMA_NAME.pattern}")
+    if max_tokens <= 0:
+        raise ValueError("max_tokens must be positive")
+    check_strict_schema(schema)
+    return jsonschema.Draft202012Validator(schema)
+
+
+def _usage(payload: Mapping[str, Any]) -> Mapping[str, Any]:
+    usage = payload.get("usage")
+    return usage if isinstance(usage, Mapping) else {}
+
+
 class OpenRouterClient:
     """Calls one tier of a verified ladder. `record` gets every billed call's ledger entry; in
     production it is `functools.partial(worker.db.ledger.record_to, engine)`.
@@ -303,6 +376,9 @@ class OpenRouterClient:
     A ledger write that fails propagates: a call that cannot be accounted for is one the worker
     should stop making, even though it has already been paid for.
     """
+
+    provider = PROVIDER
+    label = "OpenRouter"
 
     def __init__(
         self,
@@ -407,12 +483,7 @@ class OpenRouterClient:
         max_tokens: int,
         attribution: Attribution,
     ) -> Completion:
-        if not _SCHEMA_NAME.match(schema_name):
-            raise ValueError(f"schema name {schema_name!r} must match {_SCHEMA_NAME.pattern}")
-        if max_tokens <= 0:
-            raise ValueError("max_tokens must be positive")
-        check_strict_schema(schema)
-        validator = jsonschema.Draft202012Validator(schema)
+        validator = _prepare(schema_name, schema, max_tokens)
         body = request_body(
             tier,
             chain,
@@ -421,14 +492,30 @@ class OpenRouterClient:
             messages=messages,
             max_tokens=max_tokens,
         )
+        payload, duration_ms = await self._post(CHAT_URL, body)
+        usage = _usage(payload)
+        return await self._settle(
+            tier,
+            chain[0],
+            payload,
+            validator,
+            attribution,
+            duration_ms,
+            model=_text(payload.get("model")),
+            upstream=_text(payload.get("provider")),
+            cost_usd=_usd(usage.get("cost")),
+        )
 
+    async def _post(
+        self, url: str, body: Mapping[str, Any]
+    ) -> tuple[Mapping[str, Any], int]:
+        """Send one request. Returns the answer and how long it took, or raises a `CallFailed`
+        for anything that is not a 200 carrying choices."""
         started = time.monotonic()
         try:
-            r = await self._http.post(
-                CHAT_URL, json=body, headers=self._headers(), timeout=_TIMEOUT
-            )
+            r = await self._http.post(url, json=body, headers=self._headers(), timeout=_TIMEOUT)
         except httpx.HTTPError as exc:
-            raise CallFailed(f"{type(exc).__name__} calling OpenRouter") from exc
+            raise CallFailed(f"{type(exc).__name__} calling {self.label}") from exc
         duration_ms = round((time.monotonic() - started) * 1000)
 
         retry_after = _retry_after(r.headers.get("retry-after"))
@@ -438,42 +525,59 @@ class OpenRouterClient:
             payload = None
         if r.status_code != 200:
             error = payload.get("error") if isinstance(payload, Mapping) else None
-            raise _failure(r.status_code, error, retry_after)
+            raise self._failure(r.status_code, error, retry_after)
         if not isinstance(payload, Mapping):
-            raise CallFailed("OpenRouter returned a 200 that is not a JSON object", status=200)
+            raise CallFailed(f"{self.label} returned a 200 that is not a JSON object", status=200)
         choices = payload.get("choices")
         if not isinstance(choices, list) or not choices or not isinstance(choices[0], Mapping):
             # A 200 carrying an error object instead of an answer: an upstream failure after
-            # OpenRouter had already accepted the request.
+            # the gateway had already accepted the request.
             error = payload.get("error")
             code = error.get("code") if isinstance(error, Mapping) else None
             status = code if isinstance(code, int) and not isinstance(code, bool) else 200
-            raise _failure(status, error, retry_after)
+            raise self._failure(status, error, retry_after)
+        return payload, duration_ms
 
-        usage = payload.get("usage")
-        usage = usage if isinstance(usage, Mapping) else {}
-        model = _text(payload.get("model"))
+    def _failure(self, status: int, error: Any, retry_after: float | None) -> CallFailed:
+        return _failure(status, error, retry_after)
+
+    async def _settle(
+        self,
+        tier: Tier,
+        requested: str,
+        payload: Mapping[str, Any],
+        validator: jsonschema.Draft202012Validator,
+        attribution: Attribution,
+        duration_ms: int,
+        *,
+        model: str | None,
+        upstream: str | None,
+        cost_usd: Decimal | None,
+    ) -> Completion:
+        """Check the answer, write its ledger row and return it, or raise `InvalidOutput` once
+        the row is written."""
+        usage = _usage(payload)
         refused = False
         try:
-            data, outcome, reason = _answer(choices[0], validator), "ok", None
+            data, outcome, reason = _answer(payload["choices"][0], validator), "ok", None
         except _Unusable as exc:
             data, outcome, reason, refused = None, "invalid_output", str(exc), exc.refused
 
         entry = LedgerEntry(
-            provider=PROVIDER,
+            provider=self.provider,
             stage=attribution.stage,
             outcome=outcome,
             agent=attribution.agent,
             event_id=attribution.event_id,
             run_id=attribution.run_id,
             tier=tier.value,
-            requested_model=chain[0],
+            requested_model=requested,
             model=model,
-            upstream=_text(payload.get("provider")),
+            upstream=upstream,
             generation_id=_text(payload.get("id")),
             tokens_in=_count(usage.get("prompt_tokens")),
             tokens_out=_count(usage.get("completion_tokens")),
-            cost_usd=_usd(usage.get("cost")),
+            cost_usd=cost_usd,
             duration_ms=duration_ms,
         )
         await asyncio.to_thread(self._record, entry)
@@ -505,3 +609,91 @@ class OpenRouterClient:
             generation_id=entry.generation_id,
             duration_ms=duration_ms,
         )
+
+
+class MixRouteClient(OpenRouterClient):
+    """`OpenRouterClient`'s discipline on MixRoute. The ladder must have passed MixRoute's guard,
+    which carries the prices each call is charged at."""
+
+    provider = MIXROUTE
+    label = "MixRoute"
+
+    def __init__(
+        self,
+        verified: VerifiedLadder,
+        api_key: SecretStr,
+        http: httpx.AsyncClient,
+        record: Callable[[LedgerEntry], None],
+        settings: Settings | None = None,
+    ):
+        if verified.prices is None:
+            raise ValueError("the ladder was not checked against MixRoute, so it has no prices")
+        settings = settings or get_settings()
+        super().__init__(verified, api_key, http, record, settings)
+        self._prices = verified.prices
+        self._url = f"{settings.mix_router_url.rstrip('/')}/chat/completions"
+
+    def _headers(self) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {self._api_key.get_secret_value()}",
+            "User-Agent": self._user_agent,
+        }
+
+    def _failure(self, status: int, error: Any, retry_after: float | None) -> CallFailed:
+        return _mixroute_failure(status, error, retry_after)
+
+    async def _call(
+        self,
+        tier: Tier,
+        chain: Sequence[str],
+        *,
+        schema_name: str,
+        schema: Mapping[str, Any],
+        messages: Sequence[Mapping[str, str]],
+        max_tokens: int,
+        attribution: Attribution,
+    ) -> Completion:
+        """Each model in turn until one answers. Raises the last failure when none does, and at
+        once for a failure no other model would change: a spent quota or a refused key."""
+        validator = _prepare(schema_name, schema, max_tokens)
+        last: CallFailed | None = None
+        for slug in chain:
+            model = self._prices.models[slug]
+            body = mixroute_request_body(
+                model,
+                schema_name=schema_name,
+                schema=schema,
+                messages=messages,
+                max_tokens=max_tokens,
+            )
+            try:
+                payload, duration_ms = await self._post(self._url, body)
+            except BudgetExhausted:
+                raise
+            except CallFailed as exc:
+                if exc.status is not None and exc.status not in MIXROUTE_FALL_THROUGH:
+                    raise
+                logger.info("ai %s on MixRoute failed (%s); trying the next model", slug, exc)
+                last = exc
+                continue
+            usage = _usage(payload)
+            cost = model.cost(
+                _count(usage.get("prompt_tokens")),
+                _count(usage.get("completion_tokens")),
+                _cached_tokens(usage),
+            )
+            # The configured slug, not MixRoute's echo of the id: the ladder, the task states
+            # and the gauntlet all name models by slug.
+            return await self._settle(
+                tier,
+                chain[0],
+                payload,
+                validator,
+                attribution,
+                duration_ms,
+                model=slug,
+                upstream=None,
+                cost_usd=cost,
+            )
+        assert last is not None  # the chain is never empty
+        raise last

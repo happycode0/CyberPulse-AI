@@ -246,12 +246,14 @@ def ladder_changed(notice: ScanNotice) -> str:
     if not notice.usable:
         lines.append(
             "What is left is not a usable ladder, so AI enrichment is off until "
-            "config/models.yaml is fixed. Collection and publishing carry on without it."
+            "config/models.yaml (config/models.mixroute.yaml on MixRoute) is fixed. "
+            "Collection and publishing carry on without it."
         )
     elif dropped:
         lines.append(
             "Enrichment already goes down each tier's chain without them, which needs no "
-            "approval. If a tier's default is gone for good, edit config/models.yaml."
+            "approval. If a tier's default is gone for good, edit config/models.yaml "
+            "(config/models.mixroute.yaml on MixRoute)."
         )
     else:
         lines.append("Enrichment can use them again from its next pass.")
@@ -296,7 +298,7 @@ def monthly_cost(report: dict[str, Any]) -> str:
         f"CyberPulse-AI · AI cost · {month:%B %Y}",
         (
             "The worker's cost ledger: every model call it made in the month (UTC), as "
-            "OpenRouter billed it."
+            "OpenRouter billed it, or on MixRoute, its tokens at the reviewed prices."
         ),
         "",
         "TOTAL",
@@ -321,7 +323,7 @@ def monthly_cost(report: dict[str, Any]) -> str:
         "",
         (
             "The Paperclip agents' own runs are not in the ledger: their spend is on "
-            "Paperclip's Budgets page and OpenRouter's activity page."
+            "Paperclip's Budgets page and the AI provider's usage page."
         ),
     ]
     return "\n".join(lines)

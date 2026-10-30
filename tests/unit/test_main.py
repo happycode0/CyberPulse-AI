@@ -1,12 +1,13 @@
 import logging
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 
 import httpx
 import pytest
 from pydantic import SecretStr
 
 from worker import main as main_mod
-from worker.ai.budget import KEY_URL
+from worker.ai.budget import KEY_URL, KeyStatus
 from worker.ai.ladder import (
     Breach,
     CatalogueUnavailable,
@@ -264,6 +265,56 @@ def test_check_budget_fails_when_the_key_cannot_be_read(monkeypatch, caplog, res
     respx_mock.get(KEY_URL).mock(return_value=httpx.Response(401))
     assert main_mod._check_budget() == 1
     assert "did not accept the key" in caplog.text
+
+
+# ─── On MixRoute: the same commands, with MixRoute's guard and the ledger's reading ─────────────────
+
+
+def _on_mixroute(monkeypatch, key="fake-key-TESTONLY"):
+    settings = Settings(
+        _env_file=None,
+        database_url="sqlite://",
+        ai_provider="mixroute",
+        mix_router_key=SecretStr(key) if key else None,
+        ai_monthly_budget_usd=Decimal("12"),
+    )
+    monkeypatch.setattr(main_mod, "get_settings", lambda: settings)
+    return settings
+
+
+def test_check_models_on_mixroute_uses_its_guard(monkeypatch, caplog):
+    _on_mixroute(monkeypatch)
+    seen = []
+
+    async def fake_verify(config=None, client=None, *, settings=None):
+        seen.append(settings.ai_provider)
+        return VerifiedLadder(ladder=Ladder.load(), checked_at=None)
+
+    monkeypatch.setattr(main_mod, "verify_ladder", _rejecting(AssertionError("OpenRouter")))
+    monkeypatch.setattr(main_mod, "verify_mixroute_ladder", fake_verify)
+    caplog.set_level("INFO")
+    assert main_mod._check_models(required=True) == 0
+    assert seen == ["mixroute"] and "listed by MixRoute" in caplog.text
+
+
+def test_check_budget_on_mixroute_without_its_key_fails(monkeypatch, caplog):
+    _on_mixroute(monkeypatch, key=None)
+    assert main_mod._check_budget() == 1
+    assert "MIX_ROUTER_KEY is not set" in caplog.text
+
+
+def test_check_budget_on_mixroute_reads_the_ledger(monkeypatch, caplog):
+    _on_mixroute(monkeypatch)
+    monkeypatch.setattr(main_mod, "get_engine", lambda: "engine")
+    monkeypatch.setattr(
+        main_mod,
+        "ledger_key_status",
+        lambda engine, now: KeyStatus(None, None, None, Decimal("0.5"), Decimal("7"), None),
+    )
+    caplog.set_level("INFO")
+    assert main_mod._check_budget() == 0
+    assert "mode conserve" in caplog.text and "$5.00 of $12.00" in caplog.text
+    assert "cost ledger" in caplog.text
 
 
 # ─── _check_lineage: confirmations by outlet and by lineage, read only ───────────────────────────

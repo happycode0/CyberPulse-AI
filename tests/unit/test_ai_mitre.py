@@ -253,6 +253,8 @@ class FakeLayer:
 
 
 class FakeClient:
+    label = "OpenRouter"
+
     def __init__(self, data=GOOD):
         self.data = data
         self.calls = []

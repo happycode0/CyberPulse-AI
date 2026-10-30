@@ -17,6 +17,11 @@ and raised them in Paperclip, was retired on 2026-10-20.
 
 Neither pass is fatal to the schedule, and neither sends a key anywhere but OpenRouter's
 completions and key endpoints.
+
+On MixRoute (worker/ai/provider.py) both passes keep their shape with MixRoute's parts: the scan
+has no public catalogue to diff, so it only puts the ladder through MixRoute's guard, which reads
+`GET /v1/models` with the key; the gauntlet's challengers are the models priced in
+config/models.mixroute.yaml that no tier names, and its budget reading is the cost ledger.
 """
 
 import asyncio
@@ -24,7 +29,7 @@ import dataclasses
 import functools
 import logging
 from collections import Counter
-from collections.abc import Callable, Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -35,7 +40,8 @@ import yaml
 from pydantic import ValidationError
 from sqlalchemy import Connection, Engine
 
-from worker.ai.budget import BudgetUnreadable, Mode, assess, fetch_key_status
+from worker.ai import provider
+from worker.ai.budget import BudgetUnreadable, Mode, assess, fetch_key_status, ledger_key_status
 from worker.ai.catalogue import (
     Change,
     diff,
@@ -49,6 +55,7 @@ from worker.ai.client import (
     BudgetExhausted,
     CallFailed,
     InvalidOutput,
+    MixRouteClient,
     OpenRouterClient,
 )
 from worker.ai.gauntlet import (
@@ -72,6 +79,7 @@ from worker.ai.gauntlet import (
     failures,
     judged_on,
     measure,
+    priced,
     proposal_body,
     proposal_payload,
     proposal_title,
@@ -91,15 +99,20 @@ from worker.ai.golden import (
 )
 from worker.ai.ladder import (
     DEFAULT_LADDER_PATH,
+    MIXROUTE_LADDER_PATH,
     CatalogueUnavailable,
     Ladder,
     LadderRejected,
     LadderUnusable,
+    MixRouteConfig,
     Tier,
     VerifiedCandidate,
     VerifiedLadder,
+    is_free,
     verify_candidate,
     verify_ladder,
+    verify_mixroute_candidate,
+    verify_mixroute_ladder,
 )
 from worker.ai.tasks import Rejected, TaskName, messages
 from worker.db import scout as db
@@ -188,36 +201,48 @@ async def scan_models(
     now: datetime | None = None,
     transport: httpx.AsyncBaseTransport | None = None,
 ) -> ScanSummary:
-    """Read the model list, record what changed, and check the ladder. Sends no key."""
+    """Read the model list, record what changed, and check the ladder. Sends no key, except on
+    MixRoute, whose model list needs one."""
     settings = settings or get_settings()
     engine = engine or get_engine()
     now = now or _utcnow()
+    mixroute = provider.is_mixroute(settings)
     summary = ScanSummary()
     listing = None
     catalogue_changes: list[Change] = []
     report: dict[str, Any] | None = None
 
     async with _client(settings, transport) as http:
-        try:
-            listing = await fetch_listing(http)
-            known = await asyncio.to_thread(_in, engine, db.load_catalogue)
-            catalogue_changes = diff(known, listing)
-        except CatalogueUnavailable as exc:
-            listing = None
-            summary.errors.append(str(exc))
-        else:
-            summary.models_listed = len(listing)
-            new = {c.slug for c in catalogue_changes if c.kind == "new"}
-            summary.new_free = [m.slug for m in listing if m.slug in new and m.free and m.capable]
+        if not mixroute:
+            try:
+                listing = await fetch_listing(http)
+                known = await asyncio.to_thread(_in, engine, db.load_catalogue)
+                catalogue_changes = diff(known, listing)
+            except CatalogueUnavailable as exc:
+                listing = None
+                summary.errors.append(str(exc))
+            else:
+                summary.models_listed = len(listing)
+                new = {c.slug for c in catalogue_changes if c.kind == "new"}
+                summary.new_free = [
+                    m.slug for m in listing if m.slug in new and m.free and m.capable
+                ]
 
+        path = MIXROUTE_LADDER_PATH if mixroute else DEFAULT_LADDER_PATH
         try:
-            configured = Ladder.load()
+            prices = MixRouteConfig.load() if mixroute else None
+            configured = prices.ladder if prices is not None else Ladder.load()
         except (OSError, yaml.YAMLError, ValidationError) as exc:
             summary.ladder_failed = True
-            summary.errors.append(f"{DEFAULT_LADDER_PATH.name}: {exc}")
+            summary.errors.append(f"{path.name}: {exc}")
         else:
             try:
-                summary.verified = await verify_ladder(configured, client=http)
+                if prices is not None:
+                    summary.verified = await verify_mixroute_ladder(
+                        prices, client=http, settings=settings
+                    )
+                else:
+                    summary.verified = await verify_ladder(configured, client=http)
             except LadderRejected as exc:
                 summary.ladder_failed = True
                 summary.errors.append(f"the ladder did not pass: {exc}")
@@ -353,13 +378,18 @@ async def _attempt(
     g: GoldenEvent,
     gate: asyncio.Semaphore,
     purse: _Purse,
+    *,
+    free: bool | None = None,
 ) -> Attempt:
+    """One golden event through one model. `free` says whether the model costs nothing; by
+    default, OpenRouter's `:free` suffix decides."""
+    if free is None:
+        free = is_free(candidate.slug)
     task = TIER_TASK[candidate.tier]
     subject = subject_from_record(g.event_id, g.record)
     if task.name is TaskName.SEVERITY:
         subject = blinded(subject)
     async with gate:
-        free = candidate.slug.endswith(":free")
         if purse.stopped or (not free and purse.left <= 0):
             return Attempt(g.event_id, "skipped")
         try:
@@ -380,8 +410,8 @@ async def _attempt(
                 duration_ms=exc.duration_ms,
                 cost_usd=exc.cost_usd,
             )
-        except BudgetExhausted:
-            purse.stopped = "OpenRouter turned a call away for budget (HTTP 402)"
+        except BudgetExhausted as exc:
+            purse.stopped = f"{client.label} turned a call away for budget (HTTP {exc.status})"
             return Attempt(g.event_id, "error")
         except CallFailed:
             return Attempt(g.event_id, "error")
@@ -398,18 +428,21 @@ async def _attempt(
 @dataclass
 class _Run:
     client: OpenRouterClient
-    http: httpx.AsyncClient
     golden: list[GoldenEvent]
     golden_digest: str
     purse: _Purse
     now: datetime
     notes: list[str]
+    # The guard for one model in one tier, on the provider in use.
+    check: Callable[[str, Tier], Awaitable[VerifiedCandidate]]
+    free: Callable[[str], bool]
 
     async def model(
         self, candidate: VerifiedCandidate, row: Listed | None, *, incumbent: bool
     ) -> Measured | None:
         golden = [g for g in self.golden if judged_on(TIER_TASK[candidate.tier], g.labels)]
-        if not candidate.slug.endswith(":free"):
+        free = self.free(candidate.slug)
+        if not free:
             expected = estimate(row, len(golden))
             if expected > self.purse.left:
                 self.notes.append(
@@ -419,7 +452,7 @@ class _Run:
                 return None
         gate = asyncio.Semaphore(CONCURRENCY)
         attempts = await asyncio.gather(
-            *(_attempt(self.client, candidate, g, gate, self.purse) for g in golden)
+            *(_attempt(self.client, candidate, g, gate, self.purse, free=free) for g in golden)
         )
         m = measure(
             candidate.tier,
@@ -455,7 +488,7 @@ class _Run:
             incumbent: Measured | None = dataclasses.replace(reused, reused=True)
         else:
             try:
-                candidate = await verify_candidate(slug, tier, client=self.http)
+                candidate = await self.check(slug, tier)
             except LadderUnusable as exc:
                 # Nothing to compare a challenger against, so nothing is spent on one.
                 self.notes.append(f"{tier.value}: {slug} not tried: {exc}")
@@ -475,7 +508,7 @@ class _Run:
             if len(found) == CHALLENGERS_PER_TIER:
                 break
             try:
-                found.append(await verify_candidate(row.slug, tier, client=self.http))
+                found.append(await self.check(row.slug, tier))
             except LadderRejected:
                 continue
             except CatalogueUnavailable as exc:
@@ -539,14 +572,23 @@ async def run_gauntlet(
     settings = settings or get_settings()
     engine = engine or get_engine()
     now = now or _utcnow()
-    key = settings.openrouter_api_key
+    key = provider.api_key(settings)
     if key is None:
-        return GauntletSummary(skipped="OPENROUTER_API_KEY is not set")
+        return GauntletSummary(skipped=f"{provider.key_name(settings)} is not set")
+    prices: MixRouteConfig | None = None
+    if provider.is_mixroute(settings):
+        try:
+            prices = MixRouteConfig.load()
+        except (OSError, yaml.YAMLError, ValidationError) as exc:
+            return GauntletSummary(skipped=f"{MIXROUTE_LADDER_PATH.name}: {exc}")
 
     golden, reviewed = await asyncio.to_thread(_in, engine, _golden, now)
     if not golden:
         return GauntletSummary(skipped="no event qualifies for the golden set yet")
-    listed = await asyncio.to_thread(_in, engine, db.load_listed)
+    if prices is not None:
+        listed = priced(prices, now)
+    else:
+        listed = await asyncio.to_thread(_in, engine, db.load_listed)
     if not listed:
         return GauntletSummary(skipped="the model scan has not run yet")
     golden_digest = digest(golden)
@@ -559,7 +601,10 @@ async def run_gauntlet(
     summary = GauntletSummary()
     async with _client(settings, transport) as http:
         try:
-            status = await fetch_key_status(http, key, settings.user_agent)
+            if prices is not None:
+                status = await asyncio.to_thread(ledger_key_status, engine, now)
+            else:
+                status = await fetch_key_status(http, key, settings.user_agent)
         except BudgetUnreadable as exc:
             return GauntletSummary(skipped=f"no budget reading: {exc}")
         reading = assess(status, settings.ai_monthly_budget_usd)
@@ -580,14 +625,37 @@ async def run_gauntlet(
         if not tiers:
             return GauntletSummary(skipped="; ".join(summary.notes))
         try:
-            verified = await verify_ladder(client=http)
+            if prices is not None:
+                verified = await verify_mixroute_ladder(prices, client=http, settings=settings)
+            else:
+                verified = await verify_ladder(client=http)
         except LadderUnusable as exc:
             return GauntletSummary(skipped=f"the ladder did not pass: {exc}")
 
-        client = OpenRouterClient(
-            verified, key, http, functools.partial(record_to, engine), settings
+        record = functools.partial(record_to, engine)
+        if prices is not None:
+            client = MixRouteClient(verified, key, http, record, settings)
+
+            async def check(slug: str, tier: Tier) -> VerifiedCandidate:
+                return await verify_mixroute_candidate(
+                    slug, tier, prices, client=http, settings=settings
+                )
+        else:
+            client = OpenRouterClient(verified, key, http, record, settings)
+
+            async def check(slug: str, tier: Tier) -> VerifiedCandidate:
+                return await verify_candidate(slug, tier, client=http)
+
+        run = _Run(
+            client,
+            golden,
+            golden_digest,
+            _Purse(allowance),
+            now,
+            summary.notes,
+            check,
+            functools.partial(is_free, prices=prices),
         )
-        run = _Run(client, http, golden, golden_digest, _Purse(allowance), now, summary.notes)
         decisions: list[Decision] = []
         for tier in tiers:
             if run.purse.stopped:

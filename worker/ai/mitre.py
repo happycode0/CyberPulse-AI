@@ -28,7 +28,8 @@ import httpx
 from sqlalchemy import Engine
 
 from worker.ai.budget import Governor, Mode
-from worker.ai.client import OpenRouterClient
+from worker.ai import provider
+from worker.ai.client import MixRouteClient, OpenRouterClient
 from worker.ai.enrich import (
     AiLayer,
     Done,
@@ -451,13 +452,11 @@ async def suggest_techniques(
         if not work:
             return summary
 
-        assert layer.verified is not None and layer.settings.openrouter_api_key is not None
-        client = OpenRouterClient(
-            layer.verified,
-            layer.settings.openrouter_api_key,
-            http,
-            functools.partial(record_to, engine),
-            layer.settings,
+        key = provider.api_key(layer.settings)
+        assert layer.verified is not None and key is not None
+        make = MixRouteClient if provider.is_mixroute(layer.settings) else OpenRouterClient
+        client = make(
+            layer.verified, key, http, functools.partial(record_to, engine), layer.settings
         )
         await _run(client, governor, engine, work, moment, summary)
 

@@ -55,7 +55,14 @@ from pydantic import SecretStr
 from sqlalchemy import Connection, Engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from worker.ai.budget import BudgetUnreadable, KeyStatus, assess, fetch_key_status
+from worker.ai import provider
+from worker.ai.budget import (
+    BudgetUnreadable,
+    KeyStatus,
+    assess,
+    fetch_key_status,
+    ledger_key_status,
+)
 from worker.cadence import FAST_INTERVAL
 from worker.db.digest import (
     ESCALATE_AU_RELEVANCE,
@@ -584,6 +591,20 @@ def openrouter_key_reader(settings: Settings) -> Callable[[], KeyStatus]:
                 )
 
         return asyncio.run(fetch())
+
+    return read
+
+
+def key_reader(settings: Settings, engine: Engine) -> Callable[[], KeyStatus]:
+    """The worker's AI spend for the month, read on request: what OpenRouter's `GET /api/v1/key`
+    says, or on MixRoute, which has no such endpoint, what the cost ledger charged."""
+    if not provider.is_mixroute(settings):
+        return openrouter_key_reader(settings)
+
+    def read() -> KeyStatus:
+        if provider.api_key(settings) is None:
+            raise BudgetUnreadable("no MixRoute key is set on this host")
+        return ledger_key_status(engine, _utcnow())
 
     return read
 
@@ -1624,7 +1645,7 @@ def start(settings: Settings, engine: Engine) -> OpsServer | None:
         engine=engine,
         token=settings.cyberpulse_ops_token,
         data_dir=settings.data_dir,
-        key_status=openrouter_key_reader(settings),
+        key_status=key_reader(settings, engine),
         monthly_budget=settings.ai_monthly_budget_usd,
         followup=FollowupConfig.load(),
         discovery=DiscoveryConfig.load(),

@@ -28,6 +28,23 @@ agents can push enrichment down to free models.
 Collection, ground truth and publishing never stop for the budget. Only summaries and AI
 estimates wait.
 
+### On MixRoute
+
+With `AI_PROVIDER=mixroute` the worker calls MixRoute instead (PLAN.md §7.1). Three things are
+different:
+
+- **What the mode is read from.** MixRoute has no endpoint that says what a key has spent, so the
+  worker sums its own cost ledger for the month and sets the mode from that against
+  `AI_MONTHLY_BUDGET_USD`. The agents' spend is not in it: give them their own MixRoute key.
+- **The last stop.** Each key's quota in MixRoute's console (**Token Management → Edit**) is the
+  hard limit. When the worker's is spent MixRoute answers 403, and the worker pauses paid calls
+  for an hour and tries again; `free_only` then means models marked `free: true` in
+  `config/models.mixroute.yaml`.
+- **Cost.** A MixRoute answer has tokens but no price, so each ledger row is the call's tokens at
+  the reviewed prices in that file. If MixRoute's prices change, the file must change with them.
+
+Check by hand: `python -m worker --check-models`, then `python -m worker --check-budget`.
+
 ---
 
 ## Spend is high, or the budget is nearly gone

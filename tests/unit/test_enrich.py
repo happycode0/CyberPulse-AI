@@ -100,6 +100,8 @@ class FakeClient:
     """Answers each call with the next scripted reply: an exception to raise, a Completion, or
     nothing, which means the task's good answer."""
 
+    label = "OpenRouter"
+
     def __init__(self, *replies):
         self.replies = list(replies)
         self.calls = []

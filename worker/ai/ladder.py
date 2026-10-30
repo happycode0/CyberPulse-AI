@@ -20,6 +20,12 @@ decision (§7.7), and one withdrawn model should not switch off every tier. What
 be a ladder `Ladder` accepts — no empty tier, tier 0 still ending in a paid model — or the whole
 ladder is rejected. Failing closed here means the AI layer stays off, not that the worker stops:
 see worker/ai. The daily model scan (worker/ai/catalogue.py) records every drop and return.
+
+On MixRoute (AI_PROVIDER=mixroute, worker/ai/provider.py) there are no routes to read: its
+`GET /v1/models` lists ids and nothing else. The ladder and every model's price come from
+`config/models.mixroute.yaml` instead, and a model passes if MixRoute lists its id for our key
+and its reviewed output price, at the dearest step a worker prompt can reach, is within the same
+ceiling. There is no quantisation to pin, so tier 2 has no extra check there.
 """
 
 import asyncio
@@ -29,13 +35,13 @@ from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, Literal, Self
 
 import httpx
 import yaml
-from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
-from worker.settings import get_settings
+from worker.settings import Settings, get_settings
 
 # Owner policy, 2026-09-30 (PLAN.md §7.1). A constant rather than a setting on purpose: raising it
 # should be a reviewed commit with a PLAN.md entry, not a line edited in one machine's .env.
@@ -173,6 +179,9 @@ class VerifiedLadder:
     ladder: Ladder
     checked_at: datetime
     dropped: tuple[Breach, ...] = ()
+    # Set when MixRoute's guard passed it: the reviewed prices it was checked against, which the
+    # client charges each call at and the budget reads `free` from.
+    prices: "MixRouteConfig | None" = None
 
 
 @dataclass(frozen=True)
@@ -350,6 +359,245 @@ async def verify_candidate(
         raise LadderRejected([Breach(tier, slug, reason)]) from None
     routes = await _routes(client, [slug])
     reason = breach_reason(routes.get(slug), tier)
+    if reason is not None:
+        raise LadderRejected([Breach(tier, slug, reason)])
+    return VerifiedCandidate(tier=tier, slug=slug, checked_at=datetime.now(UTC))
+
+
+# ─── MixRoute ─────────────────────────────────────────────────────────────────────────────────────
+
+# Read instead of models.yaml when AI_PROVIDER=mixroute.
+MIXROUTE_LADDER_PATH = DEFAULT_LADDER_PATH.with_name("models.mixroute.yaml")
+
+# The longest prompt the worker sends, with room to spare: the MITRE task's, with its candidate
+# list, is the largest (worker/ai/mitre.py). A dearer price step that only starts past this can
+# never be charged for a worker call, so the guard does not hold it against the model.
+MAX_PROMPT_TOKENS = 32_000
+
+_NO_PRICE = f"no price in {MIXROUTE_LADDER_PATH.name}"
+
+# What a model's extras may not set: the client owns these on every request.
+_RESERVED_FIELDS = frozenset(
+    {"model", "messages", "response_format", "max_tokens", "max_completion_tokens", "stream",
+     "tools", "tool_choice"}
+)
+
+
+class PriceStep(BaseModel):
+    """A dearer rate that applies once the prompt is longer than `prompt_tokens`."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+
+    prompt_tokens: int = Field(gt=0)
+    input: Decimal = Field(alias="in", ge=0)
+    output: Decimal = Field(alias="out", ge=0)
+    cache_read: Decimal | None = Field(default=None, ge=0)
+
+
+class MixRouteModel(BaseModel):
+    """One model in config/models.mixroute.yaml: its MixRoute id and its reviewed prices, in US$
+    per million tokens."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+
+    id: str = Field(min_length=1)  # sent as the request's `model`, exactly as written
+    input: Decimal = Field(alias="in", ge=0)
+    output: Decimal = Field(alias="out", ge=0)
+    cache_read: Decimal | None = Field(default=None, ge=0)  # None: cached input costs `input`
+    free: bool = False
+    above: tuple[PriceStep, ...] = ()
+    max_tokens_field: Literal["max_tokens", "max_completion_tokens"] = "max_tokens"
+    request: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        if self.free and (self.input or self.output or any(s.input or s.output for s in self.above)):
+            raise ValueError(f"{self.id} is marked free but has a price")
+        steps = [s.prompt_tokens for s in self.above]
+        if steps != sorted(set(steps)):
+            raise ValueError(f"{self.id}: price steps must rise")
+        reserved = sorted(set(self.request) & _RESERVED_FIELDS)
+        if reserved:
+            raise ValueError(f"{self.id}: request extras may not set {reserved}")
+        return self
+
+    def rates(self, prompt_tokens: int) -> tuple[Decimal, Decimal, Decimal | None]:
+        """Input, output and cache-read prices for a prompt of this many tokens."""
+        price = (self.input, self.output, self.cache_read)
+        for step in self.above:
+            if prompt_tokens > step.prompt_tokens:
+                price = (step.input, step.output, step.cache_read)
+        return price
+
+    def worst_output(self, max_prompt_tokens: int = MAX_PROMPT_TOKENS) -> Decimal:
+        """The dearest output price a prompt of up to `max_prompt_tokens` can be charged."""
+        reachable = (s.output for s in self.above if s.prompt_tokens < max_prompt_tokens)
+        return max([self.output, *reachable])
+
+    def cost(self, tokens_in: int, tokens_out: int, cached: int) -> Decimal:
+        """What one call cost at these prices. `cached` input is charged at `cache_read` where one
+        is listed and at the input price otherwise: an overestimate, the safe direction."""
+        price_in, price_out, price_cached = self.rates(tokens_in)
+        cached = min(max(cached, 0), tokens_in)
+        if price_cached is None:
+            price_cached = price_in
+        total = (tokens_in - cached) * price_in + cached * price_cached + tokens_out * price_out
+        return total / _PER_MTOK
+
+
+class MixRouteConfig(BaseModel):
+    """config/models.mixroute.yaml: each tier's chain, and the reviewed price of every model.
+
+    The chains are held to everything `Ladder` enforces. On top of that every model a tier names
+    must be priced, and tier 0 must still end in a paid model, which here means one not marked
+    `free`. Priced models no tier names are the gauntlet's challengers.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    tiers: dict[Tier, tuple[str, ...]]
+    models: dict[str, MixRouteModel]
+
+    @model_validator(mode="after")
+    def _well_formed(self) -> Self:
+        ladder = Ladder.model_validate({"tiers": self.tiers})
+        for slug in self.models:
+            author, _, name = slug.partition("/")
+            if not author or not name:
+                raise ValueError(f"{slug!r} is not a vendor/id slug")
+        missing = sorted(ladder.slugs() - set(self.models))
+        if missing:
+            raise ValueError(f"no price for {', '.join(missing)}")
+        if self.models[ladder.tiers[Tier.FREE][-1]].free:
+            raise ValueError("tier0_free must end in a paid model")
+        return self
+
+    @property
+    def ladder(self) -> Ladder:
+        return Ladder.model_validate({"tiers": self.tiers})
+
+    @classmethod
+    def load(cls, path: Path = MIXROUTE_LADDER_PATH) -> "MixRouteConfig":
+        with open(path) as f:
+            return cls.model_validate(yaml.safe_load(f))
+
+
+def is_free(slug: str, prices: MixRouteConfig | None = None) -> bool:
+    """Whether a model costs nothing: what the price list says on MixRoute, the `:free` suffix
+    on OpenRouter."""
+    if prices is not None and slug in prices.models:
+        return prices.models[slug].free
+    return slug.endswith(":free")
+
+
+def mixroute_breach(model: MixRouteModel | None, listed: frozenset[str]) -> str | None:
+    """Why a model may not be used on MixRoute, or None if it may."""
+    if model is None:
+        return _NO_PRICE
+    if model.id not in listed:
+        return "not on MixRoute for this key (withdrawn, or the id is wrong)"
+    worst = model.worst_output()
+    if worst > OUTPUT_CEILING_USD_PER_MTOK:
+        return (
+            f"configured at ${worst:.2f}/M output, "
+            f"over the ${OUTPUT_CEILING_USD_PER_MTOK}/M ceiling"
+        )
+    return None
+
+
+async def fetch_mixroute_ids(
+    client: httpx.AsyncClient, settings: Settings, timeout: float = 30.0
+) -> frozenset[str]:
+    """The model ids MixRoute serves our key, from `GET /v1/models`.
+
+    The one check that needs the key: MixRoute has no public model list. It costs nothing. Any
+    answer that is not a readable, non-empty list raises `CatalogueUnavailable`.
+    """
+    key = settings.mix_router_key
+    if key is None or not key.get_secret_value():
+        raise CatalogueUnavailable("MIX_ROUTER_KEY is not set, so MixRoute's model list is unread")
+    url = f"{settings.mix_router_url.rstrip('/')}/models"
+    headers = {
+        "Authorization": f"Bearer {key.get_secret_value()}",
+        "User-Agent": settings.user_agent,
+    }
+    try:
+        r = await client.get(url, headers=headers, timeout=timeout)
+    except httpx.HTTPError as exc:
+        raise CatalogueUnavailable(f"MixRoute's model list: {type(exc).__name__}") from exc
+    if r.status_code != 200:
+        raise CatalogueUnavailable(f"MixRoute's model list: HTTP {r.status_code}")
+    try:
+        ids = frozenset(m["id"] for m in r.json()["data"] if isinstance(m["id"], str))
+    except (ValueError, KeyError, TypeError) as exc:
+        raise CatalogueUnavailable("MixRoute's model list: unexpected response") from exc
+    if not ids:
+        raise CatalogueUnavailable("MixRoute's model list is empty")
+    return ids
+
+
+async def _mixroute_ids(client: httpx.AsyncClient | None, settings: Settings) -> frozenset[str]:
+    if client is not None:
+        return await fetch_mixroute_ids(client, settings)
+    async with httpx.AsyncClient() as owned:
+        return await fetch_mixroute_ids(owned, settings)
+
+
+def _load_mixroute(config: MixRouteConfig | None) -> MixRouteConfig:
+    if config is not None:
+        return config
+    try:
+        return MixRouteConfig.load()
+    except (OSError, yaml.YAMLError, ValidationError) as exc:
+        raise LadderInvalid(f"{MIXROUTE_LADDER_PATH.name}: {exc}") from exc
+
+
+async def verify_mixroute_ladder(
+    config: MixRouteConfig | None = None,
+    client: httpx.AsyncClient | None = None,
+    *,
+    settings: Settings | None = None,
+) -> VerifiedLadder:
+    """`verify_ladder` for MixRoute: drop each model MixRoute does not list or that is priced over
+    the ceiling. Raises the same `LadderUnusable`s, and the caller leaves the AI layer off."""
+    settings = settings or get_settings()
+    config = _load_mixroute(config)
+    listed = await _mixroute_ids(client, settings)
+    ladder = config.ladder
+    breaches = [
+        Breach(tier, slug, reason)
+        for tier, chain in ladder.tiers.items()
+        for slug in chain
+        if (reason := mixroute_breach(config.models.get(slug), listed)) is not None
+    ]
+    return VerifiedLadder(
+        ladder=prune(ladder, breaches),
+        checked_at=datetime.now(UTC),
+        dropped=tuple(breaches),
+        prices=config,
+    )
+
+
+async def verify_mixroute_candidate(
+    slug: str,
+    tier: Tier,
+    config: MixRouteConfig | None = None,
+    client: httpx.AsyncClient | None = None,
+    *,
+    settings: Settings | None = None,
+) -> VerifiedCandidate:
+    """`verify_candidate` for MixRoute. A model with no reviewed price is rejected without asking
+    MixRoute anything: there would be nothing to charge its calls at."""
+    try:
+        _check_slug(tier, slug)
+    except ValueError as exc:
+        reason = str(exc).removeprefix(f"{tier.value}: ")
+        raise LadderRejected([Breach(tier, slug, reason)]) from None
+    config = _load_mixroute(config)
+    model = config.models.get(slug)
+    if model is None:
+        raise LadderRejected([Breach(tier, slug, _NO_PRICE)])
+    reason = mixroute_breach(model, await _mixroute_ids(client, settings or get_settings()))
     if reason is not None:
         raise LadderRejected([Breach(tier, slug, reason)])
     return VerifiedCandidate(tier=tier, slug=slug, checked_at=datetime.now(UTC))

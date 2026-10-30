@@ -11,6 +11,11 @@ lifts it:
 - `force`: an operator can make the worker stricter than the budget requires, never looser.
 
 Degrading is the safe direction, so every unclear case goes that way.
+
+On MixRoute (worker/ai/provider.py) no key endpoint says what has been spent, so the reading is
+our own cost ledger's sum for the month (`ledger_key_status`). That cannot see the key's quota,
+which the owner sets in MixRoute's console as the hard stop, so a 403 saying it is spent pauses
+paid calls for `QUOTA_PAUSE` whatever the ledger says.
 """
 
 import logging
@@ -23,9 +28,12 @@ from typing import Any
 
 import httpx
 from pydantic import SecretStr
+from sqlalchemy import Engine
 
-from worker.ai.client import BudgetExhausted, CallFailed, RateLimited
-from worker.ai.ladder import Ladder, Tier, VerifiedLadder
+from worker.ai.client import MIXROUTE, MIXROUTE_KEY_QUOTA, BudgetExhausted, CallFailed, RateLimited
+from worker.ai.ladder import Ladder, MixRouteConfig, Tier, VerifiedLadder, is_free
+from worker.db.digest import month_bounds
+from worker.db.ledger import provider_spend
 from worker.models import Severity
 
 logger = logging.getLogger(__name__)
@@ -40,6 +48,10 @@ MAX_READING_AGE = timedelta(minutes=30)
 
 # How long paid calls wait after a 402 or 429 that sent no Retry-After.
 DEFAULT_PAUSE = timedelta(seconds=60)
+
+# How long paid calls wait after MixRoute says the key's quota is spent. A refused call costs
+# nothing, so after this one is tried again: the owner may have raised the quota meanwhile.
+QUOTA_PAUSE = timedelta(hours=1)
 
 _FULL_ABOVE = Decimal("0.50")
 _MINIMAL_BELOW = Decimal("0.20")
@@ -137,6 +149,46 @@ async def fetch_key_status(
     return parse_key_status(payload)
 
 
+def ledger_key_status(
+    engine: Engine | None,
+    now: datetime,
+    *,
+    spend: Callable[[str, datetime, datetime], Any] | None = None,
+) -> KeyStatus:
+    """A MixRoute reading, from what the cost ledger charged this UTC month and day.
+
+    `spend(provider, start, end)` sums the ledger; it defaults to the database's. The ledger only
+    holds the worker's own calls, so the key's own quota is not in it: see `QUOTA_PAUSE`.
+    """
+    if spend is None:
+        if engine is None:
+            raise BudgetUnreadable("no database to read the cost ledger from")
+        db = engine
+
+        def spend(provider: str, start: datetime, end: datetime) -> Decimal:
+            with db.connect() as conn:
+                return provider_spend(conn, provider, start, end)
+
+    month_start, month_end = month_bounds(now.astimezone(UTC))
+    day_start = now.astimezone(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+    try:
+        monthly = _money(str(spend(MIXROUTE, month_start, month_end)))
+        daily = _money(str(spend(MIXROUTE, day_start, day_start + timedelta(days=1))))
+    except BudgetUnreadable:
+        raise
+    except Exception as exc:  # noqa: BLE001 - any failure to read means no reading
+        raise BudgetUnreadable(f"the cost ledger could not be read ({type(exc).__name__})") from exc
+    assert monthly is not None and daily is not None
+    return KeyStatus(
+        limit=None,
+        limit_remaining=None,
+        limit_reset=None,
+        usage_daily=daily,
+        usage_monthly=monthly,
+        free_requests_remaining=None,
+    )
+
+
 @dataclass(frozen=True)
 class Reading:
     mode: Mode
@@ -205,8 +257,18 @@ def _free(slug: str) -> bool:
     return slug.endswith(":free")
 
 
-def plan(mode: Mode, work: Work, ladder: Ladder, *, free_cap_hit: bool = False) -> Route | None:
-    """Where `work` may go in `mode`, or None if it waits (the event is `pending_enrichment`)."""
+def plan(
+    mode: Mode,
+    work: Work,
+    ladder: Ladder,
+    *,
+    free_cap_hit: bool = False,
+    free: Callable[[str], bool] = _free,
+) -> Route | None:
+    """Where `work` may go in `mode`, or None if it waits (the event is `pending_enrichment`).
+
+    `free` says which models cost nothing: the `:free` suffix on OpenRouter, the price list on
+    MixRoute."""
     if mode is Mode.OFF:
         return None
     tier = work.tier
@@ -223,9 +285,9 @@ def plan(mode: Mode, work: Work, ladder: Ladder, *, free_cap_hit: bool = False) 
         tier = Tier.CHEAP
     models = ladder.tiers[tier]
     if free_cap_hit:
-        models = tuple(m for m in models if not _free(m))
+        models = tuple(m for m in models if not free(m))
     if mode is Mode.FREE_ONLY:
-        models = tuple(m for m in models if _free(m))
+        models = tuple(m for m in models if free(m))
     return Route(tier, tuple(models)) if models else None
 
 
@@ -249,12 +311,14 @@ class Governor:
         now: Callable[[], datetime] = _utcnow,
     ):
         self._ladder = verified.ladder
+        self._prices: MixRouteConfig | None = verified.prices
         self._budget = monthly_budget
         self._force = force or Mode.FULL
         self._now = now
         self._reading: Reading | None = None
         self._read_at: datetime | None = None
         self._paid_paused_until: datetime | None = None
+        self._quota_paused_until: datetime | None = None
         self._key_limit_hit = False
         self._free_cap_hit = False
         self.stopped: str | None = None  # set by a 402 on credits; only a restart clears it
@@ -266,6 +330,10 @@ class Governor:
     def adopt(self, verified: VerifiedLadder) -> None:
         """Route on a ladder that passed the guard again. The budget state carries over."""
         self._ladder = verified.ladder
+        self._prices = verified.prices
+
+    def _free(self, slug: str) -> bool:
+        return is_free(slug, self._prices)
 
     def mode(self) -> tuple[Mode, str]:
         """The mode now, and the strictest reason for it."""
@@ -282,6 +350,8 @@ class Governor:
             candidates.append((Mode.FREE_ONLY, "OpenRouter says the key's limit is spent"))
         if self._paid_paused_until is not None and now < self._paid_paused_until:
             candidates.append((Mode.FREE_ONLY, "paid calls paused until Retry-After"))
+        if self._quota_paused_until is not None and now < self._quota_paused_until:
+            candidates.append((Mode.FREE_ONLY, "MixRoute says the key's quota is spent"))
         candidates.append((self._force, "forced by the operator"))
         return max(candidates, key=lambda c: _ORDER.index(c[0]))
 
@@ -301,6 +371,10 @@ class Governor:
         if isinstance(exc, BudgetExhausted):
             if exc.transient:
                 self._paid_paused_until = now + pause
+            elif exc.limit_source == MIXROUTE_KEY_QUOTA:
+                # The ledger cannot see the key's quota, so no reading of it lifts this.
+                self._quota_paused_until = now + QUOTA_PAUSE
+                logger.warning("AI: MixRoute says the key's quota is spent; paid calls pause")
             elif exc.limit_source == "openrouter_credits":
                 self.stopped = "the OpenRouter account is out of credits: a person has to top it up"
                 logger.error("AI stopped: %s", self.stopped)
@@ -309,11 +383,13 @@ class Governor:
                 # until a poll shows money left.
                 self._key_limit_hit = True
         elif isinstance(exc, RateLimited):
-            if any(_free(m) for m in route.models):
+            if any(self._free(m) for m in route.models):
                 self._free_cap_hit = True
             else:
                 self._paid_paused_until = now + pause
 
     def route(self, work: Work) -> Route | None:
         mode, _ = self.mode()
-        return plan(mode, work, self._ladder, free_cap_hit=self._free_cap_hit)
+        return plan(
+            mode, work, self._ladder, free_cap_hit=self._free_cap_hit, free=self._free
+        )

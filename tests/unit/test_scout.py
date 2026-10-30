@@ -30,6 +30,7 @@ from worker.ai.ladder import (
     CatalogueUnavailable,
     Ladder,
     LadderRejected,
+    MixRouteConfig,
     Tier,
     VerifiedCandidate,
     VerifiedLadder,
@@ -435,6 +436,8 @@ def row(slug, prompt="0.02", completion="0.08"):
 class Gauntlet:
     """OpenRouter as the gauntlet sees it: the key, the guard and `trial`."""
 
+    label = "OpenRouter"
+
     def __init__(self):
         self.status = KeyStatus(None, None, None, Decimal(0), Decimal(0), None)
         self.ladder = VerifiedLadder(LADDER, NOW)
@@ -724,3 +727,132 @@ async def test_what_skips_a_run_records_nothing(gauntlet, fake_db, subjects, set
     assert summary.skipped == why
     assert gauntlet.calls == [] and not fake_db.called("record_gauntlet")
     assert not summary.changed_anything
+
+
+# ─── On MixRoute (AI_PROVIDER=mixroute) ───────────────────────────────────────────────────────────
+
+MIXROUTE = MixRouteConfig.model_validate(
+    {
+        "tiers": {
+            "tier0_free": ["z/free", "o/nano"],
+            "tier1_cheap": ["d/flash", "a/qwen"],
+            "tier2_strong": ["d/flash", "z/glm"],
+            "code": ["x/mimo"],
+            "audit": ["a/qwen"],
+        },
+        "models": {
+            "z/free": {"id": "free", "in": 0, "out": 0, "free": True},
+            "z/other-free": {"id": "other-free", "in": 0, "out": 0, "free": True},
+            "o/nano": {"id": "nano", "in": 0.05, "out": 0.40},
+            "d/flash": {"id": "flash", "in": 0.14, "out": 0.28},
+            "a/qwen": {"id": "qwen", "in": 0.10, "out": 0.40},
+            "z/glm": {"id": "glm", "in": 0.15, "out": 0.50},
+            "x/mimo": {"id": "mimo", "in": 0.41, "out": 0.819},
+            "g/lite": {"id": "lite", "in": 0.10, "out": 0.40},
+        },
+    }
+)
+MIXROUTE_VERIFIED = VerifiedLadder(MIXROUTE.ladder, NOW, prices=MIXROUTE)
+
+
+def mixroute_settings(key=KEY, budget="12"):
+    return Settings(
+        _env_file=None,
+        database_url="sqlite://",
+        ai_provider="mixroute",
+        mix_router_key=SecretStr(key) if key else None,
+        ai_monthly_budget_usd=Decimal(budget),
+    )
+
+
+async def test_on_mixroute_the_scan_checks_the_ladder_without_openrouters_list(
+    fake_db, monkeypatch
+):
+    async def no_listing(http):
+        raise AssertionError("OpenRouter's list was read")
+
+    async def verify(config=None, client=None, *, settings=None):
+        assert settings.ai_provider == "mixroute"
+        return MIXROUTE_VERIFIED
+
+    monkeypatch.setattr(scout, "fetch_listing", no_listing)
+    monkeypatch.setattr(scout, "verify_mixroute_ladder", verify)
+    monkeypatch.setattr(scout.MixRouteConfig, "load", classmethod(lambda cls: MIXROUTE))
+    summary = await scout.scan_models(engine=object(), settings=mixroute_settings(), now=NOW)
+    assert summary.verified is MIXROUTE_VERIFIED and summary.errors == []
+    assert not fake_db.called("store_listing")
+    rec = recorded_scan(fake_db)
+    assert rec["models_listed"] is None and rec["error"] is None
+    assert rec["ladder"]["tier1_cheap"]["effective"] == ["d/flash", "a/qwen"]
+
+
+async def test_on_mixroute_a_model_list_it_cannot_read_is_not_a_failure(fake_db, monkeypatch):
+    async def verify(config=None, client=None, *, settings=None):
+        raise CatalogueUnavailable("MixRoute's model list: HTTP 401")
+
+    monkeypatch.setattr(scout, "verify_mixroute_ladder", verify)
+    monkeypatch.setattr(scout.MixRouteConfig, "load", classmethod(lambda cls: MIXROUTE))
+    summary = await scout.scan_models(engine=object(), settings=mixroute_settings(), now=NOW)
+    assert not summary.ladder_failed and summary.verified is None
+    assert summary.errors == ["the ladder could not be checked: MixRoute's model list: HTTP 401"]
+
+
+@pytest.fixture
+def mixroute_gauntlet(fake_db, monkeypatch):
+    g = Gauntlet()
+    g.label = "MixRoute"
+    g.ladder = MIXROUTE_VERIFIED
+    fake_db.golden = list(GOLDEN)
+    fake_db.listed = []  # OpenRouter's catalogue is not used on MixRoute
+
+    def ledger_key_status(engine, now):
+        return _give(g.status)
+
+    async def verify_ladder(config=None, client=None, *, settings=None):
+        return _give(g.ladder)
+
+    async def verify_candidate(slug, tier, config=None, client=None, *, settings=None):
+        if slug in g.rejected:
+            raise LadderRejected([Breach(tier, slug, "no price")])
+        return VerifiedCandidate(tier, slug, NOW)
+
+    monkeypatch.setattr(scout, "ledger_key_status", ledger_key_status)
+    monkeypatch.setattr(scout, "verify_mixroute_ladder", verify_ladder)
+    monkeypatch.setattr(scout, "verify_mixroute_candidate", verify_candidate)
+    monkeypatch.setattr(scout, "MixRouteClient", lambda *args: g)
+    monkeypatch.setattr(scout.MixRouteConfig, "load", classmethod(lambda cls: MIXROUTE))
+    return g
+
+
+async def test_on_mixroute_the_challengers_are_the_priced_models_no_tier_names(
+    mixroute_gauntlet, fake_db
+):
+    g = mixroute_gauntlet
+    g.costs = {}
+    summary = await scout.run_gauntlet(engine=object(), settings=mixroute_settings(), now=NOW)
+    called = g.slugs_called()
+    # Tier 0's challenger is the other free model; the paid tiers' are priced paid models.
+    assert called["z/other-free"] == 4 and called["g/lite"] == 8
+    # A free model is never a challenger in a paid tier, and a ladder model is never one.
+    tried = {(m.tier, m.slug) for m in summary.measured if not m.incumbent}
+    assert ("tier1_cheap", "z/other-free") not in tried
+    assert ("tier1_cheap", "a/qwen") not in tried
+    assert summary.skipped is None
+
+
+async def test_on_mixroute_a_spent_quota_stops_the_run_and_says_so(mixroute_gauntlet, fake_db):
+    g = mixroute_gauntlet
+    g.raises["d/flash"] = BudgetExhausted(
+        "quota", limit_source="mixroute_key_quota", retry_after=None
+    )
+    g.raises["d/flash"].status = 403
+    summary = await scout.run_gauntlet(engine=object(), settings=mixroute_settings(), now=NOW)
+    assert summary.notes == ["MixRoute turned a call away for budget (HTTP 403)"]
+    assert summary.proposals == []
+
+
+async def test_on_mixroute_with_no_key_the_gauntlet_is_skipped(mixroute_gauntlet, fake_db):
+    summary = await scout.run_gauntlet(
+        engine=object(), settings=mixroute_settings(key=None), now=NOW
+    )
+    assert summary.skipped == "MIX_ROUTER_KEY is not set"

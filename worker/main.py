@@ -24,13 +24,15 @@ from datetime import UTC, datetime
 
 import httpx
 
-from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status
+from worker.ai import provider
+from worker.ai.budget import BudgetUnreadable, assess, fetch_key_status, ledger_key_status
 from worker.ai.enrich import DEFAULT_BATCH, AiLayer, enrich_pending
 from worker.ai.ladder import (
     OUTPUT_CEILING_USD_PER_MTOK,
     LadderRejected,
     LadderUnusable,
     verify_ladder,
+    verify_mixroute_ladder,
 )
 from worker.ai.mitre import DEFAULT_MITRE_BATCH, suggest_techniques
 from worker.ai.scout import pin_golden_set, run_gauntlet, scan_models
@@ -52,7 +54,7 @@ from worker.publish.build import LIVE_MIN_PROMINENCE
 from worker.publish.run import publish_now
 from worker.publish.validate import ValidationFailure
 from worker.scheduler import SCHEDULE, serve
-from worker.settings import get_settings
+from worker.settings import Settings, get_settings
 from worker.sources.registry import load_publishers, load_registry
 from worker.watchdog.run import Watchdog
 
@@ -73,14 +75,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--check-models",
         action="store_true",
         help=(
-            "check config/models.yaml against OpenRouter's live prices; failing models are "
+            "check the model ladder against the AI provider (config/models.yaml on OpenRouter, "
+            "config/models.mixroute.yaml on MixRoute); failing models are "
             "dropped, and it is non-zero if what is left is not a usable ladder"
         ),
     )
     p.add_argument(
         "--check-budget",
         action="store_true",
-        help="read the OpenRouter key's spend and show the mode it allows; spends nothing",
+        help="read the month's AI spend (the OpenRouter key, or the cost ledger on MixRoute) "
+        "and show the mode it allows; spends nothing",
     )
     p.add_argument(
         "--check-duplicates",
@@ -177,8 +181,13 @@ def _check_models(*, required: bool) -> int:
     scheduler logs the same errors and starts anyway, because what a failed check switches off is
     the AI layer, and collection and publishing do not depend on it.
     """
+    settings = get_settings()
+    mixroute = provider.is_mixroute(settings)
     try:
-        verified = asyncio.run(verify_ladder())
+        if mixroute:
+            verified = asyncio.run(verify_mixroute_ladder(settings=settings))
+        else:
+            verified = asyncio.run(verify_ladder())
     except LadderUnusable as exc:
         problems = exc.breaches if isinstance(exc, LadderRejected) else [exc]
         for problem in problems:
@@ -188,8 +197,9 @@ def _check_models(*, required: bool) -> int:
     for breach in verified.dropped:
         logger.warning("model ladder: %s is dropped for now", breach)
     logger.info(
-        "model ladder passed: %d models, each with a capable route at or under $%s/M output%s",
+        "model ladder passed: %d models, each %s at or under $%s/M output%s",
         len(verified.ladder.slugs()),
+        "listed by MixRoute and priced" if mixroute else "with a capable route",
         OUTPUT_CEILING_USD_PER_MTOK,
         f"; {len(verified.dropped)} dropped" if verified.dropped else "",
     )
@@ -200,13 +210,18 @@ def _check_budget() -> int:
     """Read the key's spend from OpenRouter and log the mode it allows (worker/ai/budget.py).
 
     Costs nothing: `GET /api/v1/key` is a read. Non-zero only when there is no reading, because
-    that is the case in which the worker would refuse paid calls for want of one.
+    that is the case in which the worker would refuse paid calls for want of one. On MixRoute the
+    reading is the cost ledger's sum for the month, read from the database.
     """
     settings = get_settings()
-    key = settings.openrouter_api_key
+    key = provider.api_key(settings)
     if key is None:
-        logger.error("budget: OPENROUTER_API_KEY is not set, so the AI layer stays off")
+        logger.error(
+            "budget: %s is not set, so the AI layer stays off", provider.key_name(settings)
+        )
         return EXIT_FAILED
+    if provider.is_mixroute(settings):
+        return _check_ledger_budget(settings)
 
     async def read():
         async with httpx.AsyncClient() as http:
@@ -233,6 +248,25 @@ def _check_budget() -> int:
         status.usage_monthly,
         limit,
         "unknown" if status.free_requests_remaining is None else status.free_requests_remaining,
+    )
+    return EXIT_OK
+
+
+def _check_ledger_budget(settings: Settings) -> int:
+    """`--check-budget` on MixRoute: the month's spend as the cost ledger has it."""
+    try:
+        status = ledger_key_status(get_engine(), datetime.now(UTC))
+    except BudgetUnreadable as exc:
+        logger.error("budget: %s; paid AI calls stay off until a reading succeeds", exc)
+        return EXIT_FAILED
+    reading = assess(status, settings.ai_monthly_budget_usd)
+    logger.info(
+        "budget: mode %s, %s; spent $%.4f today and $%.4f this month by the cost ledger, at the "
+        "reviewed MixRoute prices; the key's own quota is set in MixRoute's console",
+        reading.mode.value,
+        reading.reason,
+        status.usage_daily,
+        status.usage_monthly,
     )
     return EXIT_OK
 
