@@ -204,31 +204,65 @@ def asd_news(source: SourceConfig, root: Node) -> list[RawItem]:
 _TITLE_CLASS = re.compile(r"title", re.IGNORECASE)
 
 
+def _heading(link: Node) -> Node | None:
+    """A card link's headline: a heading, or an element whose class names it the title."""
+    return next(
+        (
+            n
+            for n in link.iter()
+            if n.tag in ("h1", "h2", "h3", "h4") or any(_TITLE_CLASS.search(c) for c in n.classes)
+        ),
+        None,
+    )
+
+
+def _anthropic_cards(root: Node) -> Iterator[tuple[Node, Node, Node]]:
+    """(link, <time>, card) for each card, in page order, in any of the page's layouts: a link
+    holding its <time> (until October 2026); since then, an <article> tile whose <header> holds
+    the <time> beside a category link, followed by the story's own link with the headline, and
+    an <li> row of the list below, with the headline, the summary and the <time> each in its own
+    part. The category link has no headline, so it is never taken for the story."""
+    for node in root.iter():
+        when = node.find("time")
+        if when is None:
+            continue
+        if node.tag == "a":
+            yield node, when, node
+        elif node.tag in ("article", "li"):
+            link = next((a for a in node.find_all("a") if _heading(a) is not None), None)
+            if link is not None:
+                yield link, when, node
+
+
+def _summary(link: Node, card: Node) -> Node | None:
+    """The card's summary: a <p> in its link, or in another link of the card to the same story
+    (a list row puts the summary in a second link beside the headline's)."""
+    href = link.attrs.get("href")
+    same_story = (a for a in card.find_all("a") if a is not link and a.attrs.get("href") == href)
+    for a in [link, *same_story]:
+        p = a.find("p")
+        if p is not None:
+            return p
+    return None
+
+
 def anthropic_news(source: SourceConfig, root: Node) -> list[RawItem]:
-    """anthropic.com/news: every card is a link holding a <time> with the day as text, and a
-    heading or an element whose class names it the title. Featured cards link outside /news/
-    (a model launch is its own page), so the link's path is not the test; the date is."""
+    """anthropic.com/news: every card has a <time> with the day as text and a link with a
+    heading or an element whose class names it the title (`_anthropic_cards`). Featured cards
+    link outside /news/ (a model launch is its own page), so the link's path is not the test;
+    the date is."""
     now = datetime.now(UTC)
     items: dict[str, RawItem] = {}
-    for link in root.find_all("a"):
+    for link, when, card in _anthropic_cards(root):
         url = _https_url(source, link.attrs.get("href"))
-        when = link.find("time")
-        published = parse_day(when.text(), PACIFIC) if when else None
+        published = parse_day(when.text(), PACIFIC)
         if not url or published is None:
             continue
-        heading = next(
-            (
-                n
-                for n in link.iter()
-                if n.tag in ("h1", "h2", "h3", "h4")
-                or any(_TITLE_CLASS.search(c) for c in n.classes)
-            ),
-            None,
-        )
+        heading = _heading(link)
         title = heading.text() if heading else ""
         if not title or url in items:
             continue
-        body = next((p for p in link.find_all("p")), None)
+        body = _summary(link, card)
         items[url] = _item(source, url, title, published, body.text() if body else None, now)
     return list(items.values())
 

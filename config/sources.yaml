@@ -315,7 +315,8 @@ sources:
     enabled: true
     url: https://www.triskelelabs.com/resources/rss.xml
     parser: rss
-    expected_frequency: daily
+    expected_frequency: weekly
+    # Was daily, so a quiet week demoted it to degraded. Measured 2026-10-31: median 2.3 days between posts, up to 9 (Sep 22 - Oct 22 2026).
     notes: null
 
   - id: innovationaus
@@ -379,7 +380,8 @@ sources:
     enabled: true
     url: https://krebsonsecurity.com/feed/
     parser: rss
-    expected_frequency: daily
+    expected_frequency: weekly
+    # Was daily, so a quiet week demoted it to degraded. Measured 2026-10-31: median 4 days between posts, up to 9 (Sep 8 - Oct 21 2026).
     notes: null
 
   - id: darkreading
@@ -628,7 +630,8 @@ sources:
     enabled: true
     url: https://blog.google/security/rss/
     parser: rss
-    expected_frequency: daily
+    expected_frequency: weekly
+    # Was daily, so a quiet week demoted it to degraded. Measured 2026-10-31: median 4.8 days between posts, up to 55 (Jun 2 - Oct 21 2026).
     notes: null
 
   - id: ms_ai_security
@@ -836,7 +839,8 @@ sources:
     enabled: true
     url: https://feeds.fortinet.com/fortinet/blog/threat-research
     parser: rss
-    expected_frequency: daily
+    expected_frequency: weekly
+    # Was daily, so a quiet week demoted it to degraded. Measured 2026-10-31: median 10 days between posts, up to 21 (Jun 26 - Oct 8 2026).
     # /blog/feed 404s; this is the FortiGuard Labs threat-research feed behind the same blog.
     # Their PSIRT advisories are a separate feed worth adding on its own entry rather than
     # here: https://filestore.fortinet.com/fortiguard/rss/ir.xml (50 items, IR advisories).
@@ -852,17 +856,20 @@ sources:
     class: feed
     priority: 3
     lane: normal
-    enabled: true
+    enabled: false
     url: https://news.sophos.com/feed/
     parser: rss
     expected_frequency: daily
-    # Left enabled deliberately. Measured 2026-10-01: this host answers 200 for a few requests
+    # Disabled 2026-10-31: news.sophos.com now redirects to www.sophos.com/en-gb/blog/feed,
+    # whose newest item is 2026-09-15, and the host still stalls requests per IP (timeouts
+    # from the VM and from a second network). Re-enable with a feed that has current posts.
+    # Until then it was left enabled deliberately. Measured 2026-10-01: this host answers 200 for a few requests
     # and then stalls every request from the same IP until the read timeout, regardless of
     # User-Agent — nine different strings, including ones that had just worked, all timed out
     # together. So it is per-IP rate or reputation mitigation, not something a header fixes;
     # testing it hard is what triggers it. At one request per 4 hours it may never fire. If it
     # does, source health will mark it degraded from real run data, which is the honest answer.
-    notes: Rate-limits by IP; may time out in bursts. Do not change the User-Agent for it.
+    notes: "Disabled: the feed moved to sophos.com and has had no new post since 15 Sep 2026; the host also stalls requests by IP."
 
   - id: zerodayinitiative
     name: Zero Day Initiative
@@ -969,7 +976,7 @@ sources:
     url: https://www.anthropic.com/news
     parser: anthropic_news
     expected_frequency: weekly
-    notes: "No feed; the listing page is read (worker/collectors/web_page.py). Up to 9 days between posts in Aug-Sep 2026"
+    notes: "No feed; the listing page is read (worker/collectors/web_page.py), in its tile and list layouts since 2026-10. Up to 9 days between posts in Aug-Sep 2026"
 
   # Disabled sources with reasons
   - id: securityweek
