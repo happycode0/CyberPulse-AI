@@ -36,7 +36,8 @@ from worker.pipeline.reputation import Reputation
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
 GATE = GateConfig(
     probes_to_activate=6, failures_to_reject=3, recent_days=14, min_recent_items=3,
-    min_on_beat=2, max_already_collected=0.6, probes_per_pass=10, homes_per_pass=5, max_open=20,
+    min_on_beat=2, min_on_beat_share=0.5, max_already_collected=0.6, probes_per_pass=10,
+    homes_per_pass=5, max_open=20,
     max_active=25, ready_reprobe_hours=24,
     prune=PruneConfig(per_pass=2, min_days=21, corroboration_below=0.05),
     forget_after_days=90, beat=["ransomware", "vulnerab", "breach", "AI safety"],
@@ -211,6 +212,39 @@ def test_a_feed_that_copies_what_the_worker_already_has_is_not_healthy():
 def test_the_beat_matches_word_starts_only():
     items = [item(i, "Unbreachable cake recipes") for i in range(3)]
     assert assess_probe(items, [], now=NOW, gate=GATE).on_beat == 0
+
+
+def test_a_whole_site_feed_with_a_few_security_stories_is_not_healthy():
+    # The Guardian's /au/rss, 2026-10: two security stories among the sport, film and recipes.
+    items = [item(1), item(2, "New vulnerability in a router")] + [
+        item(i, "Australia collapse to leave South Africa in sight of victory") for i in range(3, 8)
+    ]
+    probe = assess_probe(items, [], now=NOW, gate=GATE)
+    assert probe.on_beat == 2 and not probe.healthy
+    assert probe.failures == [
+        "2 of its 7 recent items are on the beat; at least 50% must be"
+    ]
+
+
+def test_beat_words_match_whole_and_in_their_own_case():
+    gate = GATE.model_copy(update={"beat_words": ["AI", "RAT"]})
+    on_beat = gate.beat_re()
+    assert on_beat.search("AI agents get a kill switch")
+    assert on_beat.search("Inside SiriusQT: a seriously skilled RAT")
+    assert not on_beat.search("Aid workers detained")
+    assert not on_beat.search("The RBA holds the cash rate")
+    assert not on_beat.search("ai")
+    # The prefixes keep matching in any case.
+    assert on_beat.search("VULNERABILITIES in a router")
+
+
+def test_the_repositorys_beat_words_are_acronyms_not_word_starts():
+    on_beat = DiscoveryConfig.load().gate.beat_re()
+    assert on_beat.search("Signal bug could keep your mic on after hangup")
+    assert on_beat.search("Nvidia woos Europeans with more open weights AI models")
+    for title in ("Clayface review – very gory but not very good", "Soccer: Socceroos qualify",
+                  "How to turn brown bananas into vegan bread"):
+        assert not on_beat.search(title), title
 
 
 # --- Making room ---------------------------------------------------------------------------------

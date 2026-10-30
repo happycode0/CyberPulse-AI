@@ -131,6 +131,25 @@ The filter has a scope row (AUSTRALIA, preselected, then GLOBAL and ALL) and a b
 is left out by either beat tag. The schema in `schemas/event.schema.json` holds the contract,
 and every file is checked against it before it is written.
 
+## What the publisher holds back
+
+Some stored events reach no public file at all (`worker/publish/hold.py`). They stay in the
+database and the ops API, and each publish decides again, so one that stops matching is back on
+the site at the next publish:
+
+- an event with no sources;
+- a directory listing ("plex-mcp-server by vladimir-tutin — ★ 150");
+- an event that only discovered sources carry, when triage put it on `other`, or when its
+  sources are mostly off the beat and its own title and summary are too (no beat word, no CVE).
+  "Mostly" is the gate's `min_on_beat_share` (`config/discovery.yaml`). A discovered source
+  mostly on the beat keeps every item.
+
+A story a curated source carries is never held for its beat: `other` keeps the rule above.
+`system-status.json` counts what was held in `counts.events_held`. In the week of 2026-10-21,
+before this rule, 1,032 of 3,531 published events would have been held: The Guardian's sport
+and recipes, ACL Anthology's NLP papers, Agent Skills Hub's listings, and general news from The
+Conversation and Federal News Network.
+
 ## Labelling the AI test stories
 
 🔴 This part is yours. The model gauntlet checks models against a golden set. Its cyber events are labelled from the

@@ -1,11 +1,14 @@
 from datetime import UTC, datetime, timedelta
 
+import pytest
+
 from worker.models import EvidenceClass, MaterialChange, RawItem, SourceConfig
 from worker.pipeline.assemble import (
     build_new_event,
     clean_summary,
     evidence_class_for,
     plan_update,
+    strip_feed_tail,
 )
 from worker.pipeline.normalise import normalise
 
@@ -71,6 +74,45 @@ def test_summary_strips_markup_decodes_entities_and_caps_length():
     assert clean_summary("<br/>", "fallback") == "fallback"
     long = clean_summary("word " * 500, "t")
     assert len(long) <= 600 and long.endswith("\u2026")
+
+
+# Feed boilerplate as it reached the site's events, 2026-10-21..27.
+@pytest.mark.parametrize(
+    ("raw", "clean"),
+    [
+        (("The worker was compromised in March. The post Hijacked Developer Account Used to "
+          "Plant Stealer in OVHcloud CLI appeared first on SecurityWeek."),
+         "The worker was compromised in March."),
+        ("including foreign leaders\u201d. Continue reading...",
+         "including foreign leaders\u201d."),
+        (("Teams already using Trivy, Grype, or \u2026 More \u2192 The post DevGuard: Open-source "
+          "vulnerability management for the software sup\u2026"),
+         "Teams already using Trivy, Grype, or \u2026"),
+        (("may be used to help solve criminal cases which [\u2026] The post New ways to catch a "
+          "thief appeared first on News ."),
+         "may be used to help solve criminal cases which\u2026"),
+        ("hacking customers directly. By \u2026 More \u2192 The post Broadcom adds real-time sca",
+         "hacking customers directly."),
+        ("eye strain and visual fatigue have emerged as major drawbacks ... Read more Source",
+         "eye strain and visual fatigue have emerged as major drawbacks\u2026"),
+        ("Patch now [...]", "Patch now\u2026"),
+        # Not a tail: the words more than 200 characters from the end, and an episode title
+        # that ends in "More".
+        (("Continue reading the advisory before you patch: three fixes ship today, and the "
+          "vendor says more are coming next week after a long review of every affected build "
+          "across its whole product line, from routers to the cloud console and beyond that."),
+         None),
+        ("Tor, PhP2Shell, Deepfakes, eMudhra, LiteLLM, Meta, and More - SWN #627", None),
+    ],
+)
+def test_summary_drops_what_feeds_append(raw, clean):
+    assert strip_feed_tail(raw) == (raw if clean is None else clean)
+    assert clean_summary(raw, "t") == (raw if clean is None else clean)
+
+
+def test_a_summary_that_was_only_boilerplate_falls_back_to_the_title():
+    assert strip_feed_tail("Continue reading...") == ""
+    assert clean_summary("<p>Continue reading...</p>", "The title") == "The title"
 
 
 def base_event():

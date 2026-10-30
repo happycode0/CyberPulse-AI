@@ -57,17 +57,45 @@ EVIDENCE_CLASS_BY_CATEGORY: dict[str, EvidenceClass] = {
 
 _TAG = re.compile(r"<[^>]*>")
 
+# What feeds append to an item's description, matched at its end (seen in a week of the site's
+# events, 2026-10): WordPress's "The post <title> appeared first on <site>." and its "More →" link
+# text, the Guardian's "Continue reading...", "Read more", and a byline left dangling before them.
+_FEED_TAILS = (
+    re.compile(r"\s*More\s*→.*$", re.DOTALL),
+    re.compile(r"\s*The post\s.+?\sappeared first on\s.+$", re.DOTALL),
+    re.compile(r"\s*Continue reading\b.{0,200}$", re.DOTALL),
+    re.compile(r"\s*Read more\b.{0,40}$", re.DOTALL | re.IGNORECASE),
+    re.compile(r"\s+By\s*(?:…|\.\.\.)$"),
+)
+# How an excerpt says it was cut: "[…]", "[...]" or "...", all made one "…".
+_CUT = re.compile(r"\s*(?:\[(?:…|\.\.\.)\]|\.\.\.)$")
+
 
 def evidence_class_for(source: SourceConfig) -> EvidenceClass:
     return EVIDENCE_CLASS_BY_CATEGORY.get(source.category, EvidenceClass.COMMUNITY)
 
 
+def strip_feed_tail(text: str) -> str:
+    """`text` without the link text and boilerplate a feed appends to an item (`_FEED_TAILS`).
+    May return "" when that was all there was. The publisher runs it over stored summaries too,
+    which predate it (worker/publish/build.py)."""
+    while True:
+        stripped = text
+        for tail in _FEED_TAILS:
+            stripped = tail.sub("", stripped)
+        stripped = _CUT.sub("…", stripped).rstrip()
+        if stripped == text:
+            return text
+        text = stripped
+
+
 def clean_summary(raw: str | None, fallback: str) -> str:
-    """Plain-text summary: tags stripped, entities decoded, whitespace collapsed, capped.
+    """Plain-text summary: tags stripped, entities decoded, whitespace collapsed, feed
+    boilerplate dropped, capped.
 
     Feed descriptions are frequently HTML; the public site must never receive markup.
     """
-    text = " ".join(html.unescape(_TAG.sub(" ", raw or "")).split())
+    text = strip_feed_tail(" ".join(html.unescape(_TAG.sub(" ", raw or "")).split()))
     if not text:
         return fallback
     if len(text) > SUMMARY_MAX_CHARS:

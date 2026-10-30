@@ -2,7 +2,8 @@
 
 `build_all` is fail-closed and all-or-nothing:
 
-1. every payload is built in memory;
+1. every payload is built in memory, without the events worker/publish/hold.py holds back
+   (no sources, a directory listing, off the beat), which no file carries;
 2. every payload is secret-scanned, then schema-validated, then serialised and the
    serialised text is secret-scanned again (that is what would reach disk);
 3. only if all of that passes is anything written: files are staged inside `out_dir`, then
@@ -13,6 +14,7 @@ A failure in steps 1-2 leaves `out_dir` exactly as it was, including not creatin
 """
 
 import json
+import logging
 import os
 import shutil
 import tempfile
@@ -65,11 +67,13 @@ from worker.models import (
     SourceConfig,
     SourceHealth,
 )
+from worker.pipeline.assemble import strip_feed_tail
 from worker.pipeline.health import consecutive_failures
 from worker.pipeline.importance import Voice, with_importance
 from worker.pipeline.reputation import CORROBORATION_WINDOW, Reputation, assess_reputation
 from worker.pipeline.trends import ACTIVITY_DAYS, compute_trends, load_trends_config
 from worker.publish.claims import with_fact_claims
+from worker.publish.hold import holds
 from worker.publish.validate import (
     ValidationFailure,
     scan_for_secrets,
@@ -79,6 +83,8 @@ from worker.publish.validate import (
 from worker.schedule import LANE_JOBS, public_schedule
 from worker.sources.registry import REGISTRY_PATH, load_publishers, load_registry
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION
+
+logger = logging.getLogger(__name__)
 
 LIVE_MIN_PROMINENCE = 0.05
 LIVE_LIMIT = 500
@@ -573,6 +579,7 @@ def _system_status_payload(
     *,
     published: int,
     total: int,
+    held: int = 0,
     live: list[dict[str, Any]] | None = None,
     jobs: dict[str, JobRun] | None = None,
     ai_budget_usd: Decimal | None = None,
@@ -598,6 +605,8 @@ def _system_status_payload(
         "counts": {
             "events_published": published,
             "events_total": total,
+            # Left out of every public file (worker/publish/hold.py), not counted in the total.
+            "events_held": held,
             "sources_total": len(registry),
             "sources_enabled": sum(1 for r in registry if r.enabled),
         },
@@ -694,12 +703,22 @@ def build_payloads(
 
     # Prominence-descending, each with the claims its ground truth supports and its importance,
     # which its sources' reputations feed. An archived event keeps its day page but is never
-    # live: its score is no longer kept up to date.
+    # live: its score is no longer kept up to date. A held event (worker/publish/hold.py) is in
+    # no file at all.
     sources = _load_sources(conn, now)
     voices = _voices(sources)
-    all_events = [with_importance(with_fact_claims(e), voices) for e in _load_events(conn)]
+    gate = DiscoveryConfig.load().gate
+    stored = _load_events(conn)
+    held = holds(stored, on_beat=gate.beat_re(), min_share=gate.min_on_beat_share)
+    if held:
+        logger.info("held back %d events: %s", len(held), dict(Counter(held.values())))
+    all_events = [
+        with_importance(with_fact_claims(e), voices) for e in stored if e.event_id not in held
+    ]
     public = [e.model_dump_public() for e in all_events]
     for p in public:
+        # Stored before assembly dropped a feed's boilerplate (clean_summary), so drop it here.
+        p["summary"] = strip_feed_tail(p["summary"]) or p["title"]
         for source in p.get("sources", []):
             source["url"] = _sanitize_source_url(source["url"])
     live = [
@@ -736,8 +755,8 @@ def build_payloads(
     out["system-status.json"] = (
         "system-status",
         _system_status_payload(
-            conn, generated_at, published=len(live), total=len(public), live=live, jobs=jobs,
-            ai_budget_usd=ai_budget_usd,
+            conn, generated_at, published=len(live), total=len(public), held=len(held), live=live,
+            jobs=jobs, ai_budget_usd=ai_budget_usd,
         ),
     )
     out["trends.json"] = ("trends", _trends_payload(conn, generated_at, now))

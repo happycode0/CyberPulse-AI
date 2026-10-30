@@ -3,9 +3,11 @@ worker collects it. Pure: the probes themselves are in worker/discovery/run.py.
 
 A host is found by the nightly search or proposed by TACHIKOMA. The worker then looks for its
 feed, and probes the feed once each gate pass. A probe is healthy when the feed has enough recent
-items, enough of them on CyberPulse's beat, and not too many the worker already has from another
-source. `probes_to_activate` healthy probes in a row activate it; `failures_to_reject` failed ones
-in a row reject it for good. One good fetch never activates anything.
+items, enough of them on CyberPulse's beat, both as a count and as a share (a whole-site news feed
+with two security stories a day among a hundred is not a security source), and not too many the
+worker already has from another source. `probes_to_activate` healthy probes in a row activate it;
+`failures_to_reject` failed ones in a row reject it for good. One good fetch never activates
+anything.
 
 An activated source is collected in the NORMAL lane as `community`, the least trusted evidence
 class a real source can have, so on its own it can never confirm an event. At most `max_active`
@@ -85,6 +87,7 @@ class GateConfig(BaseModel):
     recent_days: int = Field(ge=1, le=90)
     min_recent_items: int = Field(ge=1, le=100)
     min_on_beat: int = Field(ge=1, le=100)
+    min_on_beat_share: float = Field(ge=0.0, le=1.0)
     max_already_collected: float = Field(ge=0.0, le=1.0)
     probes_per_pass: int = Field(ge=1, le=50)
     homes_per_pass: int = Field(ge=0, le=50)
@@ -95,6 +98,10 @@ class GateConfig(BaseModel):
     prune: PruneConfig
     forget_after_days: int = Field(ge=1, le=3650)
     beat: list[str] = Field(min_length=1)
+    beat_words: list[str] = Field(default_factory=list)
+
+    def beat_re(self) -> re.Pattern[str]:
+        return beat_pattern(self.beat, self.beat_words)
 
 
 class DiscoveryConfig(BaseModel):
@@ -238,9 +245,16 @@ class Probe:
         }
 
 
-def beat_pattern(beat: Sequence[str]) -> re.Pattern[str]:
+def beat_pattern(beat: Sequence[str], words: Sequence[str] = ()) -> re.Pattern[str]:
+    """`beat` matches at the start of a word, in any case ("vulnerab" finds "Vulnerabilities").
+    `words` match whole and in their own case, for short acronyms that would otherwise be the
+    start of ordinary words ("AI" is not "aid", "RAT" is not "rate")."""
     terms = sorted({t.strip() for t in beat if t.strip()}, key=len, reverse=True)
-    return re.compile(r"\b(?:" + "|".join(map(re.escape, terms)) + ")", re.IGNORECASE)
+    pattern = r"\b(?i:" + "|".join(map(re.escape, terms)) + ")"
+    whole = sorted({w.strip() for w in words if w.strip()}, key=len, reverse=True)
+    if whole:
+        pattern += r"|\b(?:" + "|".join(map(re.escape, whole)) + r")\b"
+    return re.compile(pattern)
 
 
 def assess_probe(
@@ -259,7 +273,7 @@ def assess_probe(
     window = timedelta(days=gate.recent_days)
     dated = [i for i in items if i.published is not None and not i.published_is_estimated]
     recent = [i for i in dated if now - window <= i.published <= now + timedelta(days=1)]
-    on_beat_re = beat_pattern(gate.beat)
+    on_beat_re = gate.beat_re()
     on_beat = [i for i in recent if i.cves or on_beat_re.search(f"{i.title} {i.summary or ''}")]
     already = sum(i.url_hash in known for i in recent)
     newest = max((i.published for i in dated), default=None)
@@ -274,6 +288,11 @@ def assess_probe(
         )
     if len(on_beat) < gate.min_on_beat:
         failures.append(f"{len(on_beat)} recent items on the beat; {gate.min_on_beat} needed")
+    elif len(on_beat) < gate.min_on_beat_share * len(recent):
+        failures.append(
+            f"{len(on_beat)} of its {len(recent)} recent items are on the beat; at least "
+            f"{gate.min_on_beat_share:.0%} must be"
+        )
     if recent and already / len(recent) > gate.max_already_collected:
         failures.append(
             f"{already} of its {len(recent)} recent items were already collected from another "
