@@ -433,3 +433,37 @@ def database_back(since: datetime, now: datetime) -> str:
             ),
         ]
     )
+
+
+_GAP_KIND = {"au_sector": "Australian {topic} sector", "category": "{topic}"}
+
+
+def daily_report(
+    report: dict[str, Any], titles: dict[str, tuple[str, str]], *, site_url: str
+) -> str:
+    """The worker's daily intelligence report (worker/ai/report.py). `titles` holds each named
+    event's severity and title as published; an item whose event is not in it is left out."""
+    day = datetime(report["report_date"].year, report["report_date"].month,
+                   report["report_date"].day, 12, tzinfo=SYDNEY)
+    lines = [f"CyberPulse-AI · daily intelligence report · {_day(day)}", "", report["summary"]]
+    items = [i for i in report["items"] if i["event_id"] in titles]
+    if items:
+        lines += ["", "TODAY"]
+        for n, item in enumerate(items, 1):
+            severity, title = titles[item["event_id"]]
+            lines += [
+                f"{n}. {severity.upper()} · {_title(title)}",
+                f"   {item['why']}",
+                f"   {event_url(site_url, item['event_id'])}",
+            ]
+    if report["gaps"]:
+        lines += ["", "QUIET"]
+        for gap in report["gaps"]:
+            name = _GAP_KIND.get(gap["kind"], "{topic}").format(topic=gap["topic"])
+            lines.append(f"- {name}: nothing new for {gap['quiet_days']:.0f} days")
+    lines += [
+        "",
+        f"Written by AI ({report['model'] or 'a model'}) from the worker's own records. Every "
+        "event it names is checked; the judgement is the model's.",
+    ]
+    return "\n".join(lines)

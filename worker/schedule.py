@@ -5,8 +5,9 @@ in system-status.json (`public_schedule`), so the site's schedule is the one tha
 imports no job, so the publisher can read it without the scheduler.
 
 `kind` says what does the work: `code` is rules and registers alone, `ai` calls a model, and
-`mixed` is code that may call one. Nothing here is mixed today: enrichment and the gauntlet call
-models, and the model scan reads OpenRouter's model list and calls none.
+`mixed` is code that may call one. Enrichment, the gauntlet and the daily report call models; the
+follow-up writer is mixed, closing quiet checks by rule and reporting on the rest with a model;
+the model scan reads the provider's model list and calls none.
 """
 
 from collections.abc import Iterable
@@ -175,6 +176,22 @@ ROUTINE_WAKE_JOB_ID = "routine-wakes"
 ROUTINE_WAKE_MISFIRE_GRACE_SECONDS = 900
 
 
+# The daily intelligence report at 07:40 Sydney time (worker/ai/report.py), after the 07:10
+# digest and the 07:35 enrichment pass, which it reads. 08:40 and 09:40 write it only if 07:40
+# did not, and send it to Telegram only if no earlier pass did: one report per Sydney date.
+# Minute 40 is no hourly job's at any FAST cadence.
+DAILY_REPORT_SCHEDULE = "40 7,8,9 * * *"
+DAILY_REPORT_JOB_ID = "daily-report"
+DAILY_REPORT_MISFIRE_GRACE_SECONDS = 1800
+
+# The follow-up writer hourly at :55 (worker/ai/followup_writer.py): late in the hour, after the
+# hour's collection and enrichment have attached what they found, on a minute no other job uses
+# at any FAST cadence.
+FOLLOWUP_WRITER_SCHEDULE = "55 * * * *"
+FOLLOWUP_WRITER_JOB_ID = "followup-writer"
+FOLLOWUP_WRITER_MISFIRE_GRACE_SECONDS = 900
+
+
 def job_id(lane: Lane) -> str:
     return f"lane-{lane.value}"
 
@@ -244,6 +261,20 @@ JOBS: tuple[Job, ...] = (
         "Checks that the site, the collections and the other jobs are keeping up, and opens an "
         "incident, and tells the crew, when one is not.",
         WATCHDOG_MISFIRE_GRACE_SECONDS,
+    ),
+    Job(
+        DAILY_REPORT_JOB_ID, "Daily report", DAILY_REPORT_SCHEDULE, DIGEST_TIMEZONE, JobKind.AI,
+        "Asks a model to write the day's intelligence report from the events that mattered and "
+        "the topics gone quiet, publishes it and sends it to Telegram; 08:40 and 09:40 write it "
+        "only if 07:40 did not.",
+        DAILY_REPORT_MISFIRE_GRACE_SECONDS,
+    ),
+    Job(
+        FOLLOWUP_WRITER_JOB_ID, "Follow-up writer", FOLLOWUP_WRITER_SCHEDULE, UTC_ZONE,
+        JobKind.MIXED,
+        "Closes follow-up checks with nothing new by rule, and asks a model what changed for the "
+        "rest from the reports collected since, within the day's cap.",
+        FOLLOWUP_WRITER_MISFIRE_GRACE_SECONDS,
     ),
     Job(
         ROUTINE_WAKE_JOB_ID, "Crew wake-ups", ROUTINE_WAKE_SCHEDULE, UTC_ZONE, JobKind.CODE,
