@@ -61,8 +61,14 @@ EVERY_MINUTES = 5
 DB_FAILURES = 3
 MAX_REOPEN_NOTICES = 3
 SITE_TIMEOUT_SECONDS = 20.0
-# The kinds the crew is not told of: with Paperclip down, there is no crew to tell.
-NOT_FOR_THE_CREW = frozenset({"paperclip-down"})
+# The kinds the crew is told of: the ones code can fix (checks.py KIND_GUIDE), for TELETRAAN to
+# diagnose. The rest go to Telegram alone: a stuck worker, the network, a quiet feed, the
+# publish token, Pages and money are the board's, and with Paperclip down there is no crew to
+# tell. Waking TELETRAAN for one cost a run to say "ask the board".
+FOR_THE_CREW = frozenset({
+    "feed-failing", "parser-drift", "duplicate-explosion", "volume-collapse", "publish-failure",
+    "schema-drift", "job-failing",
+})
 
 
 def _utcnow() -> datetime:
@@ -247,7 +253,7 @@ class Watchdog:
 
         for incident in result.unresolved:
             suffix = _suffix(incident)
-            crew = routine is not None and incident.kind not in NOT_FOR_THE_CREW
+            crew = routine is not None and incident.kind in FOR_THE_CREW
             if incident.severity in NOTIFY_AT and suffix is not None:
                 if telegram is not None:
                     message = incident_opened(incident, crew=crew and not incident.needs_human)

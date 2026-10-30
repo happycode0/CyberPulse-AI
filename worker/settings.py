@@ -8,6 +8,11 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _set(url: str | None) -> str | None:
+    """A webhook URL carries its trigger's public id, so a repr says only whether it is set."""
+    return "<set>" if url else None
+
+
 class Settings(BaseSettings):
     """Application settings, read from environment variables."""
 
@@ -59,6 +64,13 @@ class Settings(BaseSettings):
     # unset, incidents go to Telegram only.
     paperclip_incident_webhook_url: str | None = None
     paperclip_incident_webhook_secret: SecretStr | None = None
+    # The Follow-up and Source discovery routines' webhook triggers, which the worker fires only
+    # when there is work for them (worker/notify/routines.py). With either half of one unset,
+    # that routine is never fired.
+    paperclip_followup_webhook_url: str | None = None
+    paperclip_followup_webhook_secret: SecretStr | None = None
+    paperclip_discovery_webhook_url: str | None = None
+    paperclip_discovery_webhook_secret: SecretStr | None = None
     # Paperclip's health endpoint on the compose network, probed with no credentials. Empty:
     # not probed.
     watchdog_paperclip_url: str = "http://server:3100/api/health"
@@ -94,6 +106,10 @@ class Settings(BaseSettings):
             f"ops_api_port={self.ops_api_port!r}",
             f"paperclip_incident_webhook_url={webhook!r}",
             f"paperclip_incident_webhook_secret={self.paperclip_incident_webhook_secret!r}",
+            f"paperclip_followup_webhook_url={_set(self.paperclip_followup_webhook_url)!r}",
+            f"paperclip_followup_webhook_secret={self.paperclip_followup_webhook_secret!r}",
+            f"paperclip_discovery_webhook_url={_set(self.paperclip_discovery_webhook_url)!r}",
+            f"paperclip_discovery_webhook_secret={self.paperclip_discovery_webhook_secret!r}",
             f"watchdog_paperclip_url={self.watchdog_paperclip_url!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"

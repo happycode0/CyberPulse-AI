@@ -34,6 +34,19 @@ def test_repr_does_not_leak_secrets(monkeypatch):
     assert "TOPSECRET" not in text and "secretpw" not in text
 
 
+def test_repr_does_not_show_the_routine_webhooks(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/db")
+    hook = "http://server:3100/api/routine-triggers/public/pub-TESTONLY-9/fire"
+    for name in ("FOLLOWUP", "DISCOVERY"):
+        monkeypatch.setenv(f"PAPERCLIP_{name}_WEBHOOK_URL", hook)
+        monkeypatch.setenv(f"PAPERCLIP_{name}_WEBHOOK_SECRET", f"webhook-secret-{name}-TESTONLY")
+    settings = get_settings.__wrapped__()
+    assert settings.paperclip_followup_webhook_url == hook
+    text = repr(settings)
+    assert "pub-TESTONLY" not in text and "webhook-secret" not in text
+    assert "paperclip_followup_webhook_url='<set>'" in text
+
+
 def test_user_agent_identifies_project(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/db")
     assert get_settings.__wrapped__().user_agent == "CyberPulse-AI/1.0"

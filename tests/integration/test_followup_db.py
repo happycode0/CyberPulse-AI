@@ -11,7 +11,10 @@ from sqlalchemy import text
 
 from worker.db.followup import (
     MAX_REPORT_ATTEMPTS,
+    WORKER_NO_CHANGE,
+    close_quiet_checks,
     count_accepted,
+    count_due,
     load_due,
     load_new_since,
     load_queue_counts,
@@ -20,7 +23,9 @@ from worker.db.followup import (
     submit_report,
 )
 from worker.db.migrate import run_migrations
-from worker.db.notifications import load_update_entries
+from worker.db.notifications import claim, last_fired, load_update_entries
+from worker.db.notifications import settle as settle_claim
+from worker.db.wakes import waiting_sites
 from worker.models import EventStatus, MaterialChange
 from worker.ops_api import OpsApi
 from worker.pipeline.run import settle
@@ -379,6 +384,99 @@ def test_an_event_that_gained_nothing_since_its_last_check_says_so(db):
         gained = load_new_since(conn, load_due(conn, now=NOW, limit=10), most=3)
     new = gained[task_id]
     assert (new.sources, new.timeline, new.newest_sources, new.newest_timeline) == (0, 0, (), ())
+
+
+def task_row(db, task_id) -> dict:
+    with db.connect() as conn:
+        return dict(conn.execute(
+            text("select status, attempts, payload, updated_at from followup_tasks where id = :id"),
+            {"id": task_id},
+        ).mappings().one())
+
+
+def test_the_worker_records_no_change_for_a_due_check_with_nothing_new(db):
+    """W3: what DECKARD's skill told it to do without a read, the worker does itself, so the
+    Follow-up routine is fired only for tasks with something to look at."""
+    def checked(event_id, **event):
+        add_event(db, event_id, status="developing", severity="high", first_seen=ago(days=5),
+                  **event)
+        add_task(db, event_id, status="done", at=ago(hours=10), outcome="no_change")
+        return add_task(db, event_id, at=ago(hours=1))
+
+    quiet = checked("evt-2026-000001")
+    news = checked("evt-2026-000002")
+    add_source(db, "evt-2026-000002", "after", added=ago(hours=5))
+    entry = checked("evt-2026-000003")
+    add_entry(db, "evt-2026-000003", "NEW_PATCH", at=ago(days=7), created_at=ago(hours=3))
+    merged = checked("evt-2026-000004", lmu=ago(hours=2))  # a merge moved it, no entry
+    add_event(db, "evt-2026-000005", status="developing")
+    first = add_task(db, "evt-2026-000005", at=ago(hours=1))  # never checked: a first look
+    add_event(db, "evt-2026-000006", status="developing", first_seen=ago(days=5))
+    add_task(db, "evt-2026-000006", status="done", at=ago(hours=10), outcome="no_change")
+    later = add_task(db, "evt-2026-000006", at=NOW + timedelta(hours=2))  # not due yet
+
+    with db.begin() as conn:
+        assert close_quiet_checks(conn, now=NOW) == ["evt-2026-000001"]
+    row = task_row(db, quiet)
+    assert (row["status"], row["attempts"], row["updated_at"]) == ("done", 1, NOW)
+    assert row["payload"] == WORKER_NO_CHANGE and row["payload"]["by"] == "worker"
+    for task_id in (news, entry, merged, first, later):
+        assert task_row(db, task_id)["status"] == "pending"
+    with db.begin() as conn:
+        assert close_quiet_checks(conn, now=NOW) == []  # nothing twice
+
+    with db.connect() as conn:
+        # The four due tasks left have something to look at. DECKARD's cap counts its five
+        # earlier reports, not the worker's own record, which cost no tokens.
+        assert count_due(conn, now=NOW) == 4
+        assert count_accepted(conn, since=ago(hours=24)) == 5
+        assert {t.event_id for t in load_due(conn, now=NOW, limit=10)} == {
+            "evt-2026-000002", "evt-2026-000003", "evt-2026-000004", "evt-2026-000005",
+        }
+
+
+def test_a_worker_no_change_backs_off_the_next_check_like_deckard_s(db):
+    add_event(db, "evt-2026-000001", status="developing", severity="high", first_seen=ago(days=5))
+    add_task(db, "evt-2026-000001", status="done", at=ago(hours=13), outcome="no_change")
+    add_task(db, "evt-2026-000001", at=ago(hours=1))
+    with db.begin() as conn:
+        close_quiet_checks(conn, now=NOW)
+        schedule_followups(conn, CONFIG.followup, now=NOW)
+    # high + developing is every 12 hours; two quiet checks since the last change: x4.
+    assert pending_due(db, "evt-2026-000001") == NOW + timedelta(hours=48)
+
+
+def test_a_routine_wake_is_claimed_and_its_last_fire_read_back(db):
+    first = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T02",
+                  now=ago(hours=6), channel="paperclip")
+    settle_claim(db, first, "sent", now=ago(hours=6))
+    failed = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T07",
+                   now=ago(hours=1), channel="paperclip")
+    settle_claim(db, failed, "failed", now=ago(hours=1), error="HTTP 503")
+    assert last_fired(db, prefix="routine:follow-up:") == ago(hours=6)
+    assert last_fired(db, prefix="routine:source-discovery:") is None
+
+
+def test_the_sites_waiting_for_a_feed_the_gate_could_not_find(db):
+    rows = [
+        ("wake-test-a.example", None, None),  # not read yet: the gate may still find its feed
+        ("wake-test-b.example", None, ago(days=3)),  # read, no feed, before the last wake
+        ("wake-test-c.example", None, ago(hours=2)),  # read, no feed, since
+        ("wake-test-d.example", "https://wake-test-d.example/feed", ago(hours=1)),  # has one
+    ]
+    with db.begin() as conn:
+        conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
+        for host, feed, probed in rows:
+            conn.execute(
+                text("insert into source_candidates (host, feed_url, found_by, state, "
+                     "last_probe_at) values (:h, :f, 'search', :state, :p)"),
+                {"h": host, "f": feed, "state": "discovered", "p": probed},
+            )
+    try:
+        assert waiting_sites(db, since=ago(days=1)) == (2, 1)
+    finally:
+        with db.begin() as conn:
+            conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
 
 
 def ops(db, tmp_path, **changes) -> OpsApi:

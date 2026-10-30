@@ -8,6 +8,8 @@ worker/pipeline/followup.py decide; this reads the record and writes the result.
   no longer qualifies is cancelled.
 - `load_due`, `count_accepted`, `load_new_since` and `submit_report`: what `GET` and
   `POST /ops/followup` read and write.
+- `close_quiet_checks` and `count_due`: what the hourly routine wake (worker/notify/routines.py)
+  does before it decides whether to wake DECKARD at all.
 
 Like every writer here it takes the caller's connection and never commits.
 """
@@ -41,6 +43,10 @@ from worker.pipeline.status import (
 
 # A task refused this many times is given up ('failed'); a check is opened again on its cadence.
 MAX_REPORT_ATTEMPTS = 3
+# The report the worker records itself for a due check with nothing new since the last one:
+# the no_change DECKARD's skill sent for it, without a read. `by` keeps it out of DECKARD's
+# daily cap, which bounds what the agent spends; it counts as a quiet check for the back-off.
+WORKER_NO_CHANGE = {"outcome": "no_change", "recorded": [], "refused": [], "by": "worker"}
 ERROR_MAX_CHARS = 300
 _OPEN = "status in ('pending', 'in_progress')"
 _SEVERITY_RANK = (
@@ -256,12 +262,61 @@ def load_due(conn: Connection, *, now: datetime, limit: int) -> list[DueTask]:
 
 
 def count_accepted(conn: Connection, *, since: datetime) -> int:
-    """How many reports were accepted (their tasks done) after `since`. GET /ops/followup hands
-    out no more once a day's worth were."""
+    """How many of DECKARD's reports were accepted (their tasks done) after `since`. GET
+    /ops/followup hands out no more once a day's worth were. The no_change the worker records
+    itself is not one of them: it spent nothing."""
     return conn.execute(
-        text("select count(*) from followup_tasks where status = 'done' and updated_at > :since"),
+        text(
+            "select count(*) from followup_tasks where status = 'done' and updated_at > :since "
+            "and coalesce(payload ->> 'by', '') <> 'worker'"
+        ),
         {"since": since},
     ).scalar_one()
+
+
+def count_due(conn: Connection, *, now: datetime) -> int:
+    """How many pending tasks are due: the ones `load_due` would hand out, uncapped."""
+    return conn.execute(
+        text(
+            "select count(*) from followup_tasks t join events e on e.event_id = t.event_id "
+            "where t.status = 'pending' and t.due_at <= :now and e.merged_into is null"
+        ),
+        {"now": now},
+    ).scalar_one()
+
+
+def close_quiet_checks(conn: Connection, *, now: datetime) -> list[str]:
+    """Record no_change on every due check whose event has gained nothing since its last check:
+    no source, no timeline entry and no material update (`nothing_new` in GET /ops/followup).
+    A first check, or a final summary, always has something to look at, so neither is closed.
+    Returns the events whose checks were closed. Under the ingest lock, so no collection adds a
+    source to an event while its check is being closed as quiet."""
+    lock_ingest(conn)
+    rows = conn.execute(
+        text(
+            "with due as ("
+            "  select t.id, t.event_id, (select max(d.updated_at) from followup_tasks d "
+            "    where d.event_id = t.event_id and d.kind = 'check' "
+            "    and d.status in ('done', 'failed')) as ended "
+            "  from followup_tasks t "
+            "  where t.status = 'pending' and t.kind = 'check' and t.due_at <= :now"
+            "), quiet as ("
+            "  select d.id from due d join events e on e.event_id = d.event_id "
+            "  where d.ended is not null and e.merged_into is null "
+            "  and coalesce(e.last_material_update, e.first_seen) <= d.ended "
+            "  and not exists (select 1 from event_sources s "
+            "    where s.event_id = d.event_id and s.created_at > d.ended) "
+            "  and not exists (select 1 from event_timeline m "
+            "    where m.event_id = d.event_id and coalesce(m.created_at, m.ts) > d.ended)"
+            ") "
+            "update followup_tasks t set status = 'done', attempts = attempts + 1, "
+            "last_error = null, payload = cast(:payload as jsonb), updated_at = :now "
+            "from quiet q where t.id = q.id "
+            "returning t.event_id"
+        ),
+        {"now": now, "payload": json.dumps(WORKER_NO_CHANGE)},
+    ).all()
+    return sorted(r.event_id for r in rows)
 
 
 @dataclass(frozen=True)

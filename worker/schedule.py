@@ -167,6 +167,14 @@ WATCHDOG_JOB_ID = "watchdog"
 WATCHDOG_MISFIRE_GRACE_SECONDS = 240
 
 
+# The crew's Follow-up and Source discovery routines, woken only when there is work for them
+# (worker/notify/routines.py): hourly at :15, a minute no other job starts on, after the hour's
+# collection, enrichment and alert passes.
+ROUTINE_WAKE_SCHEDULE = "15 * * * *"
+ROUTINE_WAKE_JOB_ID = "routine-wakes"
+ROUTINE_WAKE_MISFIRE_GRACE_SECONDS = 900
+
+
 def job_id(lane: Lane) -> str:
     return f"lane-{lane.value}"
 
@@ -236,6 +244,12 @@ JOBS: tuple[Job, ...] = (
         "Checks that the site, the collections and the other jobs are keeping up, and opens an "
         "incident, and tells the crew, when one is not.",
         WATCHDOG_MISFIRE_GRACE_SECONDS,
+    ),
+    Job(
+        ROUTINE_WAKE_JOB_ID, "Crew wake-ups", ROUTINE_WAKE_SCHEDULE, UTC_ZONE, JobKind.CODE,
+        "Records 'no change' itself on follow-up checks with nothing new, and wakes the crew's "
+        "follow-up and source-discovery routines only when there is work for them.",
+        ROUTINE_WAKE_MISFIRE_GRACE_SECONDS,
     ),
 )
 
