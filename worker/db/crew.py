@@ -97,7 +97,8 @@ def load_pipeline_ai(conn: Connection, *, since: datetime) -> PipelineAi:
 
 def load_crew_seen(conn: Connection, *, since: datetime) -> dict[str, Seen]:
     """The crew's work that reaches the worker, per callsign (lower case): TACHIKOMA's source
-    proposals, DECKARD's follow-up reports and TELETRAAN's verdicts on incident fixes. The other
+    proposals, DECKARD's follow-up reports (not the no_change the worker records itself on a
+    quiet check, marked `by: worker`) and TELETRAAN's verdicts on incident fixes. The other
     agents write only into Paperclip, which the worker never reads."""
     row = _one(
         conn,
@@ -106,9 +107,11 @@ def load_crew_seen(conn: Connection, *, since: datetime) -> dict[str, Seen]:
         "       (select count(*) from source_candidates where found_by = 'tachikoma' "
         "        and proposed_at >= :since) as tachikoma_n, "
         "       (select max(updated_at) from followup_tasks where status = 'done' "
-        "        and payload ? 'outcome') as deckard_at, "
+        "        and payload ? 'outcome' and coalesce(payload ->> 'by', '') <> 'worker') "
+        "       as deckard_at, "
         "       (select count(*) from followup_tasks where status = 'done' "
-        "        and payload ? 'outcome' and updated_at >= :since) as deckard_n, "
+        "        and payload ? 'outcome' and coalesce(payload ->> 'by', '') <> 'worker' "
+        "        and updated_at >= :since) as deckard_n, "
         "       (select max(ts) from incident_verdicts) as teletraan_at, "
         "       (select count(*) from incident_verdicts where ts >= :since) as teletraan_n",
         since,

@@ -160,9 +160,12 @@ def test_what_the_worker_sees_of_the_crew(engine):
                 "insert into followup_tasks (event_id, kind, status, due_at, payload, "
                 "updated_at) values ('evt-2026-000001', 'check', 'done', :t, "
                 "'{\"outcome\": \"no_change\"}', :t), ('evt-2026-000001', 'final_summary', "
-                "'pending', :t, '{}', :later)"
+                "'pending', :t, '{}', :later), "
+                # The no_change the worker records itself on a quiet check is not DECKARD's.
+                "('evt-2026-000001', 'check', 'done', :t, "
+                "'{\"outcome\": \"no_change\", \"by\": \"worker\"}', :quiet)"
             ),
-            {"t": NOW - timedelta(days=16), "later": NOW},
+            {"t": NOW - timedelta(days=16), "later": NOW, "quiet": NOW - timedelta(hours=1)},
         )
         incident = conn.execute(text(
             "insert into incidents (kind, severity, title) values ('stale-feed', 'low', 't') "
