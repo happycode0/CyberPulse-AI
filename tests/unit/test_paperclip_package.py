@@ -24,20 +24,29 @@ CREW = {
 RETIRED = {
     "zion", "blaster", "wintermute", "tron", "rogue", "prowl", "librarian", "link", "ripperdoc",
 }
-BEATS = [
-    "cyberpulse-au-desk",
-    "cyberpulse-global-desk",
-    "cyberpulse-ai-desk",
-    "cyberpulse-follow-up",
-]
+# DECKARD's one skill since 2026-10-30: its desk digest, and the three beat skills it used,
+# repeated the worker's own triage and brief, so the routine and the beats are gone.
+SKILLS = ["cyberpulse-follow-up"]
 ROUTINES = {
-    # name: (assignee, cron in Australia/Sydney, switched on now)
+    # name: (assignee, trigger: a cron in Australia/Sydney or "webhook", switched on now)
     "Daily editorial": ("morpheus", "30 7 * * *", True),
-    "Desk digest": ("deckard", "0 6,14,22 * * *", True),
-    "Daily QA sample": ("voight", "0 7 * * *", True),
-    "Follow-up": ("deckard", "0 3-21/6 * * *", True),
-    "Source discovery": ("tachikoma", "30 3 * * *", True),  # after the worker's 03:10 search
+    "Follow-up": ("deckard", "webhook", True),  # the worker fires it when tasks with news are due
+    "Source discovery": ("tachikoma", "webhook", True),  # and when sites wait for a feed
+    "Incident": ("teletraan", "webhook", True),  # the watchdog, for a kind code can fix
 }
+# Retired on 2026-10-30, so a re-import cannot bring them back.
+GONE_ROUTINES = {"Desk digest", "Daily QA sample"}
+# The crew's models on MixRoute (owner-approved 2026-10-30), and each one's vendor.
+MODELS = {
+    "morpheus": "mixroute/glm-5.3-flash",
+    "teletraan": "mixroute/glm-5.3-flash",
+    "deckard": "mixroute/deepseek-v4-flash",
+    "voight": "mixroute/deepseek-v4-flash",
+    "tachikoma": "mixroute/deepseek-v4-flash",
+    "wheeljack": "mixroute/mimo-v2.5-pro",
+}
+DAILY_RUNS = {"morpheus": 4, "teletraan": 4, "deckard": 8, "voight": 2, "tachikoma": 2,
+              "wheeljack": 2}
 
 
 @pytest.fixture(scope="module")
@@ -76,12 +85,13 @@ def agent(package, slug: str) -> tuple[dict, str]:
     return frontmatter(package[f"agents/{slug}/AGENTS.md"])
 
 
-def test_read_setup_finds_the_five_routines(builder):
+def test_read_setup_finds_the_four_routines(builder):
     description, routines = builder.read_setup()
     assert description
-    found = {r["name"]: (r["assignee"], r["cron"], r["active"]) for r in routines}
+    found = {r["name"]: (r["assignee"], r["trigger"], r["active"]) for r in routines}
     assert found == ROUTINES
     assert set(builder.ROUTINE_TEXT) == set(ROUTINES)
+    assert not GONE_ROUTINES & set(builder.ROUTINE_TEXT)
 
 
 def test_each_routine_s_issue_text_is_the_wiki_s(builder):
@@ -95,7 +105,7 @@ def test_the_package_has_the_seven_agents_and_nothing_else(package, extension):
     assert agents == CREW
     assert set(extension["agents"]) == CREW
     assert set(extension["sidebar"]["agents"]) == CREW
-    assert len(package) == 20  # 3 company files, 7 agents, 1 project, 4 skills, 5 routines
+    assert len(package) == 16  # 3 company files, 7 agents, 1 project, 1 skill, 4 routines
 
 
 def test_no_retired_agent_is_in_the_package(package, extension):
@@ -107,17 +117,26 @@ def test_no_retired_agent_is_in_the_package(package, extension):
 
 def test_the_routines_in_the_package(package, extension):
     routines = extension["routines"]
-    assert len(routines) == 5
+    assert len(routines) == 4
     for slug, routine in routines.items():
-        name = routine["triggers"][0]["label"]
-        assignee, cron, active = ROUTINES[name]
+        [trigger] = routine["triggers"]
+        assignee, kind, active = ROUTINES[trigger["label"]]
         task, _ = frontmatter(package[f"tasks/{slug}/TASK.md"])
         assert task["assignee"] == assignee and task["recurring"] is True
-        assert routine["concurrencyPolicy"] == "skip_if_active"
         assert routine["status"] == ("active" if active else "paused")
-        trigger = routine["triggers"][0]
-        assert trigger["cronExpression"] == cron and trigger["timezone"] == "Australia/Sydney"
-    assert routines["desk-digest"]["triggers"][0]["cronExpression"] == "0 6,14,22 * * *"
+        if kind == "webhook":
+            # Paperclip makes the secret; the owner rotates it once to see it (stage 4a step 7).
+            assert trigger == {"kind": "webhook", "label": trigger["label"], "enabled": True,
+                               "signingMode": "bearer", "replayWindowSec": 300}
+        else:
+            assert trigger["kind"] == "schedule" and trigger["cronExpression"] == kind
+            assert trigger["timezone"] == "Australia/Sydney"
+    # A fire while an incident's issue is open joins it; the others skip.
+    assert routines["incident"]["concurrencyPolicy"] == "coalesce_if_active"
+    assert {r["concurrencyPolicy"] for s, r in routines.items() if s != "incident"} == {
+        "skip_if_active"
+    }
+    assert not {"desk-digest", "daily-qa-sample"} & set(routines)
 
 
 def test_the_org_chart(package):
@@ -143,21 +162,43 @@ def test_the_org_chart(package):
     }
 
 
-def test_deckard_has_one_run_slot_and_its_beats_as_skills(builder, package, extension):
+def test_deckard_has_one_run_slot_and_only_the_follow_up_skill(builder, package, extension):
     deckard = extension["agents"]["deckard"]
-    assert deckard["budgetMonthlyCents"] == 200
+    assert deckard["budgetMonthlyCents"] == 300
     assert deckard["runtime"]["heartbeat"]["maxConcurrentRuns"] == 1
     front, _ = agent(package, "deckard")
-    assert set(BEATS) <= set(front["skills"])
-    for name in BEATS:
+    assert front["skills"] == builder.AGENT_SKILLS + SKILLS
+    for name in SKILLS:
         skill, text = frontmatter(package[f"skills/{name}/SKILL.md"])
         assert skill["name"] == name and skill["description"] and text.strip()
-    # The core prompt routes to the beats; the beats' own steps live only in their skills.
     _, cards = builder.read_crew()
     prompt = cards["deckard"]["prompt"]
-    assert len(prompt.splitlines()) <= 40
-    assert all(name in prompt for name in BEATS)
-    assert "SOCI" not in prompt and "AI_CYBER_CONVERGENCE" not in prompt
+    assert len(prompt.splitlines()) <= 30
+    assert "[DIGEST]" not in prompt and "desk" not in prompt.lower()
+
+
+def test_no_prompt_wakes_voight_or_deckard_on_every_event(builder):
+    """W4: every high or critical event no longer goes to @VOIGHT, and VOIGHT's FIX or REJECT
+    no longer goes back to @DECKARD; the QA loop had no write-back, so nothing landed."""
+    house_rules, cards = builder.read_crew()
+    for card in cards.values():
+        text = card.get("prompt", "") + "".join(s["text"] for s in card["skills"])
+        assert "@VOIGHT" not in text, card["name"]
+    assert "@DECKARD" not in cards["voight"]["prompt"]
+    assert "VOIGHT" not in house_rules
+
+
+def test_every_prompt_says_one_comment_and_no_subagents(builder):
+    house_rules, cards = builder.read_crew()
+    assert "ONE comment" in house_rules and "subagent" in house_rules.lower()
+    assert all("SUBAGENTS" not in card.get("prompt", "") for card in cards.values())
+
+
+def test_teletraan_escalates_to_the_board_while_wheeljack_has_no_repository(builder):
+    _, cards = builder.read_crew()
+    prompt = cards["teletraan"]["prompt"]
+    assert "@WHEELJACK" not in prompt.split("A PULL REQUEST FROM WHEELJACK")[0]
+    assert "no repository" in prompt
 
 
 def test_only_the_worker_s_queue_schedules_follow_ups(builder):
@@ -175,27 +216,68 @@ def test_only_the_worker_s_queue_schedules_follow_ups(builder):
     assert "FOLLOW-UP ROUTINE" in deckard["prompt"] and "cyberpulse-follow-up" in deckard["prompt"]
     [skill] = [s for s in deckard["skills"] if s["name"] == "cyberpulse-follow-up"]
     assert "FROM MORPHEUS" not in skill["text"]
+    # The worker records no_change itself for a check with nothing new (W3); this stays as the
+    # fallback for one that turns quiet between the wake and the GET.
     assert "nothing_new is true, report no_change straight away" in skill["text"]
     assert "GET again" not in skill["text"] and "then stop" in skill["text"]
 
 
+def test_morpheus_reads_the_escalation_candidates_the_desk_used_to(builder):
+    _, cards = builder.read_crew()
+    assert "escalation_candidates" in cards["morpheus"]["prompt"]
+    assert "escalation candidates" in builder.ROUTINE_TEXT["Daily editorial"][1]
+
+
 def test_the_ai_budgets_fit_inside_the_company_budget(builder, extension):
+    """The owner's cap is US$20 a month: US$12 for the worker, US$8 for the crew."""
     budgets = {slug: ext["budgetMonthlyCents"] for slug, ext in extension["agents"].items()}
     assert budgets.pop("seraph") == 0
     assert len(budgets) == 6 and all(cents > 0 for cents in budgets.values())
-    assert sum(budgets.values()) == 900
-    assert sum(budgets.values()) < builder.COMPANY_BUDGET_CENTS == 1200
+    assert sum(budgets.values()) == 780
+    assert sum(budgets.values()) < builder.COMPANY_BUDGET_CENTS == 800
 
 
-def test_teletraan_checks_wheeljack_on_another_vendors_model(extension):
-    ladder = yaml.safe_load((REPO / "config/models.yaml").read_text(encoding="utf-8"))["tiers"]
+def test_the_daily_run_caps(extension):
+    caps = {slug: ext["runtime"]["heartbeat"].get("maxDailyRuns")
+            for slug, ext in extension["agents"].items() if slug != "seraph"}
+    assert caps == DAILY_RUNS
+
+
+def test_morpheus_cannot_hire_or_keep_memory_files(package, extension):
+    front, _ = agent(package, "morpheus")
+    assert not {"paperclipai/paperclip/paperclip-create-agent",
+                "paperclipai/paperclip/para-memory-files"} & set(front["skills"])
+    assert extension["agents"]["morpheus"]["permissions"]["canCreateAgents"] is False
+
+
+def test_the_crew_runs_on_mixroute(builder, extension):
     models = {
         slug: ext["adapter"]["config"].get("model") for slug, ext in extension["agents"].items()
     }
-    assert models["teletraan"] == "openrouter/" + ladder["audit"][0]
-    assert models["wheeljack"] == "openrouter/" + ladder["code"][0]
-    code_vendors = {slug.split("/")[0] for slug in ladder["code"]}
-    assert models["teletraan"].split("/")[1] not in code_vendors
+    assert models.pop("seraph") is None
+    assert models == MODELS
+    for slug in MODELS:
+        ext = extension["agents"][slug]
+        # Paperclip has no MixRoute connection: OpenRouter's matches only openrouter/ models.
+        assert "aiConnection" not in ext["runtime"]
+        env = ext["adapter"]["config"]["env"]
+        provider = json.loads(env["PAPERCLIP_OPENCODE_PROVIDERS"]["value"])["mixroute"]
+        assert env["PAPERCLIP_OPENCODE_PROVIDERS"]["type"] == "plain"
+        assert provider["npm"] == "@ai-sdk/openai-compatible"
+        assert provider["options"] == {"baseURL": "https://api.mixroute.ai/v1",
+                                       "apiKey": "{env:MIXROUTE_API_KEY}"}
+        assert MODELS[slug].split("/", 1)[1] in provider["models"]
+        assert env["PAPERCLIP_OPENCODE_SMALL_MODEL"] == {"type": "plain", "value": MODELS[slug]}
+        # The key is a secret the import asks for and Paperclip stores; never a plain value,
+        # and never the server's environment (CYB-36).
+        assert ext["inputs"]["env"]["MIXROUTE_API_KEY"]["kind"] == "secret"
+        assert "MIXROUTE_API_KEY" not in env
+
+
+def test_teletraan_checks_wheeljack_on_another_vendors_model(builder, extension):
+    models = {slug: ext["adapter"]["config"].get("model") for slug, ext in extension["agents"].items()}
+    vendor = {slug: builder.vendor(models[slug]) for slug in ("teletraan", "wheeljack")}
+    assert vendor == {"teletraan": "zhipu", "wheeljack": "xiaomi"}
 
 
 def test_seraph_is_the_one_http_agent(builder, extension):
@@ -207,8 +289,8 @@ def test_seraph_is_the_one_http_agent(builder, extension):
 
 
 def test_the_builder_refuses_budgets_that_reach_the_company_budget(builder, monkeypatch, tmp_path):
-    monkeypatch.setattr(builder, "COMPANY_BUDGET_CENTS", 900)
-    with pytest.raises(SystemExit, match="budgets add up to 900"):
+    monkeypatch.setattr(builder, "COMPANY_BUDGET_CENTS", 780)
+    with pytest.raises(SystemExit, match="budgets add up to 780"):
         builder.build(tmp_path / "crew.zip")
     assert not (tmp_path / "crew.zip").exists()
 
@@ -238,6 +320,16 @@ def test_the_builder_refuses_one_vendor_for_code_and_its_check(builder, monkeypa
         builder.build(tmp_path / "crew.zip")
 
 
+def test_the_builder_refuses_a_model_with_no_known_vendor(builder, monkeypatch, tmp_path):
+    """A model id on a gateway names no vendor, so the two-person rule needs the map; a new
+    model is refused until someone says whose it is."""
+    house_rules, cards = builder.read_crew()
+    cards["teletraan"]["model"] = "mixroute/some-new-model"
+    monkeypatch.setattr(builder, "read_crew", lambda: (house_rules, cards))
+    with pytest.raises(SystemExit, match="no vendor for mixroute/some-new-model"):
+        builder.build(tmp_path / "crew.zip")
+
+
 # --- The public org chart (site/assets/org.json) -------------------------------------------------
 
 ORG_JSON = REPO / "site/assets/org.json"
@@ -252,7 +344,7 @@ def test_the_committed_org_chart_is_the_wiki_as_it_stands(builder):
 def test_the_org_chart_shape(builder):
     org = builder.org_chart()
     assert org["company"] == {
-        "name": "CyberPulse", "mission": builder.read_setup()[0], "budget_usd": 12.0,
+        "name": "CyberPulse", "mission": builder.read_setup()[0], "budget_usd": 8.0,
     }
     agents = {a["callsign"]: a for a in org["agents"]}
     assert set(agents) == {slug.upper() for slug in CREW}
@@ -260,7 +352,7 @@ def test_the_org_chart_shape(builder):
     assert agents["DECKARD"] == {
         "callsign": "DECKARD", "title": "Researcher", "role": "researcher",
         "reports_to": "MORPHEUS", "team": "Intelligence", "adapter": "model",
-        "model": "openrouter/xiaomi/mimo-v2.6-flash", "budget_usd": 2.0, "max_daily_runs": 12,
+        "model": "mixroute/deepseek-v4-flash", "budget_usd": 3.0, "max_daily_runs": 8,
         "summary": agents["DECKARD"]["summary"],
     }
     assert (agents["SERAPH"]["adapter"], agents["SERAPH"]["model"],
@@ -273,10 +365,12 @@ def test_the_org_chart_shape(builder):
         "WHEELJACK": "Engineering",
     }
     assert all(a["summary"] for a in org["agents"])
-    assert sum(a["budget_usd"] for a in org["agents"]) == 9.0
+    assert round(sum(a["budget_usd"] for a in org["agents"]), 2) == 7.8
     routines = {r["name"]: r for r in org["routines"]}
-    assert {name: (r["assignee"].lower(), r["cron"], r["starts"] == "now")
+    assert {name: (r["assignee"].lower(), r["cron"] or r["trigger"], r["starts"] == "now")
             for name, r in routines.items()} == ROUTINES
+    assert {r["trigger"] for r in org["routines"]} == {"schedule", "webhook"}
+    assert all(r["cron"] is None for r in org["routines"] if r["trigger"] == "webhook")
     assert {r["timezone"] for r in org["routines"]} == {"Australia/Sydney"}
     assert all(r["summary"] for r in org["routines"])
 
