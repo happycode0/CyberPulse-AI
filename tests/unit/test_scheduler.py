@@ -197,6 +197,44 @@ async def test_a_discovery_pass_that_raises_is_recorded_and_not_fatal(
     assert [(r.job, r.completed) for r in recorded] == [(job, False)]
 
 
+async def test_a_discovery_pass_records_what_it_found_for_the_site(monkeypatch):
+    from worker.discovery.run import GateSummary, SearchSummary
+
+    gate = GateSummary(homes=5, probes=10, healthy=7, rejected=3, activated=["found_dev_to"],
+                       pruned=["found_spiceworks_com"], waiting=39, promoted=["a.example"])
+    search = SearchSummary(searches=16, hits=140, new_hosts=4, credits=16)
+    recorded = []
+
+    async def record(run):
+        recorded.append(run)
+
+    async def no_notices(engine, settings, *, now):
+        return None
+
+    async def gate_pass():
+        return gate
+
+    async def search_pass():
+        return search
+
+    monkeypatch.setattr(scheduler, "run_gate", gate_pass)
+    monkeypatch.setattr(scheduler, "run_search", search_pass)
+    monkeypatch.setattr(scheduler, "_record", record)
+    monkeypatch.setattr(scheduler, "send_source_activations", no_notices)
+    monkeypatch.setattr(scheduler, "get_engine", lambda: None)
+    monkeypatch.setattr(scheduler, "get_settings", lambda: None)
+    await scheduler._gate_job()
+    await scheduler._discovery_job()
+    gate_run, search_run = recorded
+    assert gate_run.detail == {
+        "homes": 5, "feeds_found": 0, "probes": 10, "healthy": 7, "rejected": 3,
+        "activated": ["found_dev_to"], "retired": [], "pruned": ["found_spiceworks_com"],
+        "waiting": 39, "promoted": 1,
+    }
+    assert search_run.detail == {"searches": 16, "hits": 140, "new_hosts": 4, "credits": 16,
+                                 "skipped": False}
+
+
 async def test_the_gate_sends_new_source_notices_even_after_a_failed_pass(monkeypatch):
     async def boom():
         raise RuntimeError("database unreachable")

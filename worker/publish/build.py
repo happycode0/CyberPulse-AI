@@ -19,6 +19,7 @@ import tempfile
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -26,11 +27,23 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from pydantic import ValidationError
 from sqlalchemy import Connection
 
-from worker.db.crew import load_crew_activity, load_pipeline_ai
-from worker.db.discovery import Candidate, load_at_the_gate
+from worker.db.crew import load_crew_activity, load_crew_seen, load_pipeline_ai
+from worker.db.discovery import (
+    Candidate,
+    active_discovered,
+    load_at_the_gate,
+    load_gate_counts,
+    load_settled,
+)
 from worker.db.events import load_event_dates, load_live_events
+from worker.db.jobs import JobRun, load_latest_jobs
 from worker.db.merge import merged_redirects
-from worker.db.runs import load_last_completed_collection, load_latest_run
+from worker.db.runs import (
+    load_lane_activity,
+    load_last_completed_collection,
+    load_latest_finished_run,
+    load_unfinished_runs,
+)
 from worker.db.sources import (
     DEFAULT_HISTORY_LIMIT,
     RegistryRow,
@@ -40,6 +53,7 @@ from worker.db.sources import (
     load_registry_rows,
 )
 from worker.db.trends import load_trend_inputs
+from worker.discovery.gate import DiscoveryConfig, GateConfig
 from worker.models import (
     Beat,
     Event,
@@ -47,6 +61,7 @@ from worker.models import (
     HealthStatus,
     LifecycleState,
     PublisherConfig,
+    RunSummary,
     SourceConfig,
     SourceHealth,
 )
@@ -61,7 +76,7 @@ from worker.publish.validate import (
     scan_text_for_secrets,
     validate_payload,
 )
-from worker.schedule import public_schedule
+from worker.schedule import LANE_JOBS, public_schedule
 from worker.sources.registry import REGISTRY_PATH, load_publishers, load_registry
 from worker.version import PIPELINE_VERSION, SCHEMA_VERSION, SCORING_VERSION
 
@@ -79,6 +94,11 @@ MERGED_REDIRECT_WINDOW = timedelta(days=90)
 HEALTH_ERROR_MAX_CHARS = 300
 # source-health.json's `pipeline`: the finds still at SERAPH's gate, furthest through first.
 PIPELINE_LIMIT = 25
+# source-health.json's `discovery.recent`: finds activated or retired this recently.
+SETTLED_WINDOW = timedelta(days=14)
+SETTLED_LIMIT = 20
+# A run started this recently and not finished is still going; an older one crashed (runs.py).
+RUN_IN_PROGRESS_WINDOW = timedelta(hours=2)
 # An `attention` reason quotes at most this much of a check's error or a registry note.
 ATTENTION_DETAIL_MAX_CHARS = 160
 
@@ -245,8 +265,9 @@ def _attention(source: _Source) -> dict[str, str] | None:
     """What the Sources page should flag about a source, if anything.
 
     `fix`: its last check failed, or it is degraded and still failing. `watch`: it is stale, or
-    degraded and healthy again. `coming`: it is not collected yet, or is still a find on trial.
-    A retired source needs nothing.
+    degraded and healthy again. `blocked`: config/sources.yaml has it switched off, and its note
+    says why; nothing moves it on until someone edits the registry. `coming`: still a find on
+    trial. A retired source needs nothing.
     """
     row, state = source.row, source.state
     latest = source.history[-1] if source.history else None
@@ -257,7 +278,7 @@ def _attention(source: _Source) -> dict[str, str] | None:
         note = _detail(source.config.notes if source.config else None)
         if note and not note.endswith("."):
             note += "."
-        return {"kind": "coming", "reason": f"Not collected yet. {note}".rstrip()}
+        return {"kind": "blocked", "reason": f"Not collected. {note}".rstrip()}
     if state in (LifecycleState.DISCOVERED, LifecycleState.CANDIDATE):
         return {"kind": "coming", "reason": "A new find, on trial before it is collected."}
     if latest is not None and latest.status in _FAILED:
@@ -305,7 +326,7 @@ def _source_entry(source: _Source) -> dict[str, Any]:
 _FOUND_BY = {"search": "Found by the nightly search", "tachikoma": "Proposed by TACHIKOMA"}
 
 
-def _gate_reason(c: Candidate) -> str:
+def _gate_reason(c: Candidate, gate: GateConfig) -> str:
     """Where a find stands, in the worker's own words. Never the finder's `reason`, which a
     model wrote from pages on the open web."""
     who = _FOUND_BY.get(c.found_by, "Found")
@@ -313,6 +334,9 @@ def _gate_reason(c: Candidate) -> str:
         return f"{who}; feed found, queued until a testing slot frees."
     if c.state == "discovered":
         return f"{who}; looking for its feed."
+    if c.state == "testing" and c.passes >= gate.probes_to_activate:
+        return (f"{who}; passed the gate, waiting for one of the {gate.max_active} "
+                "discovered-source slots.")
     if c.state == "testing":
         return f"{who}; {_plural(c.passes, 'healthy probe')} in a row so far."
     if c.failures:
@@ -320,7 +344,7 @@ def _gate_reason(c: Candidate) -> str:
     return f"{who}; feed found, waiting for its first probe."
 
 
-def _pipeline(conn: Connection) -> list[dict[str, Any]]:
+def _pipeline(conn: Connection, gate: GateConfig) -> list[dict[str, Any]]:
     """The finds still at the gate: names and domains only, never a feed URL or evidence."""
     return [
         {
@@ -328,31 +352,237 @@ def _pipeline(conn: Connection) -> list[dict[str, Any]]:
             "host": c.host,
             "state": c.state,
             "found_at": _iso(c.created_at),
-            "reason": _gate_reason(c),
+            "reason": _gate_reason(c, gate),
         }
         for c in load_at_the_gate(conn, limit=PIPELINE_LIMIT)
     ]
 
 
-def _source_health_payload(
-    conn: Connection, generated_at: str, sources: list[_Source] | None = None
+# What a gate or search pass's `detail` (migration 018) may put on the site: counts and the ids of
+# sources it activated or retired, which source-health.json lists anyway.
+_GATE_FIELDS = ("probes", "healthy", "rejected", "activated", "retired", "pruned", "waiting",
+                "promoted")
+_SEARCH_FIELDS = ("searches", "new_hosts", "skipped")
+
+
+def _last_pass(run: JobRun | None, fields: tuple[str, ...]) -> dict[str, Any] | None:
+    """The newest pass of a discovery job: when it finished and whether it completed, then what
+    it found when it did. A pass that raised says so and no more; never its note."""
+    if run is None:
+        return None
+    out: dict[str, Any] = {"finished_at": _iso(run.finished_at), "completed": run.completed}
+    if run.completed and run.detail:
+        out.update({k: run.detail[k] for k in fields if k in run.detail})
+    return out
+
+
+def _discovery_summary(
+    conn: Connection, gate: GateConfig, jobs: dict[str, JobRun], *, shown: int, now: datetime
 ) -> dict[str, Any]:
+    """Where discovery stands, for the Sources page: the slots taken, what waits at the gate
+    and why, and what the last gate pass and search did."""
+    counts = load_gate_counts(conn, gate=gate)
+    return {
+        "active": active_discovered(conn),
+        "max_active": gate.max_active,
+        "ready_waiting": counts.ready_waiting,
+        "testing": counts.testing,
+        "queued": counts.queued,
+        "homes_waiting": counts.homes_waiting,
+        "at_the_gate": counts.at_the_gate,
+        # How many of `at_the_gate` the `pipeline` list shows (PIPELINE_LIMIT).
+        "shown": shown,
+        "rejected_total": counts.rejected,
+        "retired_total": counts.retired,
+        "probes_to_activate": gate.probes_to_activate,
+        "max_open": gate.max_open,
+        "last_gate": _last_pass(jobs.get("source-gate"), _GATE_FIELDS),
+        "last_search": _last_pass(jobs.get("discovery"), _SEARCH_FIELDS),
+        "recent": [
+            {
+                "name": c.name,
+                "host": c.host,
+                "state": c.state,
+                "at": _iso(c.updated_at),
+                "found_by": c.found_by,
+            }
+            for c in load_settled(conn, since=now - SETTLED_WINDOW, limit=SETTLED_LIMIT)
+        ],
+    }
+
+
+def _source_health_payload(
+    conn: Connection,
+    generated_at: str,
+    sources: list[_Source] | None = None,
+    jobs: dict[str, JobRun] | None = None,
+) -> dict[str, Any]:
+    now = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
     if sources is None:
-        sources = _load_sources(conn, datetime.fromisoformat(generated_at))
+        sources = _load_sources(conn, now)
+    if jobs is None:
+        jobs = load_latest_jobs(conn)
+    gate = DiscoveryConfig.load().gate
     entries = [_source_entry(s) for s in sources]
     counts = Counter(e["latest"]["status"] if e["latest"] else "no_data" for e in entries)
+    pipeline = _pipeline(conn, gate)
     return {
         "generated_at": generated_at,
         "counts": dict(counts),
         "sources": entries,
-        "pipeline": _pipeline(conn),
+        "pipeline": pipeline,
+        "discovery": _discovery_summary(conn, gate, jobs, shown=len(pipeline), now=now),
+    }
+
+
+# Each scheduled job that leaves a job_runs row, by the name the row carries (worker/db/jobs.py).
+# The lanes leave `runs` rows instead; the Telegram jobs leave notifications, not passes.
+_JOB_ROWS = {
+    "groundtruth-sync": "groundtruth",
+    "ai-enrichment": "enrichment",
+    "source-discovery": "discovery",
+    "source-gate": "source-gate",
+    "model-scan": "model-scan",
+    "model-gauntlet": "model-gauntlet",
+    "watchdog": "watchdog",
+}
+# Not scheduled: they follow each run, and the site is only as fresh as they are.
+_AFTER_EACH_RUN = (("publish", "Publish"), ("push", "Push"))
+
+
+def _job_health(
+    job_id: str,
+    label: str,
+    newest: JobRun | None,
+    completed: JobRun | None,
+    *,
+    recorded: bool,
+) -> dict[str, Any]:
+    return {
+        "job": job_id,
+        "label": label,
+        "recorded": recorded,
+        "running": False,
+        "last_run_at": _iso_or_none(newest.finished_at if newest else None),
+        "last_success_at": _iso_or_none(completed.finished_at if completed else None),
+        "ok": None if newest is None else newest.completed,
+    }
+
+
+def _lane_health(
+    job_id: str,
+    label: str,
+    started: datetime | None,
+    finished: datetime | None,
+    *,
+    now: datetime,
+) -> dict[str, Any]:
+    """A lane's newest run either finished, is still going, or crashed (it never finished)."""
+    unfinished = started is not None and (finished is None or started > finished)
+    running = unfinished and started >= now - RUN_IN_PROGRESS_WINDOW
+    if started is None:
+        ok = None
+    elif running:
+        ok = finished is not None
+    else:
+        ok = not unfinished
+    return {
+        "job": job_id,
+        "label": label,
+        "recorded": True,
+        "running": running,
+        "last_run_at": _iso_or_none(started),
+        "last_success_at": _iso_or_none(finished),
+        "ok": ok,
+    }
+
+
+def _jobs_payload(
+    conn: Connection, jobs: dict[str, JobRun], *, now: datetime
+) -> list[dict[str, Any]]:
+    """How each job last went: one row per scheduled job, then the publish and the push."""
+    completed = load_latest_jobs(conn, completed_only=True)
+    lanes = load_lane_activity(conn)
+    lane_of = {job.id: lane.value for lane, job in LANE_JOBS.items()}
+    rows = []
+    for entry in public_schedule():
+        job_id, label = entry["job"], entry["label"]
+        if job_id in lane_of:
+            started, finished = lanes.get(lane_of[job_id], (None, None))
+            rows.append(_lane_health(job_id, label, started, finished, now=now))
+            continue
+        name = _JOB_ROWS.get(job_id)
+        rows.append(
+            _job_health(job_id, label, jobs.get(name) if name else None,
+                        completed.get(name) if name else None, recorded=name is not None)
+        )
+    for name, label in _AFTER_EACH_RUN:
+        rows.append(_job_health(name, label, jobs.get(name), completed.get(name), recorded=True))
+    return rows
+
+
+def _ai_payload(
+    conn: Connection,
+    jobs: dict[str, JobRun],
+    live: list[dict[str, Any]],
+    *,
+    budget_usd: Decimal | None,
+    now: datetime,
+) -> dict[str, Any]:
+    """Where the worker's AI layer stands: whose models it calls, under what monthly budget and
+    in which mode, when it last called one, and how many published stories still wait for it.
+    The mode is what the newest enrichment pass recorded, when it recorded one."""
+    month_start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    ai = load_pipeline_ai(conn, since=month_start)
+    enrichment = jobs.get("enrichment")
+    mode = (enrichment.detail or {}).get("mode") if enrichment else None
+    return {
+        "provider": ai.provider,
+        "monthly_budget_usd": None if budget_usd is None else float(budget_usd),
+        "mode": mode if isinstance(mode, str) else None,
+        "calls_this_month": ai.calls,
+        "cost_this_month_usd": round(float(ai.cost_usd), 4),
+        "last_call_at": _iso_or_none(ai.last_call_at),
+        "last_pass_at": _iso_or_none(enrichment.finished_at if enrichment else None),
+        "events": len(live),
+        "awaiting": sum(1 for e in live if e["pending_enrichment"]),
+    }
+
+
+def _run_record(run: RunSummary) -> dict[str, Any]:
+    return {
+        "run_id": run.run_id,
+        "lane": run.lane.value,
+        "started_at": _iso(run.started_at),
+        "finished_at": _iso_or_none(run.finished_at),
+        "sources_ok": run.sources_ok,
+        "sources_failed": run.sources_failed,
+        "sources_stale": run.sources_stale,
+        "items_fetched": run.items_fetched,
+        "new_events": run.new_events,
+        "updated_events": run.updated_events,
+        "duplicates": run.duplicates,
+        "archived_events": run.archived_events,
+        "error_count": len(run.errors),
     }
 
 
 def _system_status_payload(
-    conn: Connection, generated_at: str, *, published: int, total: int
+    conn: Connection,
+    generated_at: str,
+    *,
+    published: int,
+    total: int,
+    live: list[dict[str, Any]] | None = None,
+    jobs: dict[str, JobRun] | None = None,
+    ai_budget_usd: Decimal | None = None,
 ) -> dict[str, Any]:
-    run = load_latest_run(conn)
+    now = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+    if jobs is None:
+        jobs = load_latest_jobs(conn)
+    # The run that finished last, not the newest started: the FAST and NORMAL lanes start
+    # together, and the one still going has nothing to show (28 Oct 2026, "0 sources checked").
+    run = load_latest_finished_run(conn)
     registry = load_registry_rows(conn)
     return {
         "generated_at": generated_at,
@@ -360,23 +590,11 @@ def _system_status_payload(
         "pipeline_version": PIPELINE_VERSION,
         "schema_version": SCHEMA_VERSION,
         "scoring_version": SCORING_VERSION,
-        "last_run": None
-        if run is None
-        else {
-            "run_id": run.run_id,
-            "lane": run.lane.value,
-            "started_at": _iso(run.started_at),
-            "finished_at": _iso_or_none(run.finished_at),
-            "sources_ok": run.sources_ok,
-            "sources_failed": run.sources_failed,
-            "sources_stale": run.sources_stale,
-            "items_fetched": run.items_fetched,
-            "new_events": run.new_events,
-            "updated_events": run.updated_events,
-            "duplicates": run.duplicates,
-            "archived_events": run.archived_events,
-            "error_count": len(run.errors),
-        },
+        "last_run": None if run is None else _run_record(run),
+        "runs_in_progress": [
+            {"run_id": r.run_id, "lane": r.lane.value, "started_at": _iso(r.started_at)}
+            for r in load_unfinished_runs(conn, since=now - RUN_IN_PROGRESS_WINDOW)
+        ],
         "counts": {
             "events_published": published,
             "events_total": total,
@@ -385,6 +603,8 @@ def _system_status_payload(
         },
         # What runs when, and whether code or a model does it (worker/schedule.py).
         "schedule": public_schedule(),
+        "jobs": _jobs_payload(conn, jobs, now=now),
+        "ai": _ai_payload(conn, jobs, live or [], budget_usd=ai_budget_usd, now=now),
     }
 
 
@@ -404,19 +624,33 @@ def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[
     return {"generated_at": generated_at, "pipeline_version": PIPELINE_VERSION, **trends}
 
 
-def _crew_payload(conn: Connection, generated_at: str, now: datetime) -> dict[str, Any]:
-    """The work the worker does for the crew this month (worker/db/crew.py): SERAPH's.
+# What the worker receives from an AI agent, in crew.json's `seen` (worker/db/crew.py).
+_SEEN = (("tachikoma", "source proposal"), ("deckard", "follow-up report"),
+         ("teletraan", "incident verdict"))
+
+
+def _crew_payload(
+    conn: Connection, generated_at: str, now: datetime, jobs: dict[str, JobRun] | None = None
+) -> dict[str, Any]:
+    """The work the worker does for the crew this month (worker/db/crew.py): SERAPH's, and the
+    crew's work that reaches the worker.
 
     SERAPH is doing its job by writing this file, so its last piece of work is now, and it is
-    active unless the newest ground-truth pass failed. It spends no tokens. RIPPERDOC, counted
-    from the cost ledger until it was retired on 2026-10-20, is no longer listed: the worker's
-    own model calls are `pipeline_ai`.
+    active unless the newest ground-truth pass or the newest push failed: the site keeps the last
+    data it was sent. It spends no tokens. RIPPERDOC, counted from the cost ledger until it was
+    retired on 2026-10-20, is no longer listed: the worker's own model calls are `pipeline_ai`.
+    The AI agents work in Paperclip, which the worker never reads, so `seen` is only the last
+    piece of their work that reached it: never a claim that an agent is running.
     """
+    if jobs is None:
+        jobs = load_latest_jobs(conn)
+    push = jobs.get("push")
+    push_failing = push is not None and not push.completed
     month_start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     agents = [
         {
             "callsign": callsign.upper(),
-            "status": "degraded" if activity.failing else "active",
+            "status": "degraded" if activity.failing or push_failing else "active",
             "tasks_completed": activity.tasks,
             "items_processed": activity.items,
             "cost_usd": 0.0,
@@ -425,15 +659,32 @@ def _crew_payload(conn: Connection, generated_at: str, now: datetime) -> dict[st
         for callsign, activity in load_crew_activity(conn, since=month_start).items()
     ]
     ai = load_pipeline_ai(conn, since=month_start)
+    seen = load_crew_seen(conn, since=month_start)
     return {
         "generated_at": generated_at,
         "month": month_start.strftime("%Y-%m"),
         "agents": agents,
-        "pipeline_ai": {"calls": ai.calls, "cost_usd": round(float(ai.cost_usd), 4)},
+        "pipeline_ai": {
+            "calls": ai.calls,
+            "cost_usd": round(float(ai.cost_usd), 4),
+            "last_call_at": _iso_or_none(ai.last_call_at),
+            "provider": ai.provider,
+        },
+        "seen": [
+            {
+                "callsign": name.upper(),
+                "what": what,
+                "last_at": _iso_or_none(seen[name].last_at),
+                "this_month": seen[name].this_month,
+            }
+            for name, what in _SEEN
+        ],
     }
 
 
-def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, dict[str, Any]]]:
+def build_payloads(
+    conn: Connection, *, now: datetime, ai_budget_usd: Decimal | None = None
+) -> dict[str, tuple[str, dict[str, Any]]]:
     """Every public file as `relative path -> (schema name, payload)`, in write order.
 
     Order matters for readers that fetch between moves: the files a page follows links
@@ -477,16 +728,20 @@ def build_payloads(conn: Connection, *, now: datetime) -> dict[str, tuple[str, d
                 "events": events,
             },
         )
+    jobs = load_latest_jobs(conn)
     out["source-health.json"] = (
         "source-health",
-        _source_health_payload(conn, generated_at, sources),
+        _source_health_payload(conn, generated_at, sources, jobs),
     )
     out["system-status.json"] = (
         "system-status",
-        _system_status_payload(conn, generated_at, published=len(live), total=len(public)),
+        _system_status_payload(
+            conn, generated_at, published=len(live), total=len(public), live=live, jobs=jobs,
+            ai_budget_usd=ai_budget_usd,
+        ),
     )
     out["trends.json"] = ("trends", _trends_payload(conn, generated_at, now))
-    out["crew.json"] = ("crew", _crew_payload(conn, generated_at, now))
+    out["crew.json"] = ("crew", _crew_payload(conn, generated_at, now, jobs))
     out["index.json"] = (
         "index",
         {
@@ -607,12 +862,15 @@ def _publish(rendered: dict[str, str], out_dir: Path) -> list[Path]:
         shutil.rmtree(staging, ignore_errors=True)
 
 
-def build_all(conn: Connection, out_dir: Path, *, now: datetime) -> list[Path]:
+def build_all(
+    conn: Connection, out_dir: Path, *, now: datetime, ai_budget_usd: Decimal | None = None
+) -> list[Path]:
     """Build, gate and atomically publish every public file into `out_dir`.
 
     Raises `ValidationFailure` (and leaves `out_dir` untouched) if any payload fails the
-    secret scan or its schema. Returns the paths written.
+    secret scan or its schema. Returns the paths written. `ai_budget_usd` is the AI layer's
+    monthly budget, which system-status.json states; None leaves it unsaid.
     """
-    payloads = build_payloads(conn, now=now)
+    payloads = build_payloads(conn, now=now, ai_budget_usd=ai_budget_usd)
     rendered = _gate(payloads)
     return _publish(rendered, Path(out_dir))

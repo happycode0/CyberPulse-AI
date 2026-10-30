@@ -14,8 +14,9 @@ from pathlib import Path
 import pytest
 
 import worker.publish.build as build
-from worker.db.crew import Activity, PipelineAi
-from worker.db.discovery import Candidate
+from worker.db.crew import Activity, PipelineAi, Seen
+from worker.db.discovery import Candidate, GateCounts
+from worker.db.jobs import JobRun
 from worker.db.sources import RegistryRow
 from worker.db.trends import TrendInputs
 from worker.models import (
@@ -81,12 +82,32 @@ def db(monkeypatch):
         "crew": {
             "seraph": Activity(894, 4045, NOW - timedelta(minutes=50)),
         },
-        "pipeline_ai": PipelineAi(12, Decimal("0.0412")),
+        "pipeline_ai": PipelineAi(12, Decimal("0.0412"), NOW - timedelta(minutes=25),
+                                  "openrouter"),
+        "unfinished": [],
+        "lanes": {"fast": (NOW - timedelta(minutes=5), NOW - timedelta(minutes=3))},
+        "jobs": {},
+        "completed_jobs": {},
+        "gate_counts": GateCounts(ready_waiting=0, testing=0, queued=0, homes_waiting=0,
+                                  at_the_gate=0, rejected=0, retired=0),
+        "settled": [],
+        "active_discovered": 0,
+        "seen": {name: Seen(None, 0) for name in ("tachikoma", "deckard", "teletraan")},
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
     monkeypatch.setattr(build, "load_last_completed_collection", lambda conn: state["completed"])
-    monkeypatch.setattr(build, "load_latest_run", lambda conn: state["run"])
+    monkeypatch.setattr(build, "load_latest_finished_run", lambda conn: state["run"])
+    monkeypatch.setattr(build, "load_unfinished_runs", lambda conn, **kw: state["unfinished"])
+    monkeypatch.setattr(build, "load_lane_activity", lambda conn: state["lanes"])
+    monkeypatch.setattr(
+        build, "load_latest_jobs",
+        lambda conn, completed_only=False: state["completed_jobs" if completed_only else "jobs"],
+    )
+    monkeypatch.setattr(build, "load_gate_counts", lambda conn, **kw: state["gate_counts"])
+    monkeypatch.setattr(build, "load_settled", lambda conn, **kw: state["settled"][:kw["limit"]])
+    monkeypatch.setattr(build, "active_discovered", lambda conn: state["active_discovered"])
+    monkeypatch.setattr(build, "load_crew_seen", lambda conn, **kw: state["seen"])
     monkeypatch.setattr(build, "load_registry_rows", lambda conn: state["registry"])
     monkeypatch.setattr(
         build, "load_health_history", lambda conn, sid, limit=20: state["health"].get(sid, [])
@@ -313,7 +334,7 @@ def _health(*statuses, age=None, error=None):
         (True, LifecycleState.ACTIVE, [], None),
         (True, LifecycleState.TESTING, _health("error", "ok"), None),
         (False, LifecycleState.RETIRED, _health("error"), None),
-        (False, LifecycleState.DISCOVERED, [], ("coming", "Not collected yet.")),
+        (False, LifecycleState.DISCOVERED, [], ("blocked", "Not collected.")),
         (True, LifecycleState.CANDIDATE, [],
          ("coming", "A new find, on trial before it is collected.")),
         (True, LifecycleState.ACTIVE, _health("ok", "timeout", error="ReadTimeout after 30s"),
@@ -345,14 +366,16 @@ def test_attention_says_what_needs_doing(tmp_path, db, enabled, state, history, 
 
 
 def test_a_disabled_registry_source_says_why_it_is_not_collected(tmp_path, db):
+    """Blocked, not coming: nothing moves a disabled curated source on, so the six of them used to
+    sit under COMING for good."""
     db["registry"] = [
         RegistryRow("securityweek", "SecurityWeek", "global", "news", "normal", False)
     ]
     build_all(None, tmp_path, now=NOW)
     [source] = read(tmp_path, "source-health.json")["sources"]
     assert source["attention"] == {
-        "kind": "coming",
-        "reason": "Not collected yet. Blocked: Cloudflare 403 error on feed endpoint.",
+        "kind": "blocked",
+        "reason": "Not collected. Blocked: Cloudflare 403 error on feed endpoint.",
     }
 
 
@@ -405,6 +428,165 @@ def test_the_pipeline_is_capped(tmp_path, db):
     db["gate"] = [_candidate(n, "discovered") for n in range(1, 40)]
     build_all(None, tmp_path, now=NOW)
     assert len(read(tmp_path, "source-health.json")["pipeline"]) == build.PIPELINE_LIMIT == 25
+
+
+def test_a_ready_find_says_it_passed_the_gate(tmp_path, db):
+    ready = build.DiscoveryConfig.load().gate.probes_to_activate
+    db["gate"] = [_candidate(1, "testing", passes=ready + 3),
+                  _candidate(2, "testing", passes=ready - 1)]
+    build_all(None, tmp_path, now=NOW)
+    reasons = [p["reason"] for p in read(tmp_path, "source-health.json")["pipeline"]]
+    assert reasons == [
+        "Found by the nightly search; passed the gate, waiting for one of the 25 "
+        "discovered-source slots.",
+        f"Found by the nightly search; {ready - 1} healthy probes in a row so far.",
+    ]
+
+
+def test_source_health_says_where_discovery_stands(tmp_path, db):
+    """The truth behind the old COMING 31: 25 of 25 slots taken and finds waiting for one."""
+    gate = build.DiscoveryConfig.load().gate
+    db["active_discovered"] = 25
+    db["gate_counts"] = GateCounts(ready_waiting=39, testing=4, queued=2, homes_waiting=15,
+                                   at_the_gate=60, rejected=31, retired=8)
+    settled = [
+        _candidate(7, "active", name="DEV Community"),
+        _candidate(8, "retired"),
+    ]
+    db["settled"] = [
+        c.__class__(**{**c.__dict__, "source_id": f"found_{c.id}",
+                       "updated_at": NOW - timedelta(days=c.id - 6)})
+        for c in settled
+    ]
+    db["completed_jobs"] = {
+        "source-gate": JobRun(
+            "source-gate", NOW - timedelta(hours=1), NOW - timedelta(minutes=59), True,
+            detail={"homes": 5, "feeds_found": 0, "probes": 10, "healthy": 7, "rejected": 3,
+                    "activated": ["found_dev_to"], "retired": [],
+                    "pruned": ["found_spiceworks_com"], "waiting": 39, "promoted": 0},
+        ),
+        "discovery": JobRun(
+            "discovery", NOW - timedelta(hours=9), NOW - timedelta(hours=9), True,
+            detail={"searches": 16, "hits": 140, "new_hosts": 4, "credits": 16,
+                    "skipped": False},
+        ),
+    }
+    db["jobs"] = dict(db["completed_jobs"])
+    build_all(None, tmp_path, now=NOW)
+    summary = read(tmp_path, "source-health.json")["discovery"]
+    assert summary == {
+        "active": 25, "max_active": gate.max_active, "ready_waiting": 39, "testing": 4,
+        "queued": 2, "homes_waiting": 15, "at_the_gate": 60, "shown": 0,
+        "rejected_total": 31, "retired_total": 8,
+        "probes_to_activate": gate.probes_to_activate, "max_open": gate.max_open,
+        "last_gate": {
+            "finished_at": "2026-09-30T11:01:00Z", "completed": True, "probes": 10,
+            "healthy": 7, "rejected": 3, "activated": ["found_dev_to"], "retired": [],
+            "pruned": ["found_spiceworks_com"], "waiting": 39, "promoted": 0,
+        },
+        "last_search": {
+            "finished_at": "2026-09-30T03:00:00Z", "completed": True, "searches": 16,
+            "new_hosts": 4, "skipped": False,
+        },
+        "recent": [
+            {"name": "DEV Community", "host": "feed7.example.org", "state": "active",
+             "at": "2026-09-29T12:00:00Z", "found_by": "search"},
+            {"name": None, "host": "feed8.example.org", "state": "retired",
+             "at": "2026-09-28T12:00:00Z", "found_by": "search"},
+        ],
+    }
+
+
+def test_a_gate_pass_that_raised_is_reported_without_counts(tmp_path, db):
+    db["jobs"] = {"source-gate": JobRun("source-gate", NOW, NOW, False, note="RuntimeError")}
+    build_all(None, tmp_path, now=NOW)
+    summary = read(tmp_path, "source-health.json")["discovery"]
+    assert summary["last_gate"] == {"finished_at": "2026-09-30T12:00:00Z", "completed": False}
+    assert summary["last_search"] is None
+    assert "RuntimeError" not in (tmp_path / "source-health.json").read_text()
+
+
+def test_system_status_reports_the_last_finished_run_and_what_is_still_going(tmp_path, db):
+    """28 Oct: the NORMAL run started with the FAST one and was still going when FAST published,
+    so the page read "0 sources checked" for two days."""
+    db["unfinished"] = [
+        RunSummary(run_id="run-normal", lane=Lane.NORMAL, started_at=NOW - timedelta(minutes=5),
+                   sources_ok=0, sources_failed=0, sources_stale=0, items_fetched=0,
+                   new_events=0, updated_events=0, duplicates=0, archived_events=0),
+    ]
+    build_all(None, tmp_path, now=NOW)
+    status = read(tmp_path, "system-status.json")
+    assert status["last_run"]["run_id"] == "run-1"
+    assert status["last_run"]["finished_at"] == "2026-09-30T11:57:00Z"
+    assert status["runs_in_progress"] == [
+        {"run_id": "run-normal", "lane": "normal", "started_at": "2026-09-30T11:55:00Z"},
+    ]
+
+
+def test_system_status_says_how_each_job_last_went(tmp_path, db):
+    hour = timedelta(hours=1)
+    db["lanes"] = {"fast": (NOW - timedelta(minutes=5), NOW - timedelta(minutes=3)),
+                   "normal": (NOW - timedelta(minutes=5), NOW - 4 * hour)}
+    db["jobs"] = {
+        "groundtruth": JobRun("groundtruth", NOW - 2 * hour, NOW - 2 * hour, True, changed=True),
+        "publish": JobRun("publish", NOW - hour, NOW - hour, False, note="ValidationFailure"),
+        "push": JobRun("push", NOW - 3 * hour, NOW - 3 * hour, True),
+    }
+    db["completed_jobs"] = {
+        "groundtruth": db["jobs"]["groundtruth"],
+        "publish": JobRun("publish", NOW - 2 * hour, NOW - 2 * hour, True),
+        "push": db["jobs"]["push"],
+    }
+    build_all(None, tmp_path, now=NOW)
+    jobs = {j["job"]: j for j in read(tmp_path, "system-status.json")["jobs"]}
+    # Every scheduled job has a row, then the publish and the push after each run.
+    assert list(jobs) == [j["job"] for j in public_schedule()] + ["publish", "push"]
+    assert jobs["lane-fast"] == {
+        "job": "lane-fast", "label": "Fast lane", "recorded": True, "running": False,
+        "last_run_at": "2026-09-30T11:55:00Z", "last_success_at": "2026-09-30T11:57:00Z",
+        "ok": True,
+    }
+    # The newest NORMAL run is still going; its last finished one was four hours ago.
+    assert jobs["lane-normal"]["running"] is True and jobs["lane-normal"]["ok"] is True
+    assert jobs["lane-normal"]["last_success_at"] == "2026-09-30T08:00:00Z"
+    assert jobs["groundtruth-sync"]["ok"] is True
+    assert jobs["groundtruth-sync"]["last_run_at"] == "2026-09-30T10:00:00Z"
+    assert jobs["publish"] == {
+        "job": "publish", "label": "Publish", "recorded": True, "running": False,
+        "last_run_at": "2026-09-30T11:00:00Z", "last_success_at": "2026-09-30T10:00:00Z",
+        "ok": False,
+    }
+    # A job that leaves no row says so, rather than looking healthy or broken.
+    assert jobs["daily-digest"] == {
+        "job": "daily-digest", "label": "Daily digest", "recorded": False, "running": False,
+        "last_run_at": None, "last_success_at": None, "ok": None,
+    }
+    assert "ValidationFailure" not in (tmp_path / "system-status.json").read_text()
+
+
+def test_system_status_says_where_the_ai_layer_stands(tmp_path, db):
+    db["events"] = [make_event(1, pending_enrichment=True),
+                    make_event(2, prominence=0.6, pending_enrichment=True), make_event(3)]
+    db["jobs"] = {"enrichment": JobRun("enrichment", NOW - timedelta(minutes=25),
+                                       NOW - timedelta(minutes=25), True,
+                                       detail={"mode": "free_only"})}
+    build_all(None, tmp_path, now=NOW, ai_budget_usd=Decimal("12"))
+    ai = read(tmp_path, "system-status.json")["ai"]
+    assert ai == {
+        "provider": "openrouter", "monthly_budget_usd": 12.0, "mode": "free_only",
+        "calls_this_month": 12, "cost_this_month_usd": 0.0412,
+        "last_call_at": "2026-09-30T11:35:00Z", "last_pass_at": "2026-09-30T11:35:00Z",
+        "events": 3, "awaiting": 2,
+    }
+
+
+def test_the_ai_state_without_a_recorded_mode_or_a_budget(tmp_path, db):
+    db["pipeline_ai"] = PipelineAi(0, Decimal(0))
+    build_all(None, tmp_path, now=NOW)
+    ai = read(tmp_path, "system-status.json")["ai"]
+    assert (ai["provider"], ai["mode"], ai["monthly_budget_usd"], ai["last_call_at"]) == (
+        None, None, None, None
+    )
 
 
 def test_system_status_publishes_the_schedule_the_worker_runs(tmp_path, db):
@@ -669,7 +851,7 @@ def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
         "callsign": "SERAPH", "status": "active", "tasks_completed": 894,
         "items_processed": 4045, "cost_usd": 0.0, "last_active_at": "2026-09-30T12:00:00Z",
     }
-    assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412}
+    assert crew["pipeline_ai"]["calls"] == 12 and crew["pipeline_ai"]["cost_usd"] == 0.0412
 
 
 def test_seraph_stays_active_between_fast_runs_at_any_cadence(tmp_path, db):
@@ -688,6 +870,34 @@ def test_crew_json_degrades_seraph_when_ground_truth_fails(tmp_path, db):
     agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
     # The newest ground-truth pass raised: degraded, whatever the last good one says.
     assert agents["SERAPH"]["status"] == "degraded"
+
+
+def test_seraph_is_degraded_while_pushes_fail(tmp_path, db):
+    db["jobs"] = {"push": JobRun("push", NOW, NOW, False, note="RuntimeError")}
+    build_all(None, tmp_path, now=NOW)
+    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
+    # The site keeps the last data it was sent, so a push that fails is SERAPH's problem.
+    assert agents["SERAPH"]["status"] == "degraded"
+
+
+def test_crew_json_says_what_the_worker_saw_of_the_crew(tmp_path, db):
+    db["seen"] = {
+        "tachikoma": Seen(datetime(2026, 9, 6, 3, 30, tzinfo=UTC), 0),
+        "deckard": Seen(NOW - timedelta(days=16), 4),
+        "teletraan": Seen(None, 0),
+    }
+    build_all(None, tmp_path, now=NOW)
+    crew = read(tmp_path, "crew.json")
+    assert crew["seen"] == [
+        {"callsign": "TACHIKOMA", "what": "source proposal", "last_at": "2026-09-06T03:30:00Z",
+         "this_month": 0},
+        {"callsign": "DECKARD", "what": "follow-up report", "last_at": "2026-09-14T12:00:00Z",
+         "this_month": 4},
+        {"callsign": "TELETRAAN", "what": "incident verdict", "last_at": None, "this_month": 0},
+    ]
+    assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412,
+                                   "last_call_at": "2026-09-30T11:35:00Z",
+                                   "provider": "openrouter"}
 
 
 def test_the_site_roster_has_every_agent_crew_json_names():

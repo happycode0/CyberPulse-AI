@@ -28,6 +28,18 @@ class PipelineAi:
 
     calls: int
     cost_usd: Decimal
+    # The newest call ever, and who served it: a month without calls still says when AI last ran.
+    last_call_at: datetime | None = None
+    provider: str | None = None
+
+
+@dataclass(frozen=True)
+class Seen:
+    """What the worker last received from an AI agent: its last piece of work the worker can see,
+    and how many this month."""
+
+    last_at: datetime | None
+    this_month: int
 
 
 def _one(conn: Connection, sql: str, since: datetime) -> dict:
@@ -71,8 +83,37 @@ def load_crew_activity(conn: Connection, *, since: datetime) -> dict[str, Activi
 def load_pipeline_ai(conn: Connection, *, since: datetime) -> PipelineAi:
     row = _one(
         conn,
-        "select count(*) as calls, coalesce(sum(cost_usd), 0) as cost "
-        "from cost_ledger where ts >= :since and coalesce(agent, 'worker') = 'worker'",
+        "select count(*) filter (where ts >= :since) as calls, "
+        "coalesce(sum(cost_usd) filter (where ts >= :since), 0) as cost, "
+        "max(ts) as last_call_at, "
+        "(array_agg(provider order by ts desc))[1] as provider "
+        "from cost_ledger where coalesce(agent, 'worker') = 'worker'",
         since,
     )
-    return PipelineAi(row["calls"], Decimal(row["cost"]))
+    return PipelineAi(
+        row["calls"], Decimal(row["cost"]), row["last_call_at"], row["provider"]
+    )
+
+
+def load_crew_seen(conn: Connection, *, since: datetime) -> dict[str, Seen]:
+    """The crew's work that reaches the worker, per callsign (lower case): TACHIKOMA's source
+    proposals, DECKARD's follow-up reports and TELETRAAN's verdicts on incident fixes. The other
+    agents write only into Paperclip, which the worker never reads."""
+    row = _one(
+        conn,
+        "select (select max(proposed_at) from source_candidates where found_by = 'tachikoma') "
+        "       as tachikoma_at, "
+        "       (select count(*) from source_candidates where found_by = 'tachikoma' "
+        "        and proposed_at >= :since) as tachikoma_n, "
+        "       (select max(updated_at) from followup_tasks where status = 'done' "
+        "        and payload ? 'outcome') as deckard_at, "
+        "       (select count(*) from followup_tasks where status = 'done' "
+        "        and payload ? 'outcome' and updated_at >= :since) as deckard_n, "
+        "       (select max(ts) from incident_verdicts) as teletraan_at, "
+        "       (select count(*) from incident_verdicts where ts >= :since) as teletraan_n",
+        since,
+    )
+    return {
+        name: Seen(row[f"{name}_at"], row[f"{name}_n"])
+        for name in ("tachikoma", "deckard", "teletraan")
+    }

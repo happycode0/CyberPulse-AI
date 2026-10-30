@@ -287,6 +287,12 @@ async def _discovery_job() -> None:
         JobRun(
             "discovery", started, _now(), completed=True, errors=len(summary.errors),
             changed=summary.new_hosts > 0,
+            # For the Sources page (worker/publish/build.py `_discovery_summary`).
+            detail={
+                "searches": summary.searches, "hits": summary.hits,
+                "new_hosts": summary.new_hosts, "credits": summary.credits,
+                "skipped": summary.skipped is not None,
+            },
         )
     )
 
@@ -305,6 +311,14 @@ async def _gate_job() -> None:
             JobRun(
                 "source-gate", started, _now(), completed=True, errors=len(summary.errors),
                 changed=summary.changed_anything,
+                # What the pass did, for the Sources page: counts and source ids only.
+                detail={
+                    "homes": summary.homes, "feeds_found": summary.feeds_found,
+                    "probes": summary.probes, "healthy": summary.healthy,
+                    "rejected": summary.rejected, "activated": summary.activated,
+                    "retired": summary.retired, "pruned": summary.pruned,
+                    "waiting": summary.waiting, "promoted": len(summary.promoted),
+                },
             )
         )
     try:

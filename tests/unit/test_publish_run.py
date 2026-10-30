@@ -5,6 +5,7 @@ import asyncio
 import threading
 import time
 from datetime import UTC, datetime
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -39,10 +40,12 @@ def wired(monkeypatch, tmp_path):
 
     class Settings:
         data_dir = tmp_path / "data"
+        ai_monthly_budget_usd = Decimal("12")
 
-    def fake_build_all(conn, out_dir, *, now):
+    def fake_build_all(conn, out_dir, *, now, ai_budget_usd):
         seen["out_dir"] = out_dir
         seen["now"] = now
+        seen["ai_budget_usd"] = ai_budget_usd
         log.append("build")
         return [out_dir / "live.json"]
 
@@ -56,6 +59,8 @@ async def test_it_builds_into_the_configured_data_dir(wired):
     log, seen, data_dir = wired
     written = await publish_run.publish_now()
     assert seen["out_dir"] == data_dir
+    # system-status.json states the AI layer's budget.
+    assert seen["ai_budget_usd"] == Decimal("12")
     assert written == [data_dir / "live.json"]
     assert log == ["connect", "build", "close"]
 
@@ -64,7 +69,7 @@ async def test_the_connection_is_closed_even_when_the_build_fails(wired, monkeyp
     """A publish that leaked a connection after every run would exhaust the pool within a day."""
     log, _, _ = wired
 
-    def boom(conn, out_dir, *, now):
+    def boom(conn, out_dir, *, now, **_):
         log.append("build")
         raise ValidationFailure("a secret reached a payload")
 
@@ -77,7 +82,7 @@ async def test_the_connection_is_closed_even_when_the_build_fails(wired, monkeyp
 async def test_a_validation_failure_is_raised_rather_than_reported_as_a_publish(wired, monkeypatch):
     """Fail-closed has to reach the caller: a swallowed failure would log files that do not exist."""
 
-    def boom(conn, out_dir, *, now):
+    def boom(conn, out_dir, *, now, **_):
         raise ValidationFailure("schema mismatch")
 
     monkeypatch.setattr(publish_run, "build_all", boom)
