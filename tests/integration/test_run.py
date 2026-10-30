@@ -392,3 +392,42 @@ async def test_full_committed_registry_and_scoring_config_load(pg_engine, respx_
     respx_mock.route().respond(404)
     s = await _run_lane(Lane.FAST, once=True, engine=pg_engine)     # wall clock, real config
     assert s.sources_ok == 0 and s.sources_failed > 5 and s.new_events == 0
+
+
+async def test_a_rescore_waits_for_the_ingest_lock(pg_engine, respx_mock, run_lane):
+    """The FAST and NORMAL lanes both start at the top of every fourth hour. A rescore wrote
+    events without the ingest lock, so one lane's rescore and the other's ingest each held rows
+    the other wanted, and Postgres killed an ingest (DeadlockDetected: 2026-10-28 08:00Z and
+    2026-10-30 20:00Z; two sources' items lost for the run and marked as errors). It now takes
+    the lock, so the two queue instead."""
+    import threading
+
+    from worker.db.ingest import lock_ingest
+    from worker.pipeline.run import rescore
+    from worker.pipeline.score import ScoringConfig
+
+    mock_two_feeds(respx_mock)
+    await run_lane(Lane.FAST)
+    with pg_engine.connect() as conn:
+        ids = [r[0] for r in conn.execute(text("select event_id from events"))]
+    assert ids
+    config = ScoringConfig.load(CONFIG / "scoring.yaml")
+
+    done = threading.Event()
+    errors: list[str] = []
+
+    def go():
+        errors.extend(rescore(pg_engine, config, ids, now=NOW))
+        done.set()
+
+    holder = pg_engine.connect()
+    held = holder.begin()
+    lock_ingest(holder)  # as the other lane's ingest holds it
+    worker = threading.Thread(target=go, daemon=True)
+    worker.start()
+    try:
+        assert not done.wait(1.5), "the rescore ran while another lane held the ingest lock"
+    finally:
+        held.rollback()
+        holder.close()
+    assert done.wait(30) and errors == []
