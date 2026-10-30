@@ -738,6 +738,22 @@ async def test_an_enrichment_that_changed_nothing_is_not_published(enrich_job):
     assert log == [("enrich", "the layer"), ("mitre", "the layer")]
 
 
+async def test_the_pass_records_the_budget_mode_it_ran_in(enrich_job):
+    """The SYSTEM page says what mode the AI layer is in from this row (build.py's `ai`)."""
+    _, state = enrich_job
+    state["summary"].mode = "free_only"
+    await scheduler._enrich_job()
+    [run] = state["recorded"]
+    assert run.job == "enrichment" and run.detail == {"mode": "free_only"}
+
+
+async def test_a_pass_with_the_ai_layer_off_records_no_mode(enrich_job):
+    _, state = enrich_job
+    await scheduler._enrich_job()
+    [run] = state["recorded"]
+    assert run.detail is None
+
+
 async def test_new_suggestions_alone_are_published(enrich_job):
     log, state = enrich_job
     state["mitre"].done = 1

@@ -223,10 +223,12 @@ async def _enrich_job() -> None:
     layer = _layer()
     started = _now()
     changed, completed, errors = False, True, 0
+    mode: str | None = None  # the budget mode, which the SYSTEM page shows (build.py `ai`)
     try:
         enriched = await enrich_pending(layer=layer)
         changed |= enriched.changed_anything
         errors += enriched.failed + len(enriched.errors)
+        mode = enriched.mode
     except Exception:
         logger.exception("scheduled enrichment failed")
         completed = False
@@ -237,7 +239,12 @@ async def _enrich_job() -> None:
     except Exception:
         logger.exception("scheduled MITRE suggestions failed")
         completed = False
-    await _record(JobRun("enrichment", started, _now(), completed, errors, changed))
+    await _record(
+        JobRun(
+            "enrichment", started, _now(), completed, errors, changed,
+            detail={"mode": mode} if mode else None,
+        )
+    )
 
     if not changed:
         return
