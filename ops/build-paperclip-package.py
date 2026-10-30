@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Build the CyberPulse company package for Paperclip's Import page.
 
+Paperclip was retired on 2026-10-31: the crew's AI jobs run in the worker, and the server is
+under the `paperclip` compose profile. This builder and its tests stay so the crew can be brought
+back as it was (docs/runbooks/owner-checklist.md §9); nothing in the worker or the site reads its
+output.
+
 Reads the crew (house rules, prompts, models, budgets) from docs/wiki/stage-4b-the-crew.md and
 the routines and mission from docs/wiki/stage-4a-paperclip-setup.md, so the wiki stays the one
 source of truth. Writes a zip that Company Settings -> Import accepts (agentcompanies/v1 plus

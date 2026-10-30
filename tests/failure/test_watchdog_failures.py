@@ -1,9 +1,9 @@
-"""The §11 rows the watchdog and the ops API answer for: Postgres down, Paperclip down, a stale
-public site (the worker's side of "Pages build fails"), Telegram failing and retried, one agent
-failing, the circuit breaker, and a duplicate storm.
+"""The §11 rows the watchdog and the ops API answer for: Postgres down, Paperclip down (stopped
+for good since 2026-10-31), a stale public site (the worker's side of "Pages build fails"),
+Telegram failing and retried, one check failing, the circuit breaker, and a duplicate storm.
 
-The watchdog runs whole passes. Its real probes go over httpx.MockTransport, the real Telegram
-and Incident routine too, and a down database is an engine that refuses every connection. When
+The watchdog runs whole passes. Its real site read goes over httpx.MockTransport, the real
+Telegram too, and a down database is an engine that refuses every connection. When
 the database is up, its tables are kept in memory: notices by tests/failure/conftest.py's
 Notifications, which keeps the retry rule, and incidents by `Store`, which moves them with the
 real reconcile.plan as worker/db/incidents.py does.
@@ -29,7 +29,6 @@ from worker.ops_api import WAKE_JOBS, OpsApi, Verdict
 from worker.pipeline import run as pipeline_run
 from worker.watchdog import run as watchdog_run
 from worker.watchdog.checks import Snapshot, Volume
-from worker.watchdog.paperclip import IncidentRoutine
 from worker.watchdog.reconcile import Known, plan
 from worker.watchdog.run import Watchdog
 
@@ -37,7 +36,6 @@ from .conftest import OPS_TOKEN, credential, down_engine, telegram_token, watchd
 
 NOW = datetime(2026, 10, 3, 8, 0, tzinfo=UTC)
 MIN = timedelta(minutes=1)
-HEALTH = "http://server:3100/api/health"
 AUTH = {"Authorization": f"Bearer {OPS_TOKEN}"}
 
 
@@ -115,20 +113,10 @@ def telegram(answers: Answers) -> Telegram:
     )
 
 
-def routine(answers: Answers) -> IncidentRoutine:
-    return IncidentRoutine(
-        "http://server:3100/api/routine-triggers/public/pub-TESTONLY/fire",
-        SecretStr("fake-webhook-secret-TESTONLY"),
-        user_agent="t",
-        transport=httpx.MockTransport(answers),
-    )
-
-
-def watchdog(tg=None, crew=None, *, token=False, paperclip_url="", **transports) -> Watchdog:
+def watchdog(tg=None, *, token=False, **transports) -> Watchdog:
     return Watchdog(
-        watchdog_settings(watchdog_paperclip_url=paperclip_url),
+        watchdog_settings(),
         telegram=lambda s: tg,
-        routine=lambda s: crew,
         token_configured=lambda: token,
         **transports,
     )
@@ -207,32 +195,14 @@ def test_the_ops_api_answers_503_while_the_database_is_down():
 # ─── Paperclip down ───────────────────────────────────────────────────────────────────────────────
 
 
-async def test_paperclip_down_is_found_on_the_third_probe_and_told_to_telegram_only(world):
-    probes, sent, fires = Answers(httpx.ConnectError), Answers(200), Answers(httpx.ConnectError)
-    dog = watchdog(
-        telegram(sent), routine(fires), paperclip_url=HEALTH,
-        paperclip_transport=httpx.MockTransport(probes),
-    )  # fmt: skip
+async def test_with_paperclip_stopped_the_watchdog_asks_it_nothing_and_opens_nothing(world):
+    """Paperclip was retired on 2026-10-31 and its probe with it. A pass covers paperclip-down,
+    so one left open clears, and never opens one."""
+    sent = Answers(200)
+    dog = watchdog(telegram(sent))
     for n in range(3):
         await dog.run_pass(None, NOW + n * 5 * MIN)
-    [incident] = world["store"].rows.values()
-    assert (incident.kind, incident.severity) == ("paperclip-down", "high")
-    assert len(probes.requests) == 3 and len(sent.requests) == 1 and fires.requests == []
-    assert "TELETRAAN" not in json.loads(sent.requests[0].content)["text"]
-
-
-async def test_with_the_routine_unreachable_telegram_is_still_told_and_the_fire_retried(world):
-    world["snapshot"] = explosion
-    sent, fires = Answers(200), Answers(httpx.ConnectError, httpx.ConnectError, 200)
-    dog = watchdog(telegram(sent), routine(fires))
-    for n in range(4):
-        await dog.run_pass(None, NOW + n * 5 * MIN)
-    notices = world["notices"].rows
-    assert notices["incident:1"]["status"] == "sent" and len(sent.requests) == 1
-    assert notices["paperclip:incident:1"] == {
-        "id": 2, "status": "sent", "attempts": 3, "error": None, "channel": "paperclip"
-    }  # fmt: skip
-    assert len(fires.requests) == 3
+    assert world["store"].rows == {} and sent.requests == []
 
 
 async def test_with_paperclip_down_the_worker_keeps_collecting_and_publishing(monkeypatch):
@@ -349,12 +319,12 @@ async def test_three_failed_verdicts_trip_the_breaker_and_then_only_a_person_is_
     world, monkeypatch
 ):
     """The breaker rule is the SQL in record_verdict (tests/failure/test_breaker_db.py runs it);
-    here its answer is relayed by the API, and the next pass stops the crew."""
+    here its answer is relayed by the API, and the next pass tells a person."""
     world["snapshot"] = explosion
-    sent, fires = Answers(200), Answers(200)
-    dog = watchdog(telegram(sent), routine(fires))
+    sent = Answers(200)
+    dog = watchdog(telegram(sent))
     await dog.run_pass(None, NOW)
-    assert len(fires.requests) == 1
+    assert len(sent.requests) == 1
 
     store = world["store"]
 
@@ -376,7 +346,6 @@ async def test_three_failed_verdicts_trip_the_breaker_and_then_only_a_person_is_
     assert answers[3].json()["result"] == "halted"
 
     await dog.run_pass(None, NOW + 5 * MIN)
-    assert len(fires.requests) == 1  # the crew is not woken again
     assert "incident-breaker:1" in world["notices"].rows
     assert "needs a human" in json.loads(sent.requests[-1].content)["text"]
 

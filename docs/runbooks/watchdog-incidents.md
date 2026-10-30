@@ -4,8 +4,7 @@
 
 The watchdog checks the system every five minutes, at 2, 7, 12 … minutes past the hour (UTC). A
 fault it sees opens an **incident**: a kind, and a subject such as a lane, a source or a job. High
-and critical incidents go to Telegram, and to the crew's Incident routine in Paperclip when that
-is set up:
+and critical incidents go to Telegram:
 
 ```text
 CyberPulse-AI · incident · HIGH
@@ -20,9 +19,12 @@ Seen 14:07 Sydney time, …
 Medium and low ones only wait in the list. Every entry below assumes the `q` and `ops` helpers from
 [Before you start](README.md#before-you-start).
 
-### The Incident routine
+### The Incident routine (retired 2026-10-31)
 
-TELETRAAN's *Incident* routine is a webhook routine in the crew package
+Retired with Paperclip: the worker no longer fires it, and every high or critical incident goes to
+Telegram alone. What follows is how it worked.
+
+TELETRAAN's *Incident* routine was a webhook routine in the crew package
 ([4a, step 7](../wiki/stage-4a-paperclip-setup.md#7--create-the-routines)). The worker fires it
 only for a high or critical incident **of a kind code can fix**: `feed-failing`,
 `parser-drift`, `duplicate-explosion`, `volume-collapse`, `publish-failure`, `schema-drift` and

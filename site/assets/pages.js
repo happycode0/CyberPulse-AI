@@ -280,7 +280,7 @@ export const STORY_STAGES = [
   { id: 'status', name: 'STATUS', kind: 'code', text: 'Marks each story new, developing, contained, resolved and so on. Faded stories are archived.' },
   { id: 'publish', name: 'PUBLISH', kind: 'code', text: 'Checks the schema and scans for secrets, then writes the files this site reads. Any failure stops it.' },
   { id: 'enrich', name: 'AI ENRICHMENT', kind: 'ai', side: true, text: 'Twice an hour, models add summaries and topics, and a severity estimate where no official score exists. Checked, and marked AI.' },
-  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'Agents edit, follow developing stories, triage incidents and propose sources. Nothing waits for them.' },
+  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'In the worker: a daily intelligence report, follow-ups on developing stories with news, and a diagnosis for each serious incident. Nothing waits for them.' },
 ];
 
 export const CODE_DOES = [
@@ -299,7 +299,7 @@ export const AI_DOES = [
   'A first Australian reading, which can raise relevance but never lower it',
   'A severity estimate where no official score exists, replaced when one arrives',
   'MITRE technique suggestions, picked from the loaded catalogue',
-  'The crew: editing, follow-ups, incident triage and source proposals',
+  'The crew\u2019s jobs: the daily intelligence report, follow-ups on developing stories and incident diagnosis',
 ];
 
 // For a snapshot that does not say where the AI layer stands (system-status.json `ai`).
@@ -841,7 +841,7 @@ function lastRunPanel(status, crew, live, now) {
     { name: 'UPDATED', value: run.updated_events, sub: 'stories with new facts' },
     { name: 'DUPLICATES', value: run.duplicates, sub: 'already held' },
     { name: 'ARCHIVED', value: run.archived_events, sub: 'merged or faded' },
-    { name: 'ERRORS', value: errors, sub: errors ? 'recorded for the crew' : 'none', state: errors ? 'warn' : 'ok' },
+    { name: 'ERRORS', value: errors, sub: errors ? 'recorded in the run' : 'none', state: errors ? 'warn' : 'ok' },
     { name: 'PUBLISHED', value: published, sub: pending ? `stories, ${fmtInt(pending)} awaiting AI` : 'stories in this snapshot' },
   ];
   return panel(

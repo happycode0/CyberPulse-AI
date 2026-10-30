@@ -2,32 +2,45 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "crew.schema.json",
   "title": "CyberPulse-AI crew.json",
-  "description": "This month's work the worker does for the crew, counted from the rows its jobs leave: SERAPH's collection, checks and publishing, and the pipeline's own model calls. The AI agents' own runs are in the private control panel and are not counted.",
+  "description": "This month's work by the crew's jobs, which run in the worker since the Paperclip crew was retired on 2026-10-31: SERAPH's collection, checks and publishing (code), MORPHEUS's daily report, DECKARD's follow-ups and TELETRAAN's incident diagnosis (AI calls, from the cost ledger), and the pipeline's own enrichment calls.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generated_at", "month", "agents", "pipeline_ai", "seen"],
+  "required": ["generated_at", "month", "jobs", "pipeline_ai"],
   "properties": {
     "generated_at": { "type": "string", "format": "date-time" },
     "month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
-    "agents": {
+    "jobs": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "callsign", "status", "tasks_completed", "items_processed", "cost_usd", "last_active_at"
+          "callsign", "kind", "stage", "status", "tasks_this_month", "items_this_month",
+          "calls_this_month", "cost_usd", "last_run_at", "model", "provider"
         ],
         "properties": {
           "callsign": { "type": "string", "pattern": "^[A-Z]{2,20}$" },
-          "status": { "enum": ["active", "idle", "degraded"] },
-          "tasks_completed": { "type": ["integer", "null"], "minimum": 0 },
-          "items_processed": { "type": ["integer", "null"], "minimum": 0 },
-          "cost_usd": { "type": ["number", "null"], "minimum": 0 },
-          "last_active_at": { "type": ["string", "null"], "format": "date-time" }
+          "kind": { "enum": ["code", "ai"] },
+          "stage": {
+            "description": "The cost-ledger stage an AI job's calls are recorded under; null for code.",
+            "type": ["string", "null"]
+          },
+          "status": {
+            "description": "active; degraded (SERAPH, while ground truth or the push fails); not_run (an AI job with no call yet).",
+            "enum": ["active", "degraded", "not_run"]
+          },
+          "tasks_this_month": { "type": ["integer", "null"], "minimum": 0 },
+          "items_this_month": { "type": ["integer", "null"], "minimum": 0 },
+          "calls_this_month": { "type": ["integer", "null"], "minimum": 0 },
+          "cost_usd": { "type": "number", "minimum": 0 },
+          "last_run_at": { "type": ["string", "null"], "format": "date-time" },
+          "model": { "type": ["string", "null"] },
+          "provider": { "type": ["string", "null"] }
         }
       }
     },
     "pipeline_ai": {
+      "description": "The pipeline's own enrichment calls this month: triage, briefs, severity and MITRE suggestions.",
       "type": "object",
       "additionalProperties": false,
       "required": ["calls", "cost_usd", "last_call_at", "provider"],
@@ -36,21 +49,6 @@
         "cost_usd": { "type": "number", "minimum": 0 },
         "last_call_at": { "type": ["string", "null"], "format": "date-time" },
         "provider": { "type": ["string", "null"] }
-      }
-    },
-    "seen": {
-      "description": "The last piece of each AI agent's work that reached the worker: TACHIKOMA's source proposals, DECKARD's follow-up reports and TELETRAAN's incident verdicts. Never a claim that an agent is running: the agents work in Paperclip, which the worker never reads.",
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["callsign", "what", "last_at", "this_month"],
-        "properties": {
-          "callsign": { "type": "string", "pattern": "^[A-Z]{2,20}$" },
-          "what": { "type": "string" },
-          "last_at": { "type": ["string", "null"], "format": "date-time" },
-          "this_month": { "type": "integer", "minimum": 0 }
-        }
       }
     }
   }

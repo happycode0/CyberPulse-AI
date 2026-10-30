@@ -1,14 +1,58 @@
 {
   "generated_at": "2026-10-04T10:00:01.877051Z",
   "month": "2026-10",
-  "agents": [
+  "jobs": [
     {
       "callsign": "SERAPH",
+      "kind": "code",
+      "stage": null,
       "status": "active",
-      "tasks_completed": 3499,
-      "items_processed": 47225,
+      "tasks_this_month": 3499,
+      "items_this_month": 47225,
+      "calls_this_month": null,
       "cost_usd": 0.0,
-      "last_active_at": "2026-10-04T10:00:01.877051Z"
+      "last_run_at": "2026-10-04T10:00:01.877051Z",
+      "model": null,
+      "provider": null
+    },
+    {
+      "callsign": "MORPHEUS",
+      "kind": "ai",
+      "stage": "report.daily",
+      "status": "active",
+      "tasks_this_month": null,
+      "items_this_month": null,
+      "calls_this_month": 1,
+      "cost_usd": 0.0021,
+      "last_run_at": "2026-09-28T20:30:00Z",
+      "model": "zhipu/glm-5.3-flash",
+      "provider": "mixroute"
+    },
+    {
+      "callsign": "DECKARD",
+      "kind": "ai",
+      "stage": "followup.report",
+      "status": "active",
+      "tasks_this_month": null,
+      "items_this_month": null,
+      "calls_this_month": 4,
+      "cost_usd": 0.0084,
+      "last_run_at": "2026-10-04T09:12:00Z",
+      "model": "deepseek/deepseek-v4-flash",
+      "provider": "mixroute"
+    },
+    {
+      "callsign": "TELETRAAN",
+      "kind": "ai",
+      "stage": "incident.diagnosis",
+      "status": "not_run",
+      "tasks_this_month": null,
+      "items_this_month": null,
+      "calls_this_month": 0,
+      "cost_usd": 0.0,
+      "last_run_at": null,
+      "model": null,
+      "provider": null
     }
   ],
   "pipeline_ai": {
@@ -16,25 +60,5 @@
     "cost_usd": 0.1177,
     "last_call_at": "2026-10-01T23:35:12Z",
     "provider": "mixroute"
-  },
-  "seen": [
-    {
-      "callsign": "TACHIKOMA",
-      "what": "source proposal",
-      "last_at": "2026-09-06T03:30:00Z",
-      "this_month": 0
-    },
-    {
-      "callsign": "DECKARD",
-      "what": "follow-up report",
-      "last_at": "2026-10-04T09:12:00Z",
-      "this_month": 4
-    },
-    {
-      "callsign": "TELETRAAN",
-      "what": "incident verdict",
-      "last_at": null,
-      "this_month": 0
-    }
-  ]
+  }
 }

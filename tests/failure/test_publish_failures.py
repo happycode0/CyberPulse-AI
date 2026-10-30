@@ -26,7 +26,6 @@ from worker.publish.build import build_all
 from worker.publish.push import push_data
 from worker.publish.validate import ValidationFailure
 from worker.watchdog.checks import PUBLISH_LIMIT, PUSH_LIMIT, Jobs, job_findings
-from worker.watchdog.paperclip import IncidentRoutine
 
 from .conftest import OPS_TOKEN, credential, telegram_token
 
@@ -94,12 +93,7 @@ async def test_every_outbound_channel_withholds_a_secret_instead_of_sending_it()
     transport = httpx.MockTransport(handler)
     telegram = Telegram(SecretStr(telegram_token()), "42", user_agent="t", transport=transport)
     told = await telegram.send(f"the key is {credential()}")
-    routine = IncidentRoutine(
-        "http://paperclip.invalid/hook", SecretStr("fake-webhook-secret-TESTONLY"),
-        user_agent="t", transport=transport,
-    )  # fmt: skip
-    fired = await routine.fire({"title": credential()})
-    assert told.withheld and fired.withheld and sent == []
+    assert told.withheld and sent == []
 
     api = OpsApi(
         engine=None, token=SecretStr(OPS_TOKEN), data_dir=Path("."), key_status=lambda: None,

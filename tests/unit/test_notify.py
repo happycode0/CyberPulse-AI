@@ -413,10 +413,10 @@ def test_a_ladder_notice_names_the_tier_the_model_and_the_guards_reason():
     ]
     assert f"- tier1_cheap · deepseek/deepseek-v4-flash-0731: {OVER}" in lines
     assert f"- audit · qwen/qwen3.8-flash: {GONE}" in lines
-    # The guard has acted already; what is left to the owner is a config edit, and a Paperclip
-    # agent's model, which the ladder does not set.
+    # The guard has acted already; what is left to the owner is a config edit. The crew whose
+    # models the ladder did not set was retired on 2026-10-31.
     assert "needs no approval" in text and "config/models.yaml" in text
-    assert "change it there" in text and "BACK" not in text
+    assert "Paperclip" not in text and "BACK" not in text
 
 
 def test_a_ladder_left_unusable_says_enrichment_is_off():
@@ -454,7 +454,8 @@ def test_the_monthly_cost_is_the_ledgers_month_by_stage_and_model():
     assert "- nvidia/nemotron-3-super-120b-a12b:free: 534 calls, $0.0000" in lines
     # By stage and model, not by agent: the gauntlet's rows still carry RIPPERDOC's label.
     assert "ripperdoc" not in text and "BY AGENT" not in text
-    assert "Paperclip agents' own runs are not in the ledger" in text
+    # Every AI call is the worker's now, so the ledger is the whole spend.
+    assert "Paperclip" not in text
 
 
 def test_a_month_with_no_calls_says_so_and_a_long_breakdown_is_cut():

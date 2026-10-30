@@ -29,7 +29,7 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from pydantic import ValidationError
 from sqlalchemy import Connection
 
-from worker.db.crew import load_crew_activity, load_crew_seen, load_pipeline_ai
+from worker.db.crew import load_crew_activity, load_job_activity, load_pipeline_ai
 from worker.db.discovery import (
     Candidate,
     active_discovered,
@@ -633,61 +633,76 @@ def _trends_payload(conn: Connection, generated_at: str, now: datetime) -> dict[
     return {"generated_at": generated_at, "pipeline_version": PIPELINE_VERSION, **trends}
 
 
-# What the worker receives from an AI agent, in crew.json's `seen` (worker/db/crew.py).
-_SEEN = (("tachikoma", "source proposal"), ("deckard", "follow-up report"),
-         ("teletraan", "incident verdict"))
+# The crew's AI jobs, which run in the worker since Paperclip was retired on 2026-10-31: the
+# callsign each keeps from its agent, and the cost-ledger stage its calls are recorded under.
+CREW_AI_JOBS: tuple[tuple[str, str], ...] = (
+    ("morpheus", "report.daily"),
+    ("deckard", "followup.report"),
+    ("teletraan", "incident.diagnosis"),
+)
 
 
 def _crew_payload(
     conn: Connection, generated_at: str, now: datetime, jobs: dict[str, JobRun] | None = None
 ) -> dict[str, Any]:
-    """The work the worker does for the crew this month (worker/db/crew.py): SERAPH's, and the
-    crew's work that reaches the worker.
+    """The crew's jobs this month (worker/db/crew.py): SERAPH's in code, and the three AI jobs
+    from the cost ledger, in that order.
 
-    SERAPH is doing its job by writing this file, so its last piece of work is now, and it is
-    active unless the newest ground-truth pass or the newest push failed: the site keeps the last
-    data it was sent. It spends no tokens. RIPPERDOC, counted from the cost ledger until it was
-    retired on 2026-10-20, is no longer listed: the worker's own model calls are `pipeline_ai`.
-    The AI agents work in Paperclip, which the worker never reads, so `seen` is only the last
-    piece of their work that reached it: never a claim that an agent is running.
+    SERAPH is doing its job by writing this file, so its last run is now, and it is active
+    unless the newest ground-truth pass or the newest push failed: the site keeps the last data
+    it was sent. It spends no tokens. An AI job that has no call in the ledger is `not_run`:
+    nothing is claimed for it. The enrichment calls are `pipeline_ai`.
     """
     if jobs is None:
         jobs = load_latest_jobs(conn)
     push = jobs.get("push")
     push_failing = push is not None and not push.completed
     month_start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    agents = [
+    seraph = load_crew_activity(conn, since=month_start)["seraph"]
+    rows = [
         {
-            "callsign": callsign.upper(),
-            "status": "degraded" if activity.failing or push_failing else "active",
-            "tasks_completed": activity.tasks,
-            "items_processed": activity.items,
+            "callsign": "SERAPH",
+            "kind": "code",
+            "stage": None,
+            "status": "degraded" if seraph.failing or push_failing else "active",
+            "tasks_this_month": seraph.tasks,
+            "items_this_month": seraph.items,
+            "calls_this_month": None,
             "cost_usd": 0.0,
-            "last_active_at": generated_at,
+            "last_run_at": generated_at,
+            "model": None,
+            "provider": None,
         }
-        for callsign, activity in load_crew_activity(conn, since=month_start).items()
     ]
+    activity = load_job_activity(conn, since=month_start, stages=dict(CREW_AI_JOBS))
+    for callsign, stage in CREW_AI_JOBS:
+        job = activity[callsign]
+        rows.append(
+            {
+                "callsign": callsign.upper(),
+                "kind": "ai",
+                "stage": stage,
+                "status": "active" if job.last_at is not None else "not_run",
+                "tasks_this_month": None,
+                "items_this_month": None,
+                "calls_this_month": job.calls,
+                "cost_usd": round(float(job.cost_usd), 4),
+                "last_run_at": _iso_or_none(job.last_at),
+                "model": job.model,
+                "provider": job.provider,
+            }
+        )
     ai = load_pipeline_ai(conn, since=month_start)
-    seen = load_crew_seen(conn, since=month_start)
     return {
         "generated_at": generated_at,
         "month": month_start.strftime("%Y-%m"),
-        "agents": agents,
+        "jobs": rows,
         "pipeline_ai": {
             "calls": ai.calls,
             "cost_usd": round(float(ai.cost_usd), 4),
             "last_call_at": _iso_or_none(ai.last_call_at),
             "provider": ai.provider,
         },
-        "seen": [
-            {
-                "callsign": name.upper(),
-                "what": what,
-                "last_at": _iso_or_none(seen[name].last_at),
-                "this_month": seen[name].this_month,
-            }
-            for name, what in _SEEN
-        ],
     }
 
 

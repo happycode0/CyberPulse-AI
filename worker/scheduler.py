@@ -1,7 +1,7 @@
 """Scheduling. FAST and NORMAL lanes, the ground-truth sync, AI enrichment, source discovery, the
 model scan and gauntlet, the Telegram notifications (the monthly cost summary among them), the
-watchdog and the crew's wake-ups run in the worker; DEEP is a Paperclip routine, so it has no
-schedule here and is only reachable through `--lane deep --once`."""
+and the watchdog run in the worker. DEEP has no schedule (it was a Paperclip routine, retired with
+the crew on 2026-10-31) and is only reachable through `--lane deep --once`."""
 
 import asyncio
 import logging
@@ -29,7 +29,6 @@ from worker.notify.jobs import (
     send_monthly_cost,
     send_source_activations,
 )
-from worker.notify.routines import wake_routines
 from worker.notify.telegram import Telegram
 from worker.pipeline import run as pipeline_run
 from worker.publish.push import publish_token_configured
@@ -72,9 +71,6 @@ from worker.schedule import (  # noqa: F401
     MONTHLY_COST_JOB_ID,
     MONTHLY_COST_MISFIRE_GRACE_SECONDS,
     MONTHLY_COST_SCHEDULE,
-    ROUTINE_WAKE_JOB_ID,
-    ROUTINE_WAKE_MISFIRE_GRACE_SECONDS,
-    ROUTINE_WAKE_SCHEDULE,
     SCHEDULE,
     WATCHDOG_JOB_ID,
     WATCHDOG_MISFIRE_GRACE_SECONDS,
@@ -412,14 +408,6 @@ async def _watchdog_job() -> None:
         await _record(JobRun("watchdog", started, _now(), False, note=type(exc).__name__))
 
 
-async def _routine_wake_job() -> None:
-    """Never fatal to the schedule; the next pass is an hour away."""
-    try:
-        await wake_routines(get_engine(), get_settings(), now=_now())
-    except Exception:
-        logger.exception("routine wake pass failed")
-
-
 def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
     """A configured, not yet started scheduler, with the jobs worker/schedule.py lists.
 
@@ -443,7 +431,6 @@ def build_scheduler(lanes: tuple[Lane, ...] | None = None) -> AsyncIOScheduler:
         MODEL_SCAN_JOB_ID: _model_scan_job,
         GAUNTLET_JOB_ID: _gauntlet_job,
         WATCHDOG_JOB_ID: _watchdog_job,
-        ROUTINE_WAKE_JOB_ID: _routine_wake_job,
     }
     scheduler = AsyncIOScheduler(timezone="UTC")
     if lanes is None:
@@ -496,21 +483,6 @@ async def serve(lanes: tuple[Lane, ...] | None = None) -> None:
             logger.info("no Telegram bot: the digest, alerts and model notices are not sent")
         else:
             logger.info("Telegram notifications are on")
-        settings = get_settings()
-        if settings.paperclip_incident_webhook_url and settings.paperclip_incident_webhook_secret:
-            logger.info("incidents go to the Incident routine in Paperclip")
-        else:
-            logger.info("no Incident routine webhook: incidents are not sent to Paperclip")
-        for name, url, secret in (
-            ("Follow-up", settings.paperclip_followup_webhook_url,
-             settings.paperclip_followup_webhook_secret),
-            ("Source discovery", settings.paperclip_discovery_webhook_url,
-             settings.paperclip_discovery_webhook_secret),
-        ):
-            if url and secret:
-                logger.info("the %s routine is fired when there is work for it", name)
-            else:
-                logger.info("no %s routine webhook: that routine is never fired", name)
     ops = ops_api.start(get_settings(), get_engine()) if lanes is None else None
     try:
         await stop.wait()

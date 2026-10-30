@@ -5,6 +5,11 @@
 **Reviewed 2026-10-03 against `main` at `13ecc2c9` (Stage 6 merged).** This page covers what the
 code and the VM actually do, not what the plan meant them to do. Where the two differ, it says so.
 
+**Updated 2026-10-31: Paperclip retired.** The crew's AI jobs run in the worker, the Paperclip
+server is stopped, and `docker compose up -d` no longer starts it (the `paperclip` profile). That
+closes [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token), the largest open risk, for as
+long as the server stays stopped. Risks 1, 7, 8 and 9 below are rated again for that.
+
 Each boundary below has a table of the threats that are real here, sorted by STRIDE: **S**poofing,
 **T**ampering, **R**epudiation, **I**nformation disclosure, **D**enial of service, **E**levation
 of privilege. Then the risk that is left, and what you do about it. The page ends with the
@@ -66,7 +71,7 @@ and Telegram as services.
 | `OPENROUTER_API_KEY` | worker; the same key in Paperclip's OpenRouter connection (stage-4a-paperclip-setup.md:347) | Model spend, up to the key's limit |
 | `TAVILY_API_KEY`, `NVD_API_KEY` | worker | Free-tier quotas |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | worker | Posting as the bot in your chat |
-| `PAPERCLIP_INCIDENT_WEBHOOK_URL`, `_SECRET` | worker | Firing the Incident routine, which opens a TELETRAAN issue |
+| `PAPERCLIP_INCIDENT_WEBHOOK_URL`, `_SECRET` | nothing since 2026-10-31: the worker no longer reads them | Retired with the crew; delete them from `.env` |
 | `BETTER_AUTH_SECRET`, `PAPERCLIP_AGENT_JWT_SECRET`, `PAPERCLIP_TOOL_ACTION_SIGNING_SECRET` | server (docker-compose.yml:56-58); the worker through `env_file` | Signing Paperclip's sessions, agent tokens and tool actions |
 | Paperclip's secrets folder | `/paperclip/instances/default/secrets`, inside `HOME=/paperclip` | The keys Paperclip signs and encrypts with |
 | SSH key `cyberpulse_vm_ed25519` | The WSL box | The deploy user on the VM |
@@ -152,7 +157,15 @@ but `data`.
 
 ### B5. Paperclip, its agents and the ops API (ops token)
 
-**This is the largest open risk.**
+**Closed 2026-10-31, while the server stays stopped.** Paperclip and its crew were retired that
+day, and the server no longer starts with the stack. No agent runs, so nothing inherits the
+environment described below. This is the exposure behind CYB-35 and CYB-169, where agent runs
+printed the database URL and a provider key into their run logs, and CYB-36, which asked to keep
+the server's secrets out of agent runs. The two printed credentials should still be rotated: the
+logs are in the `paperclip` database. The rest of this section is how it stood, and applies again
+if the server is brought back with `--profile paperclip`.
+
+**Until 2026-10-31 this was the largest open risk.**
 
 **Observed:** Paperclip's `opencode_local` agents run inside the `server` container and inherit its
 environment. That environment holds `DATABASE_URL`, which logs in as `cyberpulse`, the Postgres
@@ -295,21 +308,21 @@ first; rewriting history comes second, because a public push is copied within mi
 
 | # | Risk | Rating | What you do | Where |
 |---|---|---|---|---|
-| 1 | Paperclip's AI agents run in the server container and inherit its environment: the superuser `DATABASE_URL`, the auth and signing secrets, the ops token, and the secrets folder in their home | **Critical** while any `opencode_local` agent runs | Keep the AI agents paused. Give Paperclip a least-privilege database role (backup first). Raise it upstream | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); docker-compose.yml:53, 56-58, 72-73 |
+| 1 | Paperclip's AI agents run in the server container and inherit its environment: the superuser `DATABASE_URL`, the auth and signing secrets, the ops token, and the secrets folder in their home | **Closed** since 2026-10-31, while the server stays stopped (**critical** if it is brought back and an `opencode_local` agent runs) | Leave the server stopped. Rotate the two credentials CYB-35 and CYB-169 found in run logs | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); docker-compose.yml (the `paperclip` profile) |
 | 2 | No off-host backup (a restore was rehearsed on 2026-10-03, from the VM's own disk). Nothing alerts on a failed backup | **High** | Off-host target, `vzdump`, scheduled `ops/backup.sh` behind a `mountpoint` check, a weekly look at its log, monthly rehearsal | [B8](#b8-backups-on-a-single-disk-host) |
 | 3 | GitHub tokens act as your account, so branch protection and "a human merges" do not bind them. The publish token could force-push any unprotected branch; since 2026-10-03 worker/publish/push.py refuses any but `data` and `data-<name>` | **High** once WHEELJACK runs; medium now | A separate identity for WHEELJACK; a no-bypass ruleset on `main` | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection), [B4](#b4-worker-to-the-github-data-branch-publish-token) |
 | 4 | TELETRAAN runs pull request code in the server container, and no CI runs the tests | **High** once Stage 6 runs | Fix #1 first; CI on pull requests (lead) | [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
 | 5 | The worker holds every secret and mounts the checkout read-write, a path to the deploy user and so to root | **Medium** | Check `id -u`; read-only mount except `data/` (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); docker-compose.yml:21, 26 |
 | 6 | The whole `data` branch becomes the site | **Medium** | Check what `/data/` serves; copy only `*.json` (lead) | [B4](#b4-worker-to-the-github-data-branch-publish-token); pages.yml:63-67 |
-| 7 | One ops token opens all three writes, and every agent holds it | **Medium** | A token per role (lead) | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); ops_api.py:641-655 |
-| 8 | The OpenRouter key's hard limit is the last spend stop, and the agents hold the same key. `cost-anomaly` counts only the worker's calls | **Medium** (at most US$20 a month) | Never raise the limit to clear a symptom; look at the key's usage on OpenRouter weekly; rotate on unexpected spend | [B3](#b3-worker-to-openrouter-and-tavily) |
-| 9 | Paperclip on plain HTTP across the LAN; Connection requests unset | **Medium** | Human only; DHCP reservation; separate network for guests; NetBird later | [B7](#b7-the-lan) |
+| 7 | One ops token opens all three writes. Every agent held it until 2026-10-31; nothing does while the server is stopped | **Low** | A token per role, if Paperclip comes back (lead) | [B5](#b5-paperclip-its-agents-and-the-ops-api-ops-token); ops_api.py:641-655 |
+| 8 | The AI key's own limit (OpenRouter's monthly limit, or the MixRoute key's quota) is the last spend stop. Since 2026-10-31 every AI call is the worker's, so `cost-anomaly` sees all of it | **Low** (at most the key's limit a month) | Never raise the limit to clear a symptom; look at the key's usage weekly; rotate on unexpected spend | [B3](#b3-worker-to-openrouter-and-tavily) |
+| 9 | Paperclip on plain HTTP across the LAN; Connection requests unset | **Closed** while the server is stopped (2026-10-31); **medium** if it comes back | Human only; DHCP reservation; separate network for guests; NetBird later | [B7](#b7-the-lan) |
 | 10 | `db` has no restart policy (docker-compose.yml:2-15). Compose's default is `no`, so after a reboot `worker` and `server` come back and the database does not | **Medium** (availability) | After a reboot, check `docker compose ps`; add `restart: unless-stopped` to `db` (lead) | [Services](runbooks/services.md#database-down) |
 | 11 | `.env` committed to the public repository | **Low** likelihood, high impact | Secret scanning and push protection; never `git add -f` | [B9](#b9-the-public-repository) |
 | 12 | The publish token gains the Workflows permission | **Low** today | Never add it, or Administration | [B4](#b4-worker-to-the-github-data-branch-publish-token) |
 | 13 | Worker images built before 2026-10-03 hold a copy of `.env`; the `.dockerignore` keeps it out of new ones | **Low** while the image never leaves the VM | Never `docker save` or push it; `docker image prune` after the next build and after a rotation | [B8](#b8-backups-on-a-single-disk-host); Dockerfile.worker:16 |
 | 14 | Curated feeds are read whole before the size cap | **Low** | Stream with a cap, as the discovery guard does (lead) | [B2](#b2-untrusted-feed-content-into-the-worker-and-into-model-prompts); collectors/http.py:126-146 |
-| 15 | Out-of-date wording: docker-compose.yml:70-71 ("reads only"). The rest (ops_api.py, 4b, 4c, PLAN.md, 4a §9) was corrected on 2026-10-03 | **Low** | Correct the compose comment when you next edit the server service | This page |
+| 15 | Out-of-date wording: docker-compose.yml:70-71 ("reads only"). Corrected on 2026-10-31, with the rest (ops_api.py, 4b, 4c, PLAN.md, 4a §9) corrected on 2026-10-03 | **Closed** | — | This page |
 | 16 | Actions pinned by tag; Python dependencies unpinned | **Low** | Pin by SHA; a hashed lock file (lead) | [B9](#b9-the-public-repository), [B6](#b6-wheeljack-to-github-engineer-token-and-branch-protection) |
 
 ---

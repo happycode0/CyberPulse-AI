@@ -12,12 +12,12 @@ never shows a value.
 | Name | What it is | Expires | Read by |
 |---|---|---|---|
 | `CYBERPULSE_PUBLISH_TOKEN` | GitHub fine-grained token: this repository, **Contents** read and write | **90 days** | worker |
-| `CYBERPULSE_ENGINEER_TOKEN` | GitHub fine-grained token: this repository, **Contents** and **Pull requests** read and write | **90 days** | WHEELJACK, once Stage 6 runs |
+| `CYBERPULSE_ENGINEER_TOKEN` | Retired with WHEELJACK on 2026-10-31: not needed | — | nothing |
 | `CYBERPULSE_OPS_TOKEN` | Made on the VM, 32 characters or more | Never | worker and server, so every AI agent |
 | `OPENROUTER_API_KEY` | OpenRouter key, US$20 monthly limit | Never | worker, and Paperclip's OpenRouter connection |
 | `TAVILY_API_KEY`, `NVD_API_KEY` | Free-tier API keys | Never | worker |
 | `TELEGRAM_BOT_TOKEN` | The bot's token from @BotFather | Never | worker |
-| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | The Incident routine's webhook secret | Never | worker |
+| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Retired with Paperclip on 2026-10-31: the worker no longer reads it | — | nothing |
 | `POSTGRES_PASSWORD` | The database superuser's password | Never | db, worker, server |
 | `BETTER_AUTH_SECRET`, `PAPERCLIP_AGENT_JWT_SECRET`, `PAPERCLIP_TOOL_ACTION_SIGNING_SECRET`, and Paperclip's secrets folder | Paperclip's signing and encryption keys | Never | server |
 
@@ -204,7 +204,7 @@ Each takes [the same six steps](#the-same-six-steps-every-time), and a recreate 
 | `TAVILY_API_KEY` | [app.tavily.com](https://app.tavily.com), a new API key | The next discovery pass (03:10 Sydney) completes: `q "select finished_at, completed, note from job_runs where job = 'discovery' order by finished_at desc limit 1"` | Delete it on Tavily |
 | `NVD_API_KEY` | [Request a new one](https://nvd.nist.gov/developers/request-an-api-key). Blank is fine too | The next ground-truth pass (:25, every 6 hours) completes, as above with `job = 'groundtruth'` | NVD's site has no revoke. The key only raises a free rate limit |
 | `TELEGRAM_BOT_TOKEN` | **@BotFather** → `/revoke` → your bot. The old one stops at once, so do the rest straight away | `docker compose logs worker --since 5m \| grep -i telegram` says `Telegram notifications are on`. The chat id does not change | Done by `/revoke` |
-| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Paperclip → **Routines → Incident**, the webhook trigger card → **Rotate secret**. It is shown once | The start-up log says `incidents go to the Incident routine in Paperclip`. On the next sent incident, no `paperclip:incident:<n>: failed` line | Done by the rotation |
+| `PAPERCLIP_INCIDENT_WEBHOOK_SECRET` | Retired on 2026-10-31: nothing reads it. Delete it from `.env` | — | — |
 
 `ops/check-keys.sh` checks most of these in one go from the VM, without showing a value. It needs
 `jq` (`sudo apt-get install -y jq`), and it sends a test message to the Telegram chat.
