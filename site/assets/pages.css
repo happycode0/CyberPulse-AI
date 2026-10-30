@@ -67,7 +67,8 @@
 
 /* SOURCES: the summary strip. */
 .pg-strip { list-style: none; margin: 0 0 var(--gap); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-@media (max-width: 560px) { .pg-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pg-strip[data-tiles="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 560px) { .pg-strip, .pg-strip[data-tiles="5"] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .pg-tile { display: grid; gap: 4px; min-width: 0; padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--line); border-left: 3px solid var(--tile, var(--line-strong)); border-radius: var(--radius); }
 .pg-tile[data-group="ok"] { --tile: var(--sev-low); --tile-text: var(--sev-low); }
 .pg-tile[data-group="fail"] { --tile: var(--sev-critical); --tile-text: var(--sev-critical-text); }
@@ -165,3 +166,11 @@
   .pg-cell[data-group="watch"] { fill: none; stroke: CanvasText; }
   .pg-meter__track { fill: Canvas; stroke: CanvasText; }
 }
+
+/* A snapshot that stopped updating says so at the top of the page (pages.js `staleNotice`). */
+.pg-stale { margin-bottom: var(--gap); max-width: none; border-color: var(--sev-medium); color: var(--text); }
+/* How each job last went: a state marker and its words (pages.js `jobHealth`). */
+.pg-health { display: inline-flex; align-items: center; gap: 6px; font: 400 12.5px/1.4 var(--font-mono); color: var(--text-dim); white-space: nowrap; }
+.pg-health[data-state="fail"] { color: var(--text); }
+.pg-after-run { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.pg-discovery li { max-width: 90ch; }

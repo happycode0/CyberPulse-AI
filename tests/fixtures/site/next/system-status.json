@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-10-04T10:00:01.877051Z",
+  "last_completed_collection": "2026-10-04T10:00:01.872199Z",
+  "pipeline_version": "1.0.0",
+  "schema_version": "1",
+  "scoring_version": "4",
+  "last_run": {
+    "run_id": "run-fast-20261004T100000Z-61d3bd",
+    "lane": "fast",
+    "started_at": "2026-10-04T10:00:00.085037Z",
+    "finished_at": "2026-10-04T10:00:01.872199Z",
+    "sources_ok": 10,
+    "sources_failed": 0,
+    "sources_stale": 1,
+    "items_fetched": 90,
+    "new_events": 0,
+    "updated_events": 0,
+    "duplicates": 90,
+    "archived_events": 0,
+    "error_count": 1
+  },
+  "counts": {
+    "events_published": 194,
+    "events_total": 4907,
+    "sources_total": 60,
+    "sources_enabled": 54
+  },
+  "schedule": [
+    {
+      "job": "lane-fast",
+      "label": "Fast lane",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the fast-lane sources and republishes."
+    },
+    {
+      "job": "lane-normal",
+      "label": "Normal lane",
+      "cron": "0 */4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the normal-lane sources and republishes."
+    },
+    {
+      "job": "groundtruth-sync",
+      "label": "Ground-truth sync",
+      "cron": "25 */6 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Reads the public registers and rescores."
+    },
+    {
+      "job": "ai-enrichment",
+      "label": "AI enrichment",
+      "cron": "5,35 * * * *",
+      "timezone": "UTC",
+      "kind": "ai",
+      "summary": "Asks a model to brief a small batch of new events."
+    },
+    {
+      "job": "daily-digest",
+      "label": "Daily digest",
+      "cron": "10 7,8,9 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Sends the morning digest to Telegram."
+    },
+    {
+      "job": "source-discovery",
+      "label": "Discovery search",
+      "cron": "10 3 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Searches the web for feeds worth adding."
+    },
+    {
+      "job": "source-gate",
+      "label": "Source gate",
+      "cron": "50 3-23/4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Probes each candidate feed."
+    }
+  ],
+  "runs_in_progress": [
+    {
+      "run_id": "run-normal-20261004T100000Z-045959",
+      "lane": "normal",
+      "started_at": "2026-10-04T10:00:00.180102Z"
+    }
+  ],
+  "jobs": [
+    {
+      "job": "lane-fast",
+      "label": "Fast lane",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T10:00:00.085037Z",
+      "last_success_at": "2026-10-04T10:00:01.872199Z",
+      "ok": true
+    },
+    {
+      "job": "lane-normal",
+      "label": "Normal lane",
+      "recorded": true,
+      "running": true,
+      "last_run_at": "2026-10-04T10:00:00.180102Z",
+      "last_success_at": "2026-10-04T06:02:03Z",
+      "ok": true
+    },
+    {
+      "job": "groundtruth-sync",
+      "label": "Ground-truth sync",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T06:25:40Z",
+      "last_success_at": "2026-10-04T06:25:40Z",
+      "ok": true
+    },
+    {
+      "job": "ai-enrichment",
+      "label": "AI enrichment",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T09:35:00Z",
+      "last_success_at": "2026-10-04T09:35:00Z",
+      "ok": true
+    },
+    {
+      "job": "daily-digest",
+      "label": "Daily digest",
+      "recorded": false,
+      "running": false,
+      "last_run_at": null,
+      "last_success_at": null,
+      "ok": null
+    },
+    {
+      "job": "source-discovery",
+      "label": "Discovery search",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-03T16:10:30Z",
+      "last_success_at": "2026-10-03T16:10:30Z",
+      "ok": true
+    },
+    {
+      "job": "source-gate",
+      "label": "Source gate",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T07:51:22Z",
+      "last_success_at": "2026-10-02T07:51:22Z",
+      "ok": false
+    },
+    {
+      "job": "publish",
+      "label": "Publish",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T10:00:01Z",
+      "last_success_at": "2026-10-04T10:00:01Z",
+      "ok": true
+    },
+    {
+      "job": "push",
+      "label": "Push",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-04T09:01:30Z",
+      "last_success_at": "2026-10-04T08:01:30Z",
+      "ok": false
+    }
+  ],
+  "ai": {
+    "provider": "mixroute",
+    "monthly_budget_usd": 12.0,
+    "mode": "free_only",
+    "calls_this_month": 960,
+    "cost_this_month_usd": 0.1177,
+    "last_call_at": "2026-10-01T23:35:12Z",
+    "last_pass_at": "2026-10-04T09:35:00Z",
+    "events": 10,
+    "awaiting": 9
+  }
+}

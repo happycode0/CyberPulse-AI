@@ -280,7 +280,7 @@ export const STORY_STAGES = [
   { id: 'status', name: 'STATUS', kind: 'code', text: 'Marks each story new, developing, contained, resolved and so on. Faded stories are archived.' },
   { id: 'publish', name: 'PUBLISH', kind: 'code', text: 'Checks the schema and scans for secrets, then writes the files this site reads. Any failure stops it.' },
   { id: 'enrich', name: 'AI ENRICHMENT', kind: 'ai', side: true, text: 'Twice an hour, models add summaries and topics, and a severity estimate where no official score exists. Checked, and marked AI.' },
-  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'Agents edit, check quality and look for new sources. Nothing waits for them.' },
+  { id: 'crew', name: 'CREW', kind: 'ai', side: true, text: 'Agents edit, follow developing stories, triage incidents and propose sources. Nothing waits for them.' },
 ];
 
 export const CODE_DOES = [
@@ -290,6 +290,7 @@ export const CODE_DOES = [
   'Severity from official scores',
   'Scores, importance and source reputation',
   'Status, archiving and publishing',
+  'Finding and testing new sources: a nightly search and a probe gate',
 ];
 
 export const AI_DOES = [
@@ -298,18 +299,69 @@ export const AI_DOES = [
   'A first Australian reading, which can raise relevance but never lower it',
   'A severity estimate where no official score exists, replaced when one arrives',
   'MITRE technique suggestions, picked from the loaded catalogue',
-  'The crew: editing, quality checks and source discovery',
+  'The crew: editing, follow-ups, incident triage and source proposals',
 ];
 
+// For a snapshot that does not say where the AI layer stands (system-status.json `ai`).
 export const BUDGET_SENTENCE =
-  'AI runs under a hard US$20 monthly cap: as it runs down, AI steps move to cheaper or free ' +
+  'AI runs under a hard monthly cap: as it runs down, AI steps move to cheaper or free ' +
   'models and then stop, and collection and publishing never depend on them.';
+
+const PROVIDER_NAME = { openrouter: 'OpenRouter', mixroute: 'MixRoute' };
+const MODE_TEXT = {
+  full: 'full, the whole model ladder',
+  conserve: 'conserve, the strong models only for critical and KEV-linked stories',
+  minimal: 'minimal, the cheapest models for the stories that matter most',
+  free_only: 'free models only, as the paid budget is spent or cannot be read',
+  off: 'off, no model calls',
+};
+
+// What the AI layer is doing now, from system-status.json `ai`: whose models, under what cap and
+// mode, when it last called one and how many published stories wait for it. Null without one.
+export function aiStateText(ai, now) {
+  if (!isObj(ai)) return null;
+  const at = nowMs(now);
+  const via = PROVIDER_NAME[str(ai.provider)] || str(ai.provider);
+  const cap = fmtUsd(ai.monthly_budget_usd);
+  const mode = MODE_TEXT[str(ai.mode)];
+  const last = parseTime(ai.last_call_at);
+  const events = num(ai.events);
+  const awaiting = num(ai.awaiting);
+  const parts = [
+    `AI runs ${via ? `through ${via}` : 'on the AI key'} under a hard ${cap ? `${cap} ` : ''}monthly cap.`,
+    mode ? `Budget mode: ${mode}.` : null,
+    last === null ? 'No model call has been recorded yet.' : `Last model call ${sydneyStamp(last)} Sydney, ${fmtAgo(at - last)}.`,
+    events !== null && awaiting !== null && events > 0
+      ? `${fmtInt(awaiting)} of ${fmtInt(events)} published ${plural(events, 'story', 'stories')} ${awaiting === 1 ? 'awaits' : 'await'} AI.`
+      : null,
+    'Collection and publishing never depend on it.',
+  ];
+  return parts.filter(Boolean).join(' ');
+}
 
 export const FALLBACK_SCHEDULE = [
   { job: 'fast', label: 'FAST LANE', cron: '0 * * * *', timezone: 'UTC', kind: 'code', summary: 'Checks the quickest sources: advisories and busy news feeds.' },
   { job: 'normal', label: 'NORMAL LANE', cron: '0 */4 * * *', timezone: 'UTC', kind: 'code', summary: 'Checks the rest of the regular sources.' },
-  { job: 'deep', label: 'DEEP LANE AND DISCOVERY', cron: '10 3 * * *', timezone: SYDNEY, kind: 'mixed', summary: 'Slow sources, and a search for new ones.' },
+  { job: 'discovery', label: 'DISCOVERY SEARCH', cron: '10 3 * * *', timezone: SYDNEY, kind: 'code', summary: 'Searches for new sources; the gate tests each find before anything is collected.' },
 ];
+
+// The worker publishes after every collection, about once an hour. Older than this, the page
+// says so: a snapshot that stopped updating cannot report that itself.
+export const STALE_AFTER = 2 * HOUR;
+
+// When the snapshot was built and how long ago, if that is longer than STALE_AFTER; else null.
+// `files` are any of the published files, read in order for their `generated_at`.
+export function staleSince(now, ...files) {
+  const built = files.map((f) => parseTime(f?.generated_at)).find((t) => t !== null) ?? null;
+  if (built === null) return null;
+  const age = nowMs(now) - built;
+  return age > STALE_AFTER ? { at: built, ago: fmtAgo(age), text: `Not updated since ${sydneyStamp(built)} Sydney, ${fmtAgo(age)}. The worker publishes after every collection, about once an hour; until it does again, everything here is as of then.` } : null;
+}
+
+function staleNotice(now, ...files) {
+  const stale = staleSince(now, ...files);
+  return stale ? h('p', { class: 'notice pg-stale', role: 'status', text: stale.text }) : null;
+}
 
 const KIND_LABEL = { code: 'CODE', ai: 'AI', mixed: 'CODE + AI' };
 const KIND_GLYPH = { code: '■', ai: '◇', mixed: '◈' };
@@ -330,7 +382,7 @@ function kindMarker(kind) {
 const FAIL_STATUSES = new Set(['error', 'timeout', 'empty', 'failed']);
 const WATCH_STATUSES = new Set(['stale', 'degraded']);
 const COMING_LIFECYCLES = new Set(['discovered', 'candidate']);
-const ATTENTION_KINDS = new Set(['fix', 'watch', 'coming']);
+const ATTENTION_KINDS = new Set(['fix', 'watch', 'coming', 'blocked']);
 
 export const STANDING_POINTS = { authoritative: 90, established: 75, specialist: 60, community: 40 };
 export const REPUTATION_WEIGHTS = [
@@ -404,7 +456,7 @@ function comingReason(source) {
   return 'Not switched on yet.';
 }
 
-// What, if anything, a source needs: { kind: 'fix'|'watch'|'coming'|'off'|null, reason }.
+// What, if anything, a source needs: { kind: 'fix'|'watch'|'coming'|'blocked'|'off'|null, reason }.
 // A published `attention` object wins. Without one (an older file, or null for "nothing to
 // add"), it is worked out from the lifecycle and the latest check.
 export function attentionOf(source) {
@@ -414,7 +466,9 @@ export function attentionOf(source) {
   const status = statusOf(latest);
   const given = isObj(source.attention) ? source.attention : null;
   if (given && ATTENTION_KINDS.has(given.kind)) {
-    const fallback = given.kind === 'coming' ? comingReason(source) : `Last check: ${STATUS_LABEL[status] || 'unknown'}.`;
+    const fallback = given.kind === 'coming' ? comingReason(source)
+      : given.kind === 'blocked' ? 'Switched off in the source registry.'
+        : `Last check: ${STATUS_LABEL[status] || 'unknown'}.`;
     return { kind: given.kind, reason: sentence(shortText(given.reason, 160)) || fallback };
   }
   if (life === 'retired') return { kind: 'off', reason: 'Retired.' };
@@ -466,25 +520,52 @@ export function reputationOf(source) {
   };
 }
 
+// source-health.json `discovery`, read strictly: null unless it says how many discovered-source
+// slots there are and how many are taken.
+export function discoveryOf(health) {
+  const d = isObj(health?.discovery) ? health.discovery : null;
+  const n = (v) => (num(v) === null ? null : Math.max(0, Math.round(v)));
+  if (!d || n(d.active) === null || n(d.max_active) === null) return null;
+  const pass = (v) => (isObj(v) && parseTime(v.finished_at) !== null ? v : null);
+  return {
+    active: n(d.active),
+    max: n(d.max_active),
+    ready: n(d.ready_waiting) ?? 0,
+    testing: n(d.testing) ?? 0,
+    queued: n(d.queued) ?? 0,
+    homes: n(d.homes_waiting) ?? 0,
+    atGate: n(d.at_the_gate),
+    shown: n(d.shown),
+    rejected: n(d.rejected_total),
+    retired: n(d.retired_total),
+    lastGate: pass(d.last_gate),
+    lastSearch: pass(d.last_search),
+    recent: Array.isArray(d.recent) ? d.recent.filter((r) => isObj(r) && (str(r.name) || str(r.host))) : [],
+  };
+}
+
 export function classifySources(health) {
   if (!isObj(health) || !Array.isArray(health.sources)) return null;
   const sources = health.sources.filter(isObj);
-  const groups = { fix: [], watch: [], active: [], coming: [], off: [] };
+  const groups = { fix: [], watch: [], active: [], coming: [], blocked: [], off: [] };
   for (const src of sources) {
     const { kind } = attentionOf(src);
     if (kind === 'fix') groups.fix.push(src);
     else if (kind === 'watch') groups.watch.push(src);
     else if (kind === 'coming') groups.coming.push(src);
+    else if (kind === 'blocked') groups.blocked.push(src);
     else if (kind === 'off') groups.off.push(src);
     else groups.active.push(src);
   }
   groups.pipeline = Array.isArray(health.pipeline) ? health.pipeline.filter(isObj) : [];
+  groups.discovery = discoveryOf(health);
   groups.counts = {
     total: sources.length,
     healthy: groups.active.length,
     fix: groups.fix.length,
     watch: groups.watch.length,
     coming: groups.coming.length + groups.pipeline.length,
+    blocked: groups.blocked.length,
     retired: groups.off.length,
   };
   return groups;
@@ -496,7 +577,7 @@ export function filterSources(list, region = 'all') {
   return items.filter((src) => regionOf(src) === region);
 }
 
-const ATTENTION_RANK = { fix: 0, watch: 1, coming: 3, off: 4 };
+const ATTENTION_RANK = { fix: 0, watch: 1, coming: 3, blocked: 4, off: 5 };
 const GROUP_RANK = { fail: 0, watch: 1, off: 2, ok: 3 };
 
 export function sortSources(list, by = 'reputation') {
@@ -629,7 +710,7 @@ function flowPanel() {
   );
 }
 
-function splitPanel() {
+function splitPanel(status, now) {
   const column = (kind, head, items) =>
     h(
       'div',
@@ -641,7 +722,7 @@ function splitPanel() {
     'pg-sys-split',
     'WHAT IS CODE, WHAT IS AI',
     h('div', { class: 'pg-split' }, column('code', 'Rules and formulas', CODE_DOES), column('ai', 'Language models', AI_DOES)),
-    h('p', { class: 'pg-budget', text: BUDGET_SENTENCE }),
+    h('p', { class: 'pg-budget', text: aiStateText(status?.ai, now) || BUDGET_SENTENCE }),
   );
 }
 
@@ -650,9 +731,36 @@ function scheduleRows(status) {
   return list.length ? { rows: list, fallback: false } : { rows: FALLBACK_SCHEDULE, fallback: true };
 }
 
-function schedulePanel(status) {
+// How a job last went (system-status.json `jobs`), as words and a state for the marker.
+export function jobHealth(row, now) {
+  if (!isObj(row)) return null;
+  const at = nowMs(now);
+  const ago = (v) => {
+    const t = parseTime(v);
+    return t === null ? null : fmtAgo(at - t);
+  };
+  const good = ago(row.last_success_at);
+  if (row.recorded === false) return { state: 'idle', text: 'NOT RECORDED' };
+  if (row.running === true) return { state: 'ok', text: good ? `RUNNING · last OK ${good}` : 'RUNNING' };
+  if (row.ok === true) return { state: 'ok', text: `OK · ${ago(row.last_run_at) || 'time unknown'}` };
+  if (row.ok === false) return { state: 'fail', text: good ? `FAILING · last OK ${good}` : 'FAILING · never OK' };
+  return { state: 'idle', text: 'NOT RUN YET' };
+}
+
+function healthMarker(health) {
+  if (!health) return h('span', { class: 'hint', text: '—' });
+  return h('span', { class: 'pg-health', 'data-state': health.state }, h('span', { class: 'led', 'data-state': health.state, 'aria-hidden': 'true' }), health.text);
+}
+
+function jobsById(status) {
+  const list = Array.isArray(status?.jobs) ? status.jobs.filter((j) => isObj(j) && str(j.job)) : [];
+  return new Map(list.map((j) => [j.job, j]));
+}
+
+function schedulePanel(status, now) {
   const { rows, fallback } = scheduleRows(status);
-  const head = ['JOB', 'WHEN', 'CRON', 'KIND', 'WHAT IT DOES'];
+  const jobs = jobsById(status);
+  const head = ['JOB', 'WHEN', 'CRON', 'KIND', 'WHAT IT DOES', 'HEALTH'];
   const table = h(
     'table',
     { class: 'pg-table pg-schedule' },
@@ -670,16 +778,27 @@ function schedulePanel(status) {
           h('td', { 'data-label': 'CRON' }, h('code', { class: 'mono', text: str(r.cron) }), h('span', { class: 'pg-tz', text: ` ${tzLabel(r.timezone)}` })),
           h('td', { 'data-label': 'KIND' }, kindMarker(r.kind) || h('span', { class: 'hint', text: '—' })),
           h('td', { 'data-label': 'WHAT IT DOES', text: str(r.summary) || '—' }),
+          h('td', { 'data-label': 'HEALTH' }, healthMarker(jobHealth(jobs.get(str(r.job)), now))),
         ),
       ),
     ),
   );
+  // The publish and the push follow every run: the site is only as fresh as they are.
+  const after = ['publish', 'push'].map((id) => [id, jobHealth(jobs.get(id), now)]).filter(([, health]) => health);
   return panel(
     'pg-sys-schedule',
     'SCHEDULE',
     table,
+    after.length
+      ? h(
+        'p',
+        { class: 'hint pg-after-run' },
+        'After each run: ',
+        after.map(([id, health], i) => [i ? ' · ' : null, `${id.toUpperCase()} `, healthMarker(health)]),
+      )
+      : null,
     fallback
-      ? h('p', { class: 'hint', text: 'The full schedule has not been published yet, so these are the standing defaults. Deep collection and discovery run at about 03:10 Sydney.' })
+      ? h('p', { class: 'hint', text: 'The full schedule has not been published yet, so these are the standing defaults. The search for new sources runs at about 03:10 Sydney.' })
       : h('p', { class: 'hint', text: 'Times are UTC unless marked Sydney. The site is republished after every collection run.' }),
   );
 }
@@ -696,7 +815,7 @@ function aiLine(crew) {
 function lastRunPanel(status, crew, live, now) {
   const run = isObj(status?.last_run) ? status.last_run : null;
   if (!run) {
-    return panel('pg-sys-run', 'LAST RUN', h('p', { class: 'empty', text: 'No completed run has been published yet.' }), aiLine(crew));
+    return panel('pg-sys-run', 'LAST RUN', h('p', { class: 'empty', text: 'No completed run has been published yet.' }), goingLine(status, now), aiLine(crew));
   }
   const at = nowMs(now);
   const fin = parseTime(run.finished_at);
@@ -743,9 +862,32 @@ function lastRunPanel(status, crew, live, now) {
         ),
       ),
     ),
+    goingLine(status, now),
     aiLine(crew),
     str(run.run_id) ? h('p', { class: 'hint mono pg-run__id', text: `RUN ${run.run_id}` }) : null,
   );
+}
+
+// A run that started with the FAST lane and is still going: LAST RUN is the one that finished.
+function goingLine(status, now) {
+  const going = (Array.isArray(status?.runs_in_progress) ? status.runs_in_progress : [])
+    .filter((r) => isObj(r) && parseTime(r.started_at) !== null);
+  if (!going.length) return null;
+  const at = nowMs(now);
+  const words = going.map((r) => {
+    const t = parseTime(r.started_at);
+    return `${str(r.lane) ? `${r.lane.toUpperCase()} lane` : 'a run'}, started ${sydneyStamp(t)} Sydney (${fmtAgo(at - t)})`;
+  });
+  return h('p', { class: 'hint pg-run__going', text: `Still going: ${words.join('; ')}.` });
+}
+
+// How many stories the models have reached, and on which version. "0" is the version of a story
+// no model has touched, so it is never reported as a version.
+function enrichmentAcross(events) {
+  if (!events.length) return null;
+  const done = events.filter((e) => str(e.enrichment_version) && e.enrichment_version !== '0' && e.pending_enrichment !== true);
+  if (!done.length) return `none of ${fmtInt(events.length)} ${plural(events.length, 'story', 'stories')} yet`;
+  return `${versionAcross(done, (e) => e.enrichment_version)} · ${fmtInt(done.length)} of ${fmtInt(events.length)} ${plural(events.length, 'story', 'stories')}`;
 }
 
 // The most common value of a version stamp across a list, and how many carry another.
@@ -758,7 +900,7 @@ function versionAcross(items, pick) {
   if (!tally.size) return null;
   const [top, n] = [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
   const rest = [...tally.values()].reduce((a, b) => a + b, 0) - n;
-  return rest ? `${top} (${fmtInt(rest)} on older)` : top;
+  return rest ? `${top} (${fmtInt(rest)} on another)` : top;
 }
 
 function versionsPanel(status, health, live, now) {
@@ -776,7 +918,7 @@ function versionsPanel(status, health, live, now) {
     ['PIPELINE', str(status?.pipeline_version) || str(live?.pipeline_version) || '—'],
     ['SCHEMA', str(status?.schema_version) || '—'],
     ['SCORING', str(status?.scoring_version) || '—'],
-    ['ENRICHMENT', versionAcross(events, (e) => e.enrichment_version)],
+    ['ENRICHMENT', enrichmentAcross(events)],
     ['IMPORTANCE', versionAcross(events, (e) => e.importance?.version)],
     ['REPUTATION', versionAcross(sources, (src) => src.reputation?.version)],
     ['SNAPSHOT BUILT', when(status?.generated_at) || when(live?.generated_at)],
@@ -794,9 +936,10 @@ export function renderSystemPage(host, data = {}) {
   const summary = systemSummary({ status, live, now });
   if (!host || !hasDom()) return summary;
   fill(host,
+    staleNotice(now, status, live),
     flowPanel(),
-    splitPanel(),
-    schedulePanel(status),
+    splitPanel(status, now),
+    schedulePanel(status, now),
     lastRunPanel(status, crew, live, now),
     versionsPanel(status, health, live, now),
   );
@@ -931,7 +1074,7 @@ function sourceCard(source, ctx) {
       att.reason,
       note ? h('span', { class: 'pg-card__good', text: note }) : null,
     );
-  } else if (att.kind === 'coming' || att.kind === 'off') {
+  } else if (att.kind === 'coming' || att.kind === 'blocked' || att.kind === 'off') {
     reason = h('p', { class: 'pg-card__reason', 'data-kind': att.kind, text: att.reason });
   }
   const facts = [];
@@ -943,7 +1086,7 @@ function sourceCard(source, ctx) {
     if (t !== null) facts.push(`checked ${fmtAgo(ctx.now - t)}`);
   }
   const link = safeLink(source.url);
-  const checked = att.kind !== 'coming' && att.kind !== 'off';
+  const checked = att.kind !== 'coming' && att.kind !== 'blocked' && att.kind !== 'off';
   return h(
     'li',
     { class: 'pg-card', 'data-attention': att.kind || 'healthy', 'data-region': region },
@@ -985,23 +1128,97 @@ function group(id, title, items, ctx, { empty = null, note = null, extra = [] } 
 }
 
 function stripPanel(groups) {
+  const d = groups.discovery;
+  // With the discovery summary, the finds are counted as what they are: slots taken and finds
+  // waiting for one. Without it (an older file), as the old COMING count.
   const tiles = [
     ['HEALTHY', groups.counts.healthy, 'ok'],
     ['NEEDS FIXING', groups.counts.fix, 'fail'],
     ['WATCH', groups.counts.watch, 'watch'],
-    ['COMING', groups.counts.coming, 'off'],
+    ...(d
+      ? [
+        ['BLOCKED', groups.counts.blocked, 'off'],
+        [d.ready ? `DISCOVERED · ${fmtInt(d.ready)} READY, WAITING FOR A SLOT` : 'DISCOVERED SOURCES', d.active, 'off', `${fmtInt(d.active)}/${fmtInt(d.max)}`],
+      ]
+      : [['COMING', groups.counts.coming, 'off']]),
   ];
   return h(
     'ul',
-    { class: 'pg-strip', 'aria-label': 'Source summary' },
-    tiles.map(([label, n, g]) =>
+    { class: 'pg-strip', 'aria-label': 'Source summary', 'data-tiles': String(tiles.length) },
+    tiles.map(([label, n, g, shown]) =>
       h(
         'li',
-        { class: 'pg-tile', 'data-group': g, 'data-zero': n === 0 ? 'true' : null },
-        h('span', { class: 'pg-tile__value mono' }, h('span', { class: 'pg-tile__glyph', 'aria-hidden': 'true', text: GROUP_GLYPH[g] }), fmtInt(n)),
+        { class: 'pg-tile', 'data-group': g, 'data-zero': n === 0 && !shown ? 'true' : null },
+        h('span', { class: 'pg-tile__value mono' }, h('span', { class: 'pg-tile__glyph', 'aria-hidden': 'true', text: GROUP_GLYPH[g] }), shown || fmtInt(n)),
         h('span', { class: 'pg-tile__label', text: label }),
       ),
     ),
+  );
+}
+
+function listWords(items) {
+  if (items.length <= 1) return items.join('');
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
+function gateLine(pass, ctx) {
+  const t = parseTime(pass.finished_at);
+  const when = `Last gate pass ${sydneyStamp(t)} Sydney, ${fmtAgo(ctx.now - t)}`;
+  if (pass.completed !== true) return `${when}: it did not finish; the next pass tries again.`;
+  const ids = (v) => (Array.isArray(v) ? v.map((x) => str(x)).filter(Boolean) : []);
+  const activated = ids(pass.activated);
+  const made = ids(pass.pruned);
+  const silent = ids(pass.retired);
+  const parts = [
+    num(pass.probes) === null ? null : `${fmtInt(pass.probes)} ${plural(pass.probes, 'probe')}, ${fmtInt(pass.healthy)} healthy`,
+    `${activated.length} activated${activated.length ? ` (${listWords(activated)})` : ''}`,
+    made.length ? `${made.length} retired to make room (${listWords(made)})` : null,
+    silent.length ? `${silent.length} retired after three silent weeks (${listWords(silent)})` : null,
+    num(pass.rejected) ? `${fmtInt(pass.rejected)} rejected` : null,
+  ].filter(Boolean);
+  return `${when}: ${parts.join(', ')}.`;
+}
+
+function searchLine(pass, ctx) {
+  const t = parseTime(pass.finished_at);
+  const when = `Last search for new sources ${sydneyStamp(t)} Sydney, ${fmtAgo(ctx.now - t)}`;
+  if (pass.completed !== true) return `${when}: it did not finish; tomorrow's search tries again.`;
+  if (pass.skipped === true) return `${when}: skipped, so nothing was searched.`;
+  const found = num(pass.new_hosts);
+  return `${when}: ${fmtInt(pass.searches)} ${plural(num(pass.searches) ?? 0, 'search', 'searches')}, ${found === null ? 'an unknown number of' : fmtInt(found)} new ${plural(found ?? 0, 'site')}.`;
+}
+
+function recentLine(recent) {
+  const named = (state) => recent.filter((r) => r.state === state).map((r) => str(r.name) || str(r.host));
+  const on = named('active');
+  const off = named('retired');
+  if (!on.length && !off.length) return 'No find was activated or retired in the last 14 days.';
+  return `Last 14 days: ${[
+    on.length ? `activated ${listWords(on)}` : null,
+    off.length ? `retired ${listWords(off)}` : null,
+  ].filter(Boolean).join('; ')}.`;
+}
+
+// DISCOVERY: the truth behind the finds. The slots are a cap, so the count of active discovered
+// sources only moves when the gate retires a weak one to make room for a ready find.
+function discoveryPanel(d, ctx) {
+  const lines = [
+    `${fmtInt(d.active)} of ${fmtInt(d.max)} discovered-source slots are in use.${d.ready
+      ? ` ${fmtInt(d.ready)} ${d.ready === 1 ? 'find has' : 'finds have'} passed the gate and ${d.ready === 1 ? 'waits' : 'wait'} for one; a slot frees when the gate retires a discovered source that has done little once it has been collected long enough to judge.`
+      : d.active < d.max ? ' A find that passes the gate is collected straight away.' : ''}`,
+    `At the gate now: ${fmtInt(d.testing)} being tested, ${fmtInt(d.queued)} queued for a testing slot, ${fmtInt(d.homes)} ${plural(d.homes, 'site')} still to read for a feed.`,
+    d.lastGate ? gateLine(d.lastGate, ctx) : 'No gate pass has been recorded yet.',
+    d.lastSearch ? searchLine(d.lastSearch, ctx) : null,
+    recentLine(d.recent),
+    d.rejected !== null && d.retired !== null
+      ? `Since discovery began: ${fmtInt(d.rejected)} rejected, ${fmtInt(d.retired)} retired.`
+      : null,
+  ].filter(Boolean);
+  return panel(
+    'pg-src-discovery',
+    'DISCOVERY',
+    h('ul', { class: 'pg-list pg-discovery' }, lines.map((t) => h('li', { text: t }))),
+    h('p', { class: 'hint', text: 'Finding and testing sources is code: a nightly search, then probes every four hours. TACHIKOMA can propose sites too; the same gate tests them.' }),
   );
 }
 
@@ -1038,19 +1255,25 @@ function drawLists(lists, showing, groups, ctx, state) {
   const watch = pick(groups.watch);
   const active = pick(groups.active);
   const coming = pick(groups.coming);
+  const blocked = pick(groups.blocked);
   const off = pick(groups.off);
   const all = state.region === 'all';
   const pipeline = all ? groups.pipeline : [];
-  const shown = fix.length + watch.length + active.length + coming.length + off.length;
+  const shown = fix.length + watch.length + active.length + coming.length + blocked.length + off.length;
   showing.textContent = `Showing ${shown} of ${groups.counts.total} ${plural(groups.counts.total, 'source')}${all ? '' : `, ${REGION_NAME[state.region]} only`}.`;
+  const d = groups.discovery;
+  const atGate = d?.atGate ?? null;
   const pipelineNote = !all && groups.pipeline.length
     ? `${groups.pipeline.length} discovery ${plural(groups.pipeline.length, 'candidate has', 'candidates have')} no region yet; choose ALL to see them.`
-    : null;
+    : all && atGate !== null && atGate > groups.pipeline.length
+      ? `Showing ${fmtInt(groups.pipeline.length)} of the ${fmtInt(atGate)} finds at the gate, furthest through first.`
+      : null;
   fill(lists,
     fix.length ? group('pg-src-fix', 'NEEDS FIXING', fix, ctx) : null,
     watch.length ? group('pg-src-watch', 'WATCH', watch, ctx) : null,
     group('pg-src-active', 'ACTIVE SOURCES', active, ctx, { empty: 'No healthy sources in this view.' }),
-    group('pg-src-coming', 'IN THE PIPELINE / COMING', coming, ctx, {
+    blocked.length ? group('pg-src-blocked', 'BLOCKED', blocked, ctx, { note: 'Switched off in the source registry, each for the reason it gives. Nothing switches one back on by itself.' }) : null,
+    group('pg-src-coming', d ? 'AT THE GATE' : 'IN THE PIPELINE / COMING', coming, ctx, {
       empty: 'Nothing is waiting to be added.',
       note: pipelineNote,
       extra: pipeline.map((item) => candidateCard(item, ctx)),
@@ -1179,7 +1402,15 @@ export function renderSourcesPage(host, data = {}) {
   const lists = h('div', { class: 'pg-lists' });
   const showing = h('p', { class: 'hint pg-showing', role: 'status' });
   const redraw = () => drawLists(lists, showing, groups, ctx, state);
-  fill(host, stripPanel(groups), h('div', { class: 'pg-toolbar' }, controls(state, redraw), showing), lists, ratePanel(live));
+  fill(
+    host,
+    staleNotice(now, health, live),
+    stripPanel(groups),
+    groups.discovery ? discoveryPanel(groups.discovery, ctx) : null,
+    h('div', { class: 'pg-toolbar' }, controls(state, redraw), showing),
+    lists,
+    ratePanel(live),
+  );
   redraw();
   return summary;
 }

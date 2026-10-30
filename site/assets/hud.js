@@ -6,7 +6,7 @@ import { renderMap, syncMapSelection } from './map.js';
 // The SYSTEM and SOURCES views are drawn by pages.js, which owns their markup and styles
 // (pages.css). The contract is two functions that clear and refill a host and hand back the
 // view head's count and LED; renderPage() below is the only caller.
-import { renderSystemPage, renderSourcesPage } from './pages.js';
+import { renderSystemPage, renderSourcesPage, staleSince } from './pages.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const DATA_BASES = ['data/', '../data/'];
@@ -24,8 +24,10 @@ const SEVERITY_WEIGHT = { critical: 10, high: 6, medium: 3, low: 1, info: 0.5, u
 
 // The crew roster is presentation, not authority (PLAN.md): personas are stable and
 // ship with the site. Workload per agent comes from data/crew.json and is looked up by
-// callsign at render time; an agent crew.json does not list shows RUNS IN PAPERCLIP, since
-// every such agent runs in Paperclip's control panel, which this data file never reads.
+// callsign at render time; an agent crew.json does not count runs in Paperclip's control panel,
+// which this data file never reads, so its card says only what of its work reached the worker
+// (crew.json `seen`). `runtime` is the fallback for when assets/org.json, which says what each
+// agent runs on, cannot be read.
 // Each agent carries a `face`: the key of the one accessory that distinguishes its drawn
 // portrait in THE CREW. Callsigns are unchanged — they are the join key for data/crew.json
 // and the names PLAN.md assigns permissions and budgets to. Eight agents since October 2026:
@@ -33,13 +35,13 @@ const SEVERITY_WEIGHT = { critical: 10, high: 6, medium: 3, low: 1, info: 0.5, u
 // `title` is its Paperclip role. Seven since 20 October 2026, when RIPPERDOC was retired: the
 // worker sends the owner what it reported. `desk` only picks the portrait's accent colour.
 export const CREW = [
-  { callsign: 'MORPHEUS', face: 'crown', title: 'CEO', desk: 'INTELLIGENCE', beat: 'Chief executive and chief editor', runtime: 'LLM · strong · 1×/day', quote: 'I can only show you the door.' },
-  { callsign: 'DECKARD', face: 'lens', title: 'RESEARCHER', desk: 'INTELLIGENCE', beat: 'Research, context and developing events', runtime: 'LLM + Strands', quote: "The case stays open until it's patched." },
-  { callsign: 'VOIGHT', face: 'scan', title: 'PUBLISHER', desk: 'INTELLIGENCE', beat: 'Editorial check and publication', runtime: 'LLM · strong · gated', quote: 'Says who?' },
-  { callsign: 'TACHIKOMA', face: 'tilt', title: 'FINDER', desk: 'INTELLIGENCE', beat: 'Source discovery', runtime: 'LLM + Tavily', quote: "Ooh — what's this one?" },
-  { callsign: 'WHEELJACK', face: 'helmet', title: 'CODER', desk: 'ENGINEERING', beat: 'Collectors, parsers and the platform', runtime: 'CODE agent · wakes on request', quote: '' },
-  { callsign: 'TELETRAAN', face: 'dish', title: 'OPERATION', desk: 'OPERATIONS', beat: 'Watchdog, SRE and code checks', runtime: 'Deterministic + LLM triage', quote: '' },
-  { callsign: 'SERAPH', face: 'shield', title: 'COLLECTOR', desk: 'OPERATIONS', beat: 'Collection, the source gate and ground truth', runtime: 'Deterministic', quote: 'I had to be sure.' },
+  { callsign: 'MORPHEUS', face: 'crown', title: 'CEO', desk: 'INTELLIGENCE', beat: 'Chief executive and chief editor', runtime: 'LLM · daily report', quote: 'I can only show you the door.' },
+  { callsign: 'DECKARD', face: 'lens', title: 'RESEARCHER', desk: 'INTELLIGENCE', beat: 'Research, context and developing events', runtime: 'LLM · follow-up queue', quote: "The case stays open until it's patched." },
+  { callsign: 'VOIGHT', face: 'scan', title: 'PUBLISHER', desk: 'INTELLIGENCE', beat: 'Editorial check of what the crew writes', runtime: 'LLM · on request', quote: 'Says who?' },
+  { callsign: 'TACHIKOMA', face: 'tilt', title: 'FINDER', desk: 'INTELLIGENCE', beat: 'Source proposals', runtime: 'LLM · nightly', quote: "Ooh — what's this one?" },
+  { callsign: 'WHEELJACK', face: 'helmet', title: 'CODER', desk: 'ENGINEERING', beat: 'Collectors, parsers and the platform', runtime: 'LLM · on request', quote: '' },
+  { callsign: 'TELETRAAN', face: 'dish', title: 'OPERATION', desk: 'OPERATIONS', beat: 'Incident triage and code checks', runtime: 'LLM · on incident', quote: '' },
+  { callsign: 'SERAPH', face: 'shield', title: 'COLLECTOR', desk: 'OPERATIONS', beat: 'Collection, the source gate and ground truth', runtime: 'Code · no model', quote: 'I had to be sure.' },
 ];
 
 const SYDNEY = new Intl.DateTimeFormat('en-AU', {
@@ -1922,30 +1924,32 @@ export function renderTrends(trends, events = [], { unread = false } = {}) {
 
 // -------------------------------------------------------------------- crew
 
+// Every figure in a run is the worker's own, so it is SERAPH's: the AI agents work in Paperclip
+// and publish no counter of their own into the run.
 const CREW_JOBS = {
   MORPHEUS: { owns: 'Editorial direction: what leads, what is held, and the daily brief', run: () => null },
   DECKARD: { owns: 'Research and follow-up: the context behind an event, and keeping a developing one open until it is patched or closed', run: () => null },
-  VOIGHT: {
-    owns: 'The publication veto and the publish: every critical and high claim is checked or held, then the snapshot this page reads goes out',
-    run: (run, feed) => (feed?.counts?.events === undefined ? null : `${plural(feed.counts.events, 'event')} published in this snapshot`),
-  },
-  TACHIKOMA: { owns: 'Finding sources we do not have yet, and proposing them for review', run: () => null },
+  VOIGHT: { owns: 'The editorial check: what the crew writes is held to its evidence before it stands', run: () => null },
+  TACHIKOMA: { owns: 'Proposing extra sources; the worker’s own nightly search and probe gate find and test most of them', run: () => null },
   WHEELJACK: { owns: 'Writing and repairing the collectors and parsers this pipeline runs on', run: () => null },
-  TELETRAAN: {
-    owns: 'Watching the estate, checking every code change, and opening an incident before a reader notices',
-    run: (run) => (run ? (run.error_count ? `${plural(run.error_count, 'error')} recorded during the run` : 'No errors recorded during the run') : null),
-  },
+  TELETRAAN: { owns: 'Diagnosing each incident the worker’s watchdog opens, and checking every code change', run: () => null },
   SERAPH: {
-    owns: 'Collection: the source gate, fetching every source, matching items to events, and the KEV, CVE, EPSS, OSV and ATT&CK ground truth, looked up and never generated',
+    owns: 'Collection and publishing: the source gate, fetching every source, matching items to events, the KEV, CVE, EPSS, OSV and ATT&CK ground truth, looked up and never generated, and the snapshot this page reads',
     run: (run, feed) => {
       const pending = feed?.counts?.pending_enrichment;
       const queue = pending === undefined ? null : pending ? `${plural(pending, 'event')} queued for enrichment` : 'nothing queued for enrichment';
-      if (!run) return queue ? `${queue[0].toUpperCase()}${queue.slice(1)}` : null;
+      const published = feed?.counts?.events === undefined ? null : `${plural(feed.counts.events, 'event')} published in this snapshot`;
+      if (!run) {
+        const rest = [published, queue].filter(Boolean).join('; ');
+        return rest ? `${rest[0].toUpperCase()}${rest.slice(1)}` : null;
+      }
       const bad = run.sources_failed + run.sources_stale;
       return [
         `${plural(run.sources_ok, 'source')} passed the check${bad ? `, ${bad} did not` : ''}`,
         run.items_fetched === undefined || run.items_fetched === null ? null : `${plural(run.items_fetched, 'item')} fetched`,
         `${run.new_events} new and ${plural(run.updated_events, 'updated event')}, ${run.duplicates} merged as ${run.duplicates === 1 ? 'a duplicate' : 'duplicates'}`,
+        run.error_count ? `${plural(run.error_count, 'error')} recorded` : 'no errors recorded',
+        published,
         queue,
       ]
         .filter(Boolean)
@@ -1961,13 +1965,18 @@ export function renderCrewRun(status, feed) {
   if (!host) return;
   clear(host);
   const run = status?.last_run || null;
-  const when = run?.finished_at ? `${formatSydney(run.finished_at)}` : null;
+  // An older snapshot's `last_run` can be a run still going, with no finish and no counters.
+  const done = run?.finished_at ? run : null;
+  const going = (Array.isArray(status?.runs_in_progress) ? status.runs_in_progress : [])
+    .filter((r) => r && r.lane && r.started_at)
+    .map((r) => `${String(r.lane).toUpperCase()} lane since ${formatSydney(r.started_at)}`);
+  if (run && !done && run.lane && run.started_at) going.push(`${String(run.lane).toUpperCase()} lane since ${formatSydney(run.started_at)}`);
   host.append(
     h('p', {
       class: 'hint',
-      text: run
-        ? `Last completed run: ${run.lane.toUpperCase()} lane, finished ${when}. An agent appears with a figure only where the run published a counter it owns; the rest state that plainly.`
-        : 'No completed run has been published, so there is nothing for any agent to report yet. Each agent\u2019s ownership below is what it will answer for once it is wired up.',
+      text: done
+        ? `Last completed run: ${String(done.lane).toUpperCase()} lane, finished ${formatSydney(done.finished_at)}.${going.length ? ` Still going: ${going.join('; ')}.` : ''} Every figure in a run is the worker\u2019s own, so it is SERAPH\u2019s; the AI agents work in Paperclip and publish none into it.`
+        : `No completed run has been published${going.length ? ` (still going: ${going.join('; ')})` : ''}, so there is nothing for any agent to report yet. Each agent\u2019s ownership below is what it answers for.`,
     }),
     h(
       'table',
@@ -1978,7 +1987,7 @@ export function renderCrewRun(status, feed) {
         {},
         CREW.map((agent) => {
           const job = CREW_JOBS[agent.callsign] || {};
-          const did = job.run ? job.run(run, feed) : null;
+          const did = job.run ? job.run(done, feed) : null;
           return h(
             'tr',
             { 'data-desk': agent.desk },
@@ -2111,10 +2120,47 @@ function botFace(agent, klass = 'bot') {
   );
 }
 
-function crewCard(agent, stat) {
-  const status = stat?.status || 'not_active';
-  const led = { active: 'ok', idle: 'idle', degraded: 'warn', not_active: 'idle' }[status] || 'idle';
-  const label = { active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED', not_active: 'RUNS IN PAPERCLIP' }[status] || status.toUpperCase();
+// The router an agent's model is reached through, which a reader does not need: OpenRouter's or
+// MixRoute's prefix on the model id.
+const ROUTER_PREFIX = /^(?:openrouter|mixroute)\//;
+
+// An agent in Paperclip, as far as the worker can tell: the last piece of its work that reached
+// the worker (crew.json `seen`), or that nothing of its work ever does. Never "running": Paperclip
+// can pause an agent, or run out of budget, and this page cannot see either.
+const SEEN_RECENTLY = 2 * 24 * 3600 * 1000;
+const SYDNEY_DATE = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', day: 'numeric', month: 'short' });
+
+export function seenState(seen, now = Date.now()) {
+  if (!seen) return { status: 'not_active', led: 'idle', label: 'RUNS IN PAPERCLIP', text: 'Works in Paperclip’s control panel; none of its work reaches the worker, so it is not tracked here.' };
+  const at = seen.last_at ? Date.parse(seen.last_at) : NaN;
+  const what = String(seen.what || 'piece of work');
+  const month = Number.isFinite(seen.this_month) ? ` · ${seen.this_month} this month` : '';
+  if (!Number.isFinite(at)) return { status: 'not_seen', led: 'idle', label: 'NOT SEEN YET', text: `Works in Paperclip. No ${what} has reached the worker yet.` };
+  const recent = now - at <= SEEN_RECENTLY;
+  return {
+    status: recent ? 'seen' : 'not_seen',
+    led: recent ? 'ok' : 'warn',
+    label: `LAST SEEN ${SYDNEY_DATE.format(new Date(at)).toUpperCase()}`,
+    text: `Works in Paperclip. Last ${what} the worker received: ${formatSydney(seen.last_at)}${month}.`,
+  };
+}
+
+// What an agent runs on, from org.json: its model without the router's prefix and its daily cap,
+// or code. The roster's own `runtime` stands in when org.json cannot be read.
+export function cardRuntime(agent, org) {
+  const a = (Array.isArray(org?.agents) ? org.agents : []).find((x) => x && x.callsign === agent.callsign);
+  if (!a) return agent.runtime;
+  if (a.adapter === 'http') return 'CODE · NO MODEL';
+  const model = a.model ? String(a.model).replace(ROUTER_PREFIX, '') : 'MODEL NOT SET';
+  const runs = hasNum(a.max_daily_runs) ? ` · UP TO ${Number(a.max_daily_runs)}/DAY` : '';
+  return `LLM · ${model}${runs}`;
+}
+
+function crewCard(agent, stat, seen, runtime, now) {
+  const watched = stat ? null : seenState(seen, now);
+  const status = stat?.status || watched.status;
+  const led = stat ? ({ active: 'ok', idle: 'idle', degraded: 'warn' }[status] || 'idle') : watched.led;
+  const label = stat ? ({ active: 'ACTIVE', idle: 'IDLE', degraded: 'DEGRADED' }[status] || status.toUpperCase()) : watched.label;
   const fmtStat = (value, fmt = (v) => String(v)) => (value === null || value === undefined ? '—' : fmt(value));
   return h(
     'li',
@@ -2146,16 +2192,16 @@ function crewCard(agent, stat) {
         h('dt', { text: 'COST THIS MONTH' }), h('dd', { text: fmtStat(stat.cost_usd, (v) => `US$${Number(v).toFixed(2)}`) }),
         h('dt', { text: 'LAST ACTIVE' }), h('dd', { text: fmtStat(stat.last_active_at, formatSydney) }),
       )
-      : h('p', { class: 'crew-card__idle', text: 'Runs in Paperclip’s control panel; the worker does not track its workload here.' }),
-    h('span', { class: 'chip crew-card__runtime', text: agent.runtime }),
+      : h('p', { class: 'crew-card__idle', text: watched.text }),
+    h('span', { class: 'chip crew-card__runtime', text: runtime || agent.runtime }),
   );
 }
 
-// Renders the full roster every time: personas ship with the site regardless of data, and a
-// card falls back to RUNS IN PAPERCLIP when data/crew.json has nothing for that callsign.
-// SERAPH is counted from the worker's own rows; the others run in Paperclip's control panel,
-// which this file never reads, so nothing is inferred.
-export function renderCrew(crew) {
+// Renders the full roster every time: personas ship with the site regardless of data. SERAPH is
+// counted from the worker's own rows; the others run in Paperclip's control panel, which this
+// file never reads, so a card says only what of the agent's work reached the worker, if any.
+// `org` is assets/org.json, for what each agent runs on; `ai` is system-status.json `ai`.
+export function renderCrew(crew, org = null, ai = null, now = Date.now()) {
   const host = document.getElementById('crew-list');
   if (!host) return;
   clear(host);
@@ -2170,8 +2216,12 @@ export function renderCrew(crew) {
   if (summary) {
     const reporting = byCallsign.size;
     const totalTasks = [...byCallsign.values()].reduce((sum, a) => sum + (a.tasks_completed || 0), 0);
-    const ai = crew?.pipeline_ai;
-    const spend = ai ? ` · the pipeline's own model calls this month: ${plural(ai.calls, 'call')}, US$${Number(ai.cost_usd).toFixed(2)}` : '';
+    const pipeline = crew?.pipeline_ai;
+    const spend = pipeline ? ` · the pipeline's own model calls this month: ${plural(pipeline.calls, 'call')}, US$${Number(pipeline.cost_usd).toFixed(2)}` : '';
+    // Two different budgets: the crew's, which Paperclip holds, and the pipeline's own AI cap.
+    const crewBudget = hasNum(org?.company?.budget_usd) ? `The crew's monthly budget in Paperclip is US$${Number(org.company.budget_usd).toFixed(2)}` : null;
+    const aiCap = hasNum(ai?.monthly_budget_usd) ? `the pipeline's own AI is capped at US$${Number(ai.monthly_budget_usd).toFixed(2)} a month` : null;
+    const budgets = [crewBudget, aiCap].filter(Boolean).join('; ');
     clear(summary).append(
       h('p', {
         class: 'hint',
@@ -2179,9 +2229,11 @@ export function renderCrew(crew) {
           ? `${reporting} of ${CREW.length} agents publish their workload · ${plural(totalTasks, 'task')} completed this month${spend}.`
           : `${CREW.length} agents. No workload has been published yet.`,
       }),
+      budgets ? h('p', { class: 'hint', text: `${budgets[0].toUpperCase()}${budgets.slice(1)}.` }) : null,
     );
   }
-  host.append(...CREW.map((agent) => crewCard(agent, byCallsign.get(agent.callsign))));
+  const seen = new Map((Array.isArray(crew?.seen) ? crew.seen : []).filter((x) => x && x.callsign).map((x) => [x.callsign, x]));
+  host.append(...CREW.map((agent) => crewCard(agent, byCallsign.get(agent.callsign), seen.get(agent.callsign), cardRuntime(agent, org), now)));
   const count = document.getElementById('crew-count');
   if (count) count.textContent = `${CREW.length} AGENTS`;
 }
@@ -2310,7 +2362,7 @@ function usd(value) {
 // What an agent runs on, in one line: the model (without the router's prefix) or plain code.
 function orgRuntime(a) {
   if (a.adapter === 'http') return 'CODE OVER HTTP · NO MODEL';
-  if (a.adapter === 'model') return a.model ? `MODEL ${String(a.model).replace(/^openrouter\//, '')}` : 'MODEL NOT SET';
+  if (a.adapter === 'model') return a.model ? `MODEL ${String(a.model).replace(ROUTER_PREFIX, '')}` : 'MODEL NOT SET';
   return a.adapter ? String(a.adapter).toUpperCase() : null;
 }
 
@@ -2382,7 +2434,7 @@ export function renderOrg(org) {
     const rows = [
       ['COMPANY', company.name],
       ['MISSION', company.mission],
-      ['MONTHLY BUDGET', usd(company.budget_usd)],
+      ['CREW BUDGET IN PAPERCLIP', usd(company.budget_usd) ? `${usd(company.budget_usd)} A MONTH` : null],
       ['AGENTS', String(model.agents.length)],
       ['ROUTINES', String(model.routines.length)],
     ];
@@ -3016,6 +3068,13 @@ function renderStrip(data) {
   }
   const local = document.getElementById('strip-local');
   if (local) local.textContent = stamp ? `SYDNEY ${formatSydney(stamp)}` : '';
+  // A snapshot that stopped updating cannot say so itself, so every view's header does.
+  const stale = staleSince(Date.now(), data.status, data.feed);
+  const strip = document.getElementById('status-strip');
+  if (strip) {
+    strip.querySelector?.('.status-strip__stale')?.remove();
+    if (stale) strip.append(h('span', { class: 'status-strip__stale mono', text: `NOT UPDATED FOR ${stale.ago.replace(/ ago$/, '').toUpperCase()}` }));
+  }
 }
 
 function showError(message) {
@@ -3080,9 +3139,10 @@ export async function main() {
   // that no snapshot was read. A fabricated zero is worse than an absence, so those wait.
   renderStrip(data || {});
   const crew = data ? await getJson(`${data.base}crew.json`, globalThis.fetch) : null;
-  renderCrew(crew);
+  const org = await orgRead;
+  renderCrew(crew, org, data?.status?.ai || null);
   renderCrewRun(data?.status || null, data?.feed || null);
-  renderOrg(await orgRead);
+  renderOrg(org);
   renderPage('system', renderSystemPage, { status: data?.status || null, health: data?.health || null, crew, live: data?.feed || null });
   renderPage('sources', renderSourcesPage, { health: data?.health || null, live: data?.feed || null });
   if (!data) {
