@@ -15,11 +15,13 @@ from sqlalchemy.exc import IntegrityError
 from worker.db.incidents import (
     BREAKER_LIMIT,
     MAX_VERDICTS,
+    count_diagnoses_since,
     load_incident,
     load_incidents,
     load_verdicts,
     record_pass,
     record_verdict,
+    set_diagnosis,
 )
 from worker.db.jobs import JobRun, load_latest_jobs, record_job
 from worker.db.migrate import run_migrations
@@ -238,7 +240,9 @@ def test_a_verdict_belongs_to_an_incident_and_says_pass_or_fail(db):
     assert read(db, "select count(*) from incident_verdicts") == [(0,)]
 
 
-@pytest.mark.parametrize("job", ["watchdog", "publish", "push", "groundtruth"])
+@pytest.mark.parametrize(
+    "job", ["watchdog", "publish", "push", "groundtruth", "daily-report", "followup-writer"]
+)
 def test_job_runs_take_the_new_jobs_and_keep_a_note(db, job):
     run = JobRun(job, NOW - MIN, NOW, completed=False, errors=2, note="RuntimeError")
     record_job(db, run)
@@ -602,3 +606,19 @@ async def test_a_pass_opens_an_incident_tells_the_crew_once_and_records_itself(d
         ("watchdog", True, 0, True),
         ("watchdog", True, 0, False),
     ]
+
+
+# ─── Migration 020: the worker's diagnosis ─────────────────────────────────────────────────────────
+
+
+def test_a_diagnosis_is_kept_with_its_incident_and_counted_by_when_it_was_made(db):
+    result = record_pass(db, [failing("wd-a"), failing("wd-b")], SOURCES, NOW)
+    first, second = sorted(i.id for i in result.opened)
+    made = {"likely_cause": "c", "suggested_fix": "f", "owner": "code", "model": "m"}
+    with db.begin() as conn:
+        set_diagnosis(conn, first, {**made, "at": (NOW - 2 * MIN).isoformat()})
+        set_diagnosis(conn, second, {**made, "at": (NOW - 30 * 60 * MIN).isoformat()})
+    with db.connect() as conn:
+        assert load_incident(conn, first).diagnosis["owner"] == "code"
+        assert count_diagnoses_since(conn, NOW - 24 * 60 * MIN) == 1
+        assert load_incident(conn, second).diagnosis is not None

@@ -59,6 +59,9 @@ logger = logging.getLogger(__name__)
 
 EVERY_MINUTES = 5
 DB_FAILURES = 3
+# How long a pass waits for the worker's diagnosis of an incident it opened
+# (worker/ai/diagnosis.py) before telling Telegram without one.
+DIAGNOSIS_TIMEOUT_SECONDS = 90.0
 MAX_REOPEN_NOTICES = 3
 SITE_TIMEOUT_SECONDS = 20.0
 # The kinds the crew is told of: the ones code can fix (checks.py KIND_GUIDE), for TELETRAAN to
@@ -69,6 +72,11 @@ FOR_THE_CREW = frozenset({
     "feed-failing", "parser-drift", "duplicate-explosion", "volume-collapse", "publish-failure",
     "schema-drift", "job-failing",
 })
+
+
+# What worker/ai/diagnosis.py `diagnose_incident` is to the watchdog: the incident in, its
+# diagnosis (stored with it) or None out.
+Diagnose = Callable[[Engine, Incident, datetime], Awaitable[dict[str, Any] | None]]
 
 
 def _utcnow() -> datetime:
@@ -143,8 +151,10 @@ class Watchdog:
         token_configured: Callable[[], bool] = publish_token_configured,
         site_transport: httpx.AsyncBaseTransport | None = None,
         paperclip_transport: httpx.AsyncBaseTransport | None = None,
+        diagnose: Diagnose | None = None,
     ) -> None:
         self._settings = settings
+        self._diagnose = diagnose
         self._telegram = telegram
         self._routine = routine
         self._token_configured = token_configured
@@ -232,6 +242,37 @@ class Watchdog:
             channel="telegram",
             now=now,
             send=functools.partial(telegram.send, database_back(since, now)),
+        )
+
+    # --- Diagnosing ---
+
+    async def _diagnosed(self, engine: Engine, result: PassResult, now: datetime) -> PassResult:
+        """`result` with a diagnosis on each high or critical incident this pass opened, as far
+        as one could be made in time. Nothing here can fail the pass."""
+        if self._diagnose is None:
+            return result
+        made: dict[int, dict[str, Any]] = {}
+        for incident in result.opened:
+            if incident.severity not in NOTIFY_AT:
+                continue
+            try:
+                diagnosis = await asyncio.wait_for(
+                    self._diagnose(engine, incident, now), DIAGNOSIS_TIMEOUT_SECONDS
+                )
+            except Exception as exc:  # noqa: BLE001 - the notice goes without one
+                logger.warning("INC-%d: no diagnosis (%s)", incident.id, type(exc).__name__)
+                continue
+            if diagnosis is not None:
+                made[incident.id] = diagnosis
+        if not made:
+            return result
+
+        def with_diagnosis(incidents: list[Incident]) -> list[Incident]:
+            return [replace(i, diagnosis=made[i.id]) if i.id in made else i for i in incidents]
+
+        return replace(
+            result, opened=with_diagnosis(result.opened),
+            unresolved=with_diagnosis(result.unresolved),
         )
 
     # --- Telling ---
@@ -331,6 +372,7 @@ class Watchdog:
         result = await asyncio.to_thread(record_pass, engine, findings, covered, started)
         summary.opened, summary.resolved = len(result.opened), len(result.resolved)
         summary.unresolved = len(result.unresolved)
+        result = await self._diagnosed(engine, result, started)
         await self._notify(
             engine, result, started, telegram, self._routine(self._settings), summary
         )

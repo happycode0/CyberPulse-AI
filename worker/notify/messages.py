@@ -337,6 +337,19 @@ def _incident_head(incident: Incident) -> list[str]:
     return [f"INC-{incident.id} · {incident.kind}{subject}", _title(incident.title)]
 
 
+def _diagnosis_lines(diagnosis: dict[str, Any] | None) -> list[str]:
+    """The worker's first diagnosis of an incident (worker/ai/diagnosis.py), labelled as AI."""
+    if not diagnosis:
+        return []
+    whose = "the board" if diagnosis.get("owner") == "board" else "a code change"
+    return [
+        "",
+        f"Likely cause (AI): {diagnosis['likely_cause']}",
+        f"Suggested fix: {diagnosis['suggested_fix']}",
+        f"Whose: {whose}",
+    ]
+
+
 def incident_opened(incident: Incident, *, crew: bool) -> str:
     """An incident the watchdog opened, or opened again, at high or critical."""
     again = ""
@@ -351,6 +364,7 @@ def incident_opened(incident: Incident, *, crew: bool) -> str:
         "",
         KIND_GUIDE.get(incident.kind, ""),
     ]
+    lines += _diagnosis_lines(incident.diagnosis)
     if crew:
         lines += ["", "The crew has been told: TELETRAAN reads it from GET /ops/incidents."]
     if incident.fix_failures:
