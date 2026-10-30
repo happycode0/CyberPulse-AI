@@ -54,8 +54,12 @@ gate:
   # A healthy probe finds at least this many items dated in the last `recent_days` ...
   recent_days: 14
   min_recent_items: 3
-  # ... this many of them on the beat (`beat` below, or a CVE) ...
+  # ... this many of them on the beat (`beat` below, or a CVE), and at least this share of them:
+  # a whole-site news feed (The Guardian's, 2026-10) carries two security stories a day among a
+  # hundred others. The publisher holds back the off-beat items of an active discovered source
+  # below the same share (worker/publish/hold.py) ...
   min_on_beat: 2
+  min_on_beat_share: 0.5
   # ... and no more than this share of them already collected from another source.
   max_already_collected: 0.6
   # The most candidates one pass probes, and the most homes it searches for a feed. A candidate
@@ -112,3 +116,56 @@ gate:
     - jailbreak
     - AI safety
     - LLM
+    # Added 2026-10-30, from security stories the list above missed (CYB-62).
+    - bug
+    - leak
+    - fraud
+    - scam
+    - spyware
+    - stealer
+    - infostealer
+    - trojan
+    - rootkit
+    - deepfake
+    - encrypt
+    - credential
+    - password
+    - passkey
+    - authenticat
+    - privilege
+    - surveillance
+    - extortion
+    - firewall
+    - intrusion
+    - ddos
+    - artificial intelligence
+    - machine learning
+    - language model
+    - chatbot
+    - agentic
+    - generative
+    - OpenAI
+    - Anthropic
+    - ChatGPT
+  # Matched as whole words in this case only: as the start of a word they would match "aid",
+  # "rate", "social".
+  beat_words:
+    - AI
+    - AGI
+    - GPT
+    - RAT
+    - APT
+    - IAM
+    - MFA
+    - SSO
+    - VPN
+    - EDR
+    - XDR
+    - SIEM
+    - SOC
+    - SBOM
+    - SCADA
+    - CISA
+    - ACSC
+    - NCSC
+    - CERT

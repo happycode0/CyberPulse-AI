@@ -48,7 +48,9 @@ def conn(pg_engine):
 
 
 def insert_event(conn, event_id, *, summary="CVE-2026-88772 exploited; patch available.",
-                 prominence=0.9, first_seen=NOW, severity="high", status="new"):
+                 prominence=0.9, first_seen=NOW, severity="high", status="new", report=True):
+    """`report`: with one report from the curated SOURCE, since an event with no sources is held
+    back (worker/publish/hold.py). A test that counts reports adds its own."""
     conn.execute(
         text(
             "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
@@ -70,6 +72,8 @@ def insert_event(conn, event_id, *, summary="CVE-2026-88772 exploited; patch ava
             "status": status,
         },
     )
+    if report:
+        insert_report(conn, event_id, "Acme VPN zero-day", first_seen)
 
 
 def insert_event_with_summary(conn, summary):
@@ -195,7 +199,7 @@ def test_source_health_lists_registry_sources(tmp_path, conn):
 def test_every_published_event_is_rated_with_its_sources_reputation(tmp_path, conn):
     """docs/wiki/importance-and-reputation.md, end to end from the database."""
     record_health(conn, SourceHealth(source_id=SOURCE, checked_at=NOW, status=HealthStatus.OK))
-    insert_event(conn, "evt-2026-000001")
+    insert_event(conn, "evt-2026-000001", report=False)
     conn.execute(
         text(
             "update events set domains = '{cybersecurity}', categories = '{zero-day}', "
@@ -321,8 +325,8 @@ def test_trends_count_independent_reports_since_collection_began(tmp_path, conn)
         ),
         {"s": NOW - timedelta(days=10)},
     )
-    insert_event(conn, "evt-2026-000001", first_seen=NOW - timedelta(hours=2))
-    insert_event(conn, "evt-2026-000002", first_seen=NOW - timedelta(hours=1))
+    insert_event(conn, "evt-2026-000001", first_seen=NOW - timedelta(hours=2), report=False)
+    insert_event(conn, "evt-2026-000002", first_seen=NOW - timedelta(hours=1), report=False)
     conn.execute(
         text(
             "update events set status = 'archived', merged_into = 'evt-2026-000001' "

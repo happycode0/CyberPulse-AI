@@ -46,6 +46,9 @@ def make_event(n=1, *, prominence=0.9, first_seen=NOW, **overrides) -> Event:
         "first_seen": first_seen,
         "last_seen": first_seen,
         "risk": {"prominence": prominence},
+        # A curated source: an event with none is held back (worker/publish/hold.py).
+        "sources": [{"source_id": "acsc-alerts", "url": f"https://example.org/{n}",
+                     "evidence_class": "AUTHORITATIVE"}],
     }
     fields.update(overrides)
     return Event(**fields)
@@ -170,6 +173,41 @@ def test_live_filters_by_strict_prominence_and_keeps_order(tmp_path, db):
     ids = [e["event_id"] for e in read(tmp_path, "live.json")["events"]]
     assert ids == ["evt-2026-000001", "evt-2026-000002"]
     assert read(tmp_path, "live.json")["counts"]["events"] == 2
+
+
+def test_a_held_event_is_in_no_file_and_is_counted(tmp_path, db):
+    """worker/publish/hold.py: the off-beat item of a mostly off-beat discovered source, and a
+    directory listing, appear on neither the live page nor their day, and the index's count and
+    system-status.json agree."""
+    found = [{"source_id": "found_theguardian_com", "url": "https://www.theguardian.com/x",
+              "evidence_class": "COMMUNITY"}]
+    db["events"] = [
+        make_event(1, title="Medibank hackers leak customer records", sources=found,
+                   domains=["cybersecurity"]),
+        make_event(2, title="How to turn brown bananas into vegan bread – recipe",
+                   summary="Waste not.", sources=found, domains=["cybersecurity"]),
+        make_event(3, title="Clayface review – very gory but not very good",
+                   summary="Body horror.", sources=found, domains=["cybersecurity"]),
+        make_event(4, title="plex-mcp-server by vladimir-tutin — ★ 150"),
+        make_event(5),
+    ]
+    build_all(None, tmp_path, now=NOW)
+    kept = ["evt-2026-000001", "evt-2026-000005"]
+    assert [e["event_id"] for e in read(tmp_path, "live.json")["events"]] == kept
+    assert [e["event_id"] for e in read(tmp_path, "history/2026-09-30.json")["events"]] == kept
+    assert read(tmp_path, "index.json")["days"][0]["event_count"] == 2
+    counts = read(tmp_path, "system-status.json")["counts"]
+    assert (counts["events_total"], counts["events_held"]) == (2, 3)
+
+
+def test_a_stored_summary_is_published_without_its_feed_boilerplate(tmp_path, db):
+    db["events"] = [
+        make_event(1, summary="Patch now. The post Patch now appeared first on SecurityWeek."),
+        make_event(2, summary="Continue reading..."),
+    ]
+    build_all(None, tmp_path, now=NOW)
+    summaries = [e["summary"] for e in read(tmp_path, "live.json")["events"]]
+    assert summaries == ["Patch now.", "Event 2"]
 
 
 def test_every_published_event_names_its_beat(tmp_path, db):
