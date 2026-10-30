@@ -435,6 +435,8 @@ def row(slug, prompt="0.02", completion="0.08"):
 class Gauntlet:
     """OpenRouter as the gauntlet sees it: the key, the guard and `trial`."""
 
+    label = "OpenRouter"
+
     def __init__(self):
         self.status = KeyStatus(None, None, None, Decimal(0), Decimal(0), None)
         self.ladder = VerifiedLadder(LADDER, NOW)

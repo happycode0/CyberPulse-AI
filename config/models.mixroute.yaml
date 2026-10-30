@@ -1,0 +1,119 @@
+# The model ladder on MixRoute (PLAN.md section 7.1), read instead of config/models.yaml when
+# AI_PROVIDER=mixroute. Approved by the owner on 2026-10-30 ("Recommended" profile).
+#
+# MixRoute is an OpenAI-compatible gateway (https://api.mixroute.ai/v1). Unlike OpenRouter it
+# publishes no prices or capabilities through its API: GET /v1/models lists ids only. So the
+# prices below are inputs, not notes. They are what the guard checks against the US$1.00/M
+# output ceiling (worker/ai/ladder.py) and what the cost ledger charges each call at, because a
+# MixRoute response carries token counts but no cost. Changing a price is a reviewed commit.
+#
+# Each entry is `vendor/id`. The vendor half is ours: it keeps the two-person rule between `code`
+# and `audit` meaningful. The id half is sent as the request's `model`, exactly as written
+# (MixRoute's ids are case-sensitive). `free: true` is what FREE_ONLY may still call, the
+# equivalent of OpenRouter's `:free`.
+#
+# Prices are US$ per million tokens, measured 2026-10-30 on each model's marketplace page
+# (https://mixroute.ai/models/<id>/); ids and request parameters are from
+# https://mixroute.ai/docs/model-api/<vendor>/<id>.md. `in` is input, `out` output, and
+# `cache_read` cached input (null: none is listed, so cached input is charged at `in`). `above`
+# lists dearer rates past a prompt size; the guard checks the dearest one a worker prompt can
+# reach. `request` is merged into every request to that model.
+#
+# Models under `models` but in no tier are the Sunday gauntlet's challengers on MixRoute.
+
+tiers:
+  # Classification, entity extraction, tagging. Ends in a paid model: a free one can go.
+  tier0_free:
+    - zhipu/glm-4-flash                   # free
+    - openai/gpt-5-nano                   # $0.05 / $0.40
+    - zhipu/glm-4.7-flashx                # $0.07 / $0.40
+
+  # Short summaries, AU relevance reasoning, ambiguous matching.
+  tier1_cheap:
+    - deepseek/deepseek-v4-flash          # $0.14 / $0.28
+    - alibaba/qwen3.5-flash               # $0.10 / $0.40
+    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
+
+  # Severity, MITRE mapping, editorial judgment.
+  tier2_strong:
+    - deepseek/deepseek-v4-flash          # $0.14 / $0.28
+    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
+    - xiaomi/mimo-v2.5-pro                # $0.41 / $0.819, last resort
+
+  # WHEELJACK.
+  code:
+    - xiaomi/mimo-v2.5-pro                # $0.41 / $0.819
+    - zhipu/glm-5.3-flash                 # $0.15 / $0.50
+
+  # TELETRAAN. No vendor here may appear under `code` (two-person rule; the loader enforces it).
+  audit:
+    - alibaba/qwen3.5-flash               # $0.10 / $0.40
+    - deepseek/deepseek-v4-flash          # $0.14 / $0.28
+
+models:
+  zhipu/glm-4-flash:
+    id: glm-4-flash
+    in: 0
+    out: 0
+    free: true
+  openai/gpt-5-nano:
+    id: gpt-5-nano
+    in: 0.05
+    out: 0.40
+    cache_read: 0.005
+    # A reasoning model: its Chat Completions example takes max_completion_tokens, not
+    # max_tokens. Reasoning effort is only documented for its Responses API, so none is set.
+    max_tokens_field: max_completion_tokens
+  zhipu/glm-4.7-flashx:
+    id: glm-4.7-flashx
+    in: 0.07
+    out: 0.40
+    cache_read: 0.01
+  deepseek/deepseek-v4-flash:
+    # Not deepseek-v4-flash-0731, a separate id at $0.44 / $1.32.
+    id: deepseek-v4-flash
+    in: 0.14
+    out: 0.28
+    cache_read: 0.0028
+  alibaba/qwen3.5-flash:
+    id: qwen3.5-flash
+    in: 0.10
+    out: 0.40
+    cache_read: 0.01
+    # The Qwen series takes enable_thinking (chat API reference); thinking spends output tokens
+    # the schema has no use for.
+    request:
+      enable_thinking: false
+  zhipu/glm-5.3-flash:
+    id: glm-5.3-flash
+    in: 0.15
+    out: 0.50
+    cache_read: 0.03
+    # Its documented values are low, high and max; low keeps reasoning tokens down.
+    request:
+      reasoning_effort: low
+  xiaomi/mimo-v2.5-pro:
+    id: mimo-v2.5-pro
+    in: 0.41
+    out: 0.819
+    cache_read: 0.003
+
+  # Gauntlet challengers only.
+  google/gemini-2.5-flash-lite:
+    id: gemini-2.5-flash-lite
+    in: 0.10
+    out: 0.40
+    cache_read: 0.01
+  xai/grok-4-1-fast-non-reasoning:
+    id: grok-4-1-fast-non-reasoning
+    in: 0.20
+    out: 0.50
+  anthropic/claude-haiku-5-5:
+    id: claude-haiku-5-5
+    in: 0.10
+    out: 0.50
+    cache_read: 0.01
+    above:
+      - prompt_tokens: 100000
+        in: 0.50
+        out: 2.50

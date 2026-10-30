@@ -3,6 +3,7 @@
 import functools
 from decimal import Decimal
 from pathlib import Path
+from typing import Literal
 
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -14,7 +15,14 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str
+    # Which gateway the AI layer calls (worker/ai/provider.py). OpenRouter unless the owner sets
+    # AI_PROVIDER=mixroute, which also switches the ladder to config/models.mixroute.yaml.
+    ai_provider: Literal["openrouter", "mixroute"] = "openrouter"
     openrouter_api_key: SecretStr | None = None
+    # MixRoute (https://mixroute.ai), an OpenAI-compatible gateway. Read from MIX_ROUTER_URL and
+    # MIX_ROUTER_KEY, the names the owner put in the VM's .env.
+    mix_router_url: str = "https://api.mixroute.ai/v1"
+    mix_router_key: SecretStr | None = None
     tavily_api_key: SecretStr | None = None
     nvd_api_key: SecretStr | None = None
     github_token: SecretStr | None = None
@@ -44,8 +52,9 @@ class Settings(BaseSettings):
     # X-OpenRouter-Title on every model call.
     openrouter_app_title: str = "CyberPulse-AI"
     openrouter_app_url: str = "https://github.com/happycode0/CyberPulse-AI"
-    # What the AI layer may spend in a calendar month (UTC, as OpenRouter counts it). The
-    # degradation modes in worker/ai/budget.py are shares of this.
+    # What the AI layer may spend in a calendar month (UTC, as OpenRouter counts it, and as the
+    # cost ledger is summed on MixRoute). The degradation modes in worker/ai/budget.py are
+    # shares of this.
     ai_monthly_budget_usd: Decimal = Decimal("20")
     # The ops API (worker/ops_api.py). The token guards its read endpoints; the AI agents get
     # it from the Paperclip server's environment. Unset or short, the reads stay closed.
@@ -75,7 +84,10 @@ class Settings(BaseSettings):
         webhook = "<set>" if self.paperclip_incident_webhook_url else None
         fields_repr = [
             f"database_url={safe_db_url!r}",
+            f"ai_provider={self.ai_provider!r}",
             f"openrouter_api_key={self.openrouter_api_key!r}",
+            f"mix_router_url={self.mix_router_url!r}",
+            f"mix_router_key={self.mix_router_key!r}",
             f"tavily_api_key={self.tavily_api_key!r}",
             f"nvd_api_key={self.nvd_api_key!r}",
             f"github_token={self.github_token!r}",
