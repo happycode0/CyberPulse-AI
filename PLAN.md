@@ -808,8 +808,8 @@ cheapest capable route:
 
 **MixRoute (2026-10-30).** The owner moved the AI budget to a MixRoute subscription, an
 OpenAI-compatible gateway, and approved a ladder for it ("Recommended" profile):
-tier 0 `glm-4-flash` (free) → `gpt-5-nano` → `glm-4.7-flashx`; tier 1 `deepseek-v4-flash` →
-`qwen3.5-flash` → `glm-5.3-flash`; tier 2 `deepseek-v4-flash` → `glm-5.3-flash` →
+tier 0 `glm-4-flash` (free) → `gpt-5-nano` → `glm-4.7-flashx`; tier 1 `glm-4-flash` (free, added
+the same day) → `deepseek-v4-flash` → `qwen3.5-flash`; tier 2 `deepseek-v4-flash` → `glm-5.3-flash` →
 `mimo-v2.5-pro`; code `mimo-v2.5-pro` → `glm-5.3-flash`; audit `qwen3.5-flash` →
 `deepseek-v4-flash`. It lives in `config/models.mixroute.yaml` and is used when
 `AI_PROVIDER=mixroute`. MixRoute publishes ids only, so three things change against §7.1 to §7.4:
