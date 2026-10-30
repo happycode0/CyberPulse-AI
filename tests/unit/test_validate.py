@@ -205,6 +205,12 @@ ADVISORY_SHAPED = [
     "cisco-sa-hardening-nxosw1-cWzSbtR",
     "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/"
     "cisco-sa-apic-info-priv-enAdB5vD",
+    # Slugs for companies called SK start the way an OpenAI-style key does (INC-63, live on
+    # 2026-10-28).
+    "https://www.breachsense.com/breaches/sk-capital-partners-data-breach/",
+    "https://www.breachsense.com/breaches/sk-accountants-tax-consultants-data-breach/",
+    "https://therecord.media/sk-telecom-fined-usim-data-breach-2025",
+    "https://dev.to/someone/sk-learn-pipelines-for-beginners-3h5k",
 ]
 
 
@@ -240,6 +246,23 @@ def test_scan_still_flags_random_tokens_with_no_word_structure(token):
 )
 def test_a_cisco_shaped_token_carrying_more_than_a_short_suffix_is_still_flagged(token):
     assert scan_for_secrets({"url": f"https://sec.cloudapps.cisco.com/x/{token}"})
+
+
+OPENAI_STYLE_KEYS = [
+    "sk-proj-Xk9Lm2Qp7Rt4Vw8Yz1Bn5Cd3Fg6Hj0Ks-q83JxK2mZp0RvT7y_Lc9WbN4sHd1GfA6eUo",
+    "sk-Xk9Lm2Qp7Rt4Vw8Yz1Bn5Cd3Fg6Hj0Ksq83JxK2mZp0RvT7y",  # legacy: 48 base62
+    "sk-ant-api03-Xk9Lm2Qp7Rt4Vw8Yz1Bn5Cd3Fg6Hj0Ks-q83JxK2mZp0RvT7yLc9WbN4sHd1GfA6eUo",
+    "sk-0f3a9c2e7b5d4f1a8c6e2b9d0a7f3c5e",  # lower-case hex, no hyphens
+    "sk-live-test-0f3a9c2e7b5d4f1a8c6e2b9d0a7f3c5e",  # hyphenated, but a 32-hex segment
+    "sk-or-v1-0123456789abcdef0123456789abcdef",  # OpenRouter's own pattern catches it
+]
+
+
+@pytest.mark.parametrize("key", OPENAI_STYLE_KEYS)
+def test_scan_still_flags_sk_keys_that_are_not_word_slugs(key):
+    assert scan_for_secrets({"note": key})
+    assert scan_for_secrets({"url": f"https://x.test/{key}/details"})
+    assert scan_for_secrets({"url": f"https://x.test/breaches/sk-group-data-breach/?k={key}"})
 
 
 def test_scan_does_not_hide_a_random_token_inside_advisory_text():
