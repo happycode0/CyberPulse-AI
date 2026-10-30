@@ -19,8 +19,6 @@ SECRET_ENV = (
     "TELEGRAM_BOT_TOKEN",
     "TELEGRAM_CHAT_ID",
     "CYBERPULSE_OPS_TOKEN",
-    "PAPERCLIP_INCIDENT_WEBHOOK_URL",
-    "PAPERCLIP_INCIDENT_WEBHOOK_SECRET",
 )
 KEY = "fake-key-TESTONLY"
 OPS_TOKEN = "fake-ops-token-TESTONLY-0123456789abcdef"
@@ -40,7 +38,6 @@ def watchdog_settings(**overrides) -> Settings:
         "_env_file": None,
         "database_url": "postgresql://x",
         "site_url": "https://example.org/site/",
-        "watchdog_paperclip_url": "",
     }
     return Settings(**{**values, **overrides})
 
@@ -60,7 +57,6 @@ def isolated(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     for name in SECRET_ENV:
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("WATCHDOG_PAPERCLIP_URL", "")
     monkeypatch.setenv("RAW_CACHE_DIR", str(tmp_path / "raw"))
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     get_settings.cache_clear()

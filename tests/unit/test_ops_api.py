@@ -1197,7 +1197,7 @@ def post_verdict(api: OpsApi, body, incident_id=7, headers=AUTH):
     return api.handle("POST", f"/ops/incidents/{incident_id}/verdict", headers, data)
 
 
-def test_the_open_incidents_are_what_teletraan_reads(api, incidents_db):
+def test_the_open_incidents_and_their_guides(api, incidents_db):
     response = api.handle("GET", "/ops/incidents", AUTH)
     assert response.status == 200
     body = response.json()
@@ -1208,7 +1208,7 @@ def test_the_open_incidents_are_what_teletraan_reads(api, incidents_db):
     assert body["watchdog"]["last_pass"]["completed"] is True
     first = body["incidents"][0]
     assert first["ref"] == "INC-7" and first["verdict_to"] == "POST /ops/incidents/7/verdict"
-    assert "WHEELJACK fixes the parser" in first["guide"]
+    assert "The fix is the parser" in first["guide"]
     assert [(v["verdict"], v["pr"], v["reasons"]) for v in first["verdicts"]] == [
         ("fail", 41, "the fixture test still fails")
     ]

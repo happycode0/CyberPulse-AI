@@ -8,8 +8,9 @@ worker/pipeline/followup.py decide; this reads the record and writes the result.
   no longer qualifies is cancelled.
 - `load_due`, `count_accepted`, `load_new_since` and `submit_report`: what `GET` and
   `POST /ops/followup` read and write.
-- `close_quiet_checks` and `count_due`: what the hourly routine wake (worker/notify/routines.py)
-  does before it decides whether to wake DECKARD at all.
+- `close_quiet_checks` and `count_due`: recording `no_change` on a due check whose event has
+  gained nothing, and counting what is still due. The hourly routine wake that called them went
+  with the crew on 2026-10-31; they stay for the worker's own follow-up writer.
 
 Like every writer here it takes the caller's connection and never commits.
 """

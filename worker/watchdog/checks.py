@@ -49,7 +49,7 @@ Kind = Literal[
 ]
 Severity = Literal["low", "medium", "high", "critical"]
 SEVERITIES: tuple[Severity, ...] = ("low", "medium", "high", "critical")
-# Told to Telegram and to the Incident routine; the rest wait in GET /ops/incidents.
+# Told to Telegram; the rest wait in GET /ops/incidents.
 NOTIFY_AT: frozenset[str] = frozenset({"high", "critical"})
 # Kinds whose subject is a source id.
 SOURCE_KINDS: frozenset[str] = frozenset({"feed-failing", "parser-drift", "stale-feed"})
@@ -232,12 +232,6 @@ class SiteReading:
 
 
 @dataclass(frozen=True)
-class ProbeReading:
-    failures: int  # checks in a row that got no answer
-    error: str | None = None
-
-
-@dataclass(frozen=True)
 class Snapshot:
     now: datetime
     lanes: Mapping[str, Sequence[LaneRun]] | None = None  # newest first
@@ -246,7 +240,6 @@ class Snapshot:
     jobs: Jobs | None = None
     cost: Cost | None = None
     site: SiteReading | None = None
-    paperclip: ProbeReading | None = None
 
 
 # Which kinds each part of the snapshot shows.
@@ -257,27 +250,30 @@ COVERS: dict[str, tuple[Kind, ...]] = {
     "jobs": ("job-failing", "publish-failure", "schema-drift", "push-failure"),
     "cost": ("cost-anomaly",),
     "site": ("site-stale",),
-    "paperclip": ("paperclip-down",),
 }
+# Kinds no check opens any more, covered by every pass so one left open clears by itself:
+# `paperclip-down` went with the crew's control plane on 2026-10-31.
+RETIRED: tuple[Kind, ...] = ("paperclip-down",)
 
-# What each kind means and who fixes it, for TELETRAAN and WHEELJACK (GET /ops/incidents).
+# What each kind means and who fixes it (GET /ops/incidents and the Telegram notices). The owner
+# fixes what is outside the code; a code fault is a change to this repository.
 KIND_GUIDE: dict[Kind, str] = {
     "no-collection": (
         "A lane has stopped finishing runs. The worker or its scheduler is stuck or down. "
-        "The board restarts the worker; a code fault behind it goes to WHEELJACK."
+        "The owner restarts the worker; a code fault behind it is a code change."
     ),
     "zero-volume": (
         "A lane's runs finish but fetch nothing from any source: the network, DNS or the "
-        "collector itself. The board checks the VM's network first."
+        "collector itself. The owner checks the VM's network first."
     ),
     "feed-failing": (
         "One feed keeps failing to answer. If its same-host siblings fail too, the publisher "
         "is down and there is nothing to fix. If only this feed fails, its URL may have moved: "
-        "WHEELJACK proposes the new URL in config/sources, with the publisher's page as proof."
+        "the new URL goes in config/sources.yaml, with the publisher's page as proof."
     ),
     "parser-drift": (
         "A feed answers but its parser finds no items, so the page or feed changed shape. "
-        "WHEELJACK fixes the parser and adds a fixture of the new shape."
+        "The fix is the parser, with a fixture of the new shape."
     ),
     "stale-feed": (
         "A feed answers with items, but the newest is older than its expected frequency. "
@@ -285,38 +281,39 @@ KIND_GUIDE: dict[Kind, str] = {
     ),
     "volume-collapse": (
         "Far fewer fresh events than a usual day: sources failing quietly, or dedupe merging "
-        "too much. SERAPH's source health and the merge log are the place to start."
+        "too much. The source health and the merge log are the place to start."
     ),
     "duplicate-explosion": (
         "Far more fresh events than usual: dedupe or the normaliser has stopped matching "
-        "reports of the same thing. WHEELJACK fixes the matching, with a test of the case."
+        "reports of the same thing. The fix is the matching, with a test of the case."
     ),
     "job-failing": (
         "A scheduled job has not completed a pass within its limit. The worker's logs say why; "
-        "the board decides, and a code fault goes to WHEELJACK."
+        "the owner decides, and a code fault is a code change."
     ),
     "publish-failure": (
-        "Building the site's data keeps failing. The worker's logs say why; a code fault "
-        "goes to WHEELJACK."
+        "Building the site's data keeps failing. The worker's logs say why; a code fault is a "
+        "code change."
     ),
     "schema-drift": (
         "The site's data no longer passes its JSON schemas or the secret scan, so nothing is "
-        "published (it fails closed). WHEELJACK fixes the builder or the schema, never the scan."
+        "published (it fails closed). The fix is the builder or the schema, never the scan."
     ),
     "push-failure": (
         "Pushing the site's data to the data branch keeps failing: the publish token or "
-        "GitHub. The board checks the token."
+        "GitHub. The owner checks the token."
     ),
     "site-stale": (
         "The public site's data is old or cannot be read, though the worker publishes: the "
-        "Pages build or GitHub. The board checks the Pages workflow."
+        "Pages build or GitHub. The owner checks the Pages workflow."
     ),
     "cost-anomaly": (
-        "AI spend is far above a usual day, or near the month's budget. The board checks the "
-        "ledger (GET /ops/cost) and the agents' activity."
+        "AI spend is far above a usual day, or near the month's budget. The owner checks the "
+        "ledger (GET /ops/cost)."
     ),
     "paperclip-down": (
-        "Paperclip's server is not answering. Only a person can see to it; the crew cannot be told."
+        "Retired on 2026-10-31 with Paperclip: no check opens it any more, and one left open "
+        "clears by itself."
     ),
 }
 
@@ -560,7 +557,7 @@ def job_findings(jobs: Jobs, now: datetime) -> list[Finding]:
     return out
 
 
-# ─── The site, the spend and Paperclip ────────────────────────────────────────────────────────────
+# ─── The site and the spend ───────────────────────────────────────────────────────────────────────
 
 
 def site_findings(site: SiteReading, now: datetime) -> list[Finding]:
@@ -622,24 +619,10 @@ def cost_findings(c: Cost) -> list[Finding]:
     return out
 
 
-def paperclip_findings(p: ProbeReading) -> list[Finding]:
-    if p.failures < PROBE_FAILURES:
-        return []
-    return [
-        Finding(
-            "paperclip-down",
-            "",
-            "high",
-            f"Paperclip has not answered {p.failures} checks in a row",
-            {"error": p.error, "failures_in_a_row": p.failures},
-        )
-    ]
-
-
 def evaluate(s: Snapshot) -> tuple[list[Finding], frozenset[str]]:
     """Every fault the snapshot shows, and the kinds it could show at all."""
     findings: list[Finding] = []
-    covered: set[str] = set()
+    covered: set[str] = set(RETIRED)
     parts = (
         ("lanes", s.lanes, lambda p: lane_findings(p, s.now)),
         ("sources", s.sources, source_findings),
@@ -647,7 +630,6 @@ def evaluate(s: Snapshot) -> tuple[list[Finding], frozenset[str]]:
         ("jobs", s.jobs, lambda p: job_findings(p, s.now)),
         ("cost", s.cost, cost_findings),
         ("site", s.site, lambda p: site_findings(p, s.now)),
-        ("paperclip", s.paperclip, paperclip_findings),
     )
     for name, part, check in parts:
         if part is None:

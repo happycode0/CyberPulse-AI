@@ -257,11 +257,6 @@ def ladder_changed(notice: ScanNotice) -> str:
         )
     else:
         lines.append("Enrichment can use them again from its next pass.")
-    if dropped:
-        lines.append(
-            "The Paperclip agents' models are set on each agent's page, not by this ladder: if "
-            "an agent runs a dropped model, change it there."
-        )
     return "\n".join(lines)
 
 
@@ -319,13 +314,6 @@ def monthly_cost(report: dict[str, Any]) -> str:
         ]
         lines += ["", "BY STAGE", *_cost_rows(report["by_stage"])]
         lines += ["", "BY MODEL", *_cost_rows(report["by_model"])]
-    lines += [
-        "",
-        (
-            "The Paperclip agents' own runs are not in the ledger: their spend is on "
-            "Paperclip's Budgets page and the AI provider's usage page."
-        ),
-    ]
     return "\n".join(lines)
 
 
@@ -337,7 +325,7 @@ def _incident_head(incident: Incident) -> list[str]:
     return [f"INC-{incident.id} · {incident.kind}{subject}", _title(incident.title)]
 
 
-def incident_opened(incident: Incident, *, crew: bool) -> str:
+def incident_opened(incident: Incident) -> str:
     """An incident the watchdog opened, or opened again, at high or critical."""
     again = ""
     if incident.reopened:
@@ -351,15 +339,13 @@ def incident_opened(incident: Incident, *, crew: bool) -> str:
         "",
         KIND_GUIDE.get(incident.kind, ""),
     ]
-    if crew:
-        lines += ["", "The crew has been told: TELETRAAN reads it from GET /ops/incidents."]
     if incident.fix_failures:
-        lines.append(f"Fixes that failed TELETRAAN's tests so far: {incident.fix_failures}.")
+        lines.append(f"Fixes that failed their checks so far: {incident.fix_failures}.")
     return "\n".join(lines)
 
 
 def incident_breaker(incident: Incident) -> str:
-    """The breaker tripped: the crew stops, and a person decides."""
+    """The breaker tripped: no more fixes are taken, and a person decides."""
     return "\n".join(
         [
             "CyberPulse-AI · incident · needs a human",
@@ -368,9 +354,8 @@ def incident_breaker(incident: Incident) -> str:
             "",
             (
                 f"{incident.fix_failures} fix{'' if incident.fix_failures == 1 else 'es'} "
-                "failed TELETRAAN's tests, so the crew has "
-                "stopped work on it and the ops API takes no more verdicts. A person decides "
-                "what happens next."
+                "failed their checks, so the ops API takes no more verdicts on it. A person "
+                "decides what happens next."
             ),
         ]
     )

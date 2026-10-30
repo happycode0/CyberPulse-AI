@@ -23,9 +23,7 @@ from worker.db.followup import (
     submit_report,
 )
 from worker.db.migrate import run_migrations
-from worker.db.notifications import claim, last_fired, load_update_entries
-from worker.db.notifications import settle as settle_claim
-from worker.db.wakes import waiting_sites
+from worker.db.notifications import load_update_entries
 from worker.models import EventStatus, MaterialChange
 from worker.ops_api import OpsApi
 from worker.pipeline.run import settle
@@ -444,39 +442,6 @@ def test_a_worker_no_change_backs_off_the_next_check_like_deckard_s(db):
         schedule_followups(conn, CONFIG.followup, now=NOW)
     # high + developing is every 12 hours; two quiet checks since the last change: x4.
     assert pending_due(db, "evt-2026-000001") == NOW + timedelta(hours=48)
-
-
-def test_a_routine_wake_is_claimed_and_its_last_fire_read_back(db):
-    first = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T02",
-                  now=ago(hours=6), channel="paperclip")
-    settle_claim(db, first, "sent", now=ago(hours=6))
-    failed = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T07",
-                   now=ago(hours=1), channel="paperclip")
-    settle_claim(db, failed, "failed", now=ago(hours=1), error="HTTP 503")
-    assert last_fired(db, prefix="routine:follow-up:") == ago(hours=6)
-    assert last_fired(db, prefix="routine:source-discovery:") is None
-
-
-def test_the_sites_waiting_for_a_feed_the_gate_could_not_find(db):
-    rows = [
-        ("wake-test-a.example", None, None),  # not read yet: the gate may still find its feed
-        ("wake-test-b.example", None, ago(days=3)),  # read, no feed, before the last wake
-        ("wake-test-c.example", None, ago(hours=2)),  # read, no feed, since
-        ("wake-test-d.example", "https://wake-test-d.example/feed", ago(hours=1)),  # has one
-    ]
-    with db.begin() as conn:
-        conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
-        for host, feed, probed in rows:
-            conn.execute(
-                text("insert into source_candidates (host, feed_url, found_by, state, "
-                     "last_probe_at) values (:h, :f, 'search', :state, :p)"),
-                {"h": host, "f": feed, "state": "discovered", "p": probed},
-            )
-    try:
-        assert waiting_sites(db, since=ago(days=1)) == (2, 1)
-    finally:
-        with db.begin() as conn:
-            conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
 
 
 def ops(db, tmp_path, **changes) -> OpsApi:

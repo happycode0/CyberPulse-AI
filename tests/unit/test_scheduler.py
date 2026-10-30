@@ -24,7 +24,6 @@ from worker.scheduler import (
     GROUNDTRUTH_JOB_ID,
     MODEL_SCAN_JOB_ID,
     MONTHLY_COST_JOB_ID,
-    ROUTINE_WAKE_JOB_ID,
     WATCHDOG_JOB_ID,
     alert_minutes,
     build_scheduler,
@@ -57,26 +56,14 @@ def test_fast_and_normal_are_scheduled_deep_is_not():
     assert jobs == {
         job_id(Lane.FAST), job_id(Lane.NORMAL), GROUNDTRUTH_JOB_ID, ENRICH_JOB_ID, DIGEST_JOB_ID,
         ALERT_JOB_ID, MONTHLY_COST_JOB_ID, DISCOVERY_JOB_ID, GATE_JOB_ID, MODEL_SCAN_JOB_ID,
-        GAUNTLET_JOB_ID, WATCHDOG_JOB_ID, ROUTINE_WAKE_JOB_ID,
+        GAUNTLET_JOB_ID, WATCHDOG_JOB_ID,
     }
 
 
-def test_the_routine_wakes_run_hourly_on_a_minute_no_other_job_uses():
-    jobs = {j.id: j for j in build_scheduler().get_jobs()}
-    assert fields(jobs[ROUTINE_WAKE_JOB_ID].trigger)["minute"] == "15"
-    assert fields(jobs[ROUTINE_WAKE_JOB_ID].trigger)["hour"] == "*"
-    start = datetime(2026, 10, 3, tzinfo=UTC)
-    window = (start, start + timedelta(days=7))
-    wakes = set(fire_times(jobs[ROUTINE_WAKE_JOB_ID].trigger, *window))
-    others = {
-        at for j in jobs.values() if j.id != ROUTINE_WAKE_JOB_ID
-        for at in fire_times(j.trigger, *window)
-    }
-    assert wakes and not wakes & others
-
-
-def test_asking_for_one_lane_does_not_bring_the_routine_wakes_along():
-    assert ROUTINE_WAKE_JOB_ID not in {j.id for j in build_scheduler((Lane.FAST,)).get_jobs()}
+def test_the_crew_s_wake_ups_are_retired_with_it():
+    """The routine wakes fired Paperclip's Follow-up and Source discovery routines until the crew
+    was retired on 2026-10-31."""
+    assert "routine-wakes" not in {j.id for j in build_scheduler().get_jobs()}
 
 
 def test_the_ground_truth_sync_runs_four_times_a_day_off_the_lane_hours():
@@ -278,8 +265,7 @@ async def test_the_gate_sends_new_source_notices_even_after_a_failed_pass(monkey
 
 @pytest.mark.parametrize("name, sender", [("_digest_job", "send_daily_digest"),
                                           ("_alert_job", "send_critical_alerts"),
-                                          ("_monthly_cost_job", "send_monthly_cost"),
-                                          ("_routine_wake_job", "wake_routines")])
+                                          ("_monthly_cost_job", "send_monthly_cost")])
 async def test_a_notification_pass_that_raises_does_not_stop_the_schedule(
     monkeypatch, caplog, name, sender
 ):

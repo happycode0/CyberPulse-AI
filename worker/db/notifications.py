@@ -63,19 +63,6 @@ def claim(
     return Claim(row.id, row.attempts) if row else None
 
 
-def last_fired(engine: Engine, *, prefix: str) -> datetime | None:
-    """When the newest message whose key starts with `prefix` was claimed, if one was sent or is
-    being sent. A failed one does not count, so the next pass tries again."""
-    with engine.connect() as conn:
-        return conn.execute(
-            text(
-                "select max(claimed_at) from notifications where starts_with(dedupe_key, :p) "
-                "and status in ('sent', 'sending')"
-            ),
-            {"p": prefix},
-        ).scalar_one()
-
-
 def settle(
     engine: Engine, claimed: Claim, outcome: Outcome, *, now: datetime, error: str | None = None
 ) -> None:
