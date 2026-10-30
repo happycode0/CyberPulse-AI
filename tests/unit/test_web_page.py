@@ -56,6 +56,41 @@ def test_anthropic_news_takes_featured_and_listed_cards_once_each(fixture):
     assert barclays.raw_summary is None
 
 
+def test_anthropic_news_reads_the_2026_10_layout_where_the_date_is_beside_the_link(fixture):
+    """Since late October 2026 each card is an <article> whose <header> holds a category link and
+    the <time>, and the story's link with its headline follows. The old reader wanted the <time>
+    inside the link, so it found nothing (the source went EMPTY, then degraded)."""
+    body = fixture("web_page_anthropic_news_2026_10.html").read_bytes()
+    items = parse_web_page(SOURCES["anthropic_news"], body)
+    assert [(i.title, i.url) for i in items] == [
+        (
+            "Anthropic files S-1 with the SEC for proposed initial public offering",
+            "https://www.anthropic.com/news/s1-sec",
+        ),
+        (
+            "Early progress on accelerating drug development with Claude",
+            "https://www.anthropic.com/research/early-progress-drug-development",
+        ),
+        ("Our mission in cyber security", "https://www.anthropic.com/news/anthropic-cyber-mission"),
+        (
+            "AI for Science expands to foundations and research institutions",
+            "https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions",
+        ),
+    ]
+    ipo, drugs, cyber, science = items
+    assert ipo.published == datetime(2026, 10, 26, 7, tzinfo=UTC)
+    assert ipo.raw_summary.startswith("Today, Anthropic, PBC filed")
+    assert drugs.raw_summary == (
+        "We're at the start of a major effort to speed up drug development with Claude."
+    )
+    assert cyber.raw_summary is None
+    # A list row: the summary is in a second link to the same story, beside the headline's.
+    assert science.published == datetime(2026, 10, 28, 7, tzinfo=UTC)
+    assert science.raw_summary.startswith("We’re highlighting 20 scientific foundations")
+    # A card's category link ("Announcements", "Science") is never a story.
+    assert not any(i.url.endswith(("/news/announcements", "/science")) for i in items)
+
+
 def test_oaic_media_unwraps_the_click_tracking_redirect(fixture):
     items = parse("oaic", fixture)
     assert [i.url for i in items] == [
