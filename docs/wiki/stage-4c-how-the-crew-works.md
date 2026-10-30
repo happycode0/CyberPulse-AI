@@ -2,6 +2,14 @@
 
 [The crew](stage-4b-the-crew.md) · [Wiki home](README.md)
 
+> **Retired on 31 October 2026.** The Paperclip crew and its control plane are no longer run.
+> Each agent run read about 1.1 million input tokens (the harness, the Paperclip skill and every
+> tool step re-sending the conversation) to do what one worker call does in 2 to 3 thousand: about
+> US$0.027 a run, against about US$0.0013 a story for the worker's own AI. MORPHEUS's daily
+> report, DECKARD's follow-ups and TELETRAAN's incident diagnosis became worker jobs;
+> TACHIKOMA, VOIGHT and WHEELJACK were retired. This page records how the crew was set up, for a
+> rollback: [owner checklist §9](../runbooks/owner-checklist.md#9-paperclip-retired-2026-10-31).
+
 The [crew page](stage-4b-the-crew.md) says what each agent is. This page shows how the work moves
 between them — who starts it, who hands it to whom, and where it stops.
 

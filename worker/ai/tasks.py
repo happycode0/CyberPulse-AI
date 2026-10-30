@@ -407,8 +407,18 @@ class Checker:
 
     def __init__(self, subject: Subject):
         e = subject.event
-        sources = [subject.source_text, e.title, *subject.headlines]
-        self._cves = {c.id.upper() for c in e.cves}
+        self._init([c.id for c in e.cves], [subject.source_text, e.title, *subject.headlines])
+
+    @classmethod
+    def over(cls, *, cves: Iterable[str], texts: Iterable[str]) -> "Checker":
+        """A checker for an answer drawn from many records, or none: the daily report's events,
+        an incident's evidence. `texts` are what it may not copy; `cves` what it may name."""
+        checker = cls.__new__(cls)
+        checker._init(list(cves), [t for t in texts if t])
+        return checker
+
+    def _init(self, cves: Sequence[str], sources: Sequence[str]) -> None:
+        self._cves = {c.upper() for c in cves}
         self._runs = _runs(sources)
         self._haystack = " ".join(_words(" ".join(sources)))
 

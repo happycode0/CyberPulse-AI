@@ -15,11 +15,13 @@ from sqlalchemy.exc import IntegrityError
 from worker.db.incidents import (
     BREAKER_LIMIT,
     MAX_VERDICTS,
+    count_diagnoses_since,
     load_incident,
     load_incidents,
     load_verdicts,
     record_pass,
     record_verdict,
+    set_diagnosis,
 )
 from worker.db.jobs import JobRun, load_latest_jobs, record_job
 from worker.db.migrate import run_migrations
@@ -238,7 +240,9 @@ def test_a_verdict_belongs_to_an_incident_and_says_pass_or_fail(db):
     assert read(db, "select count(*) from incident_verdicts") == [(0,)]
 
 
-@pytest.mark.parametrize("job", ["watchdog", "publish", "push", "groundtruth"])
+@pytest.mark.parametrize(
+    "job", ["watchdog", "publish", "push", "groundtruth", "daily-report", "followup-writer"]
+)
 def test_job_runs_take_the_new_jobs_and_keep_a_note(db, job):
     run = JobRun(job, NOW - MIN, NOW, completed=False, errors=2, note="RuntimeError")
     record_job(db, run)
@@ -544,7 +548,7 @@ def test_gather_reads_every_part(db):
     record_job(db, JobRun("publish", NOW - MIN, NOW, completed=False, note="RuntimeError"))
     record_job(db, JobRun("publish", NOW - 9 * MIN, NOW - 8 * MIN, completed=True))
     snapshot = gather(db, NOW, budget=Decimal(20))
-    assert snapshot.now == NOW and snapshot.site is None and snapshot.paperclip is None
+    assert snapshot.now == NOW and snapshot.site is None
     assert [s.source_id for s in snapshot.sources] == ["wd-a"]
     assert len(snapshot.lanes["fast"]) == 1 and snapshot.volume.fresh_24h == 0
     assert snapshot.jobs.latest["publish"].note == "RuntimeError"
@@ -555,27 +559,29 @@ def test_gather_reads_every_part(db):
 # ─── One whole pass ───────────────────────────────────────────────────────────────────────────────
 
 
-class FakeRoutine:
+class FakeTelegram:
     def __init__(self):
-        self.payloads = []
+        self.sent = []
 
-    async def fire(self, payload):
-        self.payloads.append(payload)
+    async def send(self, message):
+        self.sent.append(message)
         return SendResult(True)
 
 
-async def test_a_pass_opens_an_incident_tells_the_crew_once_and_records_itself(db):
+def a_watchdog(telegram) -> Watchdog:
+    return Watchdog(
+        Settings(_env_file=None, database_url="postgresql://x"),
+        telegram=lambda s: telegram,
+        token_configured=lambda: False,
+    )
+
+
+async def test_a_pass_opens_an_incident_tells_telegram_once_and_records_itself(db):
     add_source(db, "wd-a")
     add_checks(db, "wd-a", *(["error"] * 5), error="HTTP 500")
     add_run(db, "fast-1", "fast", NOW - 5 * MIN)
-    crew = FakeRoutine()
-    watchdog = Watchdog(
-        # No probe: a test never calls the Paperclip it may be running beside.
-        Settings(_env_file=None, database_url="postgresql://x", watchdog_paperclip_url=""),
-        telegram=lambda s: None,
-        routine=lambda s: crew,
-        token_configured=lambda: False,
-    )
+    telegram = FakeTelegram()
+    watchdog = a_watchdog(telegram)
     first = await watchdog.run_pass(db, NOW)
     assert (first.database, first.findings, first.opened, first.unresolved) == (True, 1, 1, 1)
     assert (first.uncovered, first.sent, first.failed) == ([], 1, 0)
@@ -584,21 +590,41 @@ async def test_a_pass_opens_an_incident_tells_the_crew_once_and_records_itself(d
 
     (incident,) = read(db, "select id, kind, subject, severity, checks from incidents")
     assert tuple(incident)[1:] == ("feed-failing", "wd-a", "high", 2)
-    assert crew.payloads == [
-        {
-            "incident": incident.id,
-            "ref": f"INC-{incident.id}",
-            "kind": "feed-failing",
-            "subject": "wd-a",
-            "severity": "high",
-            "title": "Feed wd-a has failed its last 5 checks",
-            "read": f"GET /ops/incidents/{incident.id}",
-        }
-    ]
+    assert len(telegram.sent) == 1 and f"INC-{incident.id} · feed-failing · wd-a" in telegram.sent[0]
     assert read(db, "select dedupe_key, channel, status from notifications") == [
-        (f"paperclip:incident:{incident.id}", "paperclip", "sent")
+        (f"incident:{incident.id}", "telegram", "sent")
     ]
     assert read(db, "select job, completed, errors, changed from job_runs order by started_at") == [
         ("watchdog", True, 0, True),
         ("watchdog", True, 0, False),
     ]
+
+
+async def test_a_paperclip_down_left_open_resolves_by_itself(db):
+    """Paperclip was stopped on 2026-10-31 and its probe removed; an incident the probe opened
+    before then is covered by every pass, so it clears and resolves."""
+    record_pass(db, [Finding("paperclip-down", "", "high", "Paperclip has not answered")],
+                frozenset({"paperclip-down"}), NOW - MIN)
+    add_run(db, "fast-1", "fast", NOW - 5 * MIN)
+    watchdog = a_watchdog(None)
+    first = await watchdog.run_pass(db, NOW)
+    assert first.resolved == 0
+    later = await watchdog.run_pass(db, NOW + RESOLVE_AFTER)
+    assert later.resolved == 1
+    assert read(db, "select kind, status from incidents") == [("paperclip-down", "resolved")]
+
+
+# ─── Migration 020: the worker's diagnosis ─────────────────────────────────────────────────────────
+
+
+def test_a_diagnosis_is_kept_with_its_incident_and_counted_by_when_it_was_made(db):
+    result = record_pass(db, [failing("wd-a"), failing("wd-b")], SOURCES, NOW)
+    first, second = sorted(i.id for i in result.opened)
+    made = {"likely_cause": "c", "suggested_fix": "f", "owner": "code", "model": "m"}
+    with db.begin() as conn:
+        set_diagnosis(conn, first, {**made, "at": (NOW - 2 * MIN).isoformat()})
+        set_diagnosis(conn, second, {**made, "at": (NOW - 30 * 60 * MIN).isoformat()})
+    with db.connect() as conn:
+        assert load_incident(conn, first).diagnosis["owner"] == "code"
+        assert count_diagnoses_since(conn, NOW - 24 * 60 * MIN) == 1
+        assert load_incident(conn, second).diagnosis is not None

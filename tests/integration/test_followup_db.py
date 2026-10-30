@@ -15,17 +15,18 @@ from worker.db.followup import (
     close_quiet_checks,
     count_accepted,
     count_due,
+    event_context,
     load_due,
+    load_followup_evidence,
     load_new_since,
     load_queue_counts,
+    refuse_task,
     schedule_followups,
     settle_statuses,
     submit_report,
 )
 from worker.db.migrate import run_migrations
-from worker.db.notifications import claim, last_fired, load_update_entries
-from worker.db.notifications import settle as settle_claim
-from worker.db.wakes import waiting_sites
+from worker.db.notifications import load_update_entries
 from worker.models import EventStatus, MaterialChange
 from worker.ops_api import OpsApi
 from worker.pipeline.run import settle
@@ -446,39 +447,6 @@ def test_a_worker_no_change_backs_off_the_next_check_like_deckard_s(db):
     assert pending_due(db, "evt-2026-000001") == NOW + timedelta(hours=48)
 
 
-def test_a_routine_wake_is_claimed_and_its_last_fire_read_back(db):
-    first = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T02",
-                  now=ago(hours=6), channel="paperclip")
-    settle_claim(db, first, "sent", now=ago(hours=6))
-    failed = claim(db, kind="routine_wake", key="routine:follow-up:2026-10-03T07",
-                   now=ago(hours=1), channel="paperclip")
-    settle_claim(db, failed, "failed", now=ago(hours=1), error="HTTP 503")
-    assert last_fired(db, prefix="routine:follow-up:") == ago(hours=6)
-    assert last_fired(db, prefix="routine:source-discovery:") is None
-
-
-def test_the_sites_waiting_for_a_feed_the_gate_could_not_find(db):
-    rows = [
-        ("wake-test-a.example", None, None),  # not read yet: the gate may still find its feed
-        ("wake-test-b.example", None, ago(days=3)),  # read, no feed, before the last wake
-        ("wake-test-c.example", None, ago(hours=2)),  # read, no feed, since
-        ("wake-test-d.example", "https://wake-test-d.example/feed", ago(hours=1)),  # has one
-    ]
-    with db.begin() as conn:
-        conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
-        for host, feed, probed in rows:
-            conn.execute(
-                text("insert into source_candidates (host, feed_url, found_by, state, "
-                     "last_probe_at) values (:h, :f, 'search', :state, :p)"),
-                {"h": host, "f": feed, "state": "discovered", "p": probed},
-            )
-    try:
-        assert waiting_sites(db, since=ago(days=1)) == (2, 1)
-    finally:
-        with db.begin() as conn:
-            conn.execute(text("delete from source_candidates where host like 'wake-test-%'"))
-
-
 def ops(db, tmp_path, **changes) -> OpsApi:
     config = CONFIG.model_copy(update={"followup": CONFIG.followup.model_copy(update=changes)})
     return OpsApi(engine=db, token=SecretStr(TOKEN), data_dir=tmp_path, key_status=lambda: None,
@@ -670,3 +638,75 @@ def test_the_developing_update_rule(db):
         entries = load_update_entries(conn, since=since)
     assert [e.entry_id for e in entries] == [kev, exposure, patch, deckard]
     assert entries[-1].link == URL and entries[0].link is None
+
+
+# --- The worker's follow-up writer (worker/ai/followup_writer.py) ------------------------------
+
+
+def titled_source(db, event_id, name, *, added, title):
+    add_source(db, event_id, name, added=added)
+    with db.begin() as conn:
+        conn.execute(
+            text("update event_sources set title = :t where url = :u"),
+            {"t": title, "u": f"https://example.org/{name}"},
+        )
+
+
+def test_the_evidence_is_the_reports_added_since_the_last_check_newest_first(db):
+    task_id = open_check(db)
+    with db.begin() as conn:
+        conn.execute(text("update followup_tasks set status = 'done', updated_at = :t "
+                          "where id = :id"), {"t": ago(hours=6), "id": task_id})
+        new_task = conn.execute(
+            text("insert into followup_tasks (event_id, kind, due_at) "
+                 "values ('evt-2026-000001', 'check', :now) returning id"),
+            {"now": NOW},
+        ).scalar_one()
+    titled_source(db, "evt-2026-000001", "old", added=ago(hours=9), title="Old report")
+    titled_source(db, "evt-2026-000001", "a", added=ago(hours=4), title="Vendor patches it")
+    titled_source(db, "evt-2026-000001", "b", added=ago(hours=2), title="Hospitals hit")
+    with db.connect() as conn:
+        [due] = load_due(conn, now=NOW, limit=5)
+        assert due.task_id == new_task
+        evidence = load_followup_evidence(conn, due, most=5)
+    assert [(e.ref, e.title) for e in evidence] == [("s1", "Hospitals hit"),
+                                                     ("s2", "Vendor patches it")]
+    assert evidence[0].url == "https://example.org/b" and evidence[0].evidence_class == "NEWS"
+
+
+def test_a_first_check_reads_the_events_newest_reports(db):
+    open_check(db)
+    titled_source(db, "evt-2026-000001", "a", added=ago(hours=30), title="First report")
+    with db.connect() as conn:
+        [due] = load_due(conn, now=NOW, limit=5)
+        assert due.last_check_at is None
+        assert [e.title for e in load_followup_evidence(conn, due, most=5)] == ["First report"]
+
+
+def test_the_writers_report_is_marked_and_counts_towards_the_days_cap(db):
+    task_id = open_check(db)
+    with db.begin() as conn:
+        done = submit_report(conn, task_id, {"outcome": "no_change"}, rule=CONFIG.status,
+                             now=NOW, by="worker-ai")
+    assert done.result == "recorded"
+    with db.connect() as conn:
+        payload = conn.execute(text("select payload from followup_tasks")).scalar_one()
+        assert payload["by"] == "worker-ai"
+        assert count_accepted(conn, since=ago(days=1)) == 1
+
+
+def test_an_answer_the_writer_could_not_use_counts_an_attempt(db):
+    task_id = open_check(db)
+    for attempt in range(1, MAX_REPORT_ATTEMPTS + 1):
+        with db.begin() as conn:
+            attempts, status = refuse_task(conn, task_id, "the answer did not match", now=NOW)
+        assert attempts == attempt
+    assert status == "failed"
+
+
+def test_the_event_context_is_what_the_report_checks_read(db):
+    open_check(db, kev="CVE-2026-1111")
+    with db.connect() as conn:
+        context = event_context(conn, "evt-2026-000001")
+    assert context.cves == frozenset({"CVE-2026-1111"})
+    assert MaterialChange.NEW_FACT in context.types and context.agent_entries == 0

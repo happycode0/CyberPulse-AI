@@ -23,6 +23,7 @@ from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import httpx
 from pydantic import SecretStr
@@ -162,7 +163,25 @@ def after_triage(subject: Subject, triage: Triage) -> Subject:
     return dataclasses.replace(subject, event=e.model_copy(update=update))
 
 
-def _route(governor: Governor, task: Task, work: Work) -> Route | Waiting:
+@dataclass(frozen=True)
+class Call:
+    """One structured call that is not an event's enrichment task: the daily report, a
+    follow-up report, an incident diagnosis (worker/ai/report.py, followup_writer.py,
+    diagnosis.py). `parse` checks the answer and raises `Rejected` when it fails a check the
+    schema cannot express. `run_task` is one of these too, so both keep the same rules."""
+
+    stage: str  # the cost ledger's
+    work: Work  # what the governor routes on: the tier asked for and how much it matters
+    schema_name: str
+    schema: dict[str, Any]
+    messages: list[dict[str, str]]
+    parse: Callable[[dict[str, Any]], Any]
+    max_tokens: int = 2500
+    editorial: bool = True  # never on tier 0 (§8)
+    event_id: str | None = None
+
+
+def _route(governor: Governor, task: Task | Call, work: Work) -> Route | Waiting:
     route = governor.route(work)
     if route is None:
         return Waiting(f"the {governor.mode()[0]} budget mode has no route for it")
@@ -184,22 +203,42 @@ async def run_task(
     An exception that is not a failed call, such as a ledger write that failed, propagates:
     a call that cannot be accounted for is one the worker must stop making.
     """
-    work = _work(task, subject)
-    attribution = Attribution(agent=AGENT, stage=task.stage, event_id=subject.event.event_id)
-    prompt = messages(task, subject)
+    return await run_call(
+        client,
+        governor,
+        Call(
+            stage=task.stage,
+            work=_work(task, subject),
+            schema_name=task.schema_name,
+            schema=task.schema,
+            messages=messages(task, subject),
+            parse=lambda data: task.parse(data, subject),
+            max_tokens=task.max_tokens,
+            editorial=task.editorial,
+            event_id=subject.event.event_id,
+        ),
+    )
+
+
+async def run_call(client: OpenRouterClient, governor: Governor, call: Call) -> Outcome:
+    """Make `call` and check the answer, as `run_task` does for a task: at most `MAX_CALLS`
+    tries, `MAX_BAD_ANSWERS` unusable answers, and the governor asked before each. Never raises
+    for a failed call; a ledger write that failed propagates."""
+    work = call.work
+    attribution = Attribution(agent=AGENT, stage=call.stage, event_id=call.event_id)
     outcome: Failed | Waiting = Waiting("no call was made")
     bad = 0
     for _ in range(MAX_CALLS):
-        route = _route(governor, task, work)
+        route = _route(governor, call, work)
         if isinstance(route, Waiting):
             return route
         try:
             completion = await client.complete(
                 route.tier,
-                schema_name=task.schema_name,
-                schema=task.schema,
-                messages=prompt,
-                max_tokens=task.max_tokens,
+                schema_name=call.schema_name,
+                schema=call.schema,
+                messages=call.messages,
+                max_tokens=call.max_tokens,
                 attribution=attribution,
                 models=route.models,
             )
@@ -217,7 +256,7 @@ async def run_task(
             return Failed(f"{client.label} refused the request ({_status(exc)})")
         else:
             try:
-                return Done(task.parse(completion.data, subject), completion.model)
+                return Done(call.parse(completion.data), completion.model)
             except Rejected as exc:
                 reason, model = str(exc), completion.model
             except (KeyError, TypeError, ValueError):

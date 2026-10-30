@@ -16,7 +16,6 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 HUD = ROOT / "site" / "assets" / "hud.js"
-ORG = ROOT / "tests" / "unit" / "fixtures" / "site_org.json"
 NODE = shutil.which("node")
 
 pytestmark = pytest.mark.skipif(NODE is None, reason="node is not installed")
@@ -75,12 +74,10 @@ EVENTS = [
 SCRIPT = """
 import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
-const [hudPath, eventsPath, orgPath] = process.argv.slice(2);
+const [hudPath, eventsPath] = process.argv.slice(2);
 const m = await import(pathToFileURL(hudPath).href);
 const events = JSON.parse(fs.readFileSync(eventsPath, 'utf8'));
-const org = JSON.parse(fs.readFileSync(orgPath, 'utf8'));
 const after = (open, event) => m.dropdownAfter(open, event);
-const model = m.orgModel(org);
 const ids = (list) => list.map((e) => e.event_id);
 const fresh = m.freshState();
 const count = (over) => m.filterEvents(events, { ...fresh, ...over }).length;
@@ -151,36 +148,6 @@ const out = {
     applyStayed: after('filter-more', { type: 'apply', id: 'filter-more', moved: false }),
     unknown: after('feed-menu', { type: 'scroll' }),
   },
-  cron: Object.fromEntries(org.routines.map((r) => [r.cron, m.describeCron(r.cron, r.timezone)])),
-  cronOther: {
-    weekdays: m.describeCron('0 9 * * 1-5', 'UTC'),
-    hourly: m.describeCron('0 * * * *', 'Australia/Sydney'),
-    pastTheHour: m.describeCron('15 * * * *', null),
-    months: m.describeCron('0 9 1 1,7 *', 'Australia/Sydney'),
-    monthly: m.describeCron('0 9 1 * *', 'Australia/Sydney'),
-    sundays: m.describeCron('0 5 * * 0', 'Australia/Sydney'),
-    everyMinute: m.describeCron('* * * * *', 'UTC'),
-    bothDays: m.describeCron('0 9 1 * 1', 'UTC'),
-    named: m.describeCron('0 9 * * MON', 'UTC'),
-    short: m.describeCron('0 9 * *', 'UTC'),
-    junk: m.describeCron(null),
-  },
-  org: model && {
-    company: model.company.name,
-    top: model.top?.callsign,
-    topManager: model.top?.manager,
-    teams: model.teams.map((t) => [t.name, t.members.map((a) => a.callsign)]),
-    managers: Object.fromEntries(model.agents.map((a) => [a.callsign, a.manager])),
-    routines: Object.fromEntries(model.agents.map((a) => [a.callsign, a.routines])),
-    personas: model.agents.filter((a) => a.persona).length,
-    unlisted: model.unlisted,
-    schedules: model.routines.map((r) => r.schedule),
-  },
-  orgEmpty: [m.orgModel(null), m.orgModel({}), m.orgModel({ agents: [{ title: 'no callsign' }] })],
-  orgPartial: (() => {
-    const partial = m.orgModel({ agents: [{ callsign: 'DECKARD', reports_to: 'MORPHEUS' }] });
-    return { top: partial.top.callsign, teams: partial.teams, unlisted: partial.unlisted.length };
-  })(),
 };
 process.stdout.write(JSON.stringify(out));
 """
@@ -192,7 +159,7 @@ def site(tmp_path_factory):
     (work / "events.json").write_text(json.dumps(EVENTS), encoding="utf-8")
     (work / "probe.mjs").write_text(SCRIPT, encoding="utf-8")
     done = subprocess.run(
-        [NODE, str(work / "probe.mjs"), str(HUD), str(work / "events.json"), str(ORG)],
+        [NODE, str(work / "probe.mjs"), str(HUD), str(work / "events.json")],
         capture_output=True, text=True, timeout=60, check=False,
     )
     assert done.returncode == 0, done.stderr
@@ -358,133 +325,6 @@ def test_a_header_menu_closes_itself(site):
     assert d["unknown"] == {"open": "feed-menu", "focus": None}
 
 
-def test_every_crew_schedule_reads_in_plain_english(site):
-    assert site["cron"] == {
-        "30 7 * * *": "Daily at 07:30 Sydney time",
-        "0 6,14,22 * * *": "Daily at 06:00, 14:00 and 22:00 Sydney time",
-        "0 7 * * *": "Daily at 07:00 Sydney time",
-        "0 3-21/6 * * *": "Daily at 03:00, 09:00, 15:00 and 21:00 Sydney time",
-        "30 3 * * *": "Daily at 03:30 Sydney time",
-    }
-
-
-def test_a_schedule_it_cannot_say_correctly_is_left_as_the_cron(site):
-    other = site["cronOther"]
-    assert other["weekdays"] == "Weekdays at 09:00 UTC"
-    assert other["hourly"] == "Every hour on the hour"
-    assert other["pastTheHour"] == "Every hour at 15 past"
-    assert other["months"] == "Monthly on the 1st in January and July at 09:00 Sydney time"
-    # RIPPERDOC's routines had these shapes until it was retired on 2026-10-20.
-    assert other["monthly"] == "Monthly on the 1st at 09:00 Sydney time"
-    assert other["sundays"] == "Sundays at 05:00 Sydney time"
-    # Every minute, both day fields (cron ORs them), names, the wrong field count, nothing.
-    for shape in ("everyMinute", "bothDays", "named", "short", "junk"):
-        assert other[shape] is None, shape
-
-
-def test_the_org_chart_puts_the_ceo_on_top_and_reports_below(site):
-    org = site["org"]
-    assert org["company"] == "CyberPulse"
-    assert (org["top"], org["topManager"]) == ("MORPHEUS", None)
-    # Teams in the order the file names them; within one, a manager before those reporting in.
-    assert org["teams"] == [
-        ["Operations", ["TELETRAAN", "SERAPH", "WHEELJACK"]],
-        ["Editorial", ["DECKARD", "VOIGHT"]],
-        ["Sources", ["TACHIKOMA"]],
-    ]
-    assert org["managers"]["SERAPH"] == "TELETRAAN" and org["managers"]["DECKARD"] == "MORPHEUS"
-    assert org["routines"] == {
-        "MORPHEUS": 1, "TELETRAAN": 0, "SERAPH": 0, "DECKARD": 2, "VOIGHT": 1, "TACHIKOMA": 1,
-        "WHEELJACK": 0,
-    }
-    # Every agent in the file has a persona on the page and every persona is in the file.
-    assert org["personas"] == 7 and org["unlisted"] == []
-    assert all(org["schedules"]), "a crew cron the page cannot put into words"
-
-
-def test_an_unpublished_org_chart_is_nothing_not_an_empty_company(site):
-    assert site["orgEmpty"] == [None, None, None]
-    # A file naming one agent whose manager is absent still draws: that agent is the top, and the
-    # page says which of its own crew the file does not list.
-    partial = site["orgPartial"]
-    assert partial["top"] == "DECKARD" and partial["teams"] == []
-    assert partial["unlisted"] == 6
-
-
-# renderOrg drawn into a small fake DOM that, like a browser's, writes a null it is given as
-# the text "null".
-DRAW_ORG = r"""
-const [hudPath, orgPath] = process.argv.slice(2);
-// Imported before there is a document, so the page's own entry point stays out of it.
-const m = await import(hudPath);
-class FakeNode {}
-class FakeText extends FakeNode {
-  constructor(t) { super(); this.data = String(t); }
-  get textContent() { return this.data; }
-}
-class FakeEl extends FakeNode {
-  constructor(tag) { super(); this.tagName = tag.toUpperCase(); this.childNodes = []; this.dataset = {}; }
-  setAttribute() {}
-  set className(v) {}
-  get textContent() { return this.childNodes.map((c) => c.textContent).join(''); }
-  set textContent(v) { this.childNodes = [new FakeText(v)]; }
-  append(...nodes) { for (const n of nodes) this.childNodes.push(n instanceof FakeNode ? n : new FakeText(n)); }
-  replaceChildren(...nodes) { this.childNodes = []; this.append(...nodes); }
-}
-const hosts = {};
-globalThis.Node = FakeNode;
-globalThis.document = {
-  createElement: (t) => new FakeEl(t),
-  createElementNS: (_, t) => new FakeEl(t),
-  createTextNode: (t) => new FakeText(t),
-  getElementById: (id) => (hosts[id] ||= new FakeEl('div')),
-};
-const { readFileSync } = await import('node:fs');
-m.renderOrg(JSON.parse(readFileSync(orgPath, 'utf8')));
-const text = (id) => (hosts[id] ? hosts[id].textContent : null);
-process.stdout.write(JSON.stringify({
-  chart: text('org-chart'), routines: text('org-routines'), facts: text('org-facts'),
-}));
-"""
-
-
-@pytest.mark.parametrize("org", [ORG, ROOT / "site" / "assets" / "org.json"], ids=["fixture", "published"])
-def test_the_org_chart_draws_no_stray_null(org, tmp_path):
-    (tmp_path / "draw.mjs").write_text(DRAW_ORG, encoding="utf-8")
-    done = subprocess.run(
-        [NODE, str(tmp_path / "draw.mjs"), str(HUD), str(org)],
-        capture_output=True, text=True, timeout=60, check=False,
-    )
-    assert done.returncode == 0, done.stderr
-    drawn = json.loads(done.stdout)
-    assert "MORPHEUS" in drawn["chart"] and "Daily editorial" in drawn["routines"]
-    for part, text in drawn.items():
-        assert "null" not in text and "undefined" not in text, part
-
-
-def test_a_routine_the_worker_fires_says_so_not_custom_schedule(tmp_path):
-    """Follow-up, Source discovery and Incident are webhook routines (2026-10-30): no cron, run
-    only when the worker has work for them. The page used to call them "Custom schedule"."""
-    org = json.loads(ORG.read_text(encoding="utf-8"))
-    org["routines"] = [
-        {"name": "Daily editorial", "assignee": "MORPHEUS", "cron": "30 7 * * *",
-         "timezone": "Australia/Sydney", "trigger": "schedule", "summary": "s"},
-        {"name": "Follow-up", "assignee": "DECKARD", "cron": None,
-         "timezone": "Australia/Sydney", "trigger": "webhook", "summary": "w"},
-    ]
-    (tmp_path / "org.json").write_text(json.dumps(org), encoding="utf-8")
-    (tmp_path / "draw.mjs").write_text(DRAW_ORG, encoding="utf-8")
-    done = subprocess.run(
-        [NODE, str(tmp_path / "draw.mjs"), str(HUD), str(tmp_path / "org.json")],
-        capture_output=True, text=True, timeout=60, check=False,
-    )
-    assert done.returncode == 0, done.stderr
-    routines = json.loads(done.stdout)["routines"]
-    assert "Daily at 07:30 Sydney time" in routines
-    assert "Only when there is work" in routines and "fired by the worker" in routines
-    assert "Custom schedule" not in routines and "—" not in routines
-
-
 def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     widen = site["widen"]
     assert widen["view"] == "events" and widen["scope"] == "all"
@@ -499,10 +339,10 @@ def test_a_story_outside_the_scope_widens_it_and_keeps_the_tags(site):
     assert site["inScopeStays"]["scope"] == "au"
 
 
-# The CREW view drawn from crew.json, org.json and system-status.json: what each card says of an
-# agent the worker cannot see, what it runs on, and the run table.
+# The CREW view drawn from crew.json and system-status.json: what each job's card says, what it
+# runs on, the retired personas, and the run table.
 DRAW_CREW = r"""
-const [hudPath, fixtures, orgPath] = process.argv.slice(2);
+const [hudPath, fixtures] = process.argv.slice(2);
 const m = await import(hudPath);
 class FakeNode {}
 class FakeText extends FakeNode {
@@ -531,31 +371,30 @@ const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const crew = read(`${fixtures}/next/crew.json`);
 const status = read(`${fixtures}/next/system-status.json`);
 const feed = read(`${fixtures}/next/live.json`);
-const org = read(orgPath);
 const NOW = Date.parse('2026-10-04T10:30:00Z');
 const cards = () => hosts['crew-list'].childNodes.map((li) => li.textContent);
-m.renderCrew(crew, org, status.ai, NOW);
-const withOrg = { cards: cards(), summary: hosts['crew-summary'].textContent };
-m.renderCrew(crew, null, null, NOW);
-const withoutOrg = { cards: cards(), summary: hosts['crew-summary'].textContent };
+m.renderCrew(crew, status.ai, NOW);
+const published = { cards: cards(), summary: hosts['crew-summary'].textContent, count: hosts['crew-count'].textContent, retired: hosts['crew-retired'].textContent };
+m.renderCrew(null, null, NOW);
+const unread = { cards: cards(), summary: hosts['crew-summary'].textContent };
 m.renderCrewRun(status, feed);
 const run = hosts['crew-run'].textContent;
 // An older snapshot whose last_run is still going: never "finished null".
 m.renderCrewRun({ last_run: { run_id: 'r', lane: 'normal', started_at: '2026-10-28T08:00:00Z', finished_at: null } }, feed);
 const unfinished = hosts['crew-run'].textContent;
-const mixroute = { agents: [{ callsign: 'DECKARD', adapter: 'model', model: 'mixroute/deepseek-v4-flash', max_daily_runs: 8 }] };
+const job = (callsign) => crew.jobs.find((j) => j.callsign === callsign);
+const persona = (callsign) => m.CREW.find((a) => a.callsign === callsign);
 process.stdout.write(JSON.stringify({
-  withOrg, withoutOrg, run, unfinished,
-  seen: [
-    m.seenState(null, NOW),
-    m.seenState({ callsign: 'TELETRAAN', what: 'incident verdict', last_at: null, this_month: 0 }, NOW),
-    m.seenState({ callsign: 'DECKARD', what: 'follow-up report', last_at: '2026-10-04T09:12:00Z', this_month: 4 }, NOW),
-    m.seenState({ callsign: 'TACHIKOMA', what: 'source proposal', last_at: '2026-09-06T03:30:00Z', this_month: 0 }, NOW),
-  ],
+  published, unread, run, unfinished,
+  jobs: m.JOBS.map((a) => a.callsign),
+  states: Object.fromEntries(['SERAPH', 'MORPHEUS', 'DECKARD', 'TELETRAAN'].map((c) => [c, m.jobState(job(c), NOW)])),
+  degraded: m.jobState({ ...job('SERAPH'), status: 'degraded' }, NOW),
+  none: m.jobState(undefined, NOW),
   runtime: [
-    m.cardRuntime({ callsign: 'DECKARD', runtime: 'fallback' }, mixroute),
-    m.cardRuntime({ callsign: 'SERAPH', runtime: 'fallback' }, { agents: [{ callsign: 'SERAPH', adapter: 'http' }] }),
-    m.cardRuntime({ callsign: 'VOIGHT', runtime: 'fallback' }, mixroute),
+    m.jobRuntime(persona('DECKARD'), job('DECKARD')),
+    m.jobRuntime(persona('SERAPH'), job('SERAPH')),
+    m.jobRuntime(persona('TELETRAAN'), job('TELETRAAN')),
+    m.jobRuntime(persona('MORPHEUS'), { model: 'mixroute/zhipu/glm-5.3-flash' }),
   ],
 }));
 """
@@ -566,43 +405,67 @@ def crew_view(tmp_path_factory):
     work = tmp_path_factory.mktemp("crew")
     (work / "draw.mjs").write_text(DRAW_CREW, encoding="utf-8")
     done = subprocess.run(
-        [NODE, str(work / "draw.mjs"), str(HUD), str(ROOT / "tests" / "fixtures" / "site"),
-         str(ORG)],
+        [NODE, str(work / "draw.mjs"), str(HUD), str(ROOT / "tests" / "fixtures" / "site")],
         capture_output=True, text=True, timeout=60, check=False,
     )
     assert done.returncode == 0, done.stderr
     return json.loads(done.stdout)
 
 
-def test_a_crew_card_says_only_what_of_the_agents_work_reached_the_worker(crew_view):
-    none, never, recent, old = crew_view["seen"]
-    assert none["label"] == "RUNS IN PAPERCLIP"
-    assert "none of its work reaches the worker" in none["text"]
-    assert never == {"status": "not_seen", "led": "idle", "label": "NOT SEEN YET",
-                     "text": "Works in Paperclip. No incident verdict has reached the worker yet."}
-    assert recent["led"] == "ok" and recent["label"] == "LAST SEEN 4 OCT"
-    assert recent["text"].endswith(" · 4 this month.")
-    # A month-old proposal is not "active": the card says when, and warns.
-    assert old["led"] == "warn" and old["label"] == "LAST SEEN 6 SEPT"
-    text = " ".join(crew_view["withOrg"]["cards"])
-    assert "Last source proposal the worker received" in text
-    assert "NOT SEEN YET" in text, "TELETRAAN: no verdict has reached the worker"
+def test_the_crew_is_the_worker_s_four_jobs(crew_view):
+    """Paperclip was retired on 2026-10-31: every job runs in the worker under its callsign."""
+    assert crew_view["jobs"] == ["SERAPH", "MORPHEUS", "DECKARD", "TELETRAAN"]
+    assert crew_view["published"]["count"] == "4 JOBS"
+    text = " ".join(crew_view["published"]["cards"])
+    assert "Paperclip" not in text and "RUNS IN PAPERCLIP" not in text
     for word in ("null", "undefined", "NaN"):
         assert word not in text
 
 
-def test_a_crew_card_says_what_the_agent_runs_on_from_the_org_chart(crew_view):
-    assert crew_view["runtime"] == ["LLM · deepseek-v4-flash · UP TO 8/DAY", "CODE · NO MODEL", "fallback"]
-    # Without org.json, the roster's own line stands in, and no hard-coded tool is claimed.
-    text = " ".join(crew_view["withoutOrg"]["cards"])
-    assert "Tavily" not in text and "Strands" not in text
+def test_a_job_card_says_how_the_job_last_ran(crew_view):
+    states = crew_view["states"]
+    assert states["SERAPH"] == {"status": "active", "led": "ok", "label": "ACTIVE"}
+    assert states["DECKARD"] == {"status": "active", "led": "ok", "label": "LAST RUN 4 OCT"}
+    # A week-old last run is not current: the card says when, and warns.
+    assert states["MORPHEUS"] == {"status": "stale", "led": "warn", "label": "LAST RUN 29 SEPT"}
+    # Never run: said so, not shown as a zero.
+    assert states["TELETRAAN"] == {"status": "not_run", "led": "idle", "label": "NOT RUN YET"}
+    assert crew_view["degraded"]["label"] == "DEGRADED"
+    assert crew_view["none"] == {"status": "unknown", "led": "idle", "label": "NO DATA"}
+    cards = dict(zip(crew_view["jobs"], crew_view["published"]["cards"]))
+    assert "CALLS THIS MONTH4" in cards["DECKARD"] and "US$0.01" in cards["DECKARD"]
+    assert "has made no AI call yet" in cards["TELETRAAN"]
+    assert "TASKS THIS MONTH3499" in cards["SERAPH"]
 
 
-def test_the_crew_summary_tells_the_two_budgets_apart(crew_view):
-    summary = crew_view["withOrg"]["summary"]
-    assert "the pipeline's own AI is capped at US$12.00 a month" in summary
-    assert "monthly budget in Paperclip" in summary
-    assert "capped" not in crew_view["withoutOrg"]["summary"]
+def test_a_job_card_says_what_the_job_runs_on(crew_view):
+    assert crew_view["runtime"] == [
+        "AI · deepseek-v4-flash", "CODE · NO MODEL", "AI · NO CALL YET", "AI · glm-5.3-flash",
+    ]
+
+
+def test_without_crew_json_every_card_says_no_data(crew_view):
+    unread = crew_view["unread"]
+    assert len(unread["cards"]) == 4
+    assert all("NO DATA" in c and "has not been published" in c for c in unread["cards"])
+    assert "No workload has been published yet" in unread["summary"]
+    assert "capped" not in unread["summary"]
+
+
+def test_the_summary_counts_the_jobs_calls_and_the_one_ai_cap(crew_view):
+    summary = crew_view["published"]["summary"]
+    assert "the crew's AI jobs this month: 5 calls, US$0.01" in summary
+    assert "the pipeline's own enrichment calls: 960 calls, US$0.12" in summary
+    assert "capped at US$12.00 a month" in summary and "Paperclip" not in summary
+
+
+def test_the_retired_personas_are_listed_with_why(crew_view):
+    retired = crew_view["published"]["retired"]
+    for callsign in ("TACHIKOMA", "VOIGHT", "WHEELJACK"):
+        assert callsign in retired
+    assert "source gate" in retired and "pull request" in retired
+    assert not any(callsign in " ".join(crew_view["published"]["cards"])
+                   for callsign in ("TACHIKOMA", "VOIGHT", "WHEELJACK"))
 
 
 def test_the_run_table_credits_the_workers_figures_to_seraph(crew_view):
@@ -611,5 +474,7 @@ def test_the_run_table_credits_the_workers_figures_to_seraph(crew_view):
     assert "Still going: NORMAL lane since" in run
     # The fixture's run recorded one error, and the snapshot holds ten stories: SERAPH's figures.
     assert "1 error recorded; 10 events published in this snapshot" in run
+    assert "Not part of a collection run: it runs on its own schedule." in run
+    assert "VOIGHT" not in run and "Paperclip" not in run
     unfinished = crew_view["unfinished"]
     assert "null" not in unfinished and "No completed run has been published (still going: NORMAL lane since" in unfinished

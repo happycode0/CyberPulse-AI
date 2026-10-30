@@ -1,22 +1,22 @@
 """One watchdog pass. worker/scheduler.py runs one every five minutes, and `--watchdog` runs one
 now.
 
-1. Probe the public site and Paperclip, and read the rest from the database.
+1. Read the public site, and the rest from the database.
 2. Judge the snapshot (checks.py), then move the incidents (reconcile.py, worker/db/incidents.py).
 3. Tell people. Telegram hears of each high or critical incident when it opens or reopens, and
-   again when it resolves. It also hears of any incident whose breaker has tripped. The
-   Incident routine in Paperclip hears of each high or critical incident when it opens or
-   reopens, so TELETRAAN files it. Each notice is claimed in `notifications`, so none is sent
-   twice. An incident that keeps reopening is announced MAX_REOPEN_NOTICES times, then waits
-   in GET /ops/incidents.
+   again when it resolves. It also hears of any incident whose breaker has tripped. Each
+   notice is claimed in `notifications`, so none is sent twice. An incident that keeps
+   reopening is announced MAX_REOPEN_NOTICES times, then waits in GET /ops/incidents. Until
+   2026-10-31 the Incident routine in Paperclip heard of them too, for TELETRAAN; the crew and
+   its control plane are retired.
 4. Record the pass in job_runs.
 
 When the database cannot be reached, nothing can be judged or recorded. After DB_FAILURES
 passes like that in a row, Telegram is told once. That message is sent without a claim,
 since there is nowhere to write one. Telegram is told again when the database is back.
 
-The counters the probes keep between passes live in memory. A restart sets them back to
-zero, which only delays a probe's finding by a few passes.
+The count of failed site reads kept between passes lives in memory. A restart sets it back to
+zero, which only delays that finding by a few passes.
 """
 
 import asyncio
@@ -46,29 +46,22 @@ from worker.notify.messages import (
 from worker.notify.telegram import SendResult, Telegram
 from worker.publish.push import publish_token_configured
 from worker.settings import Settings
-from worker.watchdog.checks import (
-    NOTIFY_AT,
-    PROBE_FAILURES,
-    ProbeReading,
-    SiteReading,
-    evaluate,
-)
-from worker.watchdog.paperclip import IncidentRoutine, probe
+from worker.watchdog.checks import NOTIFY_AT, PROBE_FAILURES, SiteReading, evaluate
 
 logger = logging.getLogger(__name__)
 
 EVERY_MINUTES = 5
 DB_FAILURES = 3
+# How long a pass waits for the worker's diagnosis of an incident it opened
+# (worker/ai/diagnosis.py) before telling Telegram without one.
+DIAGNOSIS_TIMEOUT_SECONDS = 90.0
 MAX_REOPEN_NOTICES = 3
 SITE_TIMEOUT_SECONDS = 20.0
-# The kinds the crew is told of: the ones code can fix (checks.py KIND_GUIDE), for TELETRAAN to
-# diagnose. The rest go to Telegram alone: a stuck worker, the network, a quiet feed, the
-# publish token, Pages and money are the board's, and with Paperclip down there is no crew to
-# tell. Waking TELETRAAN for one cost a run to say "ask the board".
-FOR_THE_CREW = frozenset({
-    "feed-failing", "parser-drift", "duplicate-explosion", "volume-collapse", "publish-failure",
-    "schema-drift", "job-failing",
-})
+
+
+# What worker/ai/diagnosis.py `diagnose_incident` is to the watchdog: the incident in, its
+# diagnosis (stored with it) or None out.
+Diagnose = Callable[[Engine, Incident, datetime], Awaitable[dict[str, Any] | None]]
 
 
 def _utcnow() -> datetime:
@@ -92,19 +85,6 @@ def _suffix(incident: Incident) -> str | None:
     if incident.reopened > MAX_REOPEN_NOTICES:
         return None
     return f":r{incident.reopened}" if incident.reopened else ""
-
-
-def routine_payload(incident: Incident) -> dict[str, Any]:
-    """What the Incident routine is told: enough to name it. TELETRAAN reads the rest."""
-    return {
-        "incident": incident.id,
-        "ref": f"INC-{incident.id}",
-        "kind": incident.kind,
-        "subject": incident.subject,
-        "severity": incident.severity,
-        "title": incident.title,
-        "read": f"GET /ops/incidents/{incident.id}",
-    }
 
 
 async def _once(
@@ -139,24 +119,21 @@ class Watchdog:
         settings: Settings,
         *,
         telegram: Callable[[Settings], Channel | None] = Telegram.from_settings,
-        routine: Callable[[Settings], IncidentRoutine | None] = IncidentRoutine.from_settings,
         token_configured: Callable[[], bool] = publish_token_configured,
         site_transport: httpx.AsyncBaseTransport | None = None,
-        paperclip_transport: httpx.AsyncBaseTransport | None = None,
+        diagnose: Diagnose | None = None,
     ) -> None:
         self._settings = settings
+        self._diagnose = diagnose
         self._telegram = telegram
-        self._routine = routine
         self._token_configured = token_configured
         self._site_transport = site_transport
-        self._paperclip_transport = paperclip_transport
         self.site_failures = 0
-        self.paperclip_failures = 0
         self.db_failures = 0
         self.db_down_since: datetime | None = None
         self.db_alerted = False
 
-    # --- Probes ---
+    # --- The site ---
 
     async def _read_site(self, now: datetime) -> SiteReading | None:
         """The public site's data, as a visitor gets it; None when this host does not push, or
@@ -191,20 +168,6 @@ class Watchdog:
             return None
         return SiteReading(None, error, self.site_failures)
 
-    async def _probe_paperclip(self) -> ProbeReading | None:
-        """Whether Paperclip answers; None when no probe is set, or while probes have failed
-        fewer than PROBE_FAILURES times in a row, so a blip neither opens nor clears anything."""
-        url = self._settings.watchdog_paperclip_url.strip()
-        if not url:
-            return None
-        error = await probe(
-            url, user_agent=self._settings.user_agent, transport=self._paperclip_transport
-        )
-        self.paperclip_failures = 0 if error is None else self.paperclip_failures + 1
-        if 0 < self.paperclip_failures < PROBE_FAILURES:
-            return None
-        return ProbeReading(self.paperclip_failures, error)
-
     # --- The database ---
 
     async def _database_down(self, now: datetime, telegram: Channel | None) -> None:
@@ -234,6 +197,37 @@ class Watchdog:
             send=functools.partial(telegram.send, database_back(since, now)),
         )
 
+    # --- Diagnosing ---
+
+    async def _diagnosed(self, engine: Engine, result: PassResult, now: datetime) -> PassResult:
+        """`result` with a diagnosis on each high or critical incident this pass opened, as far
+        as one could be made in time. Nothing here can fail the pass."""
+        if self._diagnose is None:
+            return result
+        made: dict[int, dict[str, Any]] = {}
+        for incident in result.opened:
+            if incident.severity not in NOTIFY_AT:
+                continue
+            try:
+                diagnosis = await asyncio.wait_for(
+                    self._diagnose(engine, incident, now), DIAGNOSIS_TIMEOUT_SECONDS
+                )
+            except Exception as exc:  # noqa: BLE001 - the notice goes without one
+                logger.warning("INC-%d: no diagnosis (%s)", incident.id, type(exc).__name__)
+                continue
+            if diagnosis is not None:
+                made[incident.id] = diagnosis
+        if not made:
+            return result
+
+        def with_diagnosis(incidents: list[Incident]) -> list[Incident]:
+            return [replace(i, diagnosis=made[i.id]) if i.id in made else i for i in incidents]
+
+        return replace(
+            result, opened=with_diagnosis(result.opened),
+            unresolved=with_diagnosis(result.unresolved),
+        )
+
     # --- Telling ---
 
     async def _notify(
@@ -242,7 +236,6 @@ class Watchdog:
         result: PassResult,
         now: datetime,
         telegram: Channel | None,
-        routine: IncidentRoutine | None,
         summary: PassSummary,
     ) -> None:
         def count(outcome: Outcome | None) -> None:
@@ -253,31 +246,17 @@ class Watchdog:
 
         for incident in result.unresolved:
             suffix = _suffix(incident)
-            crew = routine is not None and incident.kind in FOR_THE_CREW
-            if incident.severity in NOTIFY_AT and suffix is not None:
-                if telegram is not None:
-                    message = incident_opened(incident, crew=crew and not incident.needs_human)
-                    count(
-                        await _once(
-                            engine,
-                            kind="incident",
-                            key=f"incident:{incident.id}{suffix}",
-                            channel="telegram",
-                            now=now,
-                            send=functools.partial(telegram.send, message),
-                        )
+            if incident.severity in NOTIFY_AT and suffix is not None and telegram is not None:
+                count(
+                    await _once(
+                        engine,
+                        kind="incident",
+                        key=f"incident:{incident.id}{suffix}",
+                        channel="telegram",
+                        now=now,
+                        send=functools.partial(telegram.send, incident_opened(incident)),
                     )
-                if crew and routine is not None and not incident.needs_human:
-                    count(
-                        await _once(
-                            engine,
-                            kind="incident",
-                            key=f"paperclip:incident:{incident.id}{suffix}",
-                            channel="paperclip",
-                            now=now,
-                            send=functools.partial(routine.fire, routine_payload(incident)),
-                        )
-                    )
+                )
             if incident.needs_human and telegram is not None:
                 count(
                     await _once(
@@ -309,7 +288,7 @@ class Watchdog:
         started = now or _utcnow()
         summary = PassSummary()
         telegram = self._telegram(self._settings)
-        site, paperclip = await asyncio.gather(self._read_site(started), self._probe_paperclip())
+        site = await self._read_site(started)
         if not await asyncio.to_thread(ping, engine):
             summary.database = False
             await self._database_down(started, telegram)
@@ -320,7 +299,7 @@ class Watchdog:
         snapshot = await asyncio.to_thread(
             gather, engine, started, budget=self._settings.ai_monthly_budget_usd
         )
-        snapshot = replace(snapshot, site=site, paperclip=paperclip)
+        snapshot = replace(snapshot, site=site)
         summary.uncovered = [
             name
             for name in ("lanes", "sources", "volume", "jobs", "cost")
@@ -331,9 +310,8 @@ class Watchdog:
         result = await asyncio.to_thread(record_pass, engine, findings, covered, started)
         summary.opened, summary.resolved = len(result.opened), len(result.resolved)
         summary.unresolved = len(result.unresolved)
-        await self._notify(
-            engine, result, started, telegram, self._routine(self._settings), summary
-        )
+        result = await self._diagnosed(engine, result, started)
+        await self._notify(engine, result, started, telegram, summary)
         for incident in result.opened:
             logger.warning(
                 "incident INC-%d opened%s: %s %s (%s)",

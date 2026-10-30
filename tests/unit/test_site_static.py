@@ -171,8 +171,9 @@ def test_index_declares_last_completed_collection():
 
 
 # Everything the page used to show by section is still named on it: the intelligence feeds in
-# the FEEDS menu, the dashboard blocks, the five views, the crew view's company, chart and
-# routines, and the scope, beat and KEY ONLY controls in the header. AUSTRALIA NOW and GLOBAL
+# the FEEDS menu, the dashboard blocks, the five views, the crew view's jobs and its retired
+# personas, and the scope, beat and KEY ONLY controls in the header. The crew view's company,
+# org chart and routines went with Paperclip on 2026-10-31. AUSTRALIA NOW and GLOBAL
 # CYBER left the menu (the scope control is the same thing), so they are not required here; their
 # old links are held by test_site_behaviour instead.
 def test_index_lists_every_section():
@@ -181,10 +182,12 @@ def test_index_lists_every_section():
         "AI + CYBER", "ACTIVE EXPLOITATION",
         "DEVELOPING EVENTS", "EMERGING THREATS", "THREAT ACTORS", "VULNERABILITIES",
         "POLICY &amp; RESEARCH", "TRENDS", "THE CREW", "DASHBOARD", "EVENTS", "CREW", "SYSTEM",
-        "SOURCES", "FEEDS", "TAG FILTERS", "KEY ONLY", "THE COMPANY", "ORG CHART", "ROUTINES",
-        "WORLD MAP", "SEVERITY DISTRIBUTION", "TOP SIGNALS",
+        "SOURCES", "FEEDS", "TAG FILTERS", "KEY ONLY", "THE CREW IN THE LAST RUN",
+        "RETIRED ON 31 OCTOBER 2026", "WORLD MAP", "SEVERITY DISTRIBUTION", "TOP SIGNALS",
     ):
         assert name in html, name
+    for gone in ("THE COMPANY", "ORG CHART", "ROUTINES", "org-chart", "org-routines"):
+        assert gone not in html, gone
     for scope in ("au", "global", "all"):
         assert re.search(rf'name="scope" value="{scope}"', html), scope
     assert re.search(r'name="scope" value="au" checked', html), "AUSTRALIA is not preselected"
@@ -286,8 +289,8 @@ def test_severity_is_conveyed_by_more_than_colour():
 
 def test_hud_js_exports_the_contract():
     js = read("site/assets/hud.js")
-    for fn in ("loadData", "renderSections", "applyFilters", "renderOrg", "renderIndex",
-               "initFxToggle", "dropdownAfter", "describeCron", "orgModel", "importanceOf"):
+    for fn in ("loadData", "renderSections", "applyFilters", "renderCrew", "renderIndex",
+               "initFxToggle", "dropdownAfter", "jobState", "jobRuntime", "importanceOf"):
         assert re.search(rf"export\s+(async\s+)?function\s+{fn}\b", js), fn
 
 
@@ -327,9 +330,11 @@ def test_every_agent_has_its_own_portrait_and_a_published_job():
     assert set(faces) == drawn, f"undrawn: {sorted(set(faces) - drawn)}; unused: {sorted(drawn - set(faces))}"
     jobs_block = js[js.index("const CREW_JOBS = {"):js.index("\n};", js.index("const CREW_JOBS = {"))]
     described = set(re.findall(r"^  ([A-Z]+): \{", jobs_block, re.MULTILINE))
-    assert {c for c, _ in entries} == described, (
-        f"no job published for: {sorted({c for c, _ in entries} - described)}"
-    )
+    # A persona retired on 2026-10-31 has no job, and says why it went instead.
+    retired = set(re.findall(r"callsign: '([A-Z]+)'[^\n]*\bretired: '", roster))
+    assert retired == {"TACHIKOMA", "VOIGHT", "WHEELJACK"}
+    working = {c for c, _ in entries} - retired
+    assert working == described, f"no job published for: {sorted(working - described)}"
 
 
 def test_hud_js_formats_times_in_sydney():
@@ -435,3 +440,12 @@ def test_every_page_declares_a_self_hosted_favicon():
     # The mark is the wordmark's, so it has to track the palette rather than drift from it.
     for token in ("--bg-page", "--accent"):
         assert PALETTE[token] in svg, f"favicon does not use {token}"
+
+
+def test_the_system_page_says_what_the_crew_s_jobs_are_since_paperclip_went():
+    """Paperclip was retired on 2026-10-31: the SYSTEM page's AI list and its CREW step name the
+    worker's three AI jobs, and no agent that edits or proposes sources."""
+    js = read("site/assets/pages.js")
+    for gone in ("propose sources", "source proposals", "Agents edit", "recorded for the crew"):
+        assert gone not in js, gone
+    assert "daily intelligence report" in js and "incident diagnosis" in js

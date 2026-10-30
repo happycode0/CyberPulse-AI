@@ -336,15 +336,13 @@ def test_the_builder_refuses_a_model_with_no_known_vendor(builder, monkeypatch, 
         builder.build(tmp_path / "crew.zip")
 
 
-# --- The public org chart (site/assets/org.json) -------------------------------------------------
-
-ORG_JSON = REPO / "site/assets/org.json"
+# --- The public org chart (`--org-json`) ----------------------------------------------------------
 
 
-def test_the_committed_org_chart_is_the_wiki_as_it_stands(builder):
-    """Rebuild it after a wiki change:
-    python3 ops/build-paperclip-package.py --org-json site/assets/org.json"""
-    assert ORG_JSON.read_text(encoding="utf-8") == builder.org_json()
+def test_the_site_no_longer_ships_the_org_chart():
+    """Paperclip was retired on 2026-10-31 and the CREW view draws the worker's jobs. The
+    builder still writes an org chart with `--org-json`, for a rollback."""
+    assert not (REPO / "site/assets/org.json").exists()
 
 
 def test_the_org_chart_shape(builder):
@@ -382,7 +380,7 @@ def test_the_org_chart_shape(builder):
 
 
 def test_the_org_chart_carries_no_prompt_payload_or_address(builder):
-    text = ORG_JSON.read_text(encoding="utf-8")
+    text = builder.org_json()
     house_rules, cards = builder.read_crew()
     for card in cards.values():
         for line in card.get("prompt", "").splitlines():

@@ -9,11 +9,6 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def _set(url: str | None) -> str | None:
-    """A webhook URL carries its trigger's public id, so a repr says only whether it is set."""
-    return "<set>" if url else None
-
-
 class Settings(BaseSettings):
     """Application settings, read from environment variables."""
 
@@ -61,28 +56,13 @@ class Settings(BaseSettings):
     # cost ledger is summed on MixRoute). The degradation modes in worker/ai/budget.py are
     # shares of this.
     ai_monthly_budget_usd: Decimal = Decimal("20")
-    # The ops API (worker/ops_api.py). The token guards its read endpoints; the AI agents get
-    # it from the Paperclip server's environment. Unset or short, the reads stay closed.
+    # The ops API (worker/ops_api.py). The token guards its read endpoints, which the Paperclip
+    # agents read until they were retired on 2026-10-31. Unset or short, the reads stay closed.
     cyberpulse_ops_token: SecretStr | None = None
     # Every interface inside the worker's container. Nothing outside the compose network can
     # reach it: docker-compose.yml publishes no port for the worker.
     ops_api_host: str = "0.0.0.0"
     ops_api_port: int = 8700
-    # The watchdog (worker/watchdog/). The Incident routine's webhook trigger in Paperclip: the
-    # URL and bearer secret Paperclip shows once when the owner adds the trigger. With either
-    # unset, incidents go to Telegram only.
-    paperclip_incident_webhook_url: str | None = None
-    paperclip_incident_webhook_secret: SecretStr | None = None
-    # The Follow-up and Source discovery routines' webhook triggers, which the worker fires only
-    # when there is work for them (worker/notify/routines.py). With either half of one unset,
-    # that routine is never fired.
-    paperclip_followup_webhook_url: str | None = None
-    paperclip_followup_webhook_secret: SecretStr | None = None
-    paperclip_discovery_webhook_url: str | None = None
-    paperclip_discovery_webhook_secret: SecretStr | None = None
-    # Paperclip's health endpoint on the compose network, probed with no credentials. Empty:
-    # not probed.
-    watchdog_paperclip_url: str = "http://server:3100/api/health"
 
     def __repr__(self) -> str:
         """Return a string representation without leaking secrets."""
@@ -92,8 +72,6 @@ class Settings(BaseSettings):
             "***:***"
         ) if "@" in self.database_url else self.database_url
         
-        # The webhook URL carries the trigger's public id, so only whether it is set.
-        webhook = "<set>" if self.paperclip_incident_webhook_url else None
         fields_repr = [
             f"database_url={safe_db_url!r}",
             f"ai_provider={self.ai_provider!r}",
@@ -116,13 +94,6 @@ class Settings(BaseSettings):
             f"cyberpulse_ops_token={self.cyberpulse_ops_token!r}",
             f"ops_api_host={self.ops_api_host!r}",
             f"ops_api_port={self.ops_api_port!r}",
-            f"paperclip_incident_webhook_url={webhook!r}",
-            f"paperclip_incident_webhook_secret={self.paperclip_incident_webhook_secret!r}",
-            f"paperclip_followup_webhook_url={_set(self.paperclip_followup_webhook_url)!r}",
-            f"paperclip_followup_webhook_secret={self.paperclip_followup_webhook_secret!r}",
-            f"paperclip_discovery_webhook_url={_set(self.paperclip_discovery_webhook_url)!r}",
-            f"paperclip_discovery_webhook_secret={self.paperclip_discovery_webhook_secret!r}",
-            f"watchdog_paperclip_url={self.watchdog_paperclip_url!r}",
         ]
         return f"Settings({', '.join(fields_repr)})"
 

@@ -116,6 +116,16 @@
       <p class="view__desc">The shape of the last completed collection at the scope, beat and tags chosen above. Choose a headline to open it in the Events view.</p>
 
       <div class="dash-grid">
+        <!-- The worker's daily intelligence report (worker/ai/report.py), from daily-report.json:
+             written by a model from the worker's own records, and labelled as such. -->
+        <section class="panel panel--brief" id="sec-brief" aria-labelledby="h-brief">
+          <header class="panel__head">
+            <h3 class="panel__title" id="h-brief">TODAY'S BRIEF</h3>
+            <span class="panel-count mono" id="brief-count">AWAITING DATA</span>
+          </header>
+          <div id="daily-brief"></div>
+        </section>
+
         <section class="panel panel--map" aria-labelledby="h-map">
           <header class="panel__head">
             <h3 class="panel__title" id="h-map">WORLD MAP</h3>
@@ -191,48 +201,31 @@
       <div class="events-body" data-section-body="events"></div>
     </section>
 
-    <!-- Who runs this: the company in Paperclip (the org chart, from assets/org.json), the crew's
-         personas and their last run, and the routines. Nothing here claims an agent is running:
-         a schedule is configuration, and whether it fires is Paperclip's decision. -->
+    <!-- Who produced this: the crew's jobs, all in the worker since the Paperclip control plane was
+         retired on 31 October 2026, with what each did this month (data/crew.json), and the
+         personas retired that day. -->
     <section class="view" id="view-crew" aria-labelledby="h-crew" hidden>
       <header class="view__head">
         <h2 class="view__title" id="h-crew">CREW</h2>
-        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">7 AGENTS</span></span>
+        <span class="panel-status"><span class="led" data-state="idle"></span><span class="panel-count mono" id="crew-count">4 JOBS</span></span>
       </header>
-      <p class="view__desc">Who produced the page you are reading: the company, the agents in it and the schedules they are given.</p>
-
-      <section class="panel" aria-labelledby="h-company">
-        <header class="panel__head">
-          <h3 class="panel__title" id="h-company">THE COMPANY</h3>
-          <span class="panel-status"><span class="led" data-state="idle" id="org-led"></span><span class="panel-count mono" id="org-count">AWAITING DATA</span></span>
-        </header>
-        <div class="explain">
-          <p>CyberPulse is run as a small newsroom company in Paperclip, the control plane: a CEO, desks that report to it, a monthly budget and a set of routines. Paperclip holds the org chart, wakes the agents and enforces budgets and approvals.</p>
-          <p><strong>Collection is code.</strong> The worker fetches every source, matches and scores what comes back and publishes the snapshot on its own clock, with no model in that loop, so a snapshot is still written when every agent is stopped. The agents add judgment, review and housekeeping on top.</p>
-          <p>The names and faces are presentation. Authority comes from each agent's Paperclip role, permissions and budget.</p>
-        </div>
-        <dl class="kv mono org-facts" id="org-facts"></dl>
-        <h4 class="subhead">ORG CHART</h4>
-        <div id="org-chart" class="org-chart"></div>
-      </section>
+      <p class="view__desc">Who produced the page you are reading: the crew's jobs, and what each did this month.</p>
 
       <section class="panel" aria-labelledby="h-the-crew">
         <header class="panel__head"><h3 class="panel__title" id="h-the-crew">THE CREW</h3></header>
-        <p class="hint">Personas are presentation, not authority — that comes from each agent's Paperclip role, permissions and budget. Deterministic agents cost zero tokens. Workload below is real once published; an agent that has not reported yet says so rather than showing a zero.</p>
+        <div class="explain">
+          <p><strong>Collection is code.</strong> The worker fetches every source, matches and scores what comes back and publishes the snapshot on its own clock, with no model in that loop, so a snapshot is still written when every AI job is stopped.</p>
+          <p>The AI jobs add judgment on top: a daily intelligence report, follow-ups on developing stories, and a diagnosis for each serious incident. Each is one AI call at a time inside the worker, recorded in its cost ledger and held to the same monthly cap as the rest of its AI.</p>
+          <p>The names and faces are presentation. Until 31 October 2026 each was an agent in Paperclip, a separate control plane; each agent run read about a million tokens to do what one worker call does in a few thousand, so the jobs moved into the worker.</p>
+        </div>
         <div id="crew-summary"></div>
         <ul id="crew-list" class="crew-grid"></ul>
 
         <h4 class="subhead">THE CREW IN THE LAST RUN</h4>
         <div id="crew-run"></div>
-      </section>
 
-      <section class="panel" aria-labelledby="h-routines">
-        <header class="panel__head">
-          <h3 class="panel__title" id="h-routines">ROUTINES</h3>
-          <span class="panel-count mono" id="routines-count">AWAITING DATA</span>
-        </header>
-        <p class="hint">Schedules as configured; Paperclip decides whether they run. An agent or routine paused there does not run, and this page cannot see which are paused, so a schedule here is not a claim that anything ran. A routine marked FROM STAGE 5 is not switched on until that stage of the rollout.</p>
-        <div id="org-routines"></div>
+        <h4 class="subhead">RETIRED ON 31 OCTOBER 2026</h4>
+        <ul id="crew-retired" class="crew-retired"></ul>
       </section>
     </section>
 

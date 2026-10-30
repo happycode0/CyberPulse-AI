@@ -1,6 +1,6 @@
 """job_runs rows: one per ground-truth, enrichment, discovery search, source-gate, model-scan,
 gauntlet or watchdog pass, and per publish and push after a run, written when it ends
-(migrations 010, 013, 014, 015 and 018)."""
+(migrations 010, 013, 014, 015, 018 and 020), and per daily report and follow-up writer pass."""
 
 import json
 from dataclasses import asdict, dataclass
@@ -19,6 +19,8 @@ Job = Literal[
     "watchdog",
     "publish",
     "push",
+    "daily-report",
+    "followup-writer",
 ]
 
 

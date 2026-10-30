@@ -246,7 +246,7 @@ def test_the_crew_roster_renders_even_when_the_feed_cannot_be_read():
     body = js.split("export async function main", 1)[1].split("\n}", 1)[0]
     unguarded, sep, guarded = body.partition("if (!data) {")
     assert sep, "main() no longer has a no-data guard, so this test cannot tell the halves apart"
-    for call in ("renderStrip(", "renderCrew(", "renderCrewRun(", "renderOrg(",
+    for call in ("renderStrip(", "renderCrew(", "renderCrewRun(",
                  "renderPage('system', renderSystemPage,", "renderPage('sources', renderSourcesPage,"):
         assert call in unguarded, f"{call} sits behind the no-data guard; it ships with the site"
     for call in ("renderIndex(", "renderGauges(", "renderHeadlines("):

@@ -8,8 +8,12 @@ worker/pipeline/followup.py decide; this reads the record and writes the result.
   no longer qualifies is cancelled.
 - `load_due`, `count_accepted`, `load_new_since` and `submit_report`: what `GET` and
   `POST /ops/followup` read and write.
-- `close_quiet_checks` and `count_due`: what the hourly routine wake (worker/notify/routines.py)
-  does before it decides whether to wake DECKARD at all.
+- `close_quiet_checks` and `count_due`: recording `no_change` on a due check whose event has
+  gained nothing, and counting what is still due. The hourly routine wake that called them went
+  with the crew on 2026-10-31; they stay for the worker's own follow-up writer.
+- `load_followup_evidence`, `event_context` and `refuse_task`: what the worker's own follow-up
+  writer (worker/ai/followup_writer.py) reads and records; it reports through `submit_report`
+  like DECKARD, marked `by: worker-ai`.
 
 Like every writer here it takes the caller's connection and never commits.
 """
@@ -399,6 +403,37 @@ def load_new_since(
     return out
 
 
+@dataclass(frozen=True)
+class EvidenceSource:
+    """A report the follow-up writer may rest a change on. It names one by `ref`, never by URL:
+    the URL is filled in from here, so it is always one the worker collected."""
+
+    ref: str
+    source_id: str
+    url: str
+    title: str | None
+    published: datetime | None
+    evidence_class: str
+
+
+def load_followup_evidence(conn: Connection, task: DueTask, *, most: int) -> list[EvidenceSource]:
+    """The reports attached to the task's event since its last check ended, or, for a first
+    check or a final summary, its newest; newest first, at most `most`."""
+    since = task.last_check_at if task.kind == "check" else None
+    rows = conn.execute(
+        text(
+            "select source_id, url, title, published, evidence_class from event_sources "
+            "where event_id = :e and (cast(:since as timestamptz) is null or created_at > :since) "
+            "order by coalesce(published, created_at) desc, id desc limit :most"
+        ),
+        {"e": task.event_id, "since": since, "most": most},
+    ).all()
+    return [
+        EvidenceSource(f"s{i}", r.source_id, r.url, r.title, r.published, r.evidence_class)
+        for i, r in enumerate(rows, 1)
+    ]
+
+
 def load_queue_counts(conn: Connection, *, now: datetime, overdue_after: float) -> dict:
     """How many tasks are due, waiting and overdue (due more than `overdue_after` hours ago),
     and how many standing events are in each status."""
@@ -441,6 +476,21 @@ class Submitted:
     attempts: int = 0
     task_status: str | None = None
     transition: Transition | None = None
+
+
+def event_context(conn: Connection, event_id: str) -> EventContext:
+    """What `check_report` checks a report on `event_id` against, as `submit_report` reads it:
+    the follow-up writer checks its answer before it sends it."""
+    first_seen = conn.execute(
+        text("select first_seen from events where event_id = :e"), {"e": event_id}
+    ).scalar_one()
+    return _context(conn, event_id, first_seen)
+
+
+def refuse_task(conn: Connection, task_id: int, reason: str, *, now: datetime) -> tuple[int, str]:
+    """Count a try on a task that got no usable report, as a rejected one is counted: after
+    MAX_REPORT_ATTEMPTS it is given up. Returns its attempts and status."""
+    return _refuse(conn, task_id, reason, now)
 
 
 def _context(conn: Connection, event_id: str, first_seen: datetime) -> EventContext:
@@ -493,8 +543,9 @@ def _refuse(conn: Connection, task_id: int, reason: str, now: datetime) -> tuple
     return row.attempts, row.status
 
 
-def _payload(report: Report) -> str:
+def _payload(report: Report, by: str | None = None) -> str:
     return json.dumps({
+        **({"by": by} if by else {}),
         "outcome": report.outcome,
         "recorded": [
             {"type": c.type.value, "url": c.url,
@@ -506,10 +557,17 @@ def _payload(report: Report) -> str:
 
 
 def submit_report(
-    conn: Connection, task_id: int, body: object, *, rule: StatusRule, now: datetime
+    conn: Connection,
+    task_id: int,
+    body: object,
+    *,
+    rule: StatusRule,
+    now: datetime,
+    by: str | None = None,
 ) -> Submitted:
-    """Check DECKARD's report on task `task_id` and store what passes, in the caller's
-    transaction. Under the ingest lock, so no collection writes the event meanwhile."""
+    """Check a report on task `task_id` and store what passes, in the caller's transaction.
+    Under the ingest lock, so no collection writes the event meanwhile. `by` marks who wrote it
+    in the stored payload: the worker's follow-up writer says "worker-ai"; DECKARD said nothing."""
     lock_ingest(conn)
     task = conn.execute(
         text(
@@ -581,7 +639,7 @@ def submit_report(
             "last_error = null, payload = cast(:payload as jsonb), updated_at = :now "
             "where id = :id returning attempts"
         ),
-        {"id": task.id, "now": now, "payload": _payload(report)},
+        {"id": task.id, "now": now, "payload": _payload(report, by)},
     ).one()
     moved = settle_statuses(conn, rule, now=now, event_ids=[task.event_id])
     return Submitted(
