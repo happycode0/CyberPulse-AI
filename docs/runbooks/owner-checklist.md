@@ -146,30 +146,40 @@ month's AI cost at 11:10 on the 1st. The code cannot touch Paperclip, so these a
    It is yours to decide now, not MORPHEUS's: promote it with a reviewed edit to
    `config/models.yaml`, or do nothing.
 
-## 9. The leaner crew on MixRoute (about 45 minutes)
+## 9. Paperclip retired (2026-10-31)
 
-Approved on 2026-10-30 ([4b, the crew since 2026-10-30](../wiki/stage-4b-the-crew.md#the-crew-since-2026-10-30)).
-The worker side is deployed with a pull and a restart. Paperclip is yours:
+You decided on 2026-10-31 to retire Paperclip and move the crew's AI jobs into the worker. An
+agent run read about 1.1 million input tokens to do what one worker call does in 2 to 3 thousand
+(about US$0.027 a run, against about US$0.0013 a story for the worker's own AI). The 2026-10-30
+plan to move the crew to MixRoute (the package import, the crew's key, the three webhooks) is not
+needed.
 
-1. **Clear the stale backlog first**, so nothing old runs when a key comes back: the cleanup
-   snippet Claude gave you on 2026-10-30 (dry run, then apply).
-2. **Two MixRoute keys**, in MixRoute's console: one for the worker (`MIX_ROUTER_KEY` in the
-   VM's `.env`, quota US$12 a month) and one for the crew (quota US$8). The crew's never goes in
-   `.env`.
-3. **Import the package** as in [4a, the quick way](../wiki/stage-4a-paperclip-setup.md#the-quick-way-import-the-whole-crew-and-the-routines-in-one-go),
-   pasting the crew's key for MORPHEUS, TELETRAAN, DECKARD and TACHIKOMA. Untick every agent
-   on **Connectors → My OpenRouter API → Permissions**, and untick DECKARD's three old beat
-   skills on its **Skills** tab.
-4. **Budgets**: the snippet in 4a step 5 (US$7.80 in all, company US$8).
-5. **Archive the old routines**: the snippet in
-   [4a step 7](../wiki/stage-4a-paperclip-setup.md#archive-the-routines-an-import-leaves-behind)
-   (dry run, then `APPLY = true`). That takes the desk digest, the QA sample, the two scheduled
-   routines the worker now fires, and RIPPERDOC's three.
-6. **Pause RIPPERDOC** (section 8) if it is not paused yet.
-7. **The three webhooks**: rotate each trigger's secret and put the URLs and secrets in `.env`
-   ([4a step 7](../wiki/stage-4a-paperclip-setup.md#give-the-worker-the-three-webhooks)), then
-   `docker compose up -d --force-recreate worker`.
-8. **Smoke-test** MORPHEUS, DECKARD, TELETRAAN and TACHIKOMA one at a time
-   ([4a, Moving from 16 agents to 8, step 6](../wiki/stage-4a-paperclip-setup.md#moving-from-16-agents-to-8)),
-   then resume them and the four routines. VOIGHT and WHEELJACK stay paused.
+Done already:
+
+- The Paperclip server is stopped on the VM. Its database, volume and secrets are kept.
+- `docker-compose.yml` puts it under the `paperclip` profile, so `docker compose up -d` no longer
+  starts it. `ops/backup.sh` and `ops/restore.sh` still back up and restore its database and
+  secrets.
+- The worker no longer fires routines, sends incidents to Paperclip or probes its health. High and
+  critical incidents go to Telegram.
+
+Yours, all optional:
+
+1. **The crew's MixRoute key** is not needed: don't create it, or delete it in MixRoute's console.
+   The worker's key (`MIX_ROUTER_KEY`, quota US$12) stays.
+2. **The OpenRouter key** is not used while `AI_PROVIDER=mixroute`. Revoke it, or set its limit to
+   US$0, on openrouter.ai. Nothing else needs it.
+3. **Old `.env` lines**: `PAPERCLIP_*_WEBHOOK_*`, `WATCHDOG_PAPERCLIP_URL` and
+   `CYBERPULSE_ENGINEER_TOKEN` are no longer read; delete them. Keep the `PAPERCLIP_*` server
+   settings and `BETTER_AUTH_SECRET` if you might bring Paperclip back.
+4. **CYB-35 and CYB-169**: the database password and the provider key that agent runs printed
+   should still be rotated. They sit in Paperclip's run logs in its database.
+
+To bring Paperclip back (nothing in the worker depends on it):
+
+```bash
+docker compose --profile paperclip up -d server
+```
+
+Its agents and routines come back as they were left: paused or archived, with no budget.
 

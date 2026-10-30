@@ -15,8 +15,8 @@
 
 ## What this is
 
-Not a news aggregator. A small, permanently-running intelligence organisation staffed by eight
-named agents who each own a job.
+Not a news aggregator. A small, permanently-running intelligence pipeline whose jobs each carry
+a named persona.
 
 Deterministic Python collects from dozens of live-validated sources on three cadences and
 resolves many reports into **one canonical event**. Ground truth comes from CISA KEV, CVE.org,
@@ -24,10 +24,12 @@ CISA Vulnrichment, EPSS, OSV and MITRE ATT&CK — never from a model's memory. A
 layer that judges severity, extracts entities, reasons about Australian relevance and reconciles
 conflicting evidence, always from retrieved facts, never recalled from training data.
 
-[Paperclip](https://github.com/paperclipai/paperclip) is the control plane where the agents
-live, wake, delegate and spend budget. When a source breaks, the watchdog opens an incident, an
-engineer agent fixes the parser on a branch, an independent auditor checks it on a different
-model, and a human approves the merge.
+Every job runs in one Python worker, on its own schedule. When a source breaks, the watchdog opens
+an incident, an AI job suggests the likely cause and fix, and the owner makes the change as a
+reviewed pull request. Until 31 October 2026 a crew of AI agents in
+[Paperclip](https://github.com/paperclipai/paperclip), a separate control plane, did the
+judgment work. Each agent run read about a million tokens to do what one worker call does in a
+few thousand, so the jobs moved into the worker and Paperclip was retired.
 
 The public site is a static HUD on GitHub Pages that publishes only canonical, evidence-linked
 intelligence — and says plainly that it's a snapshot of the last completed run, not a live feed.
@@ -38,25 +40,22 @@ intelligence — and says plainly that it's a snapshot of the last completed run
 
 ```mermaid
 flowchart TB
-    OWNER["OWNER<br/>private network only"]
-    PAPERCLIP["PAPERCLIP — control plane<br/>agents · goals · issues · delegation<br/>budgets · approvals · audit"]
-    OWNER --> PAPERCLIP
-
-    subgraph CREW[" "]
-        direction LR
-        A_INT["INTELLIGENCE<br/>MORPHEUS · DECKARD<br/>VOIGHT · TACHIKOMA"]
-        A_ENG["ENGINEERING<br/>WHEELJACK"]
-        A_OPS["OPERATIONS<br/>TELETRAAN · SERAPH"]
-    end
-
-    PAPERCLIP -- "agent API key /<br/>http+process adapters" --> CREW
+    OWNER["OWNER<br/>Telegram · reviewed pull requests"]
 
     WORKER["WORKER — Python<br/>no AI in the collection path<br/>own scheduler: FAST hourly / NORMAL 4-hourly"]
-    CREW --> WORKER
+
+    subgraph JOBS[" "]
+        direction LR
+        J_CODE["CODE<br/>SERAPH: collection, ground truth,<br/>the source gate, publishing"]
+        J_AI["AI JOBS<br/>MORPHEUS: daily report<br/>DECKARD: follow-ups<br/>TELETRAAN: incident diagnosis<br/>enrichment: triage, briefs, severity, MITRE"]
+    end
+
+    WORKER --> JOBS
+    WORKER -- "incidents, digest, cost" --> OWNER
 
     subgraph DEPS[" "]
         direction LR
-        OPENROUTER["OpenRouter<br/>AI enrichment"]
+        AI["MixRoute or OpenRouter<br/>AI calls, one at a time"]
         TAVILY["Tavily<br/>discovery"]
         DB["PostgreSQL + pgvector<br/>state"]
     end
@@ -69,91 +68,55 @@ flowchart TB
 
 | | |
 |---|---|
-| **Control plane** | Paperclip — agents, issues, delegation, budgets, approvals, audit |
 | **Deterministic layer** | Python worker — collection, resolution, scoring, publishing, scheduling |
-| **Inference** | OpenRouter, free tier first, then two paid tiers. Hard monthly cap, output price ceiling enforced in code |
+| **Inference** | MixRoute or OpenRouter (`AI_PROVIDER`), cheapest capable model first. Hard monthly cap, output price ceiling enforced in code |
 | **Discovery** | Tavily, free tier |
 | **State** | PostgreSQL + pgvector |
 | **Public site** | Static HTML/CSS/JS on GitHub Pages — no build step, no secrets |
 
-The worker is intentionally the only thing in the collection path with no AI: it keeps
-collecting, scoring and publishing on its own schedule even if Paperclip and every agent are
-stopped. Agents add judgment on top — Australian relevance, campaign links, follow-ups, quality
-review — never ground truth.
+The collection path has no AI: the worker keeps collecting, scoring and publishing on its own
+schedule even if every AI call fails. The AI jobs add judgment on top — briefs, Australian
+relevance, a daily report, follow-ups, a diagnosis for each serious incident — never ground
+truth. Each is a single structured call inside the worker, checked against its schema and
+recorded in the cost ledger.
 
 ---
 
 ## The crew
 
-Personas are presentation, not authority — that comes from each agent's Paperclip role,
-permissions and budget. Deterministic agents cost zero tokens, which is the whole point of the
-split.
+Personas are presentation: each is a name for one of the worker's jobs. Since 31 October 2026
+they all run in the worker; until then each was an agent in Paperclip.
 
-| Callsign | Job | Beat | Runtime |
+| Callsign | Job | What it does | Runtime |
 |---|---|---|---|
-| **MORPHEUS** · *"I can only show you the door."* | CEO | Chief editor | LLM |
-| **DECKARD** · *"The case stays open until it's patched."* | Researcher | Australian, global and AI beats; follow-up on developing events | LLM |
-| **VOIGHT** · *"Says who?"* | Publisher | Editorial QA, publication veto | LLM |
-| **TACHIKOMA** · *"Ooh — what's this one?"* | Finder | Source discovery | LLM + Tavily |
-| **WHEELJACK** | Coder | Source & platform engineer, branch + PR only | LLM |
-| **TELETRAAN** | Operation | Incidents, self-healing, independent check on every fix (a different model vendor from WHEELJACK) | Deterministic + LLM |
-| **SERAPH** · *"I had to be sure."* | Collector | Ground truth, the source gate, correlation and publishing | Deterministic, zero tokens |
+| **SERAPH** · *"I had to be sure."* | Collection | Ground truth, the source gate, correlation and publishing | Code, zero tokens |
+| **MORPHEUS** · *"I can only show you the door."* | Daily report | The day's intelligence report, Australia first | One AI call a day |
+| **DECKARD** · *"The case stays open until it's patched."* | Follow-ups | For each developing story with news: what changed, and whether it is still developing | One AI call per story with news |
+| **TELETRAAN** | Incidents | A likely cause and fix for each high or critical incident, for the owner | One AI call per incident |
 
-See [how the crew works together](docs/wiki/stage-4c-how-the-crew-works.md) for how work moves
-between them, and [the crew](docs/wiki/stage-4b-the-crew.md) for each agent's full configuration.
+Retired on 31 October 2026, with the Paperclip control plane:
 
-MORPHEUS sits at the top as CEO and reports to no one but the owner: it decides what the crew
-covers and writes the daily intelligence report. Below that, three small departments split the
-work. **Operations** (TELETRAAN, SERAPH) keeps the lights on — incident triage, and the
-zero-token collection pipeline that runs whether or not any agent is awake. **Intelligence**
-(DECKARD, VOIGHT, TACHIKOMA) does the editorial work — research, publication veto, source
-discovery. **Engineering** (WHEELJACK) fixes broken parsers on a branch and hands the diff to
-TELETRAAN, which checks it on a different model vendor before a human merges. Each box only has
-the budget and credentials its job needs — nobody can approve their own change.
+- **TACHIKOMA** (source proposals): the worker's nightly search and its source gate find and test
+  sources in code.
+- **VOIGHT** (the editorial check): its verdicts had no way back into the published data, and the
+  worker checks every model answer itself.
+- **WHEELJACK** (code fixes): it never had access to the repository; a code change is a reviewed
+  pull request.
 
-The models and the money need no agent. The worker checks every model against the price ceiling
-each night, tests challengers each Sunday and keeps the cost ledger, and it tells the owner on
-Telegram when a model is dropped, when it proposes a better one, and what last month cost. The
-owner decides every model change. RIPPERDOC, the agent that passed these on, was retired on
-2026-10-20.
+RIPPERDOC, which passed on model and cost notices, was retired on 2026-10-20. The worker checks
+every model against the price ceiling each night, tests challengers each Sunday and keeps the cost
+ledger, and it tells the owner on Telegram when a model is dropped, when it proposes a better one,
+and what last month cost. The owner decides every model change.
 
-### Org chart
-
-```mermaid
-flowchart TB
-    MORPHEUS["🤖 MORPHEUS — CEO<br/>Editorial direction · daily report"]
-
-    subgraph OPS["OPERATIONS"]
-        direction TB
-        TELETRAAN["TELETRAAN — Operation<br/>Incident triage · checks WHEELJACK's fixes"]
-        SERAPH["SERAPH — Collector<br/>Ground truth · zero tokens"]
-        TELETRAAN --> SERAPH
-    end
-
-    subgraph INT["INTELLIGENCE"]
-        direction TB
-        DECKARD["DECKARD — Researcher<br/>Beats · follow-ups"]
-        VOIGHT["VOIGHT — Publisher<br/>Editorial veto"]
-        TACHIKOMA["TACHIKOMA — Finder<br/>Source discovery"]
-    end
-
-    subgraph ENG["ENGINEERING"]
-        direction TB
-        WHEELJACK["WHEELJACK — Coder<br/>Branch fix + test"]
-    end
-
-    MORPHEUS --> OPS
-    MORPHEUS --> INT
-    MORPHEUS --> ENG
-    TELETRAAN -.checks.-> WHEELJACK
-```
+See [how the crew works together](docs/wiki/stage-4c-how-the-crew-works.md) and
+[the crew](docs/wiki/stage-4b-the-crew.md) for how the agents worked while they ran in Paperclip.
 
 ---
 
 ## Cost control
 
-The hard stop is the OpenRouter key's own monthly limit — the platform cannot exceed it
-regardless of any bug on this side. Inside that, the worker degrades progressively:
+The hard stop is the AI key's own limit (OpenRouter's monthly limit, or the quota on the MixRoute
+key) — the platform cannot exceed it regardless of any bug on this side. Inside that, the worker degrades progressively:
 
 | Budget remaining | Behaviour |
 |---|---|
@@ -165,10 +128,9 @@ regardless of any bug on this side. Inside that, the worker degrades progressive
 
 ### ☕ Support this project
 
-None of the above is free to run. The OpenRouter key behind the AI enrichment layer has a hard
-**US$20/month** cap, the Paperclip company budget on top of it is **US$12/month**, and that's
-split across all eight agents' own budgets — before counting the server crawling ~70 sources
-around the clock and the Postgres + pgvector instance holding every event. AI calls cost tokens;
+None of the above is free to run. The worker's AI has a hard monthly cap — before counting the
+server crawling ~70 sources around the clock and the Postgres + pgvector instance holding every
+event. AI calls cost tokens;
 tokens cost money; this is a solo project, not a funded one.
 
 If CyberPulse-AI is useful to you, **[buying a coffee](https://buymeacoffee.com/happycode0)** —
@@ -180,11 +142,10 @@ or source request with your support and I'll try to build it.
 Non-negotiable, and enforced in code:
 
 - Secrets live only in an untracked `.env`, never committed, logged or pasted anywhere
-- Each agent gets only the credentials its job requires
-- The engineer agent holds exactly one credential: a branch-scoped GitHub token
+- The worker holds the only credentials, and no AI call is given any of them
 - The publisher secret-scans every payload before publishing and **fails closed**
 - Ingested article text is treated as untrusted input, given to models as data with no tools
-  available, and never forwarded to the engineer agent
+  available
 
 See the [threat model](docs/threat-model.md) for the full analysis, open risks and what's done
 about each.
@@ -207,11 +168,10 @@ an intelligence product that oversells itself is worthless:
 - **Missing data is `unknown`, never "low"** — a deliberate choice, not a gap. An absent CVSS or
   EPSS score is common for a new CVE and is not evidence of low risk.
 - **Coverage is still growing.** Some publishers block automated access or offer no feed. Known
-  gaps are tracked in `config/sources.yaml` with reasons, and TACHIKOMA keeps proposing new
-  sources to close them.
-- **Self-healing is bounded, and getting better at it.** Agents may repair parsers, adapters,
-  transformations and tests. A human approves every merge. A circuit breaker halts after repeated
-  failed attempts.
+  gaps are tracked in `config/sources.yaml` with reasons, and the nightly discovery search and its
+  source gate keep finding and testing new sources to close them.
+- **Self-healing is bounded.** The watchdog finds the fault and an AI job suggests the cause and
+  the fix; the change itself is a pull request a human reviews and merges.
 - **Summaries are original and short**, by design. Articles are never reproduced. Every event
   links to its sources.
 
