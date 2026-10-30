@@ -1,6 +1,6 @@
 """The readers behind the site's SYSTEM, SOURCES and CREW pages against a real Postgres: runs
 finished and still going, what each job's newest pass found (migration 018), where the finds
-stand at the gate, and what the worker sees of the crew."""
+stand at the gate, and what the crew's jobs did."""
 
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -9,7 +9,7 @@ import pytest
 from sqlalchemy import text
 
 from worker.db import discovery as db
-from worker.db.crew import load_crew_seen, load_pipeline_ai
+from worker.db.crew import JobActivity, load_job_activity, load_pipeline_ai
 from worker.db.jobs import JobRun, load_latest_jobs, record_job
 from worker.db.migrate import run_migrations
 from worker.db.runs import load_lane_activity, load_latest_finished_run, load_unfinished_runs
@@ -144,44 +144,40 @@ def test_the_gate_counts_say_where_every_find_stands(engine):
     ]
 
 
-def test_what_the_worker_sees_of_the_crew(engine):
-    _candidate(engine, "a.example.org", "candidate", found_by="tachikoma",
-               proposed_at=MONTH - timedelta(days=3))
-    _candidate(engine, "b.example.org", "candidate", found_by="tachikoma",
-               proposed_at=NOW - timedelta(days=22))
-    _candidate(engine, "c.example.org", "candidate")
+def _ledger(engine, *rows) -> None:
     with engine.begin() as conn:
-        conn.execute(text(
-            "insert into events (event_id, schema_version, pipeline_version, scoring_version, "
-            "enrichment_version, title, summary, first_seen, last_seen) values "
-            "('evt-2026-000001', '1', '1.0.0', '4', '0', 't', 's', :t, :t)"), {"t": MONTH})
-        conn.execute(
-            text(
-                "insert into followup_tasks (event_id, kind, status, due_at, payload, "
-                "updated_at) values ('evt-2026-000001', 'check', 'done', :t, "
-                "'{\"outcome\": \"no_change\"}', :t), ('evt-2026-000001', 'final_summary', "
-                "'pending', :t, '{}', :later), "
-                # The no_change the worker records itself on a quiet check is not DECKARD's.
-                "('evt-2026-000001', 'check', 'done', :t, "
-                "'{\"outcome\": \"no_change\", \"by\": \"worker\"}', :quiet)"
-            ),
-            {"t": NOW - timedelta(days=16), "later": NOW, "quiet": NOW - timedelta(hours=1)},
-        )
-        incident = conn.execute(text(
-            "insert into incidents (kind, severity, title) values ('stale-feed', 'low', 't') "
-            "returning id")).scalar_one()
-        conn.execute(
-            text("insert into incident_verdicts (incident_id, ts, verdict) values (:i, :t, 'pass')"),
-            {"i": incident, "t": NOW - timedelta(days=17)},
-        )
+        for ts, provider, model, stage, agent, cost in rows:
+            conn.execute(
+                text("insert into cost_ledger (ts, provider, model, stage, agent, cost_usd, "
+                     "outcome) values (:ts, :p, :m, :s, :a, :c, 'ok')"),
+                {"ts": ts, "p": provider, "m": model, "s": stage, "a": agent, "c": cost},
+            )
+
+
+def test_each_ai_job_is_counted_from_its_own_stage(engine):
+    _ledger(
+        engine,
+        (MONTH - timedelta(days=2), "mixroute", "old", "report.daily", "worker", 0.5),
+        (NOW - timedelta(days=3), "mixroute", "zhipu/glm-5.3-flash", "report.daily", "worker",
+         0.002),
+        (NOW - timedelta(days=1), "mixroute", "deepseek/deepseek-v4-flash", "report.daily",
+         "worker", 0.001),
+        # A sub-stage counts as its job's; a neighbouring name does not.
+        (NOW - timedelta(hours=2), "mixroute", "m", "followup.report.retry", "worker", 0.003),
+        (NOW - timedelta(hours=1), "mixroute", "m", "followup.reports", "worker", 9),
+        # Not the worker's: the retired gauntlet's label.
+        (NOW, "openrouter", "m", "incident.diagnosis", "ripperdoc", 1),
+    )
+    stages = {"morpheus": "report.daily", "deckard": "followup.report",
+              "teletraan": "incident.diagnosis"}
     with engine.connect() as conn:
-        seen = load_crew_seen(conn, since=MONTH)
-    assert {k: (s.last_at, s.this_month) for k, s in seen.items()} == {
-        "tachikoma": (NOW - timedelta(days=22), 1),
-        # A report is a task DECKARD closed with an outcome; an open task is not one.
-        "deckard": (NOW - timedelta(days=16), 1),
-        "teletraan": (NOW - timedelta(days=17), 1),
-    }
+        jobs = load_job_activity(conn, since=MONTH, stages=stages)
+    assert jobs["morpheus"] == JobActivity(
+        2, Decimal("0.003"), NOW - timedelta(days=1), "deepseek/deepseek-v4-flash", "mixroute"
+    )
+    assert (jobs["deckard"].calls, jobs["deckard"].cost_usd) == (1, Decimal("0.003"))
+    # Never run: the defaults, which the page reads as "not run yet".
+    assert jobs["teletraan"] == JobActivity()
 
 
 def test_the_pipelines_last_model_call_and_its_provider(engine):
@@ -191,12 +187,13 @@ def test_the_pipelines_last_model_call_and_its_provider(engine):
                 "insert into cost_ledger (ts, provider, model, stage, agent, cost_usd, outcome) "
                 "values (:a, 'openrouter', 'm', 'enrich.brief', 'worker', 0.01, 'ok'), "
                 "(:b, 'mixroute', 'm', 'enrich.triage', null, null, 'invalid_output'), "
-                "(:c, 'openrouter', 'm', 'gauntlet', 'ripperdoc', 0.5, 'ok')"
+                "(:c, 'openrouter', 'm', 'gauntlet', 'ripperdoc', 0.5, 'ok'), "
+                "(:c, 'mixroute', 'm', 'report.daily', 'worker', 0.2, 'ok')"
             ),
             {"a": NOW - timedelta(days=15), "b": NOW - timedelta(days=14), "c": NOW},
         )
     with engine.connect() as conn:
         ai = load_pipeline_ai(conn, since=MONTH)
     assert (ai.calls, ai.cost_usd) == (2, Decimal("0.01"))
-    # The gauntlet's call is not the pipeline's.
+    # The gauntlet's call is not the pipeline's, and nor is a crew job's (JobActivity).
     assert (ai.last_call_at, ai.provider) == (NOW - timedelta(days=14), "mixroute")

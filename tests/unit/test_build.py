@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 
 import worker.publish.build as build
-from worker.db.crew import Activity, PipelineAi, Seen
+from worker.db.crew import Activity, JobActivity, PipelineAi
 from worker.db.discovery import Candidate, GateCounts
 from worker.db.jobs import JobRun
 from worker.db.sources import RegistryRow
@@ -95,7 +95,7 @@ def db(monkeypatch):
                                   at_the_gate=0, rejected=0, retired=0),
         "settled": [],
         "active_discovered": 0,
-        "seen": {name: Seen(None, 0) for name in ("tachikoma", "deckard", "teletraan")},
+        "job_activity": {name: JobActivity() for name in ("morpheus", "deckard", "teletraan")},
     }
     monkeypatch.setattr(build, "load_live_events", lambda conn, **kw: state["events"])
     monkeypatch.setattr(build, "load_event_dates", lambda conn: state["dates"])
@@ -110,7 +110,7 @@ def db(monkeypatch):
     monkeypatch.setattr(build, "load_gate_counts", lambda conn, **kw: state["gate_counts"])
     monkeypatch.setattr(build, "load_settled", lambda conn, **kw: state["settled"][:kw["limit"]])
     monkeypatch.setattr(build, "active_discovered", lambda conn: state["active_discovered"])
-    monkeypatch.setattr(build, "load_crew_seen", lambda conn, **kw: state["seen"])
+    monkeypatch.setattr(build, "load_job_activity", lambda conn, **kw: state["job_activity"])
     monkeypatch.setattr(build, "load_registry_rows", lambda conn: state["registry"])
     monkeypatch.setattr(
         build, "load_health_history", lambda conn, sid, limit=20: state["health"].get(sid, [])
@@ -876,20 +876,46 @@ def test_rebuild_replaces_previous_output(tmp_path, db):
     assert live["generated_at"] == "2026-09-30T12:15:00Z"
 
 
-def test_crew_json_counts_only_what_the_worker_does(tmp_path, db):
+def jobs_of(tmp_path):
+    return {j["callsign"]: j for j in read(tmp_path, "crew.json")["jobs"]}
+
+
+def test_crew_json_lists_the_worker_s_jobs_under_their_callsigns(tmp_path, db):
+    """Paperclip was retired on 2026-10-31: every job runs in the worker, SERAPH's in code and
+    the other three as AI calls the cost ledger records."""
     build_all(None, tmp_path, now=NOW)
     crew = read(tmp_path, "crew.json")
-    agents = {a["callsign"]: a for a in crew["agents"]}
-    # RIPPERDOC was counted from the cost ledger until it was retired on 2026-10-20; the
-    # worker's own model calls are pipeline_ai.
-    assert set(agents) == {"SERAPH"}
-    assert crew["month"] == "2026-09"
+    assert crew["month"] == "2026-09" and "agents" not in crew and "seen" not in crew
+    jobs = {j["callsign"]: j for j in crew["jobs"]}
+    assert list(jobs) == ["SERAPH", "MORPHEUS", "DECKARD", "TELETRAAN"]
     # SERAPH is doing its publish job by writing the file, so its last work is now.
-    assert agents["SERAPH"] == {
-        "callsign": "SERAPH", "status": "active", "tasks_completed": 894,
-        "items_processed": 4045, "cost_usd": 0.0, "last_active_at": "2026-09-30T12:00:00Z",
+    assert jobs["SERAPH"] == {
+        "callsign": "SERAPH", "kind": "code", "stage": None, "status": "active",
+        "tasks_this_month": 894, "items_this_month": 4045, "calls_this_month": None,
+        "cost_usd": 0.0, "last_run_at": "2026-09-30T12:00:00Z", "model": None, "provider": None,
     }
-    assert crew["pipeline_ai"]["calls"] == 12 and crew["pipeline_ai"]["cost_usd"] == 0.0412
+    # A job that has never run says so; nothing is claimed for it.
+    assert jobs["MORPHEUS"] == {
+        "callsign": "MORPHEUS", "kind": "ai", "stage": "report.daily", "status": "not_run",
+        "tasks_this_month": None, "items_this_month": None, "calls_this_month": 0,
+        "cost_usd": 0.0, "last_run_at": None, "model": None, "provider": None,
+    }
+    assert (jobs["DECKARD"]["stage"], jobs["TELETRAAN"]["stage"]) == (
+        "followup.report", "incident.diagnosis"
+    )
+
+
+def test_an_ai_job_that_ran_shows_its_calls_its_cost_and_its_model(tmp_path, db):
+    db["job_activity"]["deckard"] = JobActivity(
+        5, Decimal("0.01234"), NOW - timedelta(hours=2), "deepseek/deepseek-v4-flash", "mixroute"
+    )
+    build_all(None, tmp_path, now=NOW)
+    deckard = jobs_of(tmp_path)["DECKARD"]
+    assert (deckard["status"], deckard["calls_this_month"], deckard["cost_usd"]) == (
+        "active", 5, 0.0123
+    )
+    assert deckard["last_run_at"] == "2026-09-30T10:00:00Z"
+    assert (deckard["model"], deckard["provider"]) == ("deepseek/deepseek-v4-flash", "mixroute")
 
 
 def test_seraph_stays_active_between_fast_runs_at_any_cadence(tmp_path, db):
@@ -897,49 +923,35 @@ def test_seraph_stays_active_between_fast_runs_at_any_cadence(tmp_path, db):
     # publish job is writing this file, so it reads active however old its last source check is.
     db["crew"]["seraph"] = Activity(894, 4045, NOW - timedelta(hours=3))
     build_all(None, tmp_path, now=NOW)
-    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
-    assert agents["SERAPH"]["status"] == "active"
-    assert agents["SERAPH"]["last_active_at"] == "2026-09-30T12:00:00Z"
+    seraph = jobs_of(tmp_path)["SERAPH"]
+    assert seraph["status"] == "active" and seraph["last_run_at"] == "2026-09-30T12:00:00Z"
 
 
 def test_crew_json_degrades_seraph_when_ground_truth_fails(tmp_path, db):
     db["crew"]["seraph"] = Activity(894, 4045, NOW - timedelta(minutes=5), failing=True)
     build_all(None, tmp_path, now=NOW)
-    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
     # The newest ground-truth pass raised: degraded, whatever the last good one says.
-    assert agents["SERAPH"]["status"] == "degraded"
+    assert jobs_of(tmp_path)["SERAPH"]["status"] == "degraded"
 
 
 def test_seraph_is_degraded_while_pushes_fail(tmp_path, db):
     db["jobs"] = {"push": JobRun("push", NOW, NOW, False, note="RuntimeError")}
     build_all(None, tmp_path, now=NOW)
-    agents = {a["callsign"]: a for a in read(tmp_path, "crew.json")["agents"]}
     # The site keeps the last data it was sent, so a push that fails is SERAPH's problem.
-    assert agents["SERAPH"]["status"] == "degraded"
+    assert jobs_of(tmp_path)["SERAPH"]["status"] == "degraded"
 
 
-def test_crew_json_says_what_the_worker_saw_of_the_crew(tmp_path, db):
-    db["seen"] = {
-        "tachikoma": Seen(datetime(2026, 9, 6, 3, 30, tzinfo=UTC), 0),
-        "deckard": Seen(NOW - timedelta(days=16), 4),
-        "teletraan": Seen(None, 0),
-    }
+def test_crew_json_carries_the_pipelines_own_enrichment_calls(tmp_path, db):
     build_all(None, tmp_path, now=NOW)
-    crew = read(tmp_path, "crew.json")
-    assert crew["seen"] == [
-        {"callsign": "TACHIKOMA", "what": "source proposal", "last_at": "2026-09-06T03:30:00Z",
-         "this_month": 0},
-        {"callsign": "DECKARD", "what": "follow-up report", "last_at": "2026-09-14T12:00:00Z",
-         "this_month": 4},
-        {"callsign": "TELETRAAN", "what": "incident verdict", "last_at": None, "this_month": 0},
-    ]
-    assert crew["pipeline_ai"] == {"calls": 12, "cost_usd": 0.0412,
-                                   "last_call_at": "2026-09-30T11:35:00Z",
-                                   "provider": "openrouter"}
+    assert read(tmp_path, "crew.json")["pipeline_ai"] == {
+        "calls": 12, "cost_usd": 0.0412, "last_call_at": "2026-09-30T11:35:00Z",
+        "provider": "openrouter",
+    }
 
 
-def test_the_site_roster_has_every_agent_crew_json_names():
+def test_the_site_roster_has_every_job_crew_json_names():
     hud = (Path(__file__).resolve().parents[2] / "site/assets/hud.js").read_text()
-    assert "callsign: 'SERAPH'" in hud
-    # Retired: an older crew.json that still names it is not counted (hud.js renderCrew).
+    for callsign in ("SERAPH", "MORPHEUS", "DECKARD", "TELETRAAN"):
+        assert f"callsign: '{callsign}'" in hud, callsign
+    # Retired on 2026-10-20: an older crew.json that still names it is not drawn.
     assert "callsign: 'RIPPERDOC'" not in hud

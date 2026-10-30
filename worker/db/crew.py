@@ -1,12 +1,14 @@
-"""What the deterministic crew did, counted from the rows its jobs leave (data/crew.json).
+"""What the crew's jobs did, counted from the rows they leave (data/crew.json).
 
-Only an agent whose work the worker itself does is counted here: SERAPH, the Collector, whose
-wake answers for the collection, source checks, ground truth and publishing. The AI agents work
-in the Paperclip control panel, which the worker never reads, so nothing is claimed for them.
-RIPPERDOC was counted from the cost ledger until it was retired on 2026-10-20; the worker's own
-model calls are `PipelineAi`, and the owner gets the month's ledger on Telegram.
+Since Paperclip was retired on 2026-10-31 every job runs in the worker, under its old agent's
+callsign. SERAPH's is code: the collection, source checks, ground truth and publishing, counted
+from the runs and job rows (`Activity`). MORPHEUS's daily report, DECKARD's follow-ups and
+TELETRAAN's incident diagnosis are AI calls, counted from the cost ledger by stage
+(`JobActivity`). The pipeline's own enrichment and MITRE calls are `PipelineAi`, and the owner
+gets the month's ledger on Telegram.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
@@ -23,23 +25,27 @@ class Activity:
 
 
 @dataclass(frozen=True)
+class JobActivity:
+    """An AI job's calls this month, from the cost ledger, and the newest call ever: when, and
+    on which model and provider. The defaults are a job that has never run."""
+
+    calls: int = 0
+    cost_usd: Decimal = Decimal(0)
+    last_at: datetime | None = None
+    model: str | None = None
+    provider: str | None = None
+
+
+@dataclass(frozen=True)
 class PipelineAi:
-    """The worker's own model calls this month: enrichment and MITRE suggestions."""
+    """The worker's own enrichment calls this month: triage, briefs, severity and MITRE
+    suggestions (ledger stages `enrich.*`). The crew's jobs are `JobActivity`."""
 
     calls: int
     cost_usd: Decimal
     # The newest call ever, and who served it: a month without calls still says when AI last ran.
     last_call_at: datetime | None = None
     provider: str | None = None
-
-
-@dataclass(frozen=True)
-class Seen:
-    """What the worker last received from an AI agent: its last piece of work the worker can see,
-    and how many this month."""
-
-    last_at: datetime | None
-    this_month: int
 
 
 def _one(conn: Connection, sql: str, since: datetime) -> dict:
@@ -87,7 +93,7 @@ def load_pipeline_ai(conn: Connection, *, since: datetime) -> PipelineAi:
         "coalesce(sum(cost_usd) filter (where ts >= :since), 0) as cost, "
         "max(ts) as last_call_at, "
         "(array_agg(provider order by ts desc))[1] as provider "
-        "from cost_ledger where coalesce(agent, 'worker') = 'worker'",
+        "from cost_ledger where coalesce(agent, 'worker') = 'worker' and stage like 'enrich.%'",
         since,
     )
     return PipelineAi(
@@ -95,28 +101,28 @@ def load_pipeline_ai(conn: Connection, *, since: datetime) -> PipelineAi:
     )
 
 
-def load_crew_seen(conn: Connection, *, since: datetime) -> dict[str, Seen]:
-    """The crew's work that reaches the worker, per callsign (lower case): TACHIKOMA's source
-    proposals, DECKARD's follow-up reports (not the no_change the worker records itself on a
-    quiet check, marked `by: worker`) and TELETRAAN's verdicts on incident fixes. The other
-    agents write only into Paperclip, which the worker never reads."""
-    row = _one(
-        conn,
-        "select (select max(proposed_at) from source_candidates where found_by = 'tachikoma') "
-        "       as tachikoma_at, "
-        "       (select count(*) from source_candidates where found_by = 'tachikoma' "
-        "        and proposed_at >= :since) as tachikoma_n, "
-        "       (select max(updated_at) from followup_tasks where status = 'done' "
-        "        and payload ? 'outcome' and coalesce(payload ->> 'by', '') <> 'worker') "
-        "       as deckard_at, "
-        "       (select count(*) from followup_tasks where status = 'done' "
-        "        and payload ? 'outcome' and coalesce(payload ->> 'by', '') <> 'worker' "
-        "        and updated_at >= :since) as deckard_n, "
-        "       (select max(ts) from incident_verdicts) as teletraan_at, "
-        "       (select count(*) from incident_verdicts where ts >= :since) as teletraan_n",
-        since,
-    )
-    return {
-        name: Seen(row[f"{name}_at"], row[f"{name}_n"])
-        for name in ("tachikoma", "deckard", "teletraan")
-    }
+def load_job_activity(
+    conn: Connection, *, since: datetime, stages: Mapping[str, str]
+) -> dict[str, JobActivity]:
+    """`JobActivity` per callsign for `stages` (callsign -> ledger stage): the rows whose stage is
+    that one or under it (`report.daily`, `report.daily.retry`), the worker's own."""
+    out = {}
+    for callsign, stage in stages.items():
+        row = dict(
+            conn.execute(
+                text(
+                    "select count(*) filter (where ts >= :since) as calls, "
+                    "coalesce(sum(cost_usd) filter (where ts >= :since), 0) as cost, "
+                    "max(ts) as last_at, "
+                    "(array_agg(model order by ts desc))[1] as model, "
+                    "(array_agg(provider order by ts desc))[1] as provider "
+                    "from cost_ledger where coalesce(agent, 'worker') = 'worker' "
+                    "and (stage = :stage or stage like :under)"
+                ),
+                {"since": since, "stage": stage, "under": f"{stage}.%"},
+            ).mappings().one()
+        )
+        out[callsign] = JobActivity(
+            row["calls"], Decimal(row["cost"]), row["last_at"], row["model"], row["provider"]
+        )
+    return out
