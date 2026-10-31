@@ -137,14 +137,12 @@ def test_a_url_or_an_unknown_cve_in_the_summary_is_refused(summary):
 
 
 def test_an_item_whose_why_fails_its_checks_is_dropped_not_the_whole_report():
-    """The first live report (2026-10-31 09:40) was refused twice for one "why" a little over
-    200 characters, and no report was written that day. An item is the model's word on one event:
-    a bad one goes, as an invented entity name does, and the others stand."""
-    long_why = "Australian customers' data was taken in a breach that " + "matters a lot " * 14
-    assert len(long_why) > 200
+    """The first live report (2026-10-31 09:40) was refused whole for one item. An item is the
+    model's word on one event: one that fails a check that trimming cannot mend (a URL, an
+    unknown CVE) goes, as an invented entity name does, and the others stand."""
     items = [
         {"event_id": "evt-2026-000003", "why": "CVE-2026-1234 is exploited, so patch now."},
-        {"event_id": "evt-2026-000002", "why": long_why},
+        {"event_id": "evt-2026-000002", "why": "Read https://evil.example/fix for the patch."},
         {"event_id": "evt-2026-000001", "why": "CVE-2026-9999 is the one to patch first."},
     ]
     out = parse_report(answer(items=items), GIVEN)
@@ -157,6 +155,36 @@ def test_a_report_whose_every_item_fails_its_checks_is_refused():
     items = [{"event_id": "evt-2026-000002", "why": "See https://evil.example/fix today."}]
     with pytest.raises(Rejected, match="every item"):
         parse_report(answer(items=items), GIVEN)
+
+
+def test_the_prompt_states_the_character_limits():
+    """MixRoute's models do not keep to a schema's lengths, and the prompt only gave sentence
+    counts: the first live reports ran every "why" past 200 characters and the summary past 600."""
+    prompt = report_call(GIVEN).messages[0]["content"]
+    assert "600 characters" in prompt and "200 characters" in prompt
+
+
+def test_an_overlong_why_or_summary_is_cut_back_to_its_last_whole_sentence():
+    first = "Attackers exploited the flaw within hours of its disclosure, so patching is urgent."
+    second = (" Australian councils, hospitals and universities run the affected gateway in large "
+              "numbers, which widens the exposure well beyond the usual targets.")
+    assert len(first) <= 200 < len(first + second)
+    sentence = "A busy day for breaches across the region, with several new victims named. "
+    summary = (sentence * 9).strip()
+    assert len(summary) > 600
+    items = [{"event_id": "evt-2026-000002", "why": first + second}]
+    out = parse_report(answer(summary=summary, items=items), GIVEN)
+    assert out.items[0]["why"] == first
+    assert len(out.summary) <= 600 and out.summary.endswith(".")
+    assert out.summary.count(". ") + 1 <= 4  # and to its sentence limit
+    assert out.dropped == 0
+
+
+def test_one_sentence_longer_than_the_limit_is_cut_at_a_word():
+    why = "Exposure " + "widens " * 40 + "today."
+    out = parse_report(answer(items=[{"event_id": "evt-2026-000002", "why": why}]), GIVEN)
+    cut = out.items[0]["why"]
+    assert len(cut) <= 200 and cut.endswith("…") and not cut.endswith(" …")
 
 
 def test_at_most_five_items_and_three_gaps_each_once():
