@@ -25,6 +25,41 @@ search:
     - ransomware group new victims
     - vendor PSIRT security advisory
     - zero-day exploited in the wild
+    # Added 2026-10-31, when the crew's Finder was retired. The list rotates a day at a time
+    # (run.py: the day's ordinal picks the start), and 30 credits buy about 14 searches a night.
+    # 16 queries meant nearly the same 14 every night over the same week of results. With these,
+    # the nightly search reaches new ground for about four nights before it repeats, on the
+    # same free-tier credits.
+    - Australian energy sector cyber security
+    - Australian water utility cyber incident
+    - Australian telecommunications outage cyber attack
+    - Australian bank financial services cyber fraud
+    - Australian superannuation fund cyber breach
+    - Australian local council cyber incident
+    - Australian state government cyber security advisory
+    - Australian law firm data breach
+    - Australian retail ecommerce data breach
+    - Australian education department cyber incident
+    - Australian aviation port logistics cyber attack
+    - Australian mining resources cyber attack
+    - New Zealand cyber security incident
+    - Pacific islands cyber security
+    - Southeast Asia ransomware attack
+    - Japan Korea cyber espionage campaign
+    - industrial control systems OT vulnerability advisory
+    - cloud misconfiguration data exposure research
+    - identity provider credential stuffing attack
+    - supply chain software package malicious npm PyPI
+    - firmware router vulnerability exploited botnet
+    - threat intelligence report APT campaign
+    - malware analysis research blog
+    - scam and fraud warning consumers Australia
+    - deepfake fraud attack business
+    - AI agent security vulnerability research
+    - LLM data leakage privacy incident
+    - AI governance standards security framework
+    - vulnerability disclosure program bug bounty report
+    - cyber insurance claims ransomware trend
   # Hosts never proposed: platforms where one account is not a source, and search engines.
   skip_hosts:
     - x.com
@@ -65,16 +100,20 @@ gate:
   # The most candidates one pass probes, and the most homes it searches for a feed. A candidate
   # not yet ready comes first, one never probed before any other, so a new find gets its first
   # probe at the next pass.
-  probes_per_pass: 10
-  homes_per_pass: 5
+  # Raised on 2026-10-31 (owner), when the crew's Finder was retired: 26 ready candidates waited
+  # for a slot and 301 sites for their home page to be read, at 5 a pass. Weak sources are
+  # still retired by `prune`, and publish holds keep off-beat items off the site
+  # (worker/publish/hold.py), so a larger pool cleans itself.
+  probes_per_pass: 20
+  homes_per_pass: 15
   # Candidates being tested at once. While it is full, TACHIKOMA's proposals of a feed are
   # queued (the ops API answers 202), and each pass moves the oldest into the slots that free.
   # A home page is not counted: it has no feed to test yet.
-  max_open: 20
+  max_open: 30
   # Discovered sources collected at once. A candidate ready while it is full waits, and is
   # probed again every `ready_reprobe_hours` rather than every pass, so it does not take the
   # probes of candidates still being tested. A failed probe sends it back to the start.
-  max_active: 25
+  max_active: 50
   ready_reprobe_hours: 24
   # Room for a ready candidate while `max_active` is full: each pass retires up to `per_pass`
   # discovered sources (never a curated one, and never more than there are candidates waiting),
