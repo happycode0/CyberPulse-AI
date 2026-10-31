@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-16",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-002060",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-16T00:00:00Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-09-18T19:26:47Z",
+      "last_independent_confirmation": "2026-09-22T03:58:43Z",
+      "status": "archived",
+      "title": "Cisco Zero-Day Highlights API Endpoint Authentication Issues",
+      "summary": "A zero-day authentication bypass flaw (CVE-2026-76460) was discovered in Cisco Identity Services Engine, allowing attackers to bypass authentication. The vulnerability has a maximum CVSS score of 10 and is listed as a KEV.",
+      "why_it_matters": "The flaw has a CVSS score of 10, indicating a critical risk. It is listed in the KEV, meaning it is known to be actively exploited or has high potential for exploitation. Defenders should prioritize patching Cisco ISE deployments immediately.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "zero-day",
+        "vulnerability",
+        "advisory",
+        "news",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.9625,
+        "novelty": 4.132858262155271e-05,
+        "prominence": 0.04984956771098641
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Source from Triskele Labs (Australia)"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cisco"
+        ],
+        "products": [
+          "Cisco Identity Services Engine"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-76460",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.75599,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-16",
+            "due_date": "2026-09-19"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "darkreading",
+            "triskele"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-76460 as exploited in the wild, added 2026-09-16, with US federal agencies due to fix it by 2026-09-19.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-76460 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-76460"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-76460 being exploited in the next 30 days at 76%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-76460"
+          ]
+        },
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.9625,
+          "evidence": [
+            "cisa_kev",
+            "found_vijilan_com",
+            "darkreading",
+            "triskele"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-76460",
+          "published": "2026-09-16T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/cisco-ise-cve-2026-76460-trust-anchor-takeover",
+          "published": "2026-09-17T14:02:23Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/vulnerabilities-threats/cisco-zero-day-api-endpoint-authentication-issues",
+          "published": "2026-09-18T19:26:47Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/cisco-identity-services-engine-authentication-bypass-vulnerability-cve-2026-76460",
+          "published": "2026-09-22T03:58:43Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-16T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-17T14:02:23Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        },
+        {
+          "timestamp": "2026-09-18T19:26:47Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        },
+        {
+          "timestamp": "2026-09-22T03:58:43Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "zero-day",
+        "authentication-bypass",
+        "cisco-ise",
+        "critical",
+        "kev"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 72,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "reported in Australia",
+          "4 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

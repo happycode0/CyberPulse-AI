@@ -1,0 +1,363 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-17",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 2,
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000063",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-06T16:00:00.102767Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Mitsubishi Electric GX Works3 and Motion Control Setting",
+      "summary": "A local attacker can authenticate with an invalid block password and modify executable modules in memory on Mitsubishi Electric GX Works3 and Motion Control Setting software, potentially allowing tampering with control programs. The vulnerability is identified as CVE-2026-15688 and is rated critical with a CVSS score of 9.2.",
+      "why_it_matters": "Defenders should be aware that the vulnerability has a high severity score of 9.2, indicating a significant risk if exploited. The advisory is new and has not been listed in KEV. No evidence of exploitation in the wild is provided.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0010197982507176506,
+        "prominence": 0.04998545006242249
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Mitsubishi Electric"
+        ],
+        "products": [
+          "Mitsubishi Electric GX Works3",
+          "Mitsubishi Electric Motion Control Setting"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-15688",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00179,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1212",
+          "name": "Exploitation for Credential Access",
+          "confidence": 0.55,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-15688 is rated 9.2 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-15688"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-15688 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-15688"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-02",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "local-authentication",
+        "memory-modification",
+        "control-program",
+        "ics-advisory",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-17T12:00:00Z",
+      "last_seen": "2026-10-06T16:00:00.102767Z",
+      "last_material_update": "2026-09-17T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Hitachi Energy FACTS Control Platform (FCP)",
+      "summary": "Hitachi Energy has identified vulnerabilities in its FACTS Control Platform’s GWS component that could allow attackers to compromise confidentiality, integrity, and availability of affected power-grid control systems deployed from 2020 onward.",
+      "why_it_matters": "The vulnerabilities carry CVSS scores of 9.9 and 8.3, and the advisory lists the issue as critical, indicating a high likelihood of severe impact if exploited. Attackers could disrupt the operation of FACTS control equipment, potentially affecting power distribution and grid stability.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0007978102575780689,
+        "prominence": 0.049851902473946594
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Hitachi Energy"
+        ],
+        "products": [
+          "FACTS Control systems",
+          "SVC Light (STATCOM)",
+          "Fixed Series Capacitor",
+          "Thyristor Controlled Series Capacitor",
+          "Static Var Compensator",
+          "Static Watt Compensator"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2024-3980",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00611,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-3982",
+          "cvss": {
+            "score": 8.2,
+            "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00217,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-4872",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00496,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-7940",
+          "cvss": {
+            "score": 8.3,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00579,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2024-7941",
+          "cvss": {
+            "score": 4.3,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00335,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2024-4872 is rated 9.9 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 5 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2024-4872"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2024-3980 being exploited in the next 30 days at under 1%, the highest of the 5 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2024-3980"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-260-03",
+          "published": "2026-09-17T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-17T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "hitachi-energy",
+        "facts-control",
+        "gws-component",
+        "cisa-advisory",
+        "critical-severity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

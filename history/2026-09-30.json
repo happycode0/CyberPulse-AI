@@ -1,0 +1,1277 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-30",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 8,
+    "critical": 2,
+    "high": 1,
+    "medium": 1,
+    "low": 1,
+    "unknown": 3,
+    "directly_reported_in_au": 3,
+    "pending_enrichment": 3
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001872",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T00:00:00Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-10-06T09:40:46.462003Z",
+      "last_independent_confirmation": "2026-10-29T02:02:07Z",
+      "status": "resolved",
+      "title": "CISA Adds Exploited Cisco Catalyst SD-WAN Manager Auth Bypass to KEV",
+      "summary": "A critical authentication bypass flaw in Cisco Catalyst SD‑WAN Manager (CVE‑2026‑76504) has been added to CISA’s KEV list after reports of active exploitation.",
+      "why_it_matters": "The flaw has a CVSS score of 9.8 and allows unauthenticated remote attackers to gain access, making it a high‑risk vulnerability that is actively exploited.",
+      "resolution": "CISA added the exploited Cisco Catalyst SD-WAN Manager authentication bypass (CVE-2026-76504) to its KEV list after reports of active attacks, with threat actor UAT-11473 using KeyDrift malware against Cisco SD-WAN controllers via related flaws including CVE-2026-20127. Cisco published a Live Protect shield that provides temporary partial protection while customers upgrade to a fixed release, containing the immediate risk.",
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "news",
+        "advisory",
+        "zero-day",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.9994140625,
+        "novelty": 1.6861549381193532e-05,
+        "prominence": 0.05099272302676779
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cisco",
+          "CISA"
+        ],
+        "products": [
+          "Cisco Catalyst SD-WAN Manager"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-20127",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.89294,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-02-25",
+            "due_date": "2026-02-27"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-20182",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.91817,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-05-14",
+            "due_date": "2026-05-17"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-76504",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.38928,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-30",
+            "due_date": "2026-10-03"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-20127, CVE-2026-20182 and CVE-2026-76504 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-20182 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 3 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-20182"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-20182 being exploited in the next 30 days at 92%, the highest of the 3 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-20182"
+          ]
+        },
+        {
+          "text": "9 independent sources report this event.",
+          "confidence": 0.9994140625,
+          "evidence": [
+            "cisa_kev",
+            "bleepingcomputer",
+            "found_rapid7_com",
+            "thn",
+            "found_watchtowr_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-76504",
+          "published": "2026-09-30T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/cisco-warns-of-new-sd-wan-authentication-bypass-zero-day-exploited-in-attacks/",
+          "published": "2026-09-30T14:46:40Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_rapid7_com",
+          "url": "https://www.rapid7.com/blog/post/etr-critical-cisco-catalyst-sd-wan-manager-api-authentication-bypass-exploited-in-the-wild-cve-2026-76504",
+          "published": "2026-09-30T15:09:22Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_rapid7_com",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/cisco-warns-of-attackers-exploiting.html",
+          "published": "2026-09-30T15:24:54Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "found_watchtowr_com",
+          "url": "https://watchtowr.com/intelligence/cisco-catalyst-sd-wan-manager-cve-2026-76504-faq/",
+          "published": "2026-09-30T18:16:30Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_watchtowr_com",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/cisa-adds-exploited-cisco-catalyst-sd.html",
+          "published": "2026-10-01T10:33:16Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_socradar_io",
+          "url": "https://socradar.io/blog/cve-2026-76504-cisco-sd-wan-flaw/",
+          "published": "2026-10-01T12:22:27Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_socradar_io",
+          "independent": true
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/cve-2026-76504-cisco-sd-wan-manager-auth-bypass",
+          "published": "2026-10-01T14:02:16Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_threatfilter_dev",
+          "url": "https://blog.talosintelligence.com/uat-11473-keydrift/",
+          "published": "2026-10-28T21:32:02Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_threatfilter_dev",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/php2shell-exploit-fragnesia-roots-firewalls/",
+          "published": "2026-10-29T02:02:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/keydrift-malware-uat-11473-cisco-sd-wan/",
+          "published": "2026-10-29T02:30:06Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/gmo-internet-ransom-demand/",
+          "published": "2026-10-29T08:01:13Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/hackers-exploit-cisco-sd-wan-flaw-to-deploy-custom-keydrift-malware/",
+          "published": "2026-10-29T18:38:26Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T14:46:40Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T15:09:22Z",
+          "type": "NEW_CVE",
+          "summary": "Rapid7 Cybersecurity Blog added CVE-2026-20127, CVE-2026-20182",
+          "sources": [
+            "found_rapid7_com"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T15:24:54Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T18:16:30Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by watchTowr",
+          "sources": [
+            "found_watchtowr_com"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T10:33:16Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T12:22:27Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SOCRadar® Cyber Intelligence Inc.",
+          "sources": [
+            "found_socradar_io"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T14:02:16Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        },
+        {
+          "timestamp": "2026-10-06T09:40:46.462003Z",
+          "type": "NEW_MITIGATION",
+          "summary": "Cisco has published a Live Protect shield for Catalyst SD-WAN Manager that gives temporary, partial cover while customers schedule the upgrade to a fixed release.",
+          "sources": [
+            "deckard",
+            "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-webauth-xr8beuuU"
+          ]
+        },
+        {
+          "timestamp": "2026-10-28T21:32:02Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ThreatFilter",
+          "sources": [
+            "found_threatfilter_dev"
+          ]
+        },
+        {
+          "timestamp": "2026-10-29T08:01:13Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        },
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000316"
+        }
+      ],
+      "tags": [
+        "auth-bypass",
+        "cisco",
+        "kev",
+        "cisa",
+        "exploited"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 65,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "9 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004532",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T21:00:40Z",
+      "last_seen": "2026-10-14T00:00:00.167039Z",
+      "last_material_update": "2026-09-30T21:00:40Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "From SELECT to SYSADMIN with SQL Copilot (CVE-2026-65669)",
+      "summary": "A critical elevation-of-privilege flaw in Microsoft SQL Server Copilot (CVE-2026-65669) was disclosed, with a CVSS score of 9.6.",
+      "why_it_matters": "The vulnerability permits an attacker to gain sysadmin privileges on SQL Server, potentially compromising all databases. It is rated critical by Microsoft.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "research"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.6,
+        "novelty": 0.0010199619450389724,
+        "prominence": 0.04998774578595082
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [
+          "SQL Server",
+          "SQL Server Management Studio"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-65669",
+          "cvss": {
+            "score": 9.6,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:U/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00863,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.55,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "embracethered"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-65669 is rated 9.6 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-65669"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-65669 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-65669"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "embracethered",
+          "url": "https://embracethered.com/blog/posts/2026/from-select-to-sysadmin-sql-copilot-bluehat-asia/",
+          "published": "2026-09-30T21:00:40Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "embracethered",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T21:00:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Embrace The Red",
+          "sources": [
+            "embracethered"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-002138"
+        }
+      ],
+      "tags": [
+        "sql-server",
+        "privilege-escalation",
+        "copilot",
+        "bluehat",
+        "research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by Embrace The Red (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-001944",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:58:34Z",
+      "last_seen": "2026-10-02T08:00:00.142739Z",
+      "last_material_update": "2026-09-30T13:58:34Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Greens leadership fight scuttles Senate AI committee hearing",
+      "summary": "The Senate committee conducting an inquiry into AI and data centres has scuttled its hearing in Canberra scheduled for Thursday, apparently falling victim to the Greens’ unexpected leadership change. Greens senator Sarah Hanson-Young – who chairs the committee – had over the weekend demanded that OpenAI chief executive Sam Altman and Anthropic CEO Dario Amodei…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3677490176568887,
+        "prominence": 0.04982486795592348
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian place (Canberra)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/greens-leadership-fight-scuttles-senate-ai-committee-hearing/",
+          "published": "2026-09-30T13:58:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:58:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Innovation Australia (specialist)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001945",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:58:09Z",
+      "last_seen": "2026-10-02T08:00:00.142739Z",
+      "last_material_update": "2026-09-30T13:58:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Qld added new strings to $470m PsiQuantum investment",
+      "summary": "Queensland tightened the conditions on its $470 million PsiQuantum investment in the wake of a review of the joint federal-state deal to build a quantum computer on the outskirts of Brisbane. Queensland Treasurer David Janetzki on Wednesday revealed that “additional gateways” were added to the contract last year to “make sure that the taxpayer dollar…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3677121410055496,
+        "prominence": 0.04981412798596637
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australian places (Qld, Queensland, Brisbane)",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/qld-added-new-strings-to-470m-psiquantum-investment/",
+          "published": "2026-09-30T13:58:09Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:58:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Innovation Australia (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001946",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-30T13:57:43Z",
+      "last_seen": "2026-10-02T04:00:00.145929Z",
+      "last_material_update": "2026-09-30T13:57:43Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Aged care algorithm included ‘mental retardation’ category",
+      "summary": "The controversial algorithm determining aged care supports could place older Australians in a “mental retardation” category as recently as last year, despite the term being phased out of practice more than a decade ago. A Victorian aged care official warned federal counterparts that developed the Integrated Assessment Tool (IAT) that the anachronistic term remained a…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.3676737932108504,
+        "prominence": 0.04980296094063986
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/aged-care-algorithm-included-mental-retardation-category/",
+          "published": "2026-09-30T13:57:43Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T13:57:43Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Innovation Australia (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001878",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T14:00:00Z",
+      "last_seen": "2026-10-21T16:00:00.168132Z",
+      "last_material_update": "2026-09-30T16:46:29Z",
+      "last_independent_confirmation": "2026-09-30T16:46:29Z",
+      "status": "archived",
+      "title": "Attackers Exploit Zimbra Flaw to Deploy Web Shells and Harvest Authentication Secrets",
+      "summary": "Threat actors used a patched Zimbra Collaboration Suite vulnerability to drop web shells and steal mailbox credentials.",
+      "why_it_matters": "The CVE-2026-73570 flaw has a CVSS score of 8.9 and allows unauthenticated remote code execution via OS command injection, enabling attackers to deploy web shells and exfiltrate authentication secrets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "malware",
+        "research",
+        "news",
+        "vendor_advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.875,
+        "novelty": 0.03358977825633971,
+        "prominence": 0.04978826174632088
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Zimbra",
+          "Microsoft"
+        ],
+        "products": [
+          "Zimbra Collaboration Suite"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-73570",
+          "cvss": {
+            "score": 8.9,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:L",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.71663,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-08-21",
+            "due_date": "2026-08-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1059",
+          "name": "Command and Scripting Interpreter",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        },
+        {
+          "id": "T1505.003",
+          "name": "Server Software Component: Web Shell",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-73570 as exploited in the wild, added 2026-08-21, with US federal agencies due to fix it by 2026-08-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-73570 is rated 8.9 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-73570"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-73570 being exploited in the next 30 days at 72%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-73570"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.875,
+          "evidence": [
+            "microsoft_security",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/09/30/unauthenticated-command-injection-on-internet-facing-mail-servers-tracking-cve-2026-73570/",
+          "published": "2026-09-30T14:00:00Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-exploit-zimbra-flaw-to-deploy.html",
+          "published": "2026-09-30T16:46:29Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        },
+        {
+          "timestamp": "2026-09-30T16:46:29Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000171"
+        }
+      ],
+      "tags": [
+        "zimbra-flaw",
+        "web-shell",
+        "command-injection",
+        "rce",
+        "microsoft-research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by The Hacker News (specialist)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002254",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T22:35:00Z",
+      "last_seen": "2026-10-05T12:00:00.162796Z",
+      "last_material_update": "2026-10-02T15:20:53Z",
+      "last_independent_confirmation": "2026-10-02T15:20:53Z",
+      "status": "archived",
+      "title": "US sanctions Tren de Aragua gang members in ATM hacks crackdown",
+      "summary": "US Treasury sanctioned eight members of Venezuelan gang Tren de Aragua for orchestrating ATM jackpotting attacks that stole millions in the United States.",
+      "why_it_matters": "US sanctions eight members of Venezuelan gang Tren de Aragua for ATM jackpotting attacks, underscoring the ongoing threat of organized crime targeting financial infrastructure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "policy",
+        "malware",
+        "fraud",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.2213885680176935,
+        "prominence": 0.04963272763990609
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Tren de Aragua"
+        ],
+        "organisations": [
+          "U.S. Treasury Department"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "VE"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1657",
+          "name": "Financial Theft",
+          "confidence": 1.0,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "therecord",
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "therecord",
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/us-sanctions-10-atm-jackpotting-tren-de-aragua",
+          "published": "2026-09-30T22:35:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/us-sanctions-tren-de-aragua-members-in-atm-jackpotting-crackdown/",
+          "published": "2026-10-02T15:20:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T22:35:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        },
+        {
+          "timestamp": "2026-10-02T15:20:53Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "atm-jackpotting",
+        "sanctions",
+        "fraud",
+        "malware",
+        "policy"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "fraud",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-002152",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-30T16:00:00Z",
+      "last_seen": "2026-10-30T12:00:00.109865Z",
+      "last_material_update": "2026-10-01T10:53:38Z",
+      "last_independent_confirmation": "2026-10-01T10:53:38Z",
+      "status": "archived",
+      "title": "FBI tells ShinyHunters members to turn themselves in, after arrest of alleged leader",
+      "summary": "The FBI has urged members of the ShinyHunters gang to surrender after Dutch police arrested a 24-year-old suspected leader who may have arranged two murders.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "policy",
+        "news",
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.8,
+        "novelty": 0.3349168771549618,
+        "prominence": 0.049613970837944464
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters"
+        ],
+        "organisations": [
+          "FBI",
+          "Dutch police"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "NL"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.8,
+          "evidence": [
+            "cyberwire",
+            "grahamcluley"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/daily-briefing/15/187",
+          "published": "2026-09-30T16:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        },
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.bitdefender.com/en-us/blog/hotforsecurity/fbi-shinyhunters-turn-themselves-in-arrest-leader",
+          "published": "2026-10-01T10:53:38Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-30T16:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        },
+        {
+          "timestamp": "2026-10-01T10:53:38Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "fbi",
+        "shinyhunters",
+        "arrest",
+        "law-enforcement",
+        "threat-actor",
+        "cybercrime"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "reported by The CyberWire (established)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

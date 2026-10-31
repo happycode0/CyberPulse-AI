@@ -1,0 +1,388 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-11",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 2,
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000139",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-09-14T10:02:57Z",
+      "last_independent_confirmation": "2026-09-14T10:02:57Z",
+      "status": "archived",
+      "title": "CVE-2026-85706: GitLab Community Edition and Enterprise Edition GitLab Community Edition and Enterprise Edition Path Traversal Vulnerability",
+      "summary": "A path traversal flaw in GitLab Community and Enterprise Editions lets unauthenticated users read any file on the server.",
+      "why_it_matters": "The flaw has a CVSS score of 10.0 and is listed in the KEV, indicating it is actively exploited. Attackers can read arbitrary files without authentication, potentially exposing sensitive data.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.925,
+        "novelty": 6.560504514565297e-05,
+        "prominence": 0.04997580848352131
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GitLab"
+        ],
+        "products": [
+          "GitLab Community Edition"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-85706",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.97355,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-87719",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00571,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.95,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-85706 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-14.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-85706 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-85706"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-85706 being exploited in the next 30 days at 97%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-85706"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "found_rapid7_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-85706",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "found_rapid7_com",
+          "url": "https://www.rapid7.com/blog/post/etr-cve-2026-85706-critical-gitlab-path-traversal-exploited-in-the-wild",
+          "published": "2026-09-14T10:02:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_rapid7_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-14T10:02:57Z",
+          "type": "NEW_CVE",
+          "summary": "Rapid7 Cybersecurity Blog added CVE-2026-87719",
+          "sources": [
+            "found_rapid7_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "path-traversal",
+        "gitlab",
+        "kev",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000136",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-11T00:00:00Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-09-11T00:00:00Z",
+      "last_independent_confirmation": "2026-09-15T14:03:10Z",
+      "status": "archived",
+      "title": "CVE-2026-84869: ConnectWise ScreenConnect ConnectWise ScreenConnect Improper Privilege Management and Missing Authorization Vulnerability",
+      "summary": "A newly disclosed vulnerability (CVE-2026-84869) in ConnectWise ScreenConnect allows attackers to transfer and execute files during an active remote session without proper authorization or confirmation.",
+      "why_it_matters": "The flaw has a CVSS score of 9.9 and is classified as critical, meaning remote code execution could occur in legitimate remote support sessions.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.0002780244936951946,
+        "prominence": 0.04980457378898121
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Keen vulnerability is listed in the KEV database.",
+          "High CVSS score (9.9) indicates severe impact.",
+          "Remote file execution is possible during active sessions."
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "ConnectWise"
+        ],
+        "products": [
+          "ConnectWise ScreenConnect"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-84869",
+          "cvss": {
+            "score": 9.9,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00924,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-11",
+            "due_date": "2026-09-14"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "id": "T1570",
+          "name": "Lateral Tool Transfer",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-84869 as exploited in the wild, added 2026-09-11, with US federal agencies due to fix it by 2026-09-14.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-84869 is rated 9.9 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-84869"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-84869 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-84869"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev",
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-84869",
+          "published": "2026-09-11T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/screenconnect-cve-2026-84869-worm-like-flaw-msp-response",
+          "published": "2026-09-15T14:03:10Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-11T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-15T14:03:10Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "privilege-management",
+        "missing-authorization",
+        "remote-execution"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

@@ -1,0 +1,1345 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-22",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 7,
+    "critical": 7,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000125",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-10-09T01:06:39.097532Z",
+      "last_independent_confirmation": "2026-09-23T08:43:39Z",
+      "status": "monitoring",
+      "title": "CVE-2026-94127: F5 BIG-IP APM F5 BIG-IP APM Heap-based Buffer Overflow Vulnerability",
+      "summary": "F5 BIG-IP APM has a heap-based buffer overflow that can be triggered when an access policy and OAuth profile are configured on a virtual server, allowing unauthenticated remote code execution.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.3 and is listed on the KEV, indicating it is a high-risk, potentially exploited flaw. Defenders should prioritize patching F5 BIG-IP APM instances that use access policies and OAuth profiles on virtual servers.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.925,
+        "novelty": 1.053846836324597e-06,
+        "prominence": 0.056530696321315486
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "F5"
+        ],
+        "products": [
+          "F5 BIG-IP APM"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-94127",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.24938,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.92,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-94127 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-94127 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-94127"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-94127 being exploited in the next 30 days at 25%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-94127"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "found_rapid7_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-94127",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "found_rapid7_com",
+          "url": "https://www.rapid7.com/blog/post/etr-cve-2026-94127-critical-unauthenticated-rce-in-f5-big-ip-apm",
+          "published": "2026-09-23T08:43:39Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_rapid7_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-23T08:43:39Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Rapid7 Cybersecurity Blog",
+          "sources": [
+            "found_rapid7_com"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T01:06:39.097532Z",
+          "type": "NEW_EXPLOIT",
+          "summary": "watchTowr Labs published a public proof-of-concept exploit repository for the pre-auth BIG-IP APM RCE, with hardcoded offsets for a specific BIG-IP 21.1.0 build.",
+          "sources": [
+            "deckard",
+            "https://github.com/watchtowrlabs/watchTowr-vs-f5-bigip-PreAuth-RCE-CVE-2026-94127"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "buffer-overflow",
+        "remote-code-execution",
+        "unauthenticated",
+        "f5-bigip",
+        "kev",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000053",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-08T16:00:00.101206Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens Industrial Edge Management",
+      "summary": "Siemens Industrial Edge Management software has an authentication bypass that lets attackers reset credentials and take over accounts without email verification. Siemens released patches for affected versions.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.1 and is rated critical, meaning attackers can fully compromise accounts. Defenders should update to the latest versions immediately to prevent account takeover.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0006424326106966301,
+        "prominence": 0.04991852578073835
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "CISA advisory is US-based",
+          "No Australian source reported",
+          "Global vulnerability with no Australian detail"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Siemens"
+        ],
+        "products": [
+          "Siemens Industrial Edge Management"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-18963",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.04682,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1078.004",
+          "name": "Valid Accounts: Cloud Accounts",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.92,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-18963 is rated 9.1 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-18963"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-18963 being exploited in the next 30 days at 4.7%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-18963"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-06",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "authentication-bypass",
+        "remote",
+        "account-takeover",
+        "critical",
+        "ics",
+        "patch"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000127",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-85102: Check Point Multiple Products Check Point Multiple Products Improper Certificate Validation Vulnerability",
+      "summary": "Check Point Security Gateway and Spark Firewall have a critical vulnerability that allows unauthenticated remote attackers to execute arbitrary code via improper certificate validation in VPNs.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.8 and is listed in the KEV, indicating it is a high-risk flaw that could be exploited to gain remote code execution on affected gateways.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.00039890497732052583,
+        "prominence": 0.04987493087121436
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Check Point"
+        ],
+        "products": [
+          "Check Point Security Gateway",
+          "Check Point Spark Firewall"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-85102",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.5414,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-85102 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-85102 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-85102"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-85102 being exploited in the next 30 days at 54%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-85102"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-85102",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "certificate-validation",
+        "vpn",
+        "remote-code-execution"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 45,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000069",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-08T17:00:00.039420Z",
+      "last_material_update": "2026-10-09T00:57:46.689022Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA added two Citrix NetScaler vulnerabilities (CVE-2026-88771 and CVE-2026-88772) to its KEV catalog after evidence of active exploitation.",
+      "why_it_matters": "Both vulnerabilities have a CVSS score of 9.5 and are actively exploited, posing a high risk to federal systems that use Citrix NetScaler. Defenders should prioritize patching and monitoring these assets.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 1.2915181985827184e-06,
+        "prominence": 0.04986093880422732
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA"
+        ],
+        "products": [
+          "Citrix NetScaler"
+        ],
+        "countries": [],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-5430",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.2239,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-24",
+            "due_date": "2026-09-27"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-65660",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.08189,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-67279",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02277,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-71362",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.90491,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-24",
+            "due_date": "2026-09-27"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-85102",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.5414,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88771",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.8216,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-88772",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.78162,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-27",
+            "due_date": "2026-09-30"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-93616",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.91605,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-93952",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01384,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-94127",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.24938,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_advisories"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-5430, CVE-2026-65660, CVE-2026-67279, CVE-2026-71362 and 6 more as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-5430 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it, the highest of the 10 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-5430"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-93616 being exploited in the next 30 days at 92%, the highest of the 10 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-93616"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/22/cisa-adds-four-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/24/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-24T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/25/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-25T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/27/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-09-27T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-85102, CVE-2026-93616, CVE-2026-93952, CVE-2026-94127",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-24T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-5430, CVE-2026-71362",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-25T12:00:00Z",
+          "type": "NEW_CVE",
+          "summary": "CISA Advisories added CVE-2026-65660, CVE-2026-67279",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-09-27T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T00:57:46.689022Z",
+          "type": "NEW_AU_EXPOSURE",
+          "summary": "Australia's ACSC updated its critical alert on 30 September, reporting that it has received reports from Australian organisations confirming exploitation of the NetScaler ADC and Gateway flaws.",
+          "sources": [
+            "deckard",
+            "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-citrix-netscaler-adc-and-citrix-netscaler-gateway-products"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T00:57:46.689022Z",
+          "type": "EXPLOIT_CONFIRMED",
+          "summary": "CISA added a third Citrix NetScaler ADC and Gateway vulnerability to its Known Exploited Vulnerabilities catalog on 4 October, citing evidence of active exploitation.",
+          "sources": [
+            "deckard",
+            "https://www.cisa.gov/news-events/alerts/2026/10/04/cisa-adds-one-known-exploited-vulnerability-catalog"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T00:57:46.689022Z",
+          "type": "NEW_PATCH",
+          "summary": "Citrix released emergency NetScaler ADC and Gateway updates on 4 October to fix a newly exploited SAML-related denial-of-service zero-day, alongside global deny-list mitigations.",
+          "sources": [
+            "deckard",
+            "https://www.bleepingcomputer.com/news/security/citrix-patches-netscaler-saml-zero-day-exploited-in-attacks/"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000068"
+        }
+      ],
+      "tags": [
+        "kev",
+        "cisa",
+        "citrix",
+        "vulnerability",
+        "exploited",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "government target"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000124",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T00:00:00Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-09-22T00:00:00Z",
+      "last_independent_confirmation": "2026-09-23T14:02:41Z",
+      "status": "archived",
+      "title": "CVE-2026-93952: Arista VeloCloud Orchestrator Arista VeloCloud Orchestrator Improper Input Validation Vulnerability",
+      "summary": "Arista VeloCloud Orchestrator on-prem has a critical improper input validation flaw that could let a remote attacker gain privileged access and compromise the orchestrator and its data.",
+      "why_it_matters": "The flaw has a CVSS score of 9.5 and is listed in the KEV, indicating it is a high-risk vulnerability that could allow attackers to gain privileged access to the orchestrator and its data. Exploitation could lead to full compromise of the orchestrator host, affecting all managed services.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.00027802446226576016,
+        "prominence": 0.04980457217990218
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "High CVSS score of 9.5",
+          "listed in KEV"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Arista"
+        ],
+        "products": [
+          "Arista VeloCloud Orchestrator"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-93952",
+          "cvss": {
+            "score": 9.5,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01384,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-22",
+            "due_date": "2026-09-25"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-93952 as exploited in the wild, added 2026-09-22, with US federal agencies due to fix it by 2026-09-25.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-93952 is rated 9.5 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-93952"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-93952 being exploited in the next 30 days at 1.4%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-93952"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev",
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-93952",
+          "published": "2026-09-22T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/cve-2026-93952-arista-velocloud-orchestrator-zero-day",
+          "published": "2026-09-23T14:02:41Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-23T14:02:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "input-validation",
+        "privileged-escalation"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000049",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-13T15:00:00.047602Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "lwIP TCP/IP Stack MQTT Client Application",
+      "summary": "A vulnerability in the lwIP TCP/IP Stack MQTT Client Application (versions 2.0.1 through 2.2.1) permits attackers to gain full code execution on affected devices.",
+      "why_it_matters": "The flaw carries a CVSS v3 score of 9.3, indicating a high likelihood of exploitation. Successful exploitation can give attackers full code execution on the device, potentially compromising critical infrastructure sectors.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0009907665255078787,
+        "prominence": 0.049574075451209544
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "lwIP TCP/IP Stack MQTT Client Application",
+          "MQTT Client Application"
+        ],
+        "countries": [],
+        "industries": [
+          "energy",
+          "finance",
+          "health",
+          "transport",
+          "water",
+          "telecommunications",
+          "manufacturing",
+          "critical-infrastructure"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-87121",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00775,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1203",
+          "name": "Exploitation for Client Execution",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-87121 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-87121"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-87121 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-87121"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-01",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "out-of-bounds-write",
+        "critical-infrastructure",
+        "lwip",
+        "mqtt"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000054",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-22T12:00:00Z",
+      "last_seen": "2026-10-08T16:00:00.101206Z",
+      "last_material_update": "2026-09-22T12:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Siemens SIMOVE Fleetmanager and SIPLANT",
+      "summary": "Siemens SIMOVE Fleetmanager and SIPLANT software contain a path traversal flaw that could allow attackers to read files outside the intended scope. Siemens has released updated versions for the affected releases.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.2 and is classified as critical, indicating that attackers could potentially read sensitive files or compromise the system. No exploitation in the wild is reported in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.85,
+        "novelty": 0.0009907665255078787,
+        "prominence": 0.049574075451209544
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Siemens"
+        ],
+        "products": [
+          "SIMOVE Fleetmanager",
+          "SIPLANT"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-67367",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01106,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-67367 is rated 9.2 (critical) under CVSS 4.0 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-67367"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-67367 being exploited in the next 30 days at 1.1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-67367"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_ics",
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-265-07",
+          "published": "2026-09-22T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-22T12:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA ICS Advisories",
+          "sources": [
+            "cisa_ics"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "path-traversal",
+        "vulnerability",
+        "critical",
+        "siemens"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

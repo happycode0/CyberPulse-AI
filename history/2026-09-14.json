@@ -1,0 +1,240 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-14",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 1,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001794",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-14T00:00:00Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-10-09T01:00:57.790117Z",
+      "last_independent_confirmation": "2026-09-16T14:02:42Z",
+      "status": "resolved",
+      "title": "Unauthenticated Remote Code Execution in Cisco Secure Email Gateway (CVE-2026-76461)",
+      "summary": "An unauthenticated remote code execution vulnerability (CVE-2026-76461) was discovered in Cisco Secure Email Gateway, allowing attackers to run arbitrary code.",
+      "why_it_matters": "The vulnerability has a CVSS score of 9.8, indicating a high risk of exploitation. It is listed on the KEV, meaning it is known to be actively exploited. The EPSs score of 0.28269 suggests a significant likelihood of exploitation in the wild.",
+      "resolution": "Cisco Secure Email Gateway was affected by CVE-2026-76461, a critical unauthenticated remote code execution vulnerability listed in CISA's Known Exploited Vulnerabilities and exploited in the wild. Cisco revised its advisory to warn that compromised cluster members share SSH keys and can pivot to other members, directing administrators to remediate and re-key every member. Fixed releases remained unchanged as the resolution.",
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory",
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.98125,
+        "novelty": 6.586542727028732e-08,
+        "prominence": 0.07151866134124302
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Australian research lab Triskele Labs reported the vulnerability.",
+          "The vulnerability is listed on the KEV."
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cisco"
+        ],
+        "products": [
+          "Cisco Secure Email Gateway"
+        ],
+        "countries": [
+          "US",
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-76461",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.29543,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-14",
+            "due_date": "2026-09-17"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "triskele"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-76461 as exploited in the wild, added 2026-09-14, with US federal agencies due to fix it by 2026-09-17.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-76461 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-76461"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-76461 being exploited in the next 30 days at 30%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-76461"
+          ]
+        },
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.98125,
+          "evidence": [
+            "cisa_kev",
+            "triskele",
+            "found_rapid7_com",
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-76461",
+          "published": "2026-09-14T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "triskele",
+          "url": "https://www.triskelelabs.com/resources/unauthenticated-remote-code-execution-in-cisco-secure-email-gateway-cve-2026-76461",
+          "published": "2026-09-15T01:17:09Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "triskele",
+          "independent": true
+        },
+        {
+          "source_id": "found_rapid7_com",
+          "url": "https://www.rapid7.com/blog/post/etr-cve-2026-76461-critical-cisco-secure-email-gateway-vulnerability-exploited-in-the-wild",
+          "published": "2026-09-15T12:22:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_rapid7_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/cisco-secure-email-gateway-cve-2026-76461-root-rce",
+          "published": "2026-09-16T14:02:42Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-14T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-15T01:17:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Triskele Labs",
+          "sources": [
+            "triskele"
+          ]
+        },
+        {
+          "timestamp": "2026-09-15T12:22:50Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Rapid7 Cybersecurity Blog",
+          "sources": [
+            "found_rapid7_com"
+          ]
+        },
+        {
+          "timestamp": "2026-09-16T14:02:42Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        },
+        {
+          "timestamp": "2026-10-09T01:00:57.790117Z",
+          "type": "NEW_MITIGATION",
+          "summary": "Cisco revised the Secure Email Gateway advisory to warn that compromised cluster members share SSH keys and can pivot to other members; remediate and re-key every member. Fixed releases unchanged.",
+          "sources": [
+            "deckard",
+            "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-esa-inj-2bLVGmhX"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "unauthenticated-rce",
+        "cisco",
+        "secure-email-gateway",
+        "critical",
+        "kev"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 72,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "reported in Australia",
+          "4 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

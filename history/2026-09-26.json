@@ -1,0 +1,186 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-26",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001909",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-26T11:46:40Z",
+      "last_seen": "2026-10-03T08:00:00.135655Z",
+      "last_material_update": "2026-09-26T11:46:40Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Attackers Bypass WAFs to Exploit Oracle PeopleSoft Flaw and Deploy Web Shells",
+      "summary": "Attackers are exploiting a critical Oracle PeopleSoft vulnerability (CVE-2026-35273) to deploy web shells, bypassing WAFs in a global campaign.",
+      "why_it_matters": "The flaw has a CVSS score of 9.8 and is classified as critical, enabling unauthenticated remote code execution. Attackers are actively exploiting it in a mass campaign, deploying web shells across affected systems.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "zero-day",
+        "malware",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.45,
+        "novelty": 0.0002811647281672343,
+        "prominence": 0.04996469895589748
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "global campaign targeting multiple sectors",
+          "no Australian source reported"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters"
+        ],
+        "organisations": [
+          "Oracle",
+          "Google"
+        ],
+        "products": [
+          "Oracle PeopleSoft"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-35273",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.96678,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-06-12",
+            "due_date": "2026-06-15"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1505.003",
+          "name": "Server Software Component: Web Shell",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-35273 as exploited in the wild, added 2026-06-12, with US federal agencies due to fix it by 2026-06-15.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-35273 is rated 9.8 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-35273"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-35273 being exploited in the next 30 days at 97%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-35273"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/attackers-bypass-wafs-to-exploit-oracle.html",
+          "published": "2026-09-26T11:46:40Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-26T11:46:40Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000225"
+        }
+      ],
+      "tags": [
+        "waf-bypass",
+        "oracle-peoplesoft",
+        "web-shell",
+        "zero-day",
+        "shinyhunters"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 48,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

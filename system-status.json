@@ -1,0 +1,301 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "last_completed_collection": "2026-10-31T17:00:13.443846Z",
+  "pipeline_version": "1.0.0",
+  "schema_version": "1",
+  "scoring_version": "4",
+  "last_run": {
+    "run_id": "run-fast-20261031T170000Z-70bc60",
+    "lane": "fast",
+    "started_at": "2026-10-31T17:00:00.073128Z",
+    "finished_at": "2026-10-31T17:00:13.443846Z",
+    "sources_ok": 11,
+    "sources_failed": 0,
+    "sources_stale": 0,
+    "items_fetched": 90,
+    "new_events": 0,
+    "updated_events": 0,
+    "duplicates": 90,
+    "archived_events": 19,
+    "error_count": 0
+  },
+  "runs_in_progress": [],
+  "counts": {
+    "events_published": 500,
+    "events_total": 6866,
+    "events_held": 3134,
+    "sources_total": 123,
+    "sources_enabled": 99
+  },
+  "schedule": [
+    {
+      "job": "lane-fast",
+      "label": "Fast lane",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the fast-lane sources (government advisories, the KEV list and the fastest news feeds), merges and scores what is new by rule, and republishes the site's data."
+    },
+    {
+      "job": "lane-normal",
+      "label": "Normal lane",
+      "cron": "0 */4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Collects the normal-lane sources, merges and scores what is new by rule, and republishes the site's data."
+    },
+    {
+      "job": "groundtruth-sync",
+      "label": "Ground-truth sync",
+      "cron": "25 */6 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Reads the public registers (CISA KEV, EPSS, CVE scores, OSV advisories and MITRE ATT&CK) and rescores and republishes any event whose facts changed."
+    },
+    {
+      "job": "ai-enrichment",
+      "label": "AI enrichment",
+      "cron": "5,35 * * * *",
+      "timezone": "UTC",
+      "kind": "ai",
+      "summary": "Asks a model to triage, brief and estimate the severity of a small batch of new events, and to suggest MITRE techniques, within the month's budget; an event it has not reached is published without them."
+    },
+    {
+      "job": "daily-digest",
+      "label": "Daily digest",
+      "cron": "10 7,8,9 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Sends the morning digest to Telegram at 07:10 Sydney time; 08:10 and 09:10 send it only if 07:10 did not."
+    },
+    {
+      "job": "critical-alerts",
+      "label": "Critical alerts",
+      "cron": "3,18,48 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "After each collection and enrichment pass, sends Telegram an alert for a new critical or actively exploited event that matters to Australia, and updates on developing ones."
+    },
+    {
+      "job": "monthly-cost",
+      "label": "Monthly cost summary",
+      "cron": "10 11,12,13 1 * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "On the 1st, sends Telegram last month's AI spend from the cost ledger, by stage and model; 12:10 and 13:10 send it only if 11:10 did not."
+    },
+    {
+      "job": "source-discovery",
+      "label": "Discovery search",
+      "cron": "10 3 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Searches the web for feeds worth adding and queues each new one as a candidate; it adds no source itself."
+    },
+    {
+      "job": "source-gate",
+      "label": "Source gate",
+      "cron": "50 3-23/4 * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Probes each candidate feed; one that passes enough healthy probes in a row becomes a source, and the next normal run collects it."
+    },
+    {
+      "job": "model-scan",
+      "label": "Model scan",
+      "cron": "20 3 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "code",
+      "summary": "Reads OpenRouter's public model list and checks the enrichment models against the price and capability rules, dropping any that fail and telling Telegram when one is dropped or comes back; it calls no model."
+    },
+    {
+      "job": "model-gauntlet",
+      "label": "Model gauntlet",
+      "cron": "40 3 * * sun",
+      "timezone": "Australia/Sydney",
+      "kind": "ai",
+      "summary": "Runs the current enrichment models and up to two challengers on a labelled test set; a better challenger is sent to Telegram for the owner to decide, never switched to."
+    },
+    {
+      "job": "watchdog",
+      "label": "Watchdog",
+      "cron": "2-57/5 * * * *",
+      "timezone": "UTC",
+      "kind": "code",
+      "summary": "Checks that the site, the collections and the other jobs are keeping up, and opens an incident, and tells Telegram, when one is not."
+    },
+    {
+      "job": "daily-report",
+      "label": "Daily report",
+      "cron": "40 7,8,9 * * *",
+      "timezone": "Australia/Sydney",
+      "kind": "ai",
+      "summary": "Asks a model to write the day's intelligence report from the events that mattered and the topics gone quiet, publishes it and sends it to Telegram; 08:40 and 09:40 write it only if 07:40 did not."
+    },
+    {
+      "job": "followup-writer",
+      "label": "Follow-up writer",
+      "cron": "55 * * * *",
+      "timezone": "UTC",
+      "kind": "mixed",
+      "summary": "Closes follow-up checks with nothing new by rule, and asks a model what changed for the rest from the reports collected since, within the day's cap."
+    }
+  ],
+  "jobs": [
+    {
+      "job": "lane-fast",
+      "label": "Fast lane",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T17:00:00.073128Z",
+      "last_success_at": "2026-10-31T17:00:13.443846Z",
+      "ok": true
+    },
+    {
+      "job": "lane-normal",
+      "label": "Normal lane",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T16:00:00.165713Z",
+      "last_success_at": "2026-10-31T16:01:11.220993Z",
+      "ok": true
+    },
+    {
+      "job": "groundtruth-sync",
+      "label": "Ground-truth sync",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T12:25:57.947743Z",
+      "last_success_at": "2026-10-31T12:25:57.947743Z",
+      "ok": true
+    },
+    {
+      "job": "ai-enrichment",
+      "label": "AI enrichment",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T17:05:41.930921Z",
+      "last_success_at": "2026-10-31T17:05:41.930921Z",
+      "ok": true
+    },
+    {
+      "job": "daily-digest",
+      "label": "Daily digest",
+      "recorded": false,
+      "running": false,
+      "last_run_at": null,
+      "last_success_at": null,
+      "ok": null
+    },
+    {
+      "job": "critical-alerts",
+      "label": "Critical alerts",
+      "recorded": false,
+      "running": false,
+      "last_run_at": null,
+      "last_success_at": null,
+      "ok": null
+    },
+    {
+      "job": "monthly-cost",
+      "label": "Monthly cost summary",
+      "recorded": false,
+      "running": false,
+      "last_run_at": null,
+      "last_success_at": null,
+      "ok": null
+    },
+    {
+      "job": "source-discovery",
+      "label": "Discovery search",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T16:10:33.389264Z",
+      "last_success_at": "2026-10-31T16:10:33.389264Z",
+      "ok": true
+    },
+    {
+      "job": "source-gate",
+      "label": "Source gate",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T15:51:57.286350Z",
+      "last_success_at": "2026-10-31T15:51:57.286350Z",
+      "ok": true
+    },
+    {
+      "job": "model-scan",
+      "label": "Model scan",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T16:20:00.481984Z",
+      "last_success_at": "2026-10-31T16:20:00.481984Z",
+      "ok": true
+    },
+    {
+      "job": "model-gauntlet",
+      "label": "Model gauntlet",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T16:44:07.646200Z",
+      "last_success_at": "2026-10-31T16:44:07.646200Z",
+      "ok": true
+    },
+    {
+      "job": "watchdog",
+      "label": "Watchdog",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T17:02:00.602400Z",
+      "last_success_at": "2026-10-31T17:02:00.602400Z",
+      "ok": true
+    },
+    {
+      "job": "daily-report",
+      "label": "Daily report",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-30T22:41:13.347277Z",
+      "last_success_at": "2026-10-30T22:41:13.347277Z",
+      "ok": true
+    },
+    {
+      "job": "followup-writer",
+      "label": "Follow-up writer",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T16:55:00.111262Z",
+      "last_success_at": "2026-10-31T16:55:00.111262Z",
+      "ok": true
+    },
+    {
+      "job": "publish",
+      "label": "Publish",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T17:01:03.151690Z",
+      "last_success_at": "2026-10-31T17:01:03.151690Z",
+      "ok": true
+    },
+    {
+      "job": "push",
+      "label": "Push",
+      "recorded": true,
+      "running": false,
+      "last_run_at": "2026-10-31T17:01:09.197507Z",
+      "last_success_at": "2026-10-31T17:01:09.197507Z",
+      "ok": true
+    }
+  ],
+  "ai": {
+    "provider": "mixroute",
+    "monthly_budget_usd": 20.0,
+    "mode": "full",
+    "calls_this_month": 10592,
+    "cost_this_month_usd": 1.4704,
+    "last_call_at": "2026-10-31T17:05:41.921849Z",
+    "last_pass_at": "2026-10-31T17:05:41.930921Z",
+    "events": 500,
+    "awaiting": 54
+  }
+}

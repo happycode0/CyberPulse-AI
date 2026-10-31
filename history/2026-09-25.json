@@ -1,0 +1,677 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-25",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 4,
+    "critical": 1,
+    "high": 3,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 1
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-000119",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-25T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-09-25T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CVE-2026-67279: MikroTik RouterOS Mikrotik RouterOS Improper Enforcement of Behavioral Workflow Vulnerability",
+      "summary": "An improper enforcement in MikroTik RouterOS lets unauthenticated clients open a session channel and send exec requests, which can be chained to the more severe CVE-2026-86060 for full exploitation.",
+      "why_it_matters": "The vulnerability has a CVSS score of 6.9 and can be chained to CVE-2026-86060, which has a CVSS of 9.2. Both are listed on the KEV, indicating known exploitation. Defenders should patch MikroTik RouterOS promptly to prevent unauthenticated exploitation.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.00039890497569320847,
+        "prominence": 0.04987493081305603
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "MikroTik"
+        ],
+        "products": [
+          "MikroTik RouterOS"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-67279",
+          "cvss": {
+            "score": 6.9,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.02277,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-86060",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.06392,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-10",
+            "due_date": "2026-09-13"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-67279 and CVE-2026-86060 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-86060 is rated 9.2 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 2 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-86060"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-86060 being exploited in the next 30 days at 6.4%, the highest of the 2 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-86060"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-67279",
+          "published": "2026-09-25T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "mikrotik",
+        "routeros",
+        "kev",
+        "unauthenticated"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 45,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001912",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-25T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-09-26T08:49:53Z",
+      "last_independent_confirmation": "2026-09-26T08:49:53Z",
+      "status": "archived",
+      "title": "SharePoint RCE and MikroTik RouterOS Flaws Actively Exploited in the Wild",
+      "summary": "CISA added a code injection vulnerability in Microsoft SharePoint (CVE-2026-65660) to its KEV catalog after evidence of active exploitation.",
+      "why_it_matters": "The vulnerability has a CVSS score of 8.8 and is classified as high severity. It is actively exploited in the wild, prompting CISA to list it in the KEV catalog. Defenders should prioritize patching SharePoint installations to mitigate potential remote code execution.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.925,
+        "novelty": 0.02178027669115399,
+        "prominence": 0.049625920470814114
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA",
+          "Microsoft",
+          "MikroTik"
+        ],
+        "products": [
+          "Microsoft SharePoint",
+          "Microsoft Office SharePoint",
+          "MikroTik RouterOS"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-65660",
+          "cvss": {
+            "score": 8.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.08189,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-65660 as exploited in the wild, added 2026-09-25, with US federal agencies due to fix it by 2026-09-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-65660 is rated 8.8 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-65660"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-65660 being exploited in the next 30 days at 8.2%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-65660"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.925,
+          "evidence": [
+            "cisa_kev",
+            "thn"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-65660",
+          "published": "2026-09-25T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/sharepoint-rce-and-mikrotik-routeros.html",
+          "published": "2026-09-26T08:49:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-26T08:49:53Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "sharepoint",
+        "rce",
+        "code-injection",
+        "kev",
+        "cisa",
+        "mikrotik"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-000071",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-25T00:00:00Z",
+      "last_seen": "2026-10-30T18:00:00.077313Z",
+      "last_material_update": "2026-09-25T12:00:00Z",
+      "last_independent_confirmation": "2026-10-14T19:00:17Z",
+      "status": "archived",
+      "title": "CVE-2026-87902: WordPress Core WordPress Core Remote File Inclusion Vulnerability",
+      "summary": "A remote file inclusion vulnerability in WordPress core (CVE-2026-87902) has been added to the CISA KEV catalog after evidence of active exploitation.",
+      "why_it_matters": "The vulnerability has a CVSS score of 8.1 and is listed in the KEV catalog, indicating that it is actively exploited. Defenders should prioritize patching WordPress installations to mitigate potential remote code execution.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.8181818181818182,
+        "confidence": 0.85,
+        "novelty": 0.033589778296087315,
+        "prominence": 0.04954345276516605
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA"
+        ],
+        "products": [
+          "WordPress Core"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-87902",
+          "cvss": {
+            "score": 8.1,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.95769,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-25",
+            "due_date": "2026-09-28"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "cisa_advisories"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-87902 as exploited in the wild, added 2026-09-25, with US federal agencies due to fix it by 2026-09-28.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-87902 is rated 8.1 (high) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-87902"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-87902 being exploited in the next 30 days at 96%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-87902"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev",
+            "found_spiceworks_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-87902",
+          "published": "2026-09-25T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/09/25/cisa-adds-one-known-exploited-vulnerability-catalog",
+          "published": "2026-09-25T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_spiceworks_com",
+          "url": "https://www.spiceworks.com/security/the-patch-is-out-and-attackers-are-already-racing-to-exploit-it/",
+          "published": "2026-10-14T19:00:17Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_spiceworks_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-25T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-25T12:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-10-14T19:00:17Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Spiceworks Inc",
+          "sources": [
+            "found_spiceworks_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "wordpress",
+        "remote-file-inclusion",
+        "cisa",
+        "kev",
+        "high-severity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 54,
+        "tier": "notable",
+        "reasons": [
+          "high severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "some Australian relevance",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-001918",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "3",
+      "enrichment_version": "0",
+      "first_seen": "2026-09-25T10:14:02Z",
+      "last_seen": "2026-10-01T16:00:00.077240Z",
+      "last_material_update": "2026-09-25T10:14:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Roundcube Pre-Auth SQL Injection Flaw Actively Exploited in the Wild",
+      "summary": "The Canadian Centre for Cyber Security has warned that a now-patched Roundcube Webmail vulnerability is being actively exploited in the wild. The vulnerability in question is CVE-2026-48842 (CVSS score: 8.1), a pre-authentication SQL injection in the virtuser_query plugin of Roundcube Webmail versions 1.6.x before 1.6.16 and 1.7.x before 1.7.1. The issue stems from a preg_replace() backslash",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06716392846221124,
+        "prominence": 0.048730344205852996
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-48842",
+          "cvss": {
+            "score": 8.1,
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01699,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-48842 is rated 8.1 (high) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-48842"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-48842 being exploited in the next 30 days at 1.7%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-48842"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/roundcube-pre-auth-sql-injection-flaw.html",
+          "published": "2026-09-25T10:14:02Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-25T10:14:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "high severity (CNA score)",
+          "reported by The Hacker News (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

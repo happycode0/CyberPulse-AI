@@ -1,0 +1,216 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-09-18",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 1,
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "unknown": 0,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-001920",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-09-18T14:02:19Z",
+      "last_seen": "2026-10-31T16:00:00.165713Z",
+      "last_material_update": "2026-09-25T04:46:34Z",
+      "last_independent_confirmation": "2026-09-24T00:00:00Z",
+      "status": "archived",
+      "title": "WSO2 and Adobe Commerce Flaws Exploited in Attacks, Added to CISA KEV",
+      "summary": "A critical path traversal flaw in WSO2 API Control Plane (CVE-2026-5430) has been actively exploited and added to CISA's KEV catalog.",
+      "why_it_matters": "The vulnerability has a CVSS score of 10.0 and has been added to CISA's KEV catalog after evidence of active exploitation. Defenders should prioritize patching WSO2 API Control Plane to mitigate the path traversal flaw.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "news",
+        "advisory"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.85,
+        "novelty": 0.0002624202320955516,
+        "prominence": 0.04982669995332758
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA",
+          "WSO2"
+        ],
+        "products": [
+          "WSO2 API Control Plane",
+          "Adobe Commerce",
+          "Magento"
+        ],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-5430",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.2239,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-09-24",
+            "due_date": "2026-09-27"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "cisa_kev",
+            "thn"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-5430 as exploited in the wild, added 2026-09-24, with US federal agencies due to fix it by 2026-09-27.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-5430 is rated 10.0 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-5430"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-5430 being exploited in the next 30 days at 22%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-5430"
+          ]
+        },
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.85,
+          "evidence": [
+            "found_vijilan_com",
+            "cisa_kev"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/cve-2026-5430-wso2-api-manager-forged-admin-tokens",
+          "published": "2026-09-18T14:02:19Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-5430",
+          "published": "2026-09-24T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/09/wso2-and-adobe-commerce-flaws-exploited.html",
+          "published": "2026-09-25T04:46:34Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cisa",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-09-18T14:02:19Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        },
+        {
+          "timestamp": "2026-09-24T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-09-25T04:46:34Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-000069"
+        }
+      ],
+      "tags": [
+        "path-traversal",
+        "cisa-kev",
+        "wso2",
+        "adobe-commerce",
+        "magento",
+        "critical"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}

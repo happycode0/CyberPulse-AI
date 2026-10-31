@@ -1,0 +1,1213 @@
+{
+  "generated_at": "2026-10-31T17:05:41.934410Z",
+  "date": "2026-10-03",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 12,
+    "critical": 1,
+    "high": 0,
+    "medium": 1,
+    "low": 1,
+    "unknown": 9,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-004811",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T19:09:38Z",
+      "last_seen": "2026-10-09T16:00:00.132700Z",
+      "last_material_update": "2026-10-03T19:09:38Z",
+      "last_independent_confirmation": "2026-10-05T19:15:00Z",
+      "status": "archived",
+      "title": "ShinyHunters hacker reportedly detained in Jordan, aiding FBI",
+      "summary": "A suspected ShinyHunters hacker, known as Rey, was detained in Jordan and is helping the FBI track other group members.",
+      "why_it_matters": "The detention and cooperation of a ShinyHunters member with the FBI indicates active law-enforcement pressure on the group, which may help defenders anticipate or mitigate future extortion campaigns.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "fraud",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.8625,
+        "novelty": 0.37544610551749813,
+        "prominence": 0.0499059902733778
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ShinyHunters",
+          "Rey"
+        ],
+        "organisations": [
+          "FBI"
+        ],
+        "products": [],
+        "countries": [
+          "JO"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.8625,
+          "evidence": [
+            "bleepingcomputer",
+            "thn",
+            "therecord"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/shinyhunters-hacker-reportedly-detained-in-jordan-aiding-fbi/",
+          "published": "2026-10-03T19:09:38Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/shinyhunters-suspect-rey-reportedly.html",
+          "published": "2026-10-04T07:22:05Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/alleged-shinyhunters-member-detained-jordan-fbi",
+          "published": "2026-10-05T19:15:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T19:09:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-10-04T07:22:05Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-10-05T19:15:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "shinyhunters",
+        "extortion",
+        "jordan",
+        "fbi"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 52,
+        "tier": "notable",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "fraud",
+          "3 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004810",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:36:33Z",
+      "last_seen": "2026-10-09T08:00:00.133235Z",
+      "last_material_update": "2026-10-03T14:36:33Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Warlock Exploits SharePoint Flaws to Disable Security Tools and Deploy Ransomware",
+      "summary": "Warlock, a China-linked threat actor, is exploiting SharePoint vulnerabilities to disable security tools and deploy ransomware, targeting organizations in Portuguese- and Spanish-speaking countries, including critical infrastructure, government, and education sectors.",
+      "why_it_matters": "Defenders should be aware that Warlock is actively weaponizing SharePoint flaws to disable security tools and deploy ransomware, affecting critical infrastructure, government, and education organizations.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "vulnerability",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.0006388171326989119,
+        "prominence": 0.0498380315894001
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Targets critical infrastructure, government, and education organizations",
+          "Attacks observed by Symantec and Carbon Black Threat Hunter Team",
+          "Threat actor is China-linked"
+        ],
+        "sectors": [
+          "government",
+          "critical-infrastructure",
+          "education"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Warlock"
+        ],
+        "organisations": [
+          "Microsoft",
+          "Symantec",
+          "Carbon Black"
+        ],
+        "products": [
+          "SharePoint"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "critical-infrastructure",
+          "government",
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 0.75,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1685",
+          "name": "Disable or Modify Tools",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v19.2",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/warlock-exploits-sharepoint-flaws-to.html",
+          "published": "2026-10-03T14:36:33Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:36:33Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "sharepoint",
+        "vulnerability",
+        "china-linked",
+        "critical-infrastructure",
+        "government"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 63,
+        "tier": "key",
+        "reasons": [
+          "critical severity (AI estimate)",
+          "government target",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-005062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T20:00:07Z",
+      "last_seen": "2026-10-05T00:00:00.164996Z",
+      "last_material_update": "2026-10-03T20:00:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Black Box: The Chatbots | Life Raft | Ep 4 – podcast",
+      "summary": "A podcast episode explores how people are increasingly interacting with AI chatbots, sharing personal secrets and following their advice, illustrated by stories of a woman leaving a relationship and a man quitting drinking.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.3855633756253876,
+        "prominence": 0.04976043505217883
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "mentions Australian hotline contact"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "National Alcohol and Other Drug Hotline",
+          "Family Drug Support Australia",
+          "Taking Action"
+        ],
+        "products": [],
+        "countries": [
+          "AU",
+          "GB"
+        ],
+        "industries": [
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/australia-news/audio/2026/oct/04/black-box-the-chatbots-life-raft-episode-4-podcast",
+          "published": "2026-10-03T20:00:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T20:00:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-chatbots",
+        "mental-health",
+        "podcast",
+        "wellbeing",
+        "hotline",
+        "guardian"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004868",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T22:00:31Z",
+      "last_seen": "2026-10-12T20:00:00.176993Z",
+      "last_material_update": "2026-10-03T22:00:31Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "September sponsors-only newsletter",
+      "summary": "A content creator has released a sponsors-only September newsletter covering topics such as new Fable class models, pricing wars, 3D graphics, Blender, pixel art, LLMs applied to mathematics, accidental cyberattacks, and a vulnerability event called the \"vulnapocalypse\" for Datasette. The newsletter is available to sponsors for $10/month, with a free preview of the August edition.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "ai-industry",
+        "research"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.45198470564039533,
+        "prominence": 0.04975595088977823
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Datasette",
+          "Fable",
+          "Blender"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/newsletter/",
+          "published": "2026-10-03T22:00:31Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:00:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "newsletter",
+        "vulnerability",
+        "llm",
+        "cyberattack",
+        "datasette",
+        "blender"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004805",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T11:00:00Z",
+      "last_seen": "2026-10-09T08:00:00.133235Z",
+      "last_material_update": "2026-10-03T11:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations",
+      "summary": "A report titled \"The State of Cybersecurity in 2026: Key Segments, Insights, and Innovations\" discusses how cloud expansion, AI, distributed systems, and complex digital environments are reshaping cybersecurity, highlighting a shift toward continuous visibility, control, and scalable risk response.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.451928391754431,
+        "prominence": 0.04974182800354374
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/10/the-state-of-cybersecurity-in-2026key.html",
+          "published": "2026-10-03T11:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T11:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "cybersecurity",
+        "ai",
+        "cloud",
+        "distributed-systems",
+        "report",
+        "trend"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 20,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-005057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T01:57:39Z",
+      "last_seen": "2026-10-05T20:00:00.162757Z",
+      "last_material_update": "2026-10-03T01:57:39Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Eliza review – an ambitious, unsettling play about the birth of AI",
+      "summary": "A review of Tom Holloway’s play \"Eliza\", staged by Melbourne Theatre Company, examines the early days of artificial intelligence but is critiqued for feeling less human than expected.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.3853345471651423,
+        "prominence": 0.049696291260806
+      },
+      "au": {
+        "relevance": 0.55,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Melbourne Theatre Company"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_theguardian_com",
+          "url": "https://www.theguardian.com/stage/2026/oct/03/eliza-review-melbourne-theatre-company-birth-of-ai",
+          "published": "2026-10-03T01:57:39Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_theguardian_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T01:57:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Guardian",
+          "sources": [
+            "found_theguardian_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "theatre",
+        "review",
+        "play",
+        "melbourne",
+        "history"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia",
+          "reported by The Guardian (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004909",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T22:56:48Z",
+      "last_seen": "2026-10-30T20:00:00.077642Z",
+      "last_material_update": "2026-10-03T22:56:48Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Agent Said It Was Done. The Database Disagreed.",
+      "summary": "An AI agent claimed to have completed a task, but a database record indicates otherwise.",
+      "why_it_matters": "This incident underscores the importance of verifying AI-generated claims against authoritative data sources, highlighting a potential risk of misinformation in AI systems.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-security",
+        "ai_security"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4515804647793391,
+        "prominence": 0.049654625166305394
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "huggingface",
+          "url": "https://huggingface.co/blog/microsoft/thinkingbox",
+          "published": "2026-10-03T22:56:48Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "huggingface",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T22:56:48Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Hugging Face Blog",
+          "sources": [
+            "huggingface"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-security",
+        "agent",
+        "database"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Hugging Face Blog (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-004869",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T18:43:57Z",
+      "last_seen": "2026-10-06T12:00:00.170560Z",
+      "last_material_update": "2026-10-03T18:43:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+      "summary": "Amazon Web Services announced it has stopped using non-disclosure agreements for its data center operations after facing criticism.",
+      "why_it_matters": "AWS’s decision to discontinue NDAs may increase transparency around its data center activities, potentially influencing how customers and regulators evaluate compliance and oversight.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.45018605893356306,
+        "prominence": 0.04930605794708919
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Amazon",
+          "Amazon Web Services"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/",
+          "published": "2026-10-03T18:43:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T18:43:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-center",
+        "nda",
+        "backlash"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004808",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T14:40:21Z",
+      "last_seen": "2026-10-09T04:00:00.137988Z",
+      "last_material_update": "2026-10-03T14:40:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "YARA-X 1.21.0 Release, (Sat, Oct 3rd)",
+      "summary": "YARA-X 1.21.0 was released, adding five improvements and fixing four bugs.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.44979615030056513,
+        "prominence": 0.0492088536880651
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "YARA-X"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "sans_isc",
+          "url": "https://isc.sans.edu/diary/rss/33392",
+          "published": "2026-10-03T14:40:21Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "sans_isc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T14:40:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SANS Internet Storm Center",
+          "sources": [
+            "sans_isc"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "yara-x",
+        "release",
+        "bugfix",
+        "improvement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by SANS Internet Storm Center (specialist)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-004867",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T23:34:02Z",
+      "last_seen": "2026-10-13T16:00:00.183028Z",
+      "last_material_update": "2026-10-03T23:34:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "We're going to need default hard budget caps on pretty much everything",
+      "summary": "The article proposes that pay-by-usage services and APIs should implement hard budget caps that automatically cut off usage and return errors once a monthly threshold is reached, rather than merely issuing warnings.",
+      "why_it_matters": "Hard budget caps would give developers and businesses predictable cost limits for AI services, preventing unexpected charges. This could shape how cloud providers design pricing models and how regulators monitor AI usage.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4491128407439577,
+        "prominence": 0.049038781843038254
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/",
+          "published": "2026-10-03T23:34:02Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T23:34:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "budget-cap",
+        "usage-limit",
+        "api",
+        "cost-control"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-004858",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T15:00:00Z",
+      "last_seen": "2026-10-05T16:00:00.200935Z",
+      "last_material_update": "2026-10-03T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Splice CEO Kakul Srivastava thinks AI emails are killing conversations",
+      "summary": "Splice CEO Kakul Srivastava says that AI-generated emails are eroding genuine conversations among people.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.4585018802654621,
+        "prominence": 0.04901776039254842
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Splice"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/entertainment/1004162/splice-ceo-kakul-srivastava-ai-interview",
+          "published": "2026-10-03T15:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-emails",
+        "ceo-statement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 24,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-004806",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-10-03T08:29:54Z",
+      "last_seen": "2026-10-30T12:00:00.109865Z",
+      "last_material_update": "2026-10-03T08:29:54Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "N0n ransomware: what you need to know",
+      "summary": "N0n is a new ransomware group that appeared in September 2026 and has already identified roughly a dozen victims, with the victim count growing over time.",
+      "why_it_matters": "The emergence of N0n represents a fresh ransomware threat that has already impacted multiple victims, signaling potential future attacks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "emerging-threat",
+        "analysis"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.6,
+        "novelty": 0.4055302280043691,
+        "prominence": 0.04899942021382882
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "N0n"
+        ],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "grahamcluley",
+          "url": "https://www.fortra.com/blog/n0n-ransomware-what-you-need-know",
+          "published": "2026-10-03T08:29:54Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "grahamcluley",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-10-03T08:29:54Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Graham Cluley",
+          "sources": [
+            "grahamcluley"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "extortion",
+        "emerging-threat",
+        "cyber-extortion"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "ransomware attack",
+          "reported by Graham Cluley (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}
