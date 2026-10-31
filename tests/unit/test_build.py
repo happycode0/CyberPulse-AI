@@ -471,13 +471,14 @@ def test_the_pipeline_is_capped(tmp_path, db):
 
 
 def test_a_ready_find_says_it_passed_the_gate(tmp_path, db):
-    ready = build.DiscoveryConfig.load().gate.probes_to_activate
+    gate = build.DiscoveryConfig.load().gate
+    ready = gate.probes_to_activate
     db["gate"] = [_candidate(1, "testing", passes=ready + 3),
                   _candidate(2, "testing", passes=ready - 1)]
     build_all(None, tmp_path, now=NOW)
     reasons = [p["reason"] for p in read(tmp_path, "source-health.json")["pipeline"]]
     assert reasons == [
-        "Found by the nightly search; passed the gate, waiting for one of the 25 "
+        f"Found by the nightly search; passed the gate, waiting for one of the {gate.max_active} "
         "discovered-source slots.",
         f"Found by the nightly search; {ready - 1} healthy probes in a row so far.",
     ]

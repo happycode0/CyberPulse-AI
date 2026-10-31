@@ -160,9 +160,10 @@ def test_new_candidates_get_their_probes_before_those_already_ready():
     before had never been probed."""
     ready = [candidate(n, passes=READY + 14 + n, hours_ago=30) for n in range(1, 11)]
     new = [candidate(n) for n in range(11, 26)]
-    assert pick(ready + new) == list(range(11, 21))
+    # At that day's ten probes a pass; the shipped number has grown since.
+    assert pick(ready + new, limit=10) == list(range(11, 21))
     # With probes to spare, the ready ones still get their daily one, furthest through first.
-    assert pick(ready + new[:5]) == [11, 12, 13, 14, 15, 10, 9, 8, 7, 6]
+    assert pick(ready + new[:5], limit=10) == [11, 12, 13, 14, 15, 10, 9, 8, 7, 6]
 
 
 def test_a_candidate_never_probed_comes_first_then_those_furthest_through():
