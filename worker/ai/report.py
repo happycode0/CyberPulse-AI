@@ -23,6 +23,7 @@ report waits like any editorial task, so a month short of money goes without one
 import asyncio
 import json
 import logging
+import re
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any
@@ -71,10 +72,12 @@ Answer with JSON that matches the schema."""
 REPORT_PROMPT = f"""\
 Task: write today's report.
 
-- summary: two to four sentences on what mattered in the last day, Australia first.
+- summary: two to four sentences, at most {SUMMARY_MAX_CHARS} characters in all, on what \
+mattered in the last day, Australia first.
 - items: the events that matter most today, at most {MAX_ITEMS}, Australian ones first. Each \
-names an event by its event_id and says in one or two sentences why it matters to a defender \
-or, for AI news, to people who build, buy or regulate AI.
+names an event by its event_id and says in one or two sentences, at most {WHY_MAX_CHARS} \
+characters (about 30 words), why it matters to a defender or, for AI news, to people who \
+build, buy or regulate AI.
 - gaps: up to {MAX_GAPS} of the quiet topics, by their id, that deserve a look: a sector or \
 kind of threat it is odd to hear nothing about. Empty when none does."""
 
@@ -132,12 +135,37 @@ def _australian(event: dict[str, Any]) -> bool:
     return (event["au_relevance"] or 0) >= AU_FIRST_RELEVANCE or bool(event["reported_in_australia"])
 
 
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+def _fit(text: str, max_chars: int, max_sentences: int) -> str:
+    """`text` cut back to its last whole sentence within `max_chars` and `max_sentences`, or,
+    when its first sentence alone is longer, to its last whole word with an ellipsis.
+
+    The models MixRoute serves do not keep to a schema's lengths, and the first live reports ran
+    every "why" past its limit (2026-10-31). Cutting the model's own words at a sentence adds
+    nothing it did not write; the text is then checked like any other."""
+    text = " ".join(text.split())
+    parts = _SENTENCE_END.split(text)
+    if len(text) <= max_chars and len(parts) <= max_sentences:
+        return text
+    kept = ""
+    for sentence in parts[:max_sentences]:
+        longer = f"{kept} {sentence}".strip()
+        if len(longer) > max_chars:
+            break
+        kept = longer
+    if kept:
+        return kept
+    return text[: max_chars - 1].rsplit(" ", 1)[0].rstrip(" ,;:-") + "…"
+
+
 def parse_report(data: dict[str, Any], given: ReportInput) -> DailyReport:
     check = _checker(given)
     events = {e["event_id"]: e for e in given.events}
     summary = check.prose(
-        "summary", data["summary"], max_chars=SUMMARY_MAX_CHARS,
-        max_sentences=SUMMARY_MAX_SENTENCES,
+        "summary", _fit(data["summary"], SUMMARY_MAX_CHARS, SUMMARY_MAX_SENTENCES),
+        max_chars=SUMMARY_MAX_CHARS, max_sentences=SUMMARY_MAX_SENTENCES,
     )
     items: dict[str, dict[str, Any]] = {}
     dropped = 0
@@ -151,8 +179,10 @@ def parse_report(data: dict[str, Any], given: ReportInput) -> DailyReport:
         # invented entity name is dropped: the first live report was refused whole, twice, for
         # one "why" a little over the limit (2026-10-31).
         try:
-            why = check.prose("why", raw["why"], max_chars=WHY_MAX_CHARS,
-                              max_sentences=WHY_MAX_SENTENCES)
+            why = check.prose(
+                "why", _fit(raw["why"], WHY_MAX_CHARS, WHY_MAX_SENTENCES),
+                max_chars=WHY_MAX_CHARS, max_sentences=WHY_MAX_SENTENCES,
+            )
         except Rejected as exc:
             logger.info("daily report: item %s left out: %s", event_id, exc)
             dropped += 1
