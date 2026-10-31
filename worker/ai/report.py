@@ -84,6 +84,7 @@ class DailyReport:
     summary: str
     items: tuple[dict[str, Any], ...]  # {event_id, why}
     gaps: tuple[dict[str, Any], ...]  # {id, topic, kind, quiet_days}, from the input
+    dropped: int = 0  # items left out because their "why" failed its checks
 
 
 def _record(given: ReportInput) -> dict[str, Any]:
@@ -139,19 +140,30 @@ def parse_report(data: dict[str, Any], given: ReportInput) -> DailyReport:
         max_sentences=SUMMARY_MAX_SENTENCES,
     )
     items: dict[str, dict[str, Any]] = {}
+    dropped = 0
     for raw in data["items"]:
         event_id = raw["event_id"]
         if event_id not in events:
             raise Rejected("an item names an event that is not one it was given")
         if event_id in items:
             continue
-        why = check.prose("why", raw["why"], max_chars=WHY_MAX_CHARS,
-                          max_sentences=WHY_MAX_SENTENCES)
+        # One item's "why" failing (too long, a URL, an unknown CVE) drops that item, as an
+        # invented entity name is dropped: the first live report was refused whole, twice, for
+        # one "why" a little over the limit (2026-10-31).
+        try:
+            why = check.prose("why", raw["why"], max_chars=WHY_MAX_CHARS,
+                              max_sentences=WHY_MAX_SENTENCES)
+        except Rejected as exc:
+            logger.info("daily report: item %s left out: %s", event_id, exc)
+            dropped += 1
+            continue
         items[event_id] = {"event_id": event_id, "why": why}
+    if dropped and not items:
+        raise Rejected(f"every item failed its checks ({dropped})")
     ordered = sorted(items.values(), key=lambda i: not _australian(events[i["event_id"]]))
     gaps_by_id = {g["id"]: g for g in given.gaps}
     gaps = [gaps_by_id[g] for g in dict.fromkeys(data["gaps"]) if g in gaps_by_id]
-    return DailyReport(summary, tuple(ordered[:MAX_ITEMS]), tuple(gaps[:MAX_GAPS]))
+    return DailyReport(summary, tuple(ordered[:MAX_ITEMS]), tuple(gaps[:MAX_GAPS]), dropped)
 
 
 def report_call(given: ReportInput) -> Call:

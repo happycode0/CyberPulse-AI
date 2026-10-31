@@ -141,8 +141,12 @@ def test_the_shipped_mixroute_ladder_loads_and_keeps_the_rules():
     # strict schema. glm-4-flash, qwen3.5-flash and glm-4.7-flashx did not; mimo-v2.5-pro is
     # offline and gone from the file.
     passed = ("deepseek/deepseek-v4-flash", "zhipu/glm-5.3-flash", "openai/gpt-5-nano")
-    for tier in (Tier.FREE, Tier.CHEAP, Tier.STRONG):
-        assert ladder.tiers[tier] == passed, tier
+    assert ladder.tiers[Tier.FREE] == passed
+    # Longer answers start on glm-5.3-flash (owner, 2026-10-31): deepseek-v4-flash ran out of its
+    # 2,500 output tokens on 5 of 7 briefs, follow-ups and reports, 65% of the spend.
+    longer = ("zhipu/glm-5.3-flash", "deepseek/deepseek-v4-flash", "openai/gpt-5-nano")
+    for tier in (Tier.CHEAP, Tier.STRONG):
+        assert ladder.tiers[tier] == longer, tier
     assert ladder.tiers[Tier.CODE] == ("deepseek/deepseek-v4-flash", "openai/gpt-5-nano")
     assert ladder.tiers[Tier.AUDIT] == ("zhipu/glm-5.3-flash",)
     assert "xiaomi/mimo-v2.5-pro" not in config.models

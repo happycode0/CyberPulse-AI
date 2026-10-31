@@ -808,8 +808,9 @@ cheapest capable route:
 
 **MixRoute (2026-10-30).** The owner moved the AI budget to a MixRoute subscription, an
 OpenAI-compatible gateway, and approved a ladder for it. A live test the same day (one
-strict-schema call to each model through the client) revised it: tiers 0 to 2 are each
-`deepseek-v4-flash` → `glm-5.3-flash` → `gpt-5-nano`; code `deepseek-v4-flash` → `gpt-5-nano`;
+strict-schema call to each model through the client) revised it: tier 0 is `deepseek-v4-flash` →
+`glm-5.3-flash` → `gpt-5-nano`, and tiers 1 and 2 put `glm-5.3-flash` first (2026-10-31: deepseek ran
+out of output tokens on most longer answers); code `deepseek-v4-flash` → `gpt-5-nano`;
 audit `glm-5.3-flash`. The first picks failed on MixRoute: `glm-4-flash` (free) and
 `glm-4.7-flashx` fenced their JSON and wrote "High" for "high", `qwen3.5-flash` wrote
 "Critical", and `mimo-v2.5-pro` answered 402 "taken offline". MixRoute does not hold every model
