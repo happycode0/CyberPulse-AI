@@ -406,6 +406,19 @@ def source_id_taken(conn: Connection, source_id: str) -> bool:
     ).first() is not None
 
 
+def reject_registered(conn: Connection, candidate_id: int, *, now: datetime) -> None:
+    """Reject a find whose site was registered after it was found (promoted to a curated source,
+    say): it is collected already, under its registry entry."""
+    conn.execute(
+        text(
+            "update source_candidates set state = 'rejected', "
+            "last_error = 'its site is a registered source already', updated_at = :now "
+            "where id = :id and state in ('candidate', 'testing')"
+        ),
+        {"id": candidate_id, "now": now},
+    )
+
+
 def activate(
     conn: Connection, candidate: Candidate, source: SourceConfig, *, now: datetime
 ) -> bool:

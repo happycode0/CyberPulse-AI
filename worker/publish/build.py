@@ -70,7 +70,11 @@ from worker.models import (
     SourceHealth,
 )
 from worker.pipeline.assemble import strip_feed_tail
-from worker.pipeline.health import consecutive_failures
+from worker.pipeline.health import (
+    DEFAULT_STALE_AFTER_DAYS,
+    STALE_AFTER_DAYS,
+    consecutive_failures,
+)
 from worker.pipeline.importance import Voice, with_importance
 from worker.pipeline.reputation import CORROBORATION_WINDOW, Reputation, assess_reputation
 from worker.pipeline.trends import ACTIVITY_DAYS, compute_trends, load_trends_config
@@ -90,6 +94,11 @@ logger = logging.getLogger(__name__)
 
 LIVE_MIN_PROMINENCE = 0.05
 LIVE_LIMIT = 500
+# live.json is the top LIVE_LIMIT by prominence, which ranks the world's events against each
+# other: on 2026-11-11, 58 of its 93 Australian live events were below the line. Those join it,
+# up to this many more. Australian is the site's AUSTRALIA scope (site/assets/hud.js `isAu`).
+LIVE_AU_EXTRA_LIMIT = 250
+AU_SCOPE_RELEVANCE = 0.5
 # Below every possible prominence (0..1), so this selects every scored event.
 ALL_SCORED = -1.0
 HISTORY_EVENT_LIMIT = 10_000
@@ -160,6 +169,10 @@ def _sanitize_source_url(url: str) -> str:
     if len(kept) == len(params):
         return url
     return urlunsplit(split._replace(query=urlencode(kept)))
+
+
+def _australian(event: Event) -> bool:
+    return event.au.directly_reported_in_au or (event.au.relevance or 0) >= AU_SCOPE_RELEVANCE
 
 
 def _load_events(conn: Connection) -> list[Event]:
@@ -257,6 +270,9 @@ _FAILED = {
     HealthStatus.EMPTY: "came back empty",
 }
 _UNWELL = (LifecycleState.DEGRADED, LifecycleState.BROKEN)
+# A degraded source whose feed answers with nothing new is quiet, not broken, for this many of
+# its stale thresholds: two weeks for a daily one.
+QUIET_FOR_THRESHOLDS = 2
 _FREQUENCY = {"real_time": "around the clock"}
 
 
@@ -269,13 +285,26 @@ def _quiet_for(check: SourceHealth, row: RegistryRow) -> str:
     return said
 
 
+def _quiet(check: SourceHealth | None, row: RegistryRow) -> bool:
+    """The check found the feed answering, its newest item older than expected but within twice
+    the source's stale threshold (worker/pipeline/health.py)."""
+    if check is None or check.status is not HealthStatus.STALE:
+        return False
+    if check.newest_item_age_days is None:
+        return False
+    days = STALE_AFTER_DAYS.get(row.expected_frequency or "", DEFAULT_STALE_AFTER_DAYS)
+    return check.newest_item_age_days <= QUIET_FOR_THRESHOLDS * days
+
+
 def _attention(source: _Source) -> dict[str, str] | None:
     """What the Sources page should flag about a source, if anything.
 
     `fix`: its last check failed, or it is degraded and still failing. `watch`: it is stale, or
-    degraded and healthy again. `blocked`: config/sources.yaml has it switched off, and its note
-    says why; nothing moves it on until someone edits the registry. `coming`: still a find on
-    trial. A retired source needs nothing.
+    degraded and healthy again, or degraded only in that its feed answers with nothing new, for
+    up to twice its stale threshold: the publisher is quiet, and nothing here can change that.
+    Longer than that, the feed may have moved. `blocked`: config/sources.yaml has it switched
+    off, and its note says why; nothing moves it on until someone edits the registry. `coming`:
+    still a find on trial. A retired source needs nothing.
     """
     row, state = source.row, source.state
     latest = source.history[-1] if source.history else None
@@ -294,6 +323,9 @@ def _attention(source: _Source) -> dict[str, str] | None:
         said = f"The last check {_FAILED[latest.status]}"
         return {"kind": "fix", "reason": f"{said}: {error}" if error else f"{said}."}
     failing = consecutive_failures(source.history)
+    if state in _UNWELL and failing and _quiet(latest, row):
+        said = f"Quiet: {_quiet_for(latest, row)}, though its feed answers."
+        return {"kind": "watch", "reason": said}
     if state in _UNWELL and failing:
         said = f"Degraded: {_plural(failing, 'unhealthy check')} in a row"
         if latest is not None and latest.status is HealthStatus.STALE:
@@ -773,13 +805,17 @@ def build_payloads(
         p["summary"] = strip_feed_tail(p["summary"]) or p["title"]
         for source in p.get("sources", []):
             source["url"] = _sanitize_source_url(source["url"])
-    live = [
-        p
+    eligible = [
+        (e, p)
         for e, p in zip(all_events, public, strict=True)
         if e.risk.prominence is not None
         and e.risk.prominence > LIVE_MIN_PROMINENCE
         and e.status is not EventStatus.ARCHIVED
-    ][:LIVE_LIMIT]
+    ]
+    # Australia first: the Australian events below the line are live too, still in prominence
+    # order after the rest.
+    below = [p for e, p in eligible[LIVE_LIMIT:] if _australian(e)][:LIVE_AU_EXTRA_LIMIT]
+    live = [p for _, p in eligible[:LIVE_LIMIT]] + below
 
     by_day: dict[date, list[dict[str, Any]]] = defaultdict(list)
     for e, p in zip(all_events, public, strict=True):

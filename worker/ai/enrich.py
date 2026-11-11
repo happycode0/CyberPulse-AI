@@ -91,7 +91,12 @@ from worker.version import ENRICHMENT_VERSION
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BATCH = 10
+# 25 a pass, two passes an hour: 1,200 events a day. At 10 (480 a day) the busiest days of
+# 2026-11 enriched 442 to 463 with 50 discovered sources, and the gate now collects up to 140
+# (config/discovery.yaml). A pass of 10 took about 50 s three at a time; 25 take about two
+# minutes, well before the alerts that follow 13 minutes on (worker/schedule.py). The cost is
+# per event, not per pass, so the batch changes how soon an event is enriched, not what it costs.
+DEFAULT_BATCH = 25
 MAX_CONCURRENT_EVENTS = 3
 # Candidates read per event enriched, so a batch can skip events whose tasks all wait.
 CANDIDATE_FACTOR = 5

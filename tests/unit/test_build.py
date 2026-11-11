@@ -22,6 +22,7 @@ from worker.db.trends import TrendInputs
 from worker.models import (
     AiSignificance,
     Event,
+    EventStatus,
     HealthStatus,
     Lane,
     LifecycleState,
@@ -175,6 +176,29 @@ def test_live_filters_by_strict_prominence_and_keeps_order(tmp_path, db):
     ids = [e["event_id"] for e in read(tmp_path, "live.json")["events"]]
     assert ids == ["evt-2026-000001", "evt-2026-000002"]
     assert read(tmp_path, "live.json")["counts"]["events"] == 2
+
+
+def test_australian_events_below_the_live_limit_are_live_too(tmp_path, db, monkeypatch):
+    """Australia first: on 2026-11-11, 58 of 93 Australian live events ranked below the top 500.
+    Australian is the site's own test for its AUSTRALIA scope (site/assets/hud.js `isAu`)."""
+    monkeypatch.setattr(build, "LIVE_LIMIT", 2)
+    monkeypatch.setattr(build, "LIVE_AU_EXTRA_LIMIT", 2)
+    au = {"relevance": 0.6}
+    db["events"] = [
+        make_event(1, prominence=0.9),
+        make_event(2, prominence=0.8, au=au),
+        make_event(3, prominence=0.7),                                      # below the limit
+        make_event(4, prominence=0.6, au=au),                               # Australian
+        make_event(5, prominence=0.5, au={"relevance": 0.4}),               # not quite
+        make_event(6, prominence=0.4, au={"directly_reported_in_au": True}),
+        make_event(7, prominence=0.3, au=au, status=EventStatus.ARCHIVED),  # never live
+        make_event(8, prominence=0.04, au=au),                              # too faint
+        make_event(9, prominence=0.2, au=au),                               # past the extra
+    ]
+    build_all(None, tmp_path, now=NOW)
+    ids = [e["event_id"][-1] for e in read(tmp_path, "live.json")["events"]]
+    assert ids == ["1", "2", "4", "6"]
+    assert read(tmp_path, "live.json")["counts"]["events"] == 4
 
 
 def test_a_held_event_is_in_no_file_and_is_counted(tmp_path, db):
@@ -383,9 +407,19 @@ def _health(*statuses, age=None, error=None):
          ("fix", "The last check failed: HTTP 404")),
         (True, LifecycleState.ACTIVE, _health("empty"),
          ("fix", "The last check came back empty.")),
+        # Degraded by staleness alone, its feed answering: the publisher is quiet (CISA's ICS
+        # advisories, 2026-11-11: one in eight days), so it is watched, not fixed ...
         (True, LifecycleState.DEGRADED, _health("ok", "stale", "stale", "stale", age=9.79),
-         ("fix", "Degraded: 3 unhealthy checks in a row, nothing new in 9.8 days "
+         ("watch", "Quiet: nothing new in 9.8 days (it usually publishes daily), though its "
+                   "feed answers.")),
+        # ... until twice its stale threshold: a feed that answers with nothing new for that long
+        # may have moved (Sophos's en-gb feed, stuck from 2026-09-15 while en-us went on).
+        (True, LifecycleState.DEGRADED, _health("ok", "stale", "stale", "stale", age=14.5),
+         ("fix", "Degraded: 3 unhealthy checks in a row, nothing new in 14.5 days "
                  "(it usually publishes daily).")),
+        (True, LifecycleState.DEGRADED, _health("stale", "error", "stale", age=9.79),
+         ("watch", "Quiet: nothing new in 9.8 days (it usually publishes daily), though its "
+                   "feed answers.")),
         (True, LifecycleState.ACTIVE, _health("ok", "stale", age=8.25),
          ("watch", "Stale: nothing new in 8.2 days (it usually publishes daily).")),
         (True, LifecycleState.DEGRADED, _health("stale", "ok"),

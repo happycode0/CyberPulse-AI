@@ -18,6 +18,10 @@ publishers:
     name: MySecurity Media
   abc:
     name: ABC
+  cyble:
+    name: Cyble
+  westwickfarrow:
+    name: Westwick-Farrow Media
 
 # Every source has a `description` (one plain sentence, published on the site's Sources page)
 # and a `standing`, the base of its reputation (worker/pipeline/reputation.py):
@@ -338,6 +342,65 @@ sources:
     expected_frequency: daily
     notes: null
 
+  # Promoted from the discovery gate on 2026-11-11 (10 healthy probes in a row). Measured from
+  # the VM: 20 items, newest 2026-11-10, about a post a day, 15 of the 16 from the last 14 days
+  # on the beat.
+  - id: technology_decisions
+    name: Technology Decisions
+    description: "Technology Decisions, a Westwick-Farrow trade publication on enterprise IT, AI and security for IT leaders in Australia."
+    standing: specialist
+    publisher: westwickfarrow
+    type: rss
+    region: au
+    category: news
+    beat: both
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.technologydecisions.com.au/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Added 2026-11-11. Measured from the VM: 20 items, newest 2026-11-10, about a post a day,
+  # 8 of the 10 from the last 14 days on the beat.
+  - id: govtech_review
+    name: GovTech Review
+    description: "GovTech Review, a Westwick-Farrow trade publication on technology, AI and cyber security in Australian government."
+    standing: specialist
+    publisher: westwickfarrow
+    type: rss
+    region: au
+    category: news
+    beat: both
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.govtechreview.com.au/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Westwick-Farrow, like Technology Decisions"
+
+  # Promoted from the discovery gate on 2026-11-11 (10 healthy probes). Measured from the VM:
+  # 10 items, newest 2026-11-11, about a post a day, 8 of the 10 on the beat.
+  - id: security_solutions_media
+    name: Security Solutions Media
+    description: "Security Solutions Media, an Australian trade publication on the security industry, much of it vendor and product news."
+    standing: specialist
+    type: rss
+    region: au
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.securitysolutionsmedia.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
   - id: thn
     name: The Hacker News
     description: "The Hacker News, a cyber security news site covering vulnerabilities, malware and attacks."
@@ -483,6 +546,80 @@ sources:
     expected_frequency: daily
     notes: null
 
+  # Promoted from the discovery gate on 2026-11-11 (8 healthy probes). Measured from the VM:
+  # 20 items, newest 2026-11-11, several posts a day, 19 of the 20 on the beat.
+  - id: csoonline
+    name: CSO Online
+    description: "CSO Online, a Foundry publication on security news and practice for security leaders."
+    standing: established
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.csoonline.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (8 healthy probes). Measured from the VM:
+  # 10 items, newest 2026-11-10, several posts a day, 9 of the 10 on the beat.
+  - id: thecyberexpress
+    name: The Cyber Express
+    description: "The Cyber Express, a cyber security news site published by the threat intelligence company Cyble."
+    standing: specialist
+    publisher: cyble
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://thecyberexpress.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Added 2026-11-11. Measured from the VM: 15 items, newest 2026-11-11, an issue most weekdays,
+  # all 9 from the last 14 days on the beat.
+  - id: risky_bulletin
+    name: Risky Bulletin
+    description: "Risky Bulletin, the security news newsletter of Risky Business, the long-running security podcast founded in Australia."
+    standing: established
+    type: rss
+    region: global
+    category: news
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://news.risky.biz/rss/
+    parser: rss
+    expected_frequency: daily
+    notes: "The newsletter; risky.biz/feeds/risky-business-news/ is the same stories as a podcast"
+
+  # Other governments' cyber agencies.
+  # Added 2026-11-11. Measured from the VM: 20 items, newest 2026-11-11, a median of 4 days
+  # between posts.
+  - id: ncsc_uk
+    name: UK NCSC
+    description: "News, blog posts and guidance from the UK's National Cyber Security Centre, part of GCHQ."
+    standing: authoritative
+    type: rss
+    region: global
+    category: advisory
+    class: feed
+    priority: 2
+    lane: normal
+    enabled: true
+    url: https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml
+    parser: rss
+    expected_frequency: weekly
+    notes: "The all-content feed; the news-only feed has a post every 12 days or so"
+
   # NORMAL Lane: Vendor security blogs
   - id: microsoft_security
     name: Microsoft Security Blog
@@ -548,6 +685,261 @@ sources:
     parser: rss
     expected_frequency: daily
     notes: null
+
+  # Promoted from the discovery gate on 2026-11-11 (8 healthy probes). Measured from the VM:
+  # 15 items, newest 2026-11-10, a median of 2 days between posts, all 8 recent on the beat.
+  - id: checkpoint_research
+    name: Check Point Research
+    description: "Threat research from Check Point Research, the research team of the security vendor Check Point, including a weekly threat intelligence report."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://research.checkpoint.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (11 healthy probes). Measured from the VM:
+  # 50 items, newest 2026-11-10, about a post a day.
+  - id: recordedfuture
+    name: Recorded Future
+    description: "Threat research from Insikt Group, the research team of the threat intelligence company Recorded Future."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.recordedfuture.com/feed
+    parser: rss
+    expected_frequency: daily
+    notes: "The company's research; therecord (Recorded Future News) is its newsroom, editorially independent, so not one publisher"
+
+  # Promoted from the discovery gate on 2026-11-11 (9 healthy probes). Measured from the VM:
+  # 100 items, newest 2026-11-10, a median of 2 days between posts.
+  - id: welivesecurity
+    name: ESET WeLiveSecurity
+    description: "WeLiveSecurity, the blog of threat research and security news from the security vendor ESET."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.welivesecurity.com/en/rss/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (9 healthy probes). Measured from the VM:
+  # 10 items, newest 2026-11-10, a median of 2 days between posts, 6 of the 7 recent on the beat.
+  - id: qualys
+    name: Qualys Security Blog
+    description: "Vulnerability and threat research from the security vendor Qualys, including its Patch Tuesday reviews."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://blog.qualys.com/feed
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (9 healthy probes). Measured from the VM:
+  # 50 items, newest 2026-11-04, a median of 7 days between posts.
+  - id: intel471
+    name: Intel 471 Blog
+    description: "Research on cybercrime and the criminal underground from the threat intelligence company Intel 471."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.intel471.com/blog/feed
+    parser: rss
+    expected_frequency: weekly
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (7 healthy probes). Measured from the VM:
+  # 10 items, newest 2026-11-06, a median of 2 days between posts but gaps of up to a week.
+  - id: cyble
+    name: Cyble
+    description: "Threat research from the threat intelligence company Cyble, on ransomware, hacktivism and vulnerabilities."
+    standing: specialist
+    publisher: cyble
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://cyble.com/feed/
+    parser: rss
+    expected_frequency: weekly
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Promoted from the discovery gate on 2026-11-11 (7 healthy probes). Measured from the VM:
+  # 15 items, newest 2026-11-10, about a post a day, 11 of the 14 recent on the beat.
+  - id: gitguardian
+    name: GitGuardian Blog
+    description: "Research on leaked secrets and software supply chain security from the security vendor GitGuardian."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://blog.gitguardian.com/rss/
+    parser: rss
+    expected_frequency: daily
+    notes: "Promoted from the discovery gate on 2026-11-11"
+
+  # Added 2026-11-11. Measured from the VM: 15 items, newest 2026-11-11, about a post a day,
+  # all 7 recent on the beat.
+  - id: cisco_talos
+    name: Cisco Talos
+    description: "Threat research from Cisco Talos, the threat intelligence group of Cisco."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://blog.talosintelligence.com/rss/
+    parser: rss
+    expected_frequency: daily
+    notes: "Includes its Patch Tuesday notes"
+
+  # Added 2026-11-11. Measured from the VM: 10 items, newest 2026-11-11, about a post a day,
+  # all 10 on the beat.
+  - id: securelist
+    name: Securelist
+    description: "Securelist, Kaspersky's blog of threat research from its Global Research and Analysis Team."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://securelist.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Answers in about 4 seconds"
+
+  # Added 2026-11-11. Measured from the VM: 10 items, newest 2026-11-04, a median of 9 days
+  # between posts.
+  - id: sentinellabs
+    name: SentinelLABS
+    description: "Threat research from SentinelLABS, the research team of the security vendor SentinelOne."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.sentinelone.com/labs/feed/
+    parser: rss
+    expected_frequency: weekly
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 310 items, newest 2026-11-04, a median of 3 days
+  # between recent posts.
+  - id: elastic_security_labs
+    name: Elastic Security Labs
+    description: "Threat and detection research from Elastic Security Labs, the research team of the search and security company Elastic."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://www.elastic.co/security-labs/rss/feed.xml
+    parser: rss
+    expected_frequency: weekly
+    notes: "The feed holds every post, 310 of them"
+
+  # Added 2026-11-11 (blog.trailofbits.com/feed/ redirects here). Measured from the VM: 20 items,
+  # newest 2026-11-06, a median of 6 days between posts.
+  - id: trailofbits
+    name: Trail of Bits Blog
+    description: "Security research from Trail of Bits, a security research and consulting firm, on software assurance, cryptography and AI security."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    beat: both
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://blog.trailofbits.com/index.xml
+    parser: rss
+    expected_frequency: weekly
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 40 items, newest 2026-11-04, a median of 19 days
+  # between posts.
+  - id: portswigger_research
+    name: PortSwigger Research
+    description: "Web security research from PortSwigger, the maker of the Burp Suite testing tool."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://portswigger.net/research/rss
+    parser: rss
+    expected_frequency: monthly
+    notes: null
+
+  # Added 2026-11-11 (googleprojectzero.blogspot.com redirects here). Measured from the VM:
+  # 10 items, newest 2026-10-27, a median of 14 days between posts.
+  - id: project_zero
+    name: Google Project Zero
+    description: "Vulnerability research from Project Zero, Google's team that hunts zero-day vulnerabilities."
+    standing: specialist
+    publisher: google
+    type: rss
+    region: global
+    category: research
+    class: feed
+    priority: 3
+    lane: normal
+    enabled: true
+    url: https://projectzero.google/feed.xml
+    parser: atom
+    expected_frequency: monthly
+    notes: "Atom"
 
   # NORMAL Lane: AI security & specialist research (PLAN.md section 5: AI sources are NORMAL)
   - id: simonwillison
@@ -810,8 +1202,196 @@ sources:
     expected_frequency: weekly
     notes: "EU AI Act and wider digital policy; triage moves non-AI items off the AI beat. Median 7, longest 11 days between posts in the feed's 10 items"
 
-  # DEEP Lane: long-form research. DEEP is a Paperclip routine with no worker schedule
-  # (worker/scheduler.py), so a source here is read only when that routine runs.
+  # Added 2026-11-11. Measured from the VM: 10 items, newest 2026-11-10, several posts a day,
+  # 9 of the 10 on the beat.
+  - id: the_decoder
+    name: The Decoder
+    description: "The Decoder, a news site on artificial intelligence research, products and policy."
+    standing: specialist
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://the-decoder.com/feed/
+    parser: rss
+    expected_frequency: daily
+    notes: "Several posts a day, 10 items in the feed"
+
+  # Added 2026-11-11. Measured from the VM: 30 items, newest 2026-11-09, a median of 2 days
+  # between posts.
+  - id: ieee_spectrum_ai
+    name: IEEE Spectrum AI
+    description: "IEEE Spectrum's coverage of artificial intelligence, from the magazine of the engineering association IEEE."
+    standing: established
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 50 items, newest 2026-11-10, about a post a day.
+  - id: mit_news_ai
+    name: MIT News AI
+    description: "News of artificial intelligence research at the Massachusetts Institute of Technology, from the MIT News Office."
+    standing: specialist
+    type: rss
+    region: global
+    category: research
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: "The university's own news; mit_tr_ai is MIT Technology Review, a separate newsroom"
+
+  # Added 2026-11-11. Measured from the VM: 50 items, newest 2026-11-10, two posts a day,
+  # 19 of the 21 recent on the beat.
+  - id: ai_business
+    name: AI Business
+    description: "AI Business, an Informa trade publication on artificial intelligence in industry."
+    standing: specialist
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://aibusiness.com/rss.xml
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 12 items, newest 2026-11-09, a median of 3 days
+  # between posts, 10 of the 12 on AI.
+  - id: rest_of_world
+    name: Rest of World
+    description: "Rest of World, a non-profit newsroom covering technology and AI outside the Western world."
+    standing: established
+    type: rss
+    region: global
+    category: news
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://restofworld.org/feed/latest/
+    parser: rss
+    expected_frequency: weekly
+    notes: "Triage moves its non-AI items off the AI beat"
+
+  # Added 2026-11-11. Measured from the VM: 20 items, newest 2026-11-11, about two posts a day.
+  - id: latent_space
+    name: Latent Space
+    description: "Latent Space, a newsletter and podcast on AI engineering, with a daily AI news recap."
+    standing: specialist
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://latent.space/feed
+    parser: rss
+    expected_frequency: daily
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 20 items, newest 2026-11-04, a median of 3 days
+  # between posts.
+  - id: interconnects
+    name: Interconnects
+    description: "Interconnects, Nathan Lambert's newsletter on AI models, open models and training research."
+    standing: specialist
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.interconnects.ai/feed
+    parser: rss
+    expected_frequency: weekly
+    notes: null
+
+  # Added 2026-11-11. Measured from the VM: 15 items, newest 2026-11-11, a median of 3 days
+  # between posts, 4 of the 5 recent on the beat.
+  - id: platformer
+    name: Platformer
+    description: "Platformer, Casey Newton's newsletter on technology platforms, AI and policy."
+    standing: specialist
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.platformer.news/rss/
+    parser: rss
+    expected_frequency: weekly
+    notes: "Some posts are for subscribers; the feed carries their opening"
+
+  # Added 2026-11-11. Measured from the VM: 20 items, newest 2026-11-10, a median of 14 days
+  # between posts.
+  - id: normal_tech
+    name: AI as Normal Technology
+    description: "AI as Normal Technology (formerly AI Snake Oil), Arvind Narayanan and Sayash Kapoor's newsletter on what AI can and cannot do, and its policy."
+    standing: specialist
+    type: rss
+    region: global
+    category: analysis
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.normaltech.ai/feed
+    parser: rss
+    expected_frequency: monthly
+    notes: "aisnakeoil.com redirects here"
+
+  # Added 2026-11-11. Measured from the VM: 10 items, newest 2026-11-11, a few posts a day,
+  # 8 of the 10 on the beat.
+  - id: alignment_forum
+    name: AI Alignment Forum
+    description: "The AI Alignment Forum, where researchers post and discuss work on AI alignment and safety; posts are not peer reviewed."
+    standing: community
+    type: rss
+    region: global
+    category: research
+    beat: ai
+    class: feed
+    priority: 4
+    lane: normal
+    enabled: true
+    url: https://www.alignmentforum.org/feed.xml
+    parser: rss
+    expected_frequency: daily
+    notes: "The forum's curated front page, 10 items"
+
+  # Long-form research. The DEEP lane was a Paperclip routine with no worker schedule
+  # (worker/scheduler.py), so a source left in it is never read.
   - id: arxiv_cs_cr
     name: arXiv Computer Science - Cryptography and Security
     description: "New academic preprints in cryptography and security posted to arXiv; preprints are not peer reviewed."

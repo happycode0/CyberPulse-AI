@@ -113,7 +113,11 @@ gate:
   # Discovered sources collected at once. A candidate ready while it is full waits, and is
   # probed again every `ready_reprobe_hours` rather than every pass, so it does not take the
   # probes of candidates still being tested. A failed probe sends it back to the start.
-  max_active: 50
+  # Raised 50 → 140 on 2026-11-11 (owner): 84 finds had passed the gate and waited, and room
+  # was only made by `prune`, which judges a source after 21 days collected. Enrichment kept
+  # up (26 of the week's 2,409 events waiting) with $17.70 of $20 left on the 11th. The weak
+  # still go by `prune`, and publish holds keep their off-beat items off the site.
+  max_active: 140
   ready_reprobe_hours: 24
   # Room for a ready candidate while `max_active` is full: each pass retires up to `per_pass`
   # discovered sources (never a curated one, and never more than there are candidates waiting),

@@ -737,3 +737,21 @@ async def test_a_pass_moves_queued_proposals_into_the_slots_it_frees(engine):
     assert (summary.probes, summary.rejected) == (1, 1)
     assert summary.promoted == ["later.example.org"]
     assert candidate(engine, "later.example.org").state == "candidate"
+
+
+def test_a_find_whose_site_was_registered_is_rejected_and_says_why(engine):
+    _, row = propose(engine)
+    for _ in range(GATE.probes_to_activate):
+        call(engine, db.record_probe, candidate_id=row.id, probe=healthy(), error=None,
+             gate=GATE, now=NOW)
+    call(engine, db.reject_registered, candidate_id=row.id, now=NOW)
+    rejected = candidate(engine)
+    assert (rejected.state, rejected.last_error) == (
+        "rejected", "its site is a registered source already"
+    )
+    assert call(engine, db.ready, gate=GATE) == []
+    # Settled already, it stays as it was.
+    activate(engine, "settled.example.org")
+    settled = candidate(engine, "settled.example.org")
+    call(engine, db.reject_registered, candidate_id=settled.id, now=NOW)
+    assert candidate(engine, "settled.example.org").state == "active"
