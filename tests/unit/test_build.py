@@ -383,9 +383,19 @@ def _health(*statuses, age=None, error=None):
          ("fix", "The last check failed: HTTP 404")),
         (True, LifecycleState.ACTIVE, _health("empty"),
          ("fix", "The last check came back empty.")),
+        # Degraded by staleness alone, its feed answering: the publisher is quiet (CISA's ICS
+        # advisories, 2026-11-11: one in eight days), so it is watched, not fixed ...
         (True, LifecycleState.DEGRADED, _health("ok", "stale", "stale", "stale", age=9.79),
-         ("fix", "Degraded: 3 unhealthy checks in a row, nothing new in 9.8 days "
+         ("watch", "Quiet: nothing new in 9.8 days (it usually publishes daily), though its "
+                   "feed answers.")),
+        # ... until twice its stale threshold: a feed that answers with nothing new for that long
+        # may have moved (Sophos's en-gb feed, stuck from 2026-09-15 while en-us went on).
+        (True, LifecycleState.DEGRADED, _health("ok", "stale", "stale", "stale", age=14.5),
+         ("fix", "Degraded: 3 unhealthy checks in a row, nothing new in 14.5 days "
                  "(it usually publishes daily).")),
+        (True, LifecycleState.DEGRADED, _health("stale", "error", "stale", age=9.79),
+         ("watch", "Quiet: nothing new in 9.8 days (it usually publishes daily), though its "
+                   "feed answers.")),
         (True, LifecycleState.ACTIVE, _health("ok", "stale", age=8.25),
          ("watch", "Stale: nothing new in 8.2 days (it usually publishes daily).")),
         (True, LifecycleState.DEGRADED, _health("stale", "ok"),
