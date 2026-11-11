@@ -94,6 +94,11 @@ logger = logging.getLogger(__name__)
 
 LIVE_MIN_PROMINENCE = 0.05
 LIVE_LIMIT = 500
+# live.json is the top LIVE_LIMIT by prominence, which ranks the world's events against each
+# other: on 2026-11-11, 58 of its 93 Australian live events were below the line. Those join it,
+# up to this many more. Australian is the site's AUSTRALIA scope (site/assets/hud.js `isAu`).
+LIVE_AU_EXTRA_LIMIT = 250
+AU_SCOPE_RELEVANCE = 0.5
 # Below every possible prominence (0..1), so this selects every scored event.
 ALL_SCORED = -1.0
 HISTORY_EVENT_LIMIT = 10_000
@@ -164,6 +169,10 @@ def _sanitize_source_url(url: str) -> str:
     if len(kept) == len(params):
         return url
     return urlunsplit(split._replace(query=urlencode(kept)))
+
+
+def _australian(event: Event) -> bool:
+    return event.au.directly_reported_in_au or (event.au.relevance or 0) >= AU_SCOPE_RELEVANCE
 
 
 def _load_events(conn: Connection) -> list[Event]:
@@ -796,13 +805,17 @@ def build_payloads(
         p["summary"] = strip_feed_tail(p["summary"]) or p["title"]
         for source in p.get("sources", []):
             source["url"] = _sanitize_source_url(source["url"])
-    live = [
-        p
+    eligible = [
+        (e, p)
         for e, p in zip(all_events, public, strict=True)
         if e.risk.prominence is not None
         and e.risk.prominence > LIVE_MIN_PROMINENCE
         and e.status is not EventStatus.ARCHIVED
-    ][:LIVE_LIMIT]
+    ]
+    # Australia first: the Australian events below the line are live too, still in prominence
+    # order after the rest.
+    below = [p for e, p in eligible[LIVE_LIMIT:] if _australian(e)][:LIVE_AU_EXTRA_LIMIT]
+    live = [p for _, p in eligible[:LIVE_LIMIT]] + below
 
     by_day: dict[date, list[dict[str, Any]]] = defaultdict(list)
     for e, p in zip(all_events, public, strict=True):
