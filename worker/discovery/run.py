@@ -16,7 +16,7 @@ Neither pass is fatal to the schedule: a failure is logged, and the next pass st
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 import feedparser
 import httpx
@@ -138,10 +138,16 @@ async def run_search(
     now = now or _utcnow()
     search = config.search
 
-    spent = await asyncio.to_thread(_spent, engine, now - timedelta(days=1))
+    # The day is the UTC day, not the trailing 24 hours: the search starts at the same minute
+    # each night and spends its credits in the minute after, so the trailing 24 hours from its
+    # start still held all of last night's and it searched every other night. 03:10 Sydney is
+    # 16:10 or 17:10 UTC, so last night's search is always on the UTC day before, and a month
+    # spends at most 31 days' credits either way.
+    today = now.astimezone(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+    spent = await asyncio.to_thread(_spent, engine, today)
     allowance = search.credits_per_day - spent
     if allowance <= 0:
-        return SearchSummary(skipped=f"{spent} credits spent in the last 24 hours")
+        return SearchSummary(skipped=f"{spent} credits spent today (UTC)")
     # Start one query further on each day, so a list longer than the allowance is all used.
     start = now.toordinal() % len(search.queries)
     queries = (search.queries[start:] + search.queries[:start])[:allowance]

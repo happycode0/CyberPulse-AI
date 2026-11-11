@@ -82,6 +82,29 @@ async def test_a_spent_allowance_means_no_search(db):
     assert summary.skipped and asked == []
 
 
+async def test_last_nights_search_leaves_tonights_allowance_whole(monkeypatch, db):
+    # The search runs once a day at the same minute, and spends its credits in the minute after.
+    # A trailing 24 hours from tonight's start still holds all of them: on the VM it searched
+    # every other night (2026-11-09 skipped, 11-10 searched, 11-11 skipped).
+    spent = [(NOW - timedelta(days=1) + timedelta(seconds=s), 1) for s in range(1, 31)]
+    monkeypatch.setattr(
+        run, "_spent", lambda engine, since: sum(c for ts, c in spent if ts >= since)
+    )
+    transport, asked = tavily(lambda q: [])
+    summary = await search(transport)
+    assert summary.skipped is None and len(asked) == 4
+
+
+async def test_a_second_search_the_same_utc_day_shares_its_allowance(monkeypatch, db):
+    spent = [(NOW - timedelta(hours=1), 30)]
+    monkeypatch.setattr(
+        run, "_spent", lambda engine, since: sum(c for ts, c in spent if ts >= since)
+    )
+    transport, asked = tavily(lambda q: [])
+    summary = await search(transport)
+    assert summary.skipped and "today" in summary.skipped and asked == []
+
+
 async def test_the_allowance_left_caps_the_searches_and_the_start_rotates_daily(db):
     db["spent"] = 28
     transport, asked = tavily(lambda q: [])
