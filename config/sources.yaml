@@ -213,7 +213,10 @@ sources:
     enabled: true
     url: https://www.dta.gov.au/news-and-blogs/latest/feed/all
     parser: rss
-    expected_frequency: daily
+    # Weekly, not daily: posts on 3, 9, 23 and 28 Sep, 6, 21, 22 and 29 Oct 2026, gaps of up to
+    # 15 days, and its /news page lists nothing newer than this feed. As daily it went stale
+    # after every quiet week (INC-92) with nothing wrong.
+    expected_frequency: weekly
     notes: Use /feed/all not /rss.xml (which is stale)
 
   # NORMAL Lane: General security news & analysis
@@ -818,7 +821,9 @@ sources:
     category: research
     class: feed
     priority: 4
-    lane: deep
+    # Normal, not deep, since 2026-11-11: the deep lane has had no schedule since the crew was
+    # retired (2026-10-31), so this was enabled and never collected. About 50 items a day.
+    lane: normal
     enabled: true
     url: https://rss.arxiv.org/rss/cs.CR
     parser: rss
@@ -848,7 +853,7 @@ sources:
 
   - id: sophos_labs
     name: Sophos Labs
-    description: "Sophos News: threat research and security news from the security vendor Sophos."
+    description: "The Sophos blog: threat research and security news from the security vendor Sophos."
     standing: specialist
     type: rss
     region: global
@@ -856,10 +861,13 @@ sources:
     class: feed
     priority: 3
     lane: normal
-    enabled: false
-    url: https://news.sophos.com/feed/
+    enabled: true
+    url: https://www.sophos.com/en-us/blog/feed
     parser: rss
     expected_frequency: daily
+    # Re-enabled 2026-11-11 on the en-us feed: measured from the VM, it answers in 30 ms with
+    # nine items, the newest 2026-11-10. Only en-gb is stuck at 2026-09-15, and that is where
+    # news.sophos.com redirects, so the old URL must not come back.
     # Disabled 2026-10-31: news.sophos.com now redirects to www.sophos.com/en-gb/blog/feed,
     # whose newest item is 2026-09-15, and the host still stalls requests per IP (timeouts
     # from the VM and from a second network). Re-enable with a feed that has current posts.
@@ -869,7 +877,7 @@ sources:
     # together. So it is per-IP rate or reputation mitigation, not something a header fixes;
     # testing it hard is what triggers it. At one request per 4 hours it may never fire. If it
     # does, source health will mark it degraded from real run data, which is the honest answer.
-    notes: "Disabled: the feed moved to sophos.com and has had no new post since 15 Sep 2026; the host also stalls requests by IP."
+    notes: "The en-us blog feed. news.sophos.com redirects to the en-gb one, which has had no new post since 15 Sep 2026."
 
   - id: zerodayinitiative
     name: Zero Day Initiative
@@ -1023,10 +1031,13 @@ sources:
     priority: 3
     lane: normal
     enabled: false
-    url: https://msrc.microsoft.com/blog/
+    url: https://www.microsoft.com/en-us/msrc/blog
     parser: web_page
     expected_frequency: daily
-    notes: "Rendered by script, so the page holds no posts, and its feeds return 403. Microsoft's security releases come from msrc_cvrf instead"
+    # Re-checked 2026-11-11: msrc.microsoft.com/blog/ (and /feed, /rss) now redirects here. The
+    # page is still rendered by script (one post link in 92 KB of HTML), and /feed, /feed/ and
+    # /rss under it all 404.
+    notes: "Rendered by script, so the page holds no posts, and it has no feed. Microsoft's security releases come from msrc_cvrf instead"
 
   - id: acsc_threats
     name: ACSC Threats
@@ -1043,7 +1054,10 @@ sources:
     url: https://www.cyber.gov.au/rss/threats
     parser: rss
     expected_frequency: hourly
-    notes: "Feed endpoint exists but is empty"
+    # Re-checked 2026-11-11: no longer empty, but its nine items are guidance pages, not threat
+    # reports ("Essentials OSCAL NS 1.0", "Learn about ransomware" from 2023), re-dated when
+    # edited. ASD's advisories and alerts come from their own feeds above.
+    notes: "Guidance pages, not threat reports; ASD's advisories and alerts have their own feeds"
 
   - id: acsc_advice
     name: ACSC Advice

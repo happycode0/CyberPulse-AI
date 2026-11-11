@@ -1218,7 +1218,7 @@ function discoveryPanel(d, ctx) {
     'pg-src-discovery',
     'DISCOVERY',
     h('ul', { class: 'pg-list pg-discovery' }, lines.map((t) => h('li', { text: t }))),
-    h('p', { class: 'hint', text: 'Finding and testing sources is code: a nightly search, then probes every four hours. TACHIKOMA can propose sites too; the same gate tests them.' }),
+    h('p', { class: 'hint', text: 'Finding and testing sources is code: a nightly search, then probes every four hours.' }),
   );
 }
 

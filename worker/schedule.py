@@ -123,8 +123,8 @@ ALERT_JOB_ID = "critical-alerts"
 ALERT_MISFIRE_GRACE_SECONDS = 600
 
 # The nightly discovery search at 03:10 Sydney time, off the hourly run's minute. Tavily's credits
-# are counted over the last 24 hours (worker/discovery/run.py), so a pass that runs late still
-# keeps within the day's allowance.
+# are counted over the UTC day (worker/discovery/run.py), and UTC midnight is 10:00 or 11:00
+# Sydney, so a pass that runs late, within the hour's grace, is still on its own night's day.
 DISCOVERY_SCHEDULE = "10 3 * * *"
 DISCOVERY_JOB_ID = "source-discovery"
 DISCOVERY_MISFIRE_GRACE_SECONDS = 3600

@@ -26,6 +26,11 @@ services:
     volumes:
       - .:/app
       - rawcache:/var/cache/cyberpulse
+    # Docker's init as PID 1, to reap orphans. The publisher's git commands leave detached
+    # children (auto maintenance) that are handed to PID 1 when they finish; python never waits
+    # on them. Measured 2026-11-11: 967 zombie git processes after 11 days up, about 88 a day
+    # against a pids limit of 19,168, after which nothing in the worker can fork.
+    init: true
     # The ops API listens on 8700 for the Paperclip server (worker/ops_api.py). No `ports:`,
     # ever: only the compose network may reach it, and a published port bypasses the firewall.
     healthcheck:
