@@ -219,7 +219,7 @@ class Engine:
 def gate_db(monkeypatch):
     """The activation pass's database steps, stood in for; what they were asked."""
     state = {"ready": [], "active": GATE.max_active, "weak": [], "taken": set(),
-             "asked_to_retire": [], "activated": []}
+             "registered": set(), "asked_to_retire": [], "activated": [], "rejected": []}
 
     def retire_weak(conn, *, need, prune, now):
         state["asked_to_retire"].append(need)
@@ -233,6 +233,9 @@ def gate_db(monkeypatch):
     monkeypatch.setattr(store, "ready", lambda conn, gate: state["ready"])
     monkeypatch.setattr(store, "active_discovered", lambda conn: state["active"])
     monkeypatch.setattr(store, "source_id_taken", lambda conn, sid: sid in state["taken"])
+    monkeypatch.setattr(store, "registered_hosts", lambda conn: state["registered"])
+    monkeypatch.setattr(store, "reject_registered",
+                        lambda conn, candidate_id, *, now: state["rejected"].append(candidate_id))
     monkeypatch.setattr(store, "retire_weak", retire_weak)
     monkeypatch.setattr(store, "activate", activate)
     return state
@@ -276,3 +279,15 @@ def test_nothing_is_retired_for_a_candidate_whose_source_id_is_taken(gate_db):
     gate_db["weak"] = ["found_a"]
     assert run._activate_ready(Engine(), GATE, NOW) == ([], 0, [])
     assert gate_db["asked_to_retire"] == []
+
+
+def test_a_ready_find_on_a_registered_site_is_rejected_not_collected_twice(gate_db):
+    # 2026-11-11: finds promoted to curated sources while still waiting for a slot. Activated as
+    # well, the same feed would be fetched twice and its events would corroborate themselves.
+    gate_db["active"] = GATE.max_active - 2
+    gate_db["ready"] = [candidate(1, passes=READY), candidate(2, passes=READY),
+                        candidate(3, passes=READY)]
+    gate_db["registered"] = {"c1.example.org", "example.net", "blog.c3.example.org"}
+    activated, waiting, pruned = run._activate_ready(Engine(), GATE, NOW)
+    assert gate_db["rejected"] == [1, 3]  # the same host, and one site under the other
+    assert activated == [source_id_for("c2.example.org")] and waiting == 0 and pruned == []

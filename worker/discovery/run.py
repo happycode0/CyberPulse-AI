@@ -381,7 +381,16 @@ def _activate_ready(
     activated: list[str] = []
     ready = []
     with engine.begin() as conn:
+        registered = db.registered_hosts(conn)
         for candidate in db.ready(conn, gate):
+            # The search never finds a registered site, but a find can be registered while it
+            # waits: promoted to a curated source. Activated as well, the same feed would be
+            # fetched twice and its events would corroborate themselves.
+            if any(same_site(candidate.host, h) for h in registered):
+                db.reject_registered(conn, candidate.id, now=now)
+                logger.warning("discovery: %s is a registered source's site; rejected",
+                               candidate.host)
+                continue
             source = discovered_source(
                 host=candidate.host, feed_url=candidate.feed_url or "", name=candidate.name,
                 found_by=candidate.found_by, now=now,
