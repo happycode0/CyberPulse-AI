@@ -1,0 +1,4875 @@
+{
+  "generated_at": "2026-11-14T18:00:13.140307Z",
+  "date": "2026-11-07",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 47,
+    "critical": 3,
+    "high": 5,
+    "medium": 3,
+    "low": 6,
+    "unknown": 30,
+    "directly_reported_in_au": 0,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-030992",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T03:48:52Z",
+      "last_seen": "2026-11-07T04:00:00.166262Z",
+      "last_material_update": "2026-11-07T03:48:52Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Detecting and Patching Log4j (Log4Shell): A Practical Playbook",
+      "summary": "A community-published playbook explains how defenders can detect and patch Log4j (Log4Shell), using the vulnerability as a template for understanding how a logging library can become a remote code execution vector. It recounts the mechanism: a logged attacker-controlled string could trigger a JNDI lookup and make the application connect to attacker-controlled infrastructure.",
+      "why_it_matters": "Log4Shell (CVE-2021-44228) is rated critical with a CVSS of 10.0, is listed in CISA's Known Exploited Vulnerability catalogue, and has an EPSS score near the maximum, indicating extremely high exploitation likelihood. The record notes it remains a reference point for intrusion analysis more than four years after disclosure. Defenders can use the playbook as a model for building detection guidance against similar library-level RCE flaws.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.3,
+        "novelty": 0.07201628581930593,
+        "prominence": 0.2369523399036693
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Log4j",
+          "Log4Shell"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-44228",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.99999,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2021-12-10",
+            "due_date": "2021-12-24"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-jfh8-c2jp-5v3q",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.apache.logging.log4j:log4j-core",
+                  "fixed": [
+                    "2.15.0",
+                    "2.3.1",
+                    "2.12.2"
+                  ]
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "com.guicedee.services:log4j-core",
+                  "fixed": []
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.xbib.elasticsearch:log4j",
+                  "fixed": []
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "uk.co.nichesolutions.logging.log4j:log4j-core",
+                  "fixed": []
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.ops4j.pax.logging:pax-logging-log4j2",
+                  "fixed": [
+                    "1.9.2",
+                    "1.10.8",
+                    "1.11.10",
+                    "2.0.11"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-jfh8-c2jp-5v3q"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2021-44228 as exploited in the wild, added 2021-12-10, with US federal agencies due to fix it by 2021-12-24.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2021-44228 is rated 10.0 (critical) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2021-44228"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2021-44228 being exploited in the next 30 days at 100%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2021-44228"
+          ]
+        },
+        {
+          "text": "A fix for org.apache.logging.log4j:log4j-core (Maven) is published in 2.15.0, 2.3.1 and 2.12.2, per GHSA-jfh8-c2jp-5v3q.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-jfh8-c2jp-5v3q"
+          ]
+        },
+        {
+          "text": "A fix for org.ops4j.pax.logging:pax-logging-log4j2 (Maven) is published in 1.9.2, 1.10.8, 1.11.10 and 2.0.11, per GHSA-jfh8-c2jp-5v3q.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-jfh8-c2jp-5v3q"
+          ]
+        },
+        {
+          "text": "No fixed version of com.guicedee.services:log4j-core (Maven) is published yet, per GHSA-jfh8-c2jp-5v3q.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-jfh8-c2jp-5v3q"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/techexprt/detecting-and-patching-log4j-log4shell-a-practical-playbook-d9a",
+          "published": "2026-11-07T03:48:52Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T03:48:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-001475"
+        }
+      ],
+      "tags": [
+        "vulnerability",
+        "log4j",
+        "log4shell",
+        "detection",
+        "patching",
+        "remote-code-execution"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by DEV Community (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031029",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T05:33:27Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T05:33:27Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Atlassian’s October 2026 Bulletin: A Patch Playbook for Seven Products",
+      "summary": "Atlassian's October 2026 security bulletin covers vulnerabilities, including critical third-party issues, across seven products such as Confluence, Crowd and Jira, and provides guidance on patch priority and fix verification. The headline issue, CVE-2026-65637, carries a stated CVSS of 9.8.",
+      "why_it_matters": "The bulletin bundles a maximum-severity vulnerability (9.8) affecting widely deployed collaboration and identity products, giving defenders a prioritised patch order rather than a raw advisory. Organisations running Confluence, Crowd or Jira should follow the bulletin's fix checks to confirm remediation. The record does not state whether exploitation has been observed.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cisa_adp",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.3,
+        "novelty": 0.07385199291667696,
+        "prominence": 0.19885188159479536
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Atlassian products are widely used by enterprises and government, though the record does not name Australian entities"
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Atlassian"
+        ],
+        "products": [
+          "Confluence",
+          "Crowd",
+          "Jira"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-65637",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.00751,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": [
+            {
+              "id": "GHSA-f525-44xv-f2qj",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.apache.tomcat:tomcat-coyote",
+                  "fixed": [
+                    "11.0.25",
+                    "10.1.59",
+                    "9.0.121"
+                  ]
+                },
+                {
+                  "ecosystem": "Maven",
+                  "name": "org.apache.tomcat.embed:tomcat-embed-core",
+                  "fixed": [
+                    "11.0.25",
+                    "10.1.59",
+                    "9.0.121"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-f525-44xv-f2qj"
+            }
+          ]
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CVE-2026-65637 is rated 9.8 (critical) under CVSS 3.1 by CISA in the CVE record.",
+          "confidence": 0.85,
+          "evidence": [
+            "cve_record:CVE-2026-65637"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-65637 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-65637"
+          ]
+        },
+        {
+          "text": "A fix for org.apache.tomcat:tomcat-coyote (Maven) is published in 11.0.25, 10.1.59 and 9.0.121, per GHSA-f525-44xv-f2qj.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-f525-44xv-f2qj"
+          ]
+        },
+        {
+          "text": "A fix for org.apache.tomcat.embed:tomcat-embed-core (Maven) is published in 11.0.25, 10.1.59 and 9.0.121, per GHSA-f525-44xv-f2qj.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-f525-44xv-f2qj"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/atlassian-october-2026-bulletin-critical-cves/",
+          "published": "2026-11-07T05:33:27Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T05:33:27Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "patch",
+        "cve",
+        "atlassian"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CISA score)",
+          "reported by Brandefense (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-030996",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T03:45:03Z",
+      "last_seen": "2026-11-07T04:00:00.166262Z",
+      "last_material_update": "2026-11-07T03:45:03Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Keycloak CVE-2026-117691: How a SAML Signature Bypass Skips Authentication",
+      "summary": "A community write-up describes a flaw in Keycloak's validation of SAML assertion signatures (CVE-2026-117691), which can let an attacker who can intercept or manipulate the SAML single sign-on flow submit a crafted response that passes validation and skips authentication. The record gives no severity score, exploitation status, or affected version details.",
+      "why_it_matters": "Keycloak is widely used as an identity provider, so a SAML signature bypass could let attackers authenticate as other users in deployments using the affected flow. The record lists no CVSS score, KEV listing, or confirmed exploitation, so the actual risk is not yet established. Organisations running Keycloak should watch for vendor guidance and confirm whether their SAML configuration is affected.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.3,
+        "novelty": 0.07195016344000446,
+        "prominence": 0.1854543360741969
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Keycloak"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-117691",
+          "cvss": {
+            "score": 9.1,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00282,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1606.002",
+          "name": "Forge Web Credentials: SAML Tokens",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CVE-2026-117691 is rated 9.1 (critical) under CVSS 3.1 by the CNA that assigned it.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-117691"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-117691 being exploited in the next 30 days at under 1%.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-117691"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/techexprt/keycloak-cve-2026-117691-how-a-saml-signature-bypass-skips-authentication-5h60",
+          "published": "2026-11-07T03:45:03Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T03:45:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "keycloak",
+        "saml",
+        "signature-bypass",
+        "authentication-bypass",
+        "vulnerability"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (CNA score)",
+          "reported by DEV Community (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031131",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T19:56:18Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T19:56:18Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Inside ARTEX: AI Hacking Tools, Exposed Servers and South Korean Bank Breaches",
+      "summary": "Researchers traced the infrastructure behind ARTEX, an operation using AI-assisted hacking tools and exposed servers, linking it to breaches at seven South Korean financial institutions. The intrusions, via internet-facing systems, reportedly exposed personal, employment, income and loan data affecting roughly 66,000–67,000 individuals and about 2,200 companies.",
+      "why_it_matters": "The incident shows AI-assisted tooling being used at scale against financial institutions' internet-facing systems, with a large volume of personal and financial data exposed. It highlights the value of infrastructure tracing (as Hunt.io did) and the need to harden externally reachable services.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "data-breach",
+        "emerging-threat",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.09089730668068455,
+        "prominence": 0.06539615995515309
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Breaches affected South Korean financial institutions, not Australian ones"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "ARTEX"
+        ],
+        "organisations": [
+          "Hunt.io"
+        ],
+        "products": [],
+        "countries": [
+          "KR"
+        ],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/202607/ai/inside-artex-ai-hacking-tools-exposed-servers-and-south-korean-bank-breaches.html",
+          "published": "2026-11-07T19:56:18Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T19:56:18Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-hacking-tools",
+        "data-breach",
+        "south-korea",
+        "financial-sector",
+        "exposed-servers",
+        "ai-threat"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Security Affairs (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031082",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:43:45Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T15:43:45Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "The US let Nvidia sell chips to an empty office in China",
+      "summary": "A US-approved Chinese buyer of Nvidia's H200 AI chips, New Matrix, reportedly operates from empty offices, prompting concerns that the Commerce Department and Nvidia are not properly vetting firms cleared to receive the chips.",
+      "why_it_matters": "The report suggests US export controls on advanced AI chips may be undermined by weak vetting of approved buyers. If approvals can go to shell entities, the controls meant to keep these chips out of unintended hands may be ineffective. Regulators and exporters may face pressure to tighten screening of end users.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "policy",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.08553687941349326,
+        "prominence": 0.06264306417514687
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia",
+          "Commerce Department",
+          "New Matrix"
+        ],
+        "products": [
+          "H200"
+        ],
+        "countries": [
+          "CN",
+          "US"
+        ],
+        "industries": [
+          "technology",
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1029483/nvidia-ai-chips-china-blacklist-government",
+          "published": "2026-11-07T15:43:45Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:43:45Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-chips",
+        "export-controls",
+        "due-diligence",
+        "china",
+        "nvidia",
+        "semiconductors"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 44,
+        "tier": "notable",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "notable AI story",
+          "some Australian relevance",
+          "government involved"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031134",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T21:17:08Z",
+      "last_seen": "2026-11-10T08:00:00.165540Z",
+      "last_material_update": "2026-11-07T21:17:08Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Megaspeed exec was recruited to spy on Nvidia CEO, according to US intelligence memo",
+      "summary": "A reportedly circulated US intelligence memo claims China's Ministry of State Security recruited a female technology executive, described as connected to Megaspeed, to spy on Nvidia's chief executive. No corroboration or further detail accompanies the claim.",
+      "why_it_matters": "The allegation, if accurate, points to state-linked human intelligence targeting at the leadership level of a leading AI chipmaker, not conventional technical exploitation. Defenders and executives in strategic technology firms should note that espionage pressure can target individual staff. The record offers no verified severity or confirmed exploitation.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "espionage",
+        "emerging-threat",
+        "news"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.0926829957879934,
+        "prominence": 0.06118467357435199
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "China’s Ministry of State Security"
+        ],
+        "organisations": [
+          "Nvidia",
+          "Megaspeed"
+        ],
+        "products": [],
+        "countries": [
+          "CN",
+          "US"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/07/chinese-exec-was-recruited-to-spy-on-nvidia-ceo-according-to-us-intelligence-memo/",
+          "published": "2026-11-07T21:17:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T21:17:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "espionage",
+        "state-linked-intrusion",
+        "ai-industry",
+        "corporate-spying"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "espionage",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031084",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T12:30:00Z",
+      "last_seen": "2026-11-09T12:00:00.165911Z",
+      "last_material_update": "2026-11-07T12:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Why a new report on Anthropic automating AI development is alarming researchers",
+      "summary": "METR, an AI safety research organisation, has published an 11-week investigation into Anthropic using AI systems to help develop its own more capable models. The report finds the models are improving roughly twice as fast as a year ago, with no sign of the acceleration slowing.",
+      "why_it_matters": "The finding suggests AI research and development productivity is compounding, which could shorten timelines for future capability gains that developers, buyers and regulators would need to plan for. The pace of improvement is a safety-relevant signal, coming from an independent research organisation rather than the company itself. No security impacts are described in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.08163977858862433,
+        "prominence": 0.060615606638268774
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic",
+          "METR"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1029126/anthropic-metr-report-accelerating-ai-development",
+          "published": "2026-11-07T12:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T12:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-development",
+        "automation",
+        "ai-safety",
+        "research-report",
+        "model-improvement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "notable AI story",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031056",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:54:30Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:54:30Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Gemini Omni 1.2 Flash: Make 15-Second AI Videos Free",
+      "summary": "Google announced Gemini Omni 1.2 Flash on November 5, 2026, a video model that generates and conversationally edits 15-second clips. It is available free for three videos a month with a Google account, at $0.07 per second via the Gemini API, and to Gemini app Ultra subscribers.",
+      "why_it_matters": "For people building with AI, it lowers the cost barrier for video generation, with a free tier and a published API rate. For buyers, it expands what is available without charge, though the record notes the free route is not where most people look. No regulatory or safety findings are stated in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.08094521956315785,
+        "prominence": 0.05791278721148793
+      },
+      "au": {
+        "relevance": 0.05,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Google"
+        ],
+        "products": [
+          "Gemini Omni 1.2 Flash",
+          "Google Vids",
+          "Gemini API",
+          "Gemini app"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/theglitchfixer/gemini-omni-12-flash-make-15-second-ai-videos-free-3241",
+          "published": "2026-11-07T11:54:30Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:54:30Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-video",
+        "gemini-omni",
+        "google-vids",
+        "model-release"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by DEV Community (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031024",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T06:44:17Z",
+      "last_seen": "2026-11-12T16:00:00.165844Z",
+      "last_material_update": "2026-11-07T06:44:17Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Claude Code's “Don't Ask Again” File Exposes Passwords and Keys in 1,122 Public Copies on GitHub",
+      "summary": "Anthropic's Claude Code coding assistant has been storing approved commands verbatim, including any passwords or API keys they contained, in a project settings file when users choose its \"don't ask again\" option. Security firm Apiiro found 1,122 public GitHub repositories exposing such secrets.",
+      "why_it_matters": "Developers who approved commands with embedded credentials through Claude Code may have published those secrets to anyone browsing GitHub, with over a thousand public copies already identified. Teams using AI coding assistants should treat saved command settings as potential secret-leak vectors and rotate exposed keys.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.07512180669127852,
+        "prominence": 0.05717071851867378
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic",
+          "Apiiro"
+        ],
+        "products": [
+          "Claude Code"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1213.003",
+          "name": "Data from Information Repositories: Code Repositories",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1552.001",
+          "name": "Unsecured Credentials: Credentials In Files",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/claude-codes-dont-ask-again-file.html",
+          "published": "2026-11-07T06:44:17Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T06:44:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-coding-assistant",
+        "secret-leakage",
+        "github",
+        "configuration-file",
+        "credential-exposure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031026",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T06:00:00Z",
+      "last_seen": "2026-11-14T16:00:00.165275Z",
+      "last_material_update": "2026-11-07T06:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Stealing more than the spotlight.",
+      "summary": "Threat actors are using excitement around the upcoming release of Grand Theft Auto VI to spread malware disguised as leaked game downloads. Huntress researchers found malicious ISO files promoted via search engine poisoning, gaming forums, torrent sites and social media, containing RATs, an infostealer and ransomware that can steal credentials.",
+      "why_it_matters": "Malware delivered through these downloads combines multiple threats — RATs, infostealers and ransomware — meaning a single infection can lead to credential theft and broader compromise. Defenders should be aware that attackers ride hype cycles and poison search results, so users seeking popular content may bypass normal caution. Organisations with gaming staff on work devices could see this malware introduced into their environments.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "malware",
+        "emerging-threat",
+        "phishing",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.07432541446022622,
+        "prominence": 0.0567448259808546
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, people or authorities are mentioned",
+          "Reported by a global news source, not an Australian outlet"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "threat actors"
+        ],
+        "organisations": [
+          "Huntress"
+        ],
+        "products": [
+          "Grand Theft Auto VI",
+          "remote access trojans (RATs)",
+          "infostealer",
+          "ransomware"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1204.002",
+          "name": "User Execution: Malicious File",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1588.001",
+          "name": "Obtain Capabilities: Malware",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "cyberwire"
+          ]
+        },
+        {
+          "id": "T1608.006",
+          "name": "Stage Capabilities: SEO Poisoning",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/research-saturday/449/notes",
+          "published": "2026-11-07T06:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T06:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "malware",
+        "search-engine-poisoning",
+        "ransomware",
+        "infostealer",
+        "rat",
+        "gaming-threat"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 42,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The CyberWire (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031030",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T05:23:23Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T05:23:23Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Storm-3358 and ARTEX: How a Financial-Sector Intrusion Campaign Works",
+      "summary": "Microsoft attributes an intrusion campaign against financial-sector organisations to the actor Storm-3358, which reportedly used an agentic AI framework called ARTEX from October 2026. Entry was gained via anonymous upload and SSRF weaknesses.",
+      "why_it_matters": "The reported use of an agentic AI framework as part of an intrusion toolchain signals attackers applying AI automation to financial-sector targets. The named initial-access flaws, anonymous upload and SSRF, give defenders concrete classes of exposure to check.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07367328043673328,
+        "prominence": 0.0563952268386956
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Storm-3358"
+        ],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [
+          "ARTEX"
+        ],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/storm-3358-artex-financial-sector/",
+          "published": "2026-11-07T05:23:23Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T05:23:23Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "agentic-ai",
+        "financial-sector",
+        "ssrf",
+        "threat-actor",
+        "intrusion",
+        "vulnerability"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 42,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Brandefense (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031025",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T02:44:34Z",
+      "last_seen": "2026-11-14T00:00:00.166021Z",
+      "last_material_update": "2026-11-07T02:44:34Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "ARTEX abuse expands as cybercriminals target financial sector",
+      "summary": "Microsoft reports that the financially motivated actor Storm-3358 has been targeting financial-sector organisations since October 2026 using ARTEX, described as an agentic AI offensive framework, with the activity reported in November 2026.",
+      "why_it_matters": "It shows a financially motivated actor operationalising an agentic AI framework against the financial sector, according to a vendor advisory. Defenders in finance face AI-enabled attack tooling, though the record gives no victims, techniques detail, or severity rating.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "fraud",
+        "ai-security",
+        "vendor_advisory"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.75,
+        "novelty": 0.07091037898284035,
+        "prominence": 0.054905304158076575
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Storm-3358"
+        ],
+        "organisations": [],
+        "products": [
+          "ARTEX"
+        ],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "microsoft_security",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/11/06/artex-abuse-expands-as-cybercriminals-target-financial-sector/",
+          "published": "2026-11-07T02:44:34Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "microsoft",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T02:44:34Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Microsoft Security Blog",
+          "sources": [
+            "microsoft_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "agentic-ai",
+        "offensive-ai",
+        "threat-actor",
+        "financial-sector",
+        "financially-motivated"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "fraud",
+          "reported by Microsoft (specialist)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-030999",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T02:27:57Z",
+      "last_seen": "2026-11-08T20:00:00.132279Z",
+      "last_material_update": "2026-11-07T02:27:57Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OWASP Global AppSec: How to hide prompt injection in plain sight",
+      "summary": "A talk presented at OWASP Global AppSec describes a technique for hiding prompt-injection instructions inside images, where text embedded in the image can often get past LLM filters that only screen written text. This is a presentation of a method rather than a report of an incident, and the record names no affected organisation or product.",
+      "why_it_matters": "It highlights a gap in common defences: content filters that screen text may miss instructions smuggled in images, so multimodal AI inputs need scrutiny beyond text screening. Teams building or buying AI features that accept images should treat visual content as a potential injection channel.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-security",
+        "emerging-threat",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07062735805242192,
+        "prominence": 0.05475185931978822
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisation, person or authority mentioned in the record"
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OWASP"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "AML.T0051",
+          "name": "LLM Prompt Injection",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/resource/owasp-global-appsec-how-to-hide-prompt-injection-in-plain-sight",
+          "published": "2026-11-07T02:27:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T02:27:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "prompt-injection",
+        "llm-security",
+        "image-based-attack"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 32,
+        "tier": "routine",
+        "reasons": [
+          "reported by SCM feed for Latest (community)",
+          "medium severity (AI estimate)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-030985",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T00:15:25Z",
+      "last_seen": "2026-11-09T00:00:00.120629Z",
+      "last_material_update": "2026-11-07T00:15:25Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "LXD and Incus: Six Advisories Trace How a Trusted Image Breaks Out",
+      "summary": "Six advisories rated CVSS 9.9 cover Canonical's LXD and the Incus container management tools, all stemming from malicious container images and snapshots. Fixes were issued between February and July 2026.",
+      "why_it_matters": "With maximum-severity scores, these flaws are directly exploitable through trusted images or snapshots, so any team running LXD or Incus workloads should verify it is on patched builds. Remediation spanned several months, meaning exposure windows may be wide depending on which CVE applies.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.06841006554533113,
+        "prominence": 0.05354421697422484
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Canonical"
+        ],
+        "products": [
+          "LXD",
+          "Incus"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/lxd-incus-image-vulnerabilities/",
+          "published": "2026-11-07T00:15:25Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T00:15:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "container-security",
+        "image-tampering",
+        "supply-chain",
+        "snapshot-attacks"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Brandefense (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-030982",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T01:40:28Z",
+      "last_seen": "2026-11-10T08:00:00.165540Z",
+      "last_material_update": "2026-11-07T01:40:28Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Crusoe sells troubled Wyoming data center project to Google",
+      "summary": "Crusoe has sold a Wyoming AI data center project that faced development difficulties to Google. Details of the deal beyond the sale and the project's troubles are not given in the record.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06982481578388632,
+        "prominence": 0.050076731105293766
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Crusoe",
+          "Google"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/06/crusoe-sells-troubled-wyoming-data-center-project-to-google/",
+          "published": "2026-11-07T01:40:28Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T01:40:28Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-centers",
+        "ai-infrastructure",
+        "acquisition",
+        "wyoming"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 28,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031087",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:56:21Z",
+      "last_seen": "2026-11-07T16:00:00.169658Z",
+      "last_material_update": "2026-11-07T15:56:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "I built an AI on-call agent that never forgets an outage",
+      "summary": "An engineer has written a community post describing DejaVu, an AI agent they built to help on-call teams by recalling how past outages were diagnosed and fixed, aiming to cut time spent repeating investigations into recurring failures like stale cache keys after deployments.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48533923022132647,
+        "prominence": 0.04998337528720782
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "DejaVu",
+          "Slack",
+          "Redis"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/pratheeksh7s/i-built-an-ai-on-call-agent-that-never-forgets-an-outage-233m",
+          "published": "2026-11-07T15:56:21Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:56:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "incident-response",
+        "on-call",
+        "developer-tools",
+        "observability"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031089",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:55:21Z",
+      "last_seen": "2026-11-07T16:00:00.169658Z",
+      "last_material_update": "2026-11-07T15:55:21Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Codex CLI가 osFoundry 노트와 지식 베이스를 MCP로 읽게 하는 방법",
+      "summary": "A community article explains how to connect the Codex CLI coding agent to a project called osFoundry through its MCP server, so the agent can read specification notes, knowledge bases and bug records, with writes requiring confirmation and calls logged in recent activity. It walks through the config change, OAuth login and tool permission settings needed to set this up.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48522243472161,
+        "prominence": 0.04995519670467879
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "osFoundry"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/bbt-ko/codex-cliga-osfoundry-noteuwa-jisig-beiseureul-mcpro-ilgge-haneun-bangbeob-39a5",
+          "published": "2026-11-07T15:55:21Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:55:21Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-integration",
+        "mcp",
+        "codex",
+        "osfoundry",
+        "configuration",
+        "tutorial"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031133",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T22:07:22Z",
+      "last_seen": "2026-11-10T08:00:00.165540Z",
+      "last_material_update": "2026-11-07T22:07:22Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "After the midterms, things are looking rocky for Elon Musk and data centers",
+      "summary": "TechCrunch's Equity podcast discussed what the outcome of the US midterm elections could mean for the tech industry, with a focus on Elon Musk and data centres. No specific incidents, actors or impacts are detailed in the record.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4527303558647518,
+        "prominence": 0.04994317832810751
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Elon Musk"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/07/after-the-midterms-things-are-looking-rocky-for-elon-musk-and-data-centers/",
+          "published": "2026-11-07T22:07:22Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T22:07:22Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-031031",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T07:54:01Z",
+      "last_seen": "2026-11-07T08:00:00.166388Z",
+      "last_material_update": "2026-11-07T07:54:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Building Your Own Hermes AI Hacking Agent: A Complete Setup Guide",
+      "summary": "A community-published tutorial walks readers through setting up an AI agent, dubbed Hermes, intended for ethical hacking, reconnaissance and bug bounty work, with an emphasis on the correct sequencing of infrastructure and automation steps rather than just tool commands.",
+      "why_it_matters": "The record describes a how-to guide for assembling an AI agent with offensive security capabilities; it reports no incident, vulnerability, breach or exploitation. Its significance for defenders is limited to the fact that such agent-building guidance is being shared publicly, and the record offers no evidence of misuse.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4850667521496802,
+        "prominence": 0.04991765123582914
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Hermes AI Agent"
+        ],
+        "organisations": [],
+        "products": [
+          "Hermes AI Agent"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/denoroy737/building-your-own-hermes-ai-hacking-agent-a-complete-setup-guide-4337",
+          "published": "2026-11-07T07:54:01Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T07:54:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agent",
+        "ethical-hacking",
+        "bug-bounty",
+        "reconnaissance",
+        "automation"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031001",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T00:05:50Z",
+      "last_seen": "2026-11-08T20:00:00.132279Z",
+      "last_material_update": "2026-11-07T00:05:50Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft addresses high-severity vulnerability in Paint application",
+      "summary": "Microsoft has issued a security update fixing a high-severity flaw in its Paint application that could enable remote code execution on affected systems.",
+      "why_it_matters": "A remote code execution bug rated high severity means users should apply the Paint update promptly, since successful exploitation could let attackers run code on their machines. The record gives no CVE identifiers or confirmation of exploitation in the wild, so urgency rests on the severity rating alone.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4333761137606868,
+        "prominence": 0.04991442603602573
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [
+          "Paint"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/microsoft-addresses-high-severity-vulnerability-in-paint-application",
+          "published": "2026-11-07T00:05:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T00:05:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "remote-code-execution",
+        "security-update",
+        "high-severity",
+        "microsoft"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 19,
+        "tier": "routine",
+        "reasons": [
+          "reported by SCM feed for Latest (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:53:51Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:53:51Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "I Built an AI Grandmother That Remembers Every Scammer",
+      "summary": "A developer describes ScamSathi, an AI-powered decoy chatbot that poses as a 72-year-old retired schoolteacher and keeps a memory of prior scam calls, using that recall to challenge and stall 'digital arrest' phone scammers who contradict their earlier stories.",
+      "why_it_matters": "The record shows a tool designed to waste scammers' time and expose inconsistencies across repeat calls, illustrating a defensive use of AI against voice-based fraud. It offers defenders an example of memory-driven decoys as a scam-intervention technique. The record does not report any deployment at scale or measured impact.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "emerging-threat",
+        "fraud",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4850474734267246,
+        "prominence": 0.0499130030542762
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CBI"
+        ],
+        "products": [
+          "ScamSathi"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1566.004",
+          "name": "Phishing: Spearphishing Voice",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        },
+        {
+          "id": "T1657",
+          "name": "Financial Theft",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        },
+        {
+          "id": "T1684",
+          "name": "Social Engineering",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/remochi/i-built-an-ai-grandmother-that-remembers-every-scammer-9hj",
+          "published": "2026-11-07T11:53:51Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:53:51Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-decoy",
+        "scam",
+        "social-engineering",
+        "voice-ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "fraud",
+          "reported by DEV Community (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031059",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:53:37Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:53:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Anthropic Claude Code Game Block: 5 Fixes When Your Legit Project Gets Refused",
+      "summary": "An article describes how developers using Claude Code may see their projects wrongly refused under a rule added around late October 2026 that targets recreations of specific existing games, and offers five steps to work around such false positives, including starting a fresh session and reporting the issue.",
+      "why_it_matters": "The change affects people building with Claude Code, showing how a policy tweak to a coding assistant's prompt can block legitimate work and require workarounds or vendor reporting. Developers should be aware that refusals may cite this specific game rule rather than other safeguards.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4850202350130777,
+        "prominence": 0.049906436210849045
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic"
+        ],
+        "products": [
+          "Claude Code"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/theglitchfixer/anthropic-claude-code-game-block-5-fixes-when-your-legit-project-gets-refused-2h35",
+          "published": "2026-11-07T11:53:37Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:53:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "false-positive",
+        "content-policy"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031060",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:53:35Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:53:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "3 Checks Before Shipping an AI-Built Website",
+      "summary": "A community blog post argues that freelancers should not trust a coding agent's claim that it finished and its checks passed, and outlines three manual checks to run on AI-generated website code before delivering it to a client. The author also describes their own local prototype, Agent Mission Guard, which is not publicly available.",
+      "why_it_matters": "The record offers no vulnerability, breach, exploitation or severity information, only an author's guidance that agent-reported success may not reflect the specific properties a client paid for. Its practical value is as workflow advice for people shipping AI-written code, not as an intelligence item. No specific checks' details are provided in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48501634393599596,
+        "prominence": 0.04990549816378548
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Agent Mission Guard"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/jason_romines_704550b9353/3-checks-before-shipping-an-ai-built-website-1men",
+          "published": "2026-11-07T11:53:35Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:53:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-generated-code",
+        "code-review",
+        "how-to",
+        "verification",
+        "web-development"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031112",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T19:52:59Z",
+      "last_seen": "2026-11-07T20:00:00.164516Z",
+      "last_material_update": "2026-11-07T19:52:59Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why an Agent Hardcodes Environment Config in Source",
+      "summary": "A community article explains why AI coding agents sometimes hardcode environment-specific values like URLs, bucket names, or connection strings directly into source code, and recommends keeping such configuration in a separate config layer, validated at startup, with secrets excluded from the repository.",
+      "why_it_matters": "The article warns that hardcoded literals bake one environment's values into every deployment and can put secrets into version control, a common source of leaks. It advises teams using coding agents to validate configuration at startup and keep it out of the codebase.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4849462598777688,
+        "prominence": 0.04988860440175767
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/jeff_pdc/why-an-agent-hardcodes-environment-config-in-source-1n68",
+          "published": "2026-11-07T19:52:59Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T19:52:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "coding-agents",
+        "config-management",
+        "secrets-management",
+        "devops",
+        "how-to"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031137",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:51:29Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:51:29Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Your AI coding agent has amnesia — here's a 30-second fix",
+      "summary": ": A community post promotes a tool called Corvusmem, which is presented as giving AI coding assistants persistent local memory stored as a file in the developer's repository, so preferences and project details survive between sessions. It reads as a product announcement rather than a threat or incident report.",
+      "why_it_matters": "The record describes a developer-workflow tool, not a security event; it offers no vulnerability, breach, or exploitation facts. It may interest people who build with AI coding agents because it claims to solve context loss while keeping data local. No evidence in the record supports a broader security or regulatory implication.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4847711420359018,
+        "prominence": 0.04984640760173458
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Corvusmem"
+        ],
+        "products": [
+          "Claude Code",
+          "Codex",
+          "Corvusmem"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/r3v3rs3/your-ai-coding-agent-has-amnesia-heres-a-30-second-fix-3jpa",
+          "published": "2026-11-07T23:51:29Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:51:29Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-coding-agent",
+        "ai-memory",
+        "developer-tool"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031062",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:51:27Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:51:27Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Self-hosted Server Panel",
+      "summary": "A developer is building an open-source, self-hosted panel (EpicWing) for running game servers, Discord bots and websites in Docker containers, and describes changes in its v0.2.0-beta release. The post is a development write-up about isolating misbehaving containers, not a report of a breach or vulnerability.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "emerging-threat",
+        "vulnerability",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48476737992148583,
+        "prominence": 0.04984550131457795
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian connection appears in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "EpicWing",
+          "FastAPI",
+          "Vue",
+          "Go",
+          "Docker"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/epicwing/self-hosted-server-panel-1em8",
+          "published": "2026-11-07T11:51:27Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:51:27Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "container-security",
+        "docker",
+        "game-servers",
+        "network-isolation",
+        "server-management"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031003",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T00:03:01Z",
+      "last_seen": "2026-11-08T20:00:00.132279Z",
+      "last_material_update": "2026-11-07T00:03:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "D-Link issues mitigation guidance for unpatched DGS-3130 switch vulnerabilities",
+      "summary": "D-Link has published mitigation advice for several security flaws in its DGS-3130 series managed Gigabit stackable switches that will not receive patches. The guidance was reported by Bleeping Computer; no technical details or severity ratings are given in the record.",
+      "why_it_matters": "The record states the affected switches are unpatched, so defenders who use this hardware cannot rely on vendor fixes and must apply mitigations instead. It does not name specific CVEs, assign severity, or indicate whether exploitation has been observed.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4330824257608161,
+        "prominence": 0.049838534842685675
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "D-Link"
+        ],
+        "products": [
+          "DGS-3130 series managed Gigabit stackable switches"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/d-link-issues-mitigation-guidance-for-unpatched-dgs-3130-switch-vulnerabilities",
+          "published": "2026-11-07T00:03:01Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T00:03:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "mitigation",
+        "networking-hardware",
+        "unpatched"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 19,
+        "tier": "routine",
+        "reasons": [
+          "reported by SCM feed for Latest (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031100",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:51:09Z",
+      "last_seen": "2026-11-07T16:00:00.169658Z",
+      "last_material_update": "2026-11-07T15:51:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "2027 AI Engineer Apprentice - Level 6 Machine Learning",
+      "summary": "Thales, a UK-based defence and technology company, is advertising a Level 6 machine learning apprenticeship for AI engineers at its Crawley site, starting in September 2027 with a salary of £24,000 per year. The listing describes the company's broader operations in defence, space, aerospace, and digital security.",
+      "why_it_matters": "The record is a job listing with no security incident, vulnerability, or exploitation details. At most it signals demand for machine learning engineering skills in the defence technology sector. null",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4847322004670445,
+        "prominence": 0.049837027131838976
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Thales"
+        ],
+        "products": [],
+        "countries": [
+          "GB"
+        ],
+        "industries": [
+          "defence"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_itjobboard_co_uk",
+          "url": "https://www.itjobboard.co.uk/job/16939817/2027-ai-engineer-apprentice-level-6-machine-learning/",
+          "published": "2026-11-07T15:51:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_itjobboard_co_uk",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:51:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by IT Job Board",
+          "sources": [
+            "found_itjobboard_co_uk"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-030392"
+        }
+      ],
+      "tags": [
+        "apprenticeship",
+        "ai-workforce",
+        "hiring",
+        "thales",
+        "uk",
+        "machine-learning"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by IT Job Board (community)",
+          "government involved"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031138",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:51:02Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:51:02Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "facebook-skills: ให้ Coding Agent ช่วยงานเพจได้แค่ไหน และอะไรยังต้องคุมเอง",
+      "summary": "A community article discusses a tool called facebook-skills, a set of instructions that lets coding agents like Claude Code and Codex help prepare Facebook Page content, and weighs how much page work can safely be delegated to AI versus kept under human control.",
+      "why_it_matters": "For people building or adopting AI agents, the piece highlights a design boundary: an agent that prepares work for review is not the same as one that publishes on your behalf. It suggests operators need to decide where to stop and require human checks before actions go live.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4847186421054485,
+        "prominence": 0.04983376136992498
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Creative Content Crafts"
+        ],
+        "products": [
+          "Claude Code",
+          "Codex",
+          "facebook-skills",
+          "Facebook Page"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/sarantoon/facebook-skills-aih-coding-agent-chwyngaanephcchaidaekhaihn-aelaaairyangtngkhumeng-4adi",
+          "published": "2026-11-07T23:51:02Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:51:02Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "coding-agents",
+        "content-automation",
+        "facebook",
+        "developer-tools",
+        "human-in-the-loop"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031139",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:50:57Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:50:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Do Coding Agents Really Fail at Business Logic? What the Evidence Shows",
+      "summary": "A developer's write-up of an experiment testing whether AI coding agents fail at bug fixing because they lack understanding of the business logic behind code. The author concludes the problem is real but narrower than expected, and that commonly suggested fixes are less effective than claimed.",
+      "why_it_matters": "For teams adopting AI coding agents, the reported risk is that patches can be technically valid while breaking business rules or misidentifying a bug's root cause. The record does not quantify the failure rate or test specific agents beyond the author's setup, so it is an anecdotal finding rather than a benchmark.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48470892052006415,
+        "prominence": 0.04983141984170838
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Claude Code",
+          "EGM"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/ousskh_63/do-coding-agents-really-fail-at-business-logic-what-the-evidence-shows-42fj",
+          "published": "2026-11-07T23:50:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:50:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "coding-agents",
+        "bug-fixing",
+        "ai-limitations",
+        "opinion",
+        "software-development"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031142",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:50:08Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:50:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "คลิปไวรัลจาก AI ที่คุณดูอยู่ อาจเป็นโค้ด HTML ไม่ใช่วิดีโอ?",
+      "summary": "A Thai-language AI-generated article describes a trend from late September 2026 where viral-looking 'video' clips shared online are not video files at all, but single HTML pages of code written by AI models such as Claude from short text prompts. It points to a GitHub collection, awesome-opus5-5-videos, holding prompts for such clips, popularised via a Thai community page.",
+      "why_it_matters": "The record raises a content-authenticity concern: material that appears to be a shared video may instead be AI-generated code rendered in a browser, complicating how people verify what they are viewing. It also showcases a new AI capability — producing motion-clip-like experiences from brief prompts — with a prompt library of 703 items cited. The record states no security impact, exploits, or incidents.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4846136593008988,
+        "prominence": 0.04980847892555318
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GitHub",
+          "ollama-cloud"
+        ],
+        "products": [
+          "awesome-opus5-5-videos",
+          "deepseek-v4.1-flash",
+          "Hermes Agent"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/sarantoon/khlipaiwralcchaak-ai-thiikhunduuyuu-aacchepnokhd-html-aimaichwidiio-m7n",
+          "published": "2026-11-07T23:50:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:50:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "generative-ai",
+        "ai-content",
+        "html",
+        "open-source",
+        "viral-video",
+        "github"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031081",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:50:00Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T15:50:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "NYT Cooking’s AI assistant saved my weeknight chicken, but almost ruined my cake",
+      "summary": "A first-person review of NYT Cooking's AI assistant, which the writer found useful for suggesting weeknight dinner ideas like chicken dishes but unreliable when asked to help with a cake recipe. The piece is a consumer experience story rather than a report of a security incident.",
+      "why_it_matters": "The record only offers a personal account of an AI cooking helper's mixed performance, with no stated safety finding, capability, price, licence or regulatory detail. On the record's own facts, there is little to draw for builders, buyers or regulators of AI beyond the anecdote itself.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.4845980560556628,
+        "prominence": 0.04980472195251227
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "NYT Cooking"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/tech/1029489/nyt-cooking-ai-assistant-review",
+          "published": "2026-11-07T15:50:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:50:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-assistant",
+        "cooking",
+        "opinion"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031143",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:49:57Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:49:57Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "An AI Agent Posted $30.33 in 'Revenue.' Only $3 of It Was Real.",
+      "summary": "A community post challenges claims that an AI agent generated real earnings, arguing that most of the $30.33 the agent reported last month was not customer revenue: a line-by-line breakdown attributes only $3.00 to actual customers, with the rest coming from the operator's own funds and internal transfers between the agent's accounts.",
+      "why_it_matters": "The record suggests AI-agent 'revenue' figures can be inflated by circular flows of the operator's own money, so buyers and investors should scrutinise how agent earnings are counted. No security impact is described.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4845922767025772,
+        "prominence": 0.04980333043528998
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/jiahui-miao/an-ai-agent-posted-3033-in-revenue-only-3-of-it-was-real-2km6",
+          "published": "2026-11-07T23:49:57Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:49:57Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agent",
+        "revenue",
+        "misleading-metrics"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031144",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:49:46Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:49:46Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "สแตนด์ที่แข็งที่สุดไม่ได้โจมตีแรงที่สุด: โปรแกรมเมอร์ควรฝึก AI agent แบบไหน?",
+      "summary": "A Thai-language community article published on DEV Community uses a JoJo's Bizarre Adventure analogy to discuss how programmers should train AI agents, arguing the strongest stand does not win against the strongest attack. The piece was written by an AI model with human review and quality control by the named author.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48457089504771944,
+        "prominence": 0.04979818249904479
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "deepseek-v4.1-flash",
+          "Hermes Agent",
+          "ollama-cloud"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/sarantoon/saetndthiiaekhngthiisudaimaidocchmtiiaerngthiisud-opraekrmemrkhwrfuek-ai-agent-aebbaihn-4p7",
+          "published": "2026-11-07T23:49:46Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:49:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agent",
+        "llm",
+        "ai-training",
+        "developer-advice"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031065",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T11:49:44Z",
+      "last_seen": "2026-11-07T12:00:00.104439Z",
+      "last_material_update": "2026-11-07T11:49:44Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "LongLoom: Stop Losing Facts When Your Documents Exceed the Context Window",
+      "summary": "A developer has released an open-source library, LongLoom, that processes documents longer than an LLM's context window using a map/merge/repair pipeline, with benchmarks showing planted facts survive chunking better than with naive summarisation.",
+      "why_it_matters": "The record includes a planted-fact test showing naive chunk-and-summarise approaches lose known identifiers, numbers and dates. For teams building document-processing pipelines on LLMs, this is a measurable quality and reliability concern, not just a theoretical one. No security impact is stated in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48456713448734007,
+        "prominence": 0.04979727712466771
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "LongLoom"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/sumitn/longloom-stop-losing-facts-when-your-documents-exceed-the-context-window-1ci2",
+          "published": "2026-11-07T11:49:44Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T11:49:44Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "llm",
+        "context-window",
+        "open-source",
+        "document-processing",
+        "benchmarking"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031038",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T07:49:32Z",
+      "last_seen": "2026-11-07T08:00:00.166388Z",
+      "last_material_update": "2026-11-07T07:49:32Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "My On-Call Agent Remembered the Rollback That Never Works",
+      "summary": "An engineer describes an on-call LLM agent that gave a better incident-response answer on a second try because it could recall past incidents, including evidence that rollbacks for that service had previously failed. The difference was memory, not the model, which motivated the author's incident-memory agent Déjà Vu.",
+      "why_it_matters": "This is a practitioner account of agent memory improving operational decisions: the memory-equipped agent avoided repeating a rollback that prior incidents (INC-2291, INC-2347) showed was ineffective. For teams deploying AI agents in incident response, it suggests past-incident context can materially change recommendations. The record gives no security findings or deployment details beyond the author's description.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4845436322715281,
+        "prominence": 0.049791619073585286
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Déjà Vu",
+          "Hindsight",
+          "HikariCP",
+          "checkout-api"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/nikitha_thammaiah_0668e91/my-on-call-agent-remembered-the-rollback-that-never-works-458c",
+          "published": "2026-11-07T07:49:32Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T07:49:32Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "llm",
+        "ai-agents",
+        "incident-response",
+        "agent-memory",
+        "on-call",
+        "devops"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-030991",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T03:49:08Z",
+      "last_seen": "2026-11-07T04:00:00.166262Z",
+      "last_material_update": "2026-11-07T03:49:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Building SolShield AI: Byte-Level Honeypot & Rug Defense for Solana AI Agents",
+      "summary": "A community post describes a tool called SolShield AI, aimed at protecting autonomous AI trading agents on Solana from rug-pull and honeypot tokens by analysing tokens at the byte level before transactions are signed. It is a technical write-up of a defensive engineering approach rather than a report of an incident or vulnerability.",
+      "why_it_matters": "The post highlights a claimed risk that AI trading agents cannot distinguish malicious tokens from legitimate ones before signing transactions, meaning automated capital could be lost to rug pulls. Builders of autonomous DeFi agents may see this as an argument for adding pre-transaction token screening. The record provides no evidence of exploited incidents, affected parties, or measured impact.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "fraud",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4844969856625854,
+        "prominence": 0.04978039028519704
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, people or authorities are mentioned"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "SolShield AI",
+          "Solana"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/grandsonofsitaram/building-solshield-ai-byte-level-honeypot-rug-defense-for-solana-ai-agents-24a3",
+          "published": "2026-11-07T03:49:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T03:49:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-security",
+        "honeypot",
+        "rug-pull",
+        "solana",
+        "defi",
+        "ai-agents"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "fraud",
+          "reported by DEV Community (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031147",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T23:49:05Z",
+      "last_seen": "2026-11-08T00:00:00.166474Z",
+      "last_material_update": "2026-11-07T23:49:05Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "에이전트가 설계한 분자를 사람은 어떻게 검증할 것인가: VR 분자 실험실의 등장",
+      "summary": "A community post discusses Google DeepMind's demonstration of autonomous AI agents in drug-discovery workflows, covering tasks like compound search, macrocycle design and synthesis planning. The author argues that validating agent-designed molecular structures still depends on flat 2D screens and proposes immersive virtual-reality molecular labs as a solution.",
+      "why_it_matters": "For people building and adopting AI in chemistry, this highlights that automation of design is outpacing the human verification step, which remains a bottleneck. The proposed VR-based validation approach suggests where tooling investment may be needed to make agentic drug-discovery outputs trustworthy.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "ai-research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4844912080998437,
+        "prominence": 0.04977899961648535
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Google"
+        ],
+        "products": [
+          "Agentic Cheminformatics with Google Antigravity"
+        ],
+        "countries": [],
+        "industries": [
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/ashish_624379625242c5d263/eijeonteuga-seolgyehan-bunjareul-sarameun-eoddeohge-geomjeunghal-geosinga-vr-bunja-silheomsilyi-deungjang-6o6",
+          "published": "2026-11-07T23:49:05Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T23:49:05Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "drug-discovery",
+        "cheminformatics",
+        "vr",
+        "google-deepmind",
+        "scientific-research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031132",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T18:48:55Z",
+      "last_seen": "2026-11-09T12:00:00.165911Z",
+      "last_material_update": "2026-11-07T18:48:55Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "One Product Isn’t the Problem: Monetizing an AI Portfolio Without Confusing Your Customers",
+      "summary": "An industry commentary piece arguing that software vendors can grow revenue by pricing and monetising an expanded product portfolio — including AI capabilities — based on customer usage patterns across products, though this risks confusing customers. It is a business strategy article, not a report of an incident or vulnerability.",
+      "why_it_matters": "The record describes no threat, breach, vulnerability or exploit, and gives no AI safety or regulatory development. It notes vendors are increasingly packaging AI features into portfolios and using usage-based pricing, which is a commercial trend rather than a security fact.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4844717222681766,
+        "prominence": 0.049774309521182315
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "IDC"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/202603/ai/one-product-isnt-the-problem-monetizing-an-ai-portfolio-without-confusing-your-customers.html",
+          "published": "2026-11-07T18:48:55Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T18:48:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-monetization",
+        "software-pricing",
+        "vendor-strategy",
+        "product-portfolio",
+        "usage-tracking"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Security Affairs (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031083",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:00:00Z",
+      "last_seen": "2026-11-09T12:00:00.165911Z",
+      "last_material_update": "2026-11-07T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI broke the cybersecurity world. What’s next?",
+      "summary": "A podcast episode from The Verge features an interview with Alex Stamos, chief security officer at Cognition, discussing the current state of cybersecurity amid AI-driven change. It is part one of a series on AI in practice; the record contains no specific incident details.",
+      "why_it_matters": "The record only indicates a commentary discussion about how AI has disrupted cybersecurity, without stating specific threats, vulnerabilities, or events. It offers no concrete facts such as exploit details, breaches, or severity ratings that defenders could act on.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.43276810459584913,
+        "prominence": 0.04975738749504694
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian connection appears in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cognition"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/podcast/1029038/ai-cybersecurity-hackers-data-breach-dark-age-alex-stamos",
+          "published": "2026-11-07T15:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "cybersecurity",
+        "podcast",
+        "interview",
+        "expert-commentary"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 29,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031039",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T07:47:12Z",
+      "last_seen": "2026-11-07T08:00:00.166388Z",
+      "last_material_update": "2026-11-07T07:47:12Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why Human Documentation Fails Coding Agents (And How I Asked Gemini, Claude, and OpenAI to Fix It)",
+      "summary": "A developer writes about their experience using LLM coding agents on large, mature Rust codebases, where the tools tend to introduce subtle bugs, stylistic changes, and unsafe simplifications, and describes asking several major models for help with the problem.",
+      "why_it_matters": "The record is a practitioner's account that LLM coding agents perform well on small new projects but degrade on complex existing codebases, producing subtle bugs and dangerous simplifications. This is a caution for teams adopting AI coding assistants in mature codebases with strict security boundaries. No vendor response, benchmark, or safety finding beyond the author's anecdote is given.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4842715998234533,
+        "prominence": 0.04972615723782641
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI"
+        ],
+        "products": [
+          "Gemini",
+          "Claude"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/fcn06/why-human-documentation-fails-coding-agents-and-how-i-asked-gemini-claude-and-openai-to-fix-it-5dc8",
+          "published": "2026-11-07T07:47:12Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T07:47:12Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "coding-agents",
+        "documentation",
+        "rust",
+        "llm",
+        "developer-experience"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031040",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T07:46:42Z",
+      "last_seen": "2026-11-07T08:00:00.166388Z",
+      "last_material_update": "2026-11-07T07:46:42Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Use browser descriptions to choose, then verify the live account",
+      "summary": "A browser-automation team proposes an operating procedure for AI agents working in web accounts: use recorded browser descriptions to pick the right destination, then separately verify the currently active account before acting. The examples are fictional and no real portal test is claimed.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4842133270286918,
+        "prominence": 0.04971214136192156
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, people or authorities are mentioned",
+          "Global community post with no Australian angle"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "BrowserAct team"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/browser_act_e2505dbdf454a/use-browser-descriptions-to-choose-then-verify-the-live-account-1n9",
+          "published": "2026-11-07T07:46:42Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T07:46:42Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "browser-automation",
+        "account-verification",
+        "operating-procedure",
+        "data-exposure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-030993",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T03:46:39Z",
+      "last_seen": "2026-11-07T04:00:00.166262Z",
+      "last_material_update": "2026-11-07T03:46:39Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Difference Between a Verification Step and a Reminder to Do One",
+      "summary": "A community blog post reflects on a trending claim that a simple deterministic check can catch issues an AI code reviewer overlooks, because automated code cannot be persuaded to skip the check. The author applies that lesson to their own publishing workflow and finds a verification step they wrote but do not actually enforce.",
+      "why_it_matters": "The piece highlights a practical assurance gap: instructions that ask an AI agent to verify something are not the same as a mechanism that enforces it. For teams using AI agents in workflows, it is a prompt to audit where claimed checks are actually performed. It rests on anecdote, not a documented incident.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48420749851113903,
+        "prominence": 0.04971073961003873
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/enjoy_kumawat/the-difference-between-a-verification-step-and-a-reminder-to-do-one-1c83",
+          "published": "2026-11-07T03:46:39Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T03:46:39Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-review",
+        "verification-step",
+        "deterministic-function"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-031036",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T07:49:47Z",
+      "last_seen": "2026-11-07T08:00:00.166388Z",
+      "last_material_update": "2026-11-07T07:49:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "We checked 1,000 DeFi websites: 76% have no CSP and 64% can be framed by another site",
+      "summary": "A community study passively checked the websites of 1,000 DeFi protocols listed on DefiLlama and found weak web-layer security: 76% did not set a Content Security Policy and 64% could be embedded in another site's frame. The authors link these gaps to past front-end attacks like the BadgerDAO and Ledger Connect Kit incidents, which caused large losses without touching smart contracts.",
+      "why_it_matters": "Front-end weaknesses such as missing CSP and clickjacking protection can let attackers inject scripts or trick users into approving malicious token transfers, as shown by the roughly $120M BadgerDAO loss and the Ledger Connect Kit wallet-drainer incident. Defenders and DeFi users should treat the website itself, not just audited contracts, as part of the attack surface. No specific vulnerabilities, CVEs or active attacks were observed in this passive scan.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "research",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.40747562777392976,
+        "prominence": 0.04951911656411136
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "The record does not name any Australian organisations, people or authorities.",
+          "DeFi front-end weaknesses are a global issue with no Australia-specific detail in the record."
+        ],
+        "sectors": [
+          "finance"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "DefiLlama",
+          "BadgerDAO",
+          "Ledger"
+        ],
+        "products": [
+          "Ledger Connect Kit"
+        ],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/alex_simakov_d5176f3977ad/we-checked-1000-defi-websites-76-have-no-csp-and-64-can-be-framed-by-another-site-5m5",
+          "published": "2026-11-07T07:49:47Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T07:49:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "defi",
+        "web-security",
+        "csp",
+        "clickjacking",
+        "security-headers",
+        "measurement-study"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 34,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)",
+          "medium severity (AI estimate)",
+          "some Australian relevance",
+          "finance sector involved"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031108",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T19:49:16Z",
+      "last_seen": "2026-11-09T16:00:00.190891Z",
+      "last_material_update": "2026-11-07T19:49:16Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "GhostMap: The Android Crash-Loop Bug With No Patch Yet",
+      "summary": "Bitdefender researchers have disclosed an unpatched Android bug, dubbed GhostMap, that can trap a phone in a crash loop once a single specially crafted app is installed — and that app needs no special permissions. With no fix available, affected devices could be rendered unusable until a patch lands.",
+      "why_it_matters": "The flaw requires no permissions, so users cannot rely on permission prompts as a warning sign when installing apps. With no patch released and a vendor disclosure already public, attackers have a window to weaponise it against Android devices. Defenders may want to flag this to mobile users while awaiting a vendor fix.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.40742500429272316,
+        "prominence": 0.04950555264434188
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Bitdefender Labs"
+        ],
+        "products": [
+          "GhostMap"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1499",
+          "name": "Endpoint Denial of Service",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/ghostmap-android-flaw/",
+          "published": "2026-11-07T19:49:16Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T19:49:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "android",
+        "denial-of-service"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 27,
+        "tier": "routine",
+        "reasons": [
+          "reported by Brandefense (community)",
+          "medium severity (AI estimate)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-031099",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T15:51:09Z",
+      "last_seen": "2026-11-07T16:00:00.169658Z",
+      "last_material_update": "2026-11-07T15:51:09Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Security AI Operations Engineer",
+      "summary": "A job listing posted on a UK IT job board advertises a Security AI Operations Engineer position at Thales in Belfast, within the company's Value Added Services / Security Operations organisation. It is a recruitment advertisement rather than a security incident or disclosure.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4509668086761559,
+        "prominence": 0.049501044785855375
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Thales"
+        ],
+        "products": [],
+        "countries": [
+          "GB"
+        ],
+        "industries": [
+          "defence",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_itjobboard_co_uk",
+          "url": "https://www.itjobboard.co.uk/job/16939815/security-ai-operations-engineer/",
+          "published": "2026-11-07T15:51:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_itjobboard_co_uk",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T15:51:09Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by IT Job Board",
+          "sources": [
+            "found_itjobboard_co_uk"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-029881"
+        }
+      ],
+      "tags": [
+        "recruitment",
+        "security-operations",
+        "ai-operations",
+        "defence",
+        "uk"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "reported by IT Job Board (community)",
+          "government involved",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-031080",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-07T14:10:19Z",
+      "last_seen": "2026-11-10T04:00:00.166010Z",
+      "last_material_update": "2026-11-07T14:10:19Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CTM360 Exposes Fake Gift Card Scams Exploiting Trusted Brands",
+      "summary": "Consumer scam campaigns impersonate well-known brands and celebrities with fake gift card giveaways that harvest personal information and sign victims up for unwanted subscriptions. CTM360's analysis describes how the operators use fake verification steps and affiliate networks to earn money while never delivering rewards.",
+      "why_it_matters": "These scams monetise through personal-data collection and forced subscriptions rather than malware, so technical controls may not flag them. Brand impersonation at scale means consumer-facing organisations may see their names abused in fraudulent campaigns. Educating customers about fake verification steps is the main defence the record implies.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "fraud",
+        "phishing",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.45964169643509506,
+        "prominence": 0.049297896883726926
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Global consumer scam with no Australian detail in the record"
+        ],
+        "sectors": [
+          "retail"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CTM360"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1199",
+          "name": "Trusted Relationship",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1598",
+          "name": "Phishing for Information",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1684.001",
+          "name": "Social Engineering: Impersonation",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/ctm360-exposes-fake-gift-card-scams-exploiting-trusted-brands/",
+          "published": "2026-11-07T14:10:19Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-07T14:10:19Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "gift-card-scam",
+        "brand-impersonation",
+        "social-engineering",
+        "affiliate-fraud",
+        "consumer-fraud",
+        "subscription-trap"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "fraud",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    }
+  ]
+}
