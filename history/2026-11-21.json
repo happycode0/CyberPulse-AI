@@ -1,0 +1,5191 @@
+{
+  "generated_at": "2026-11-28T13:00:04.510164Z",
+  "date": "2026-11-21",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 39,
+    "critical": 1,
+    "high": 12,
+    "medium": 2,
+    "low": 4,
+    "unknown": 20,
+    "directly_reported_in_au": 4,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-039080",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:59:51Z",
+      "last_seen": "2026-11-28T13:00:00.102081Z",
+      "last_material_update": "2026-11-24T06:53:07Z",
+      "last_independent_confirmation": "2026-11-24T13:42:21Z",
+      "status": "contained",
+      "title": "N-able Discloses Critical Mail Assure Vulnerability Found During Breach Investigation",
+      "summary": "N-able disclosed a critical server-side request forgery flaw (CVE-2026-134624) in its Mail Assure and SpamExperts Hosted Cloud email filtering service, which serves managed service providers. The bug was discovered during an investigation into a breach of the service and could be exploited by a user with high-level API access to reach internal systems.",
+      "why_it_matters": "The flaw carries a critical severity rating (CVSS 9.3) and was found in the course of a real breach, suggesting it may have played a role in the incident. Because Mail Assure is used by managed service providers, exploitation could expose their internal systems and, through them, downstream customers.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "news",
+        "advisory",
+        "community",
+        "policy",
+        "ai-security",
+        "espionage",
+        "malware",
+        "zero-day"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "minor",
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.9999267578125,
+        "novelty": 0.074322731049078,
+        "prominence": 0.41743092368313445
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "N-able"
+        ],
+        "products": [
+          "Mail Assure",
+          "SpamExperts Hosted Cloud"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-121613",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00746,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-123007",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.46134,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-133325",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.00582,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-133968",
+          "cvss": {
+            "score": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.27157,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-11-23",
+            "due_date": "2026-11-26"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-134401",
+          "cvss": {
+            "score": 9.6,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+            "source": "cisa_adp"
+          },
+          "epss": {
+            "score": 0.01138,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-134624",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01793,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-11-23",
+            "due_date": "2026-11-26"
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-86155",
+          "cvss": {
+            "score": 10.0,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00813,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [
+        {
+          "id": "T1078.004",
+          "name": "Valid Accounts: Cloud Accounts",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1548.002",
+          "name": "Abuse Elevation Control Mechanism: Bypass User Account Control",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_securityonline_info"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-133968 and CVE-2026-134624 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-86155 is rated 10.0 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 7 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-86155"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-123007 being exploited in the next 30 days at 46%, the highest of the 7 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-123007"
+          ]
+        },
+        {
+          "text": "12 independent sources report this event.",
+          "confidence": 0.9999267578125,
+          "evidence": [
+            "found_securityonline_info",
+            "found_brandefense_io",
+            "bleepingcomputer",
+            "cisa_kev",
+            "found_hkcert_org"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/cisa-kev-catalog-vcenter-cisco-expressway/",
+          "published": "2026-11-21T00:59:51Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/palo-alto-networks-vulnerabilities-poc-cve-2026-123007/",
+          "published": "2026-11-21T01:19:03Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/monai-label-zero-day-cve-2026-133968/",
+          "published": "2026-11-21T01:32:20Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/cairn-monai-label-zero-day-universities/",
+          "published": "2026-11-21T03:34:19Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203639/security/u-s-cisa-adds-cisco-expressway-sap-netweaver-broadcom-vmware-vcenter-and-apache-roller-flaws-to-its-known-exploited-vulnerabilities-catalog.html",
+          "published": "2026-11-21T16:09:38Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/windows-uac-bypass/",
+          "published": "2026-11-22T08:06:48Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/gl-inet-cloud-zero-day-exploited/",
+          "published": "2026-11-22T10:39:31Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/hackers-exploit-glinet-cloud-flaw-to-infect-routers-kvm-devices/",
+          "published": "2026-11-22T18:45:37Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-133968",
+          "published": "2026-11-23T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_kev",
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-134624",
+          "published": "2026-11-23T00:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/cisa-adds-four-critical-vulnerabilities-to-its-known-exploited-catalog",
+          "published": "2026-11-23T02:13:18Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_hkcert_org",
+          "url": "https://www.hkcert.org/security-bulletin/palo-alto-products-multiple-vulnerabilities_20261123",
+          "published": "2026-11-23T03:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_hkcert_org",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/hackers-exploited-glinet-cloud-flaw-to.html",
+          "published": "2026-11-23T09:04:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "found_cybernews_com",
+          "url": "https://cybernews.com/security/glinet-routers-kvm-malware-cloud-breach/",
+          "published": "2026-11-23T09:20:13Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybernews_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/hackers-exploit-gl-inet-cloud-flaw/",
+          "published": "2026-11-23T10:45:32Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        },
+        {
+          "source_id": "cisa_advisories",
+          "url": "https://www.cisa.gov/news-events/alerts/2026/11/23/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+          "published": "2026-11-23T12:00:00Z",
+          "evidence_class": "AUTHORITATIVE",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
+          "published": "2026-11-23T12:28:09Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": false
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/resources/china-linked-ai-agents-exploit-monai-label-zero-day-to-root-servers/",
+          "published": "2026-11-23T12:39:52Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/23/gl-inet-cloud-compromise-malware-backdoors/",
+          "published": "2026-11-23T15:05:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/chrome-sandbox-escape-cve-2026-134401/",
+          "published": "2026-11-24T04:11:58Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/cisa-kev-monai-label-n-able-mailassure/",
+          "published": "2026-11-24T05:06:33Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/apache-security-updates-cve-2026-86155/",
+          "published": "2026-11-24T05:20:36Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/hackers-exploit-n-able-mailassure-flaw.html",
+          "published": "2026-11-24T06:02:45Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": false
+        },
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/vde-cert-security-advisories-cve-2026-121613/",
+          "published": "2026-11-24T06:53:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": false
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/critical-n-able-mail-assure-ssrf-vulnerability/",
+          "published": "2026-11-24T08:16:15Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": false
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/critical-google-chrome-flaw/",
+          "published": "2026-11-24T09:37:46Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": false
+        },
+        {
+          "source_id": "found_socprime_com",
+          "url": "https://socprime.com/blog/cve-2026-134401-critical-google-chrome-flaw-can-enable-code-execution-outside-the-sandbox/",
+          "published": "2026-11-24T12:30:20Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_socprime_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203882/hacking/u-s-cisa-adds-n-able-mailassure-and-project-monai-flaws-to-its-known-exploited-vulnerabilities-catalog.html",
+          "published": "2026-11-24T12:48:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "cisa",
+          "independent": false
+        },
+        {
+          "source_id": "found_vijilan_com",
+          "url": "https://vijilan.com/blog/n-able-mail-assure-cve-2026-134624-exploited",
+          "published": "2026-11-24T13:42:21Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_vijilan_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T01:32:20Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T03:34:19Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T16:09:38Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-22T08:06:48Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-22T18:45:37Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T00:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Known Exploited Vulnerabilities",
+          "sources": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T00:00:00Z",
+          "type": "EXPLOIT_CONFIRMED",
+          "summary": "CISA added CVE-2026-133968 to the Known Exploited Vulnerabilities catalogue",
+          "sources": []
+        },
+        {
+          "timestamp": "2026-11-23T02:13:18Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T03:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by HKCERT Infosec Express",
+          "sources": [
+            "found_hkcert_org"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T09:04:08Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T09:20:13Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cybernews News",
+          "sources": [
+            "found_cybernews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T10:45:32Z",
+          "type": "EXPLOIT_CONFIRMED",
+          "summary": "Cyber Security News: Hackers Exploit GL.iNet Cloud Flaw to Install Malware and Backdoors on Routers and KVM Devices",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CISA Advisories",
+          "sources": [
+            "cisa_advisories"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:28:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:39:52Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T15:05:50Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T04:11:58Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T05:06:33Z",
+          "type": "NEW_CVE",
+          "summary": "Daily CyberSecurity added CVE-2026-133968, CVE-2026-134624",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T05:20:36Z",
+          "type": "NEW_PATCH",
+          "summary": "Daily CyberSecurity: Apache Nov 2026 Update Fixes 33 Flaws, Including SSRF CVE-2026-86155",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T06:53:07Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T08:16:15Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T09:37:46Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T12:30:20Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SOC Prime",
+          "sources": [
+            "found_socprime_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T13:42:21Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Vijilan Security · Field notes",
+          "sources": [
+            "found_vijilan_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-035573"
+        },
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-036915"
+        }
+      ],
+      "tags": [
+        "vulnerability",
+        "ssrf",
+        "email-filtering",
+        "managed-service-provider",
+        "cve"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 71,
+        "tier": "key",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by CISA (authoritative)",
+          "12 independent sources",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037727",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T18:00:00Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-21T18:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Dario Amodei, facing an Oppenheimer moment, races ahead",
+      "summary": "Anthropic is leading AI development while facing public criticism from its own co-founder about the pace of that progress, and the record notes a recent US stock market listing that broke records. The report comes from an Australian outlet but concerns a US company.",
+      "why_it_matters": "The record frames a tension between commercial leadership in AI development and the co-founder's own warnings about it, which is relevant to debates over AI risk governance. No specific security impact, regulation, or timeline is stated.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "major",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.0950062395441992,
+        "prominence": 0.2280700667340574
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Reported by an Australian news outlet (ABC News)",
+          "No Australian organisations, people, or authorities are named in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-11-22/dario-amodei-facing-an-oppenheimer-moment-races-ahead/107264748",
+          "published": "2026-11-21T18:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T18:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "anthropic",
+        "ipo",
+        "ai-development",
+        "stock-exchange"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 52,
+        "tier": "notable",
+        "reasons": [
+          "major AI story",
+          "reported in Australia",
+          "reported by ABC (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037729",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T15:00:00Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-21T15:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Can Anthropic afford to put safety first?",
+      "summary": "Anthropic, the AI lab behind Claude, has gone public on the Nasdaq, and a reporter discusses the implications of the listing, including whether the company can maintain its safety-first approach under market pressures. The discussion is the final episode of a podcast series on AI.",
+      "why_it_matters": "null",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "major",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.09097828667435973,
+        "prominence": 0.18714918311070794
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic",
+          "Nasdaq"
+        ],
+        "products": [
+          "Claude"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/podcast/1038701/anthropic-ipo-ai-safety-openai-nvidia-structure",
+          "published": "2026-11-21T15:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T15:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "anthropic",
+        "ipo",
+        "ai-safety",
+        "claude",
+        "nasdaq",
+        "ai-industry"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "major AI story",
+          "reported by The Verge AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037517",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:32:18.231000Z",
+      "last_seen": "2026-11-22T20:00:00.165042Z",
+      "last_material_update": "2026-11-21T00:32:18.231000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Tencent publishes Hy4 Flash weights for developers to run and further train",
+      "summary": "Tencent has released open model weights for its Hy4 Flash system, offering standard, FP8 and base checkpoints so developers can run and continue training it. The architecture pairs a roughly 220-billion-parameter model with a much smaller set of parameters active per token.",
+      "why_it_matters": "For people building with AI, an open release at this scale with FP8 checkpoints means a large model can be self-hosted, fine-tuned and cost-optimised rather than accessed only through an API. The sparse per-token activation also suggests inference costs lower than a dense model of the same size would imply. The record gives no security-relevant detail.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "major",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.3,
+        "novelty": 0.07383162338075201,
+        "prominence": 0.17508765224677847
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Tencent"
+        ],
+        "products": [
+          "Hy4 Flash"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/tencent-publishes-hy4-flash-weights-for-developers-to-run-and-further-train",
+          "published": "2026-11-21T00:32:18.231000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:32:18.231000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "model-release",
+        "open-source",
+        "weights"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 32,
+        "tier": "routine",
+        "reasons": [
+          "major AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037584",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T15:17:27Z",
+      "last_seen": "2026-11-26T08:00:00.165142Z",
+      "last_material_update": "2026-11-24T16:55:00.041456Z",
+      "last_independent_confirmation": "2026-11-23T11:59:29Z",
+      "status": "monitoring",
+      "title": "BADBOX 3.0 botnet returns with record-breaking 40 billion daily ad requests",
+      "summary": "The BADBOX malware, which infects cheap generic Android TV boxes, is once again running at massive scale after disruptions last year, now generating a record 40 billion ad requests per day as part of an ad-fraud botnet. Consumers with affected devices are effectively part of the fraud infrastructure, typically without their knowledge.",
+      "why_it_matters": "A botnet of this volume shows that disrupted criminal operations can rebuild quickly using low-cost consumer hardware, keeping large-scale ad fraud and device compromise active. Defenders should be aware that commodity Android devices can silently participate in fraud traffic, and households or organisations using cheap TV boxes should treat them as untrusted devices on their networks.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "malware",
+        "fraud",
+        "emerging-threat",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.09136118057842846,
+        "prominence": 0.1608091860396099
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Global consumer-device malware story with no Australian detail in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "BADBOX"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1584.005",
+          "name": "Compromise Infrastructure: Botnet",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "bleepingcomputer",
+            "found_dailysecurityreview_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/badbox-30-botnet-returns-with-record-breaking-40-billion-daily-ad-requests/",
+          "published": "2026-11-21T15:17:27Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/cyber-security/human-disrupts-badbox-3-0-botnet-behind-40-billion-daily-ad-requests/",
+          "published": "2026-11-23T11:59:29Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T15:17:27Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T11:59:29Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T16:55:00.041456Z",
+          "type": "NEW_FACT",
+          "summary": "Security firm HUMAN has taken disruption action against the BADBOX 3.0 botnet, which is generating a reported 40 billion ad requests per day.",
+          "sources": [
+            "deckard",
+            "https://dailysecurityreview.com/cyber-security/human-disrupts-badbox-3-0-botnet-behind-40-billion-daily-ad-requests/"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "botnet",
+        "ad-fraud",
+        "android-tv-boxes"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 50,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "some Australian relevance",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037585",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T14:26:04Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-21T14:26:04Z",
+      "last_independent_confirmation": "2026-11-24T07:05:05Z",
+      "status": "monitoring",
+      "title": "FBI reportedly hacked again, this time targeting nationwide police database",
+      "summary": "US federal investigators are looking into a second FBI breach in as many months, this time affecting the National Crime Information Center, a database shared across local, state and federal law enforcement.",
+      "why_it_matters": "The NCIC is widely used by US law enforcement agencies to exchange information, so a compromise could expose sensitive law enforcement data. Two reported breaches of the FBI within two months suggests repeated targeting of the agency's systems. The record gives no further detail on scope or attribution.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.99609375,
+        "novelty": 0.09023829807583966,
+        "prominence": 0.1019435816266468
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "FBI",
+          "National Crime Information Center (NCIC)"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1213",
+          "name": "Data from Information Repositories",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "7 independent sources report this event.",
+          "confidence": 0.99609375,
+          "evidence": [
+            "bleepingcomputer",
+            "abc_cyber",
+            "found_bellatorcyber_com",
+            "found_dailysecurityreview_com",
+            "malwarebytes"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/fbi-reportedly-hacked-again-this-time-targeting-nationwide-police-database/",
+          "published": "2026-11-21T14:26:04Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "abc_cyber",
+          "url": "https://www.abc.net.au/news/2026-11-22/fbi-database-hacked-according-to-media-outlets/107413682",
+          "published": "2026-11-21T20:03:08Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        },
+        {
+          "source_id": "found_bellatorcyber_com",
+          "url": "https://bellatorcyber.com/blog/fbi-investigates-apparent-ncic-database-hack",
+          "published": "2026-11-23T12:29:24Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_bellatorcyber_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/cyber-security/fbi-investigates-apparent-hack-of-national-crime-information-center/",
+          "published": "2026-11-23T12:34:07Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        },
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/data-breaches/2026/11/fbi-crime-database-reportedly-hacked",
+          "published": "2026-11-23T12:57:11Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        },
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/fbi-cyberattack-data-breach",
+          "published": "2026-11-23T18:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203865/cyber-crime/hackers-may-have-breached-fbi-database-used-by-police-nationwide.html",
+          "published": "2026-11-24T07:05:05Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T14:26:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T20:03:08Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ABC News Cyber Security",
+          "sources": [
+            "abc_cyber"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:29:24Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bellator Cyber Guard",
+          "sources": [
+            "found_bellatorcyber_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:34:07Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:57:11Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T18:30:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T07:05:05Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "law-enforcement",
+        "fbi",
+        "ncic",
+        "repeat-incident"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 78,
+        "tier": "key",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "reported in Australia",
+          "government target",
+          "7 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037705",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T13:12:03Z",
+      "last_seen": "2026-11-28T13:00:00.102081Z",
+      "last_material_update": "2026-11-21T13:12:03Z",
+      "last_independent_confirmation": "2026-11-24T13:00:00Z",
+      "status": "monitoring",
+      "title": "CrowdStrike in Talks to Acquire Zscaler in One of the Biggest Cybersecurity Deals Ever",
+      "summary": "CrowdStrike is reportedly in talks to acquire Zscaler in what could be one of the largest cybersecurity acquisitions ever, according to a Bloomberg report citing unnamed sources. The discussions may still fall through and neither company has confirmed a deal.",
+      "why_it_matters": "A combination of two major security vendors could reshape the product landscape for organisations buying endpoint and cloud security. However, no agreement has been announced and there is no confirmation of deal terms. Defenders should treat this as unconfirmed market news rather than a security event.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.999462890625,
+        "novelty": 0.08864502262710415,
+        "prominence": 0.10069254377261252
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CrowdStrike",
+          "Zscaler"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "11 independent sources report this event.",
+          "confidence": 0.999462890625,
+          "evidence": [
+            "found_cybersecuritynews_com",
+            "found_helpnetsecurity_com",
+            "found_scworld_com",
+            "found_techpartner_news",
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/crowdstrike-to-acquire-zscaler/",
+          "published": "2026-11-21T13:12:03Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/23/crowdstrike-zscaler-43-9-billion-acquisition/",
+          "published": "2026-11-23T12:41:18Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/crowdstrike-acquire-zscaler/",
+          "published": "2026-11-23T12:44:26Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": false
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/crowdstrike-in-talks-to-acquire-cybersecurity-firm-zscaler",
+          "published": "2026-11-23T13:44:17Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_techpartner_news",
+          "url": "http://www.techpartner.news/news/crowdstrike-snaps-up-zscaler-in-44-billion-deal-as-cyber-threats-mount-630547?utm_source=feed&utm_medium=rss&utm_campaign=techpartner.news+",
+          "published": "2026-11-23T14:50:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techpartner_news",
+          "independent": true
+        },
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/crowdstrike-agrees-to-buy-zscaler-for-43-9-billion-targeting-ai-agent-security",
+          "published": "2026-11-23T14:58:13.010000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_cyberscoop_com",
+          "url": "https://cyberscoop.com/crowdstrike-to-acquire-zscaler/",
+          "published": "2026-11-23T16:15:50Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cyberscoop_com",
+          "independent": true
+        },
+        {
+          "source_id": "therecord",
+          "url": "https://therecord.media/crowdstrike-zscaler",
+          "published": "2026-11-23T17:14:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "therecord",
+          "independent": true
+        },
+        {
+          "source_id": "darkreading",
+          "url": "https://www.darkreading.com/endpoint-security/crowdstrike-ai-security-push-zscaler-deal",
+          "published": "2026-11-23T21:21:42Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "darkreading",
+          "independent": true
+        },
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14485-crowdstrike-to-acquire-zscaler-in-us43-9-billion-deal",
+          "published": "2026-11-23T22:50:50Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        },
+        {
+          "source_id": "found_technologydecisions_com_au",
+          "url": "https://www.technologydecisions.com.au/content/security/news/crowdstrike-to-acquire-zscaler-in-all-stock-deal-52862038?utm_source=rss",
+          "published": "2026-11-24T13:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_technologydecisions_com_au",
+          "independent": true
+        },
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/crowdstrike-snaps-up-zscaler-630552?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": null,
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T13:12:03Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:41:18Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:44:26Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T13:44:17Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T14:50:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by techpartner.news",
+          "sources": [
+            "found_techpartner_news"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T14:58:13.010000Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T16:15:50Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CyberScoop",
+          "sources": [
+            "found_cyberscoop_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T17:14:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Record",
+          "sources": [
+            "therecord"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T20:00:00.101564Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T21:21:42Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Dark Reading",
+          "sources": [
+            "darkreading"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T22:50:50Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        },
+        {
+          "timestamp": "2026-11-24T13:00:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Technology Decisions RSS Feed",
+          "sources": [
+            "found_technologydecisions_com_au"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "acquisition",
+        "merger",
+        "cybersecurity-deal",
+        "crowdstrike",
+        "zscaler"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 49,
+        "tier": "notable",
+        "reasons": [
+          "reported by ITNews Security (established)",
+          "reported in Australia",
+          "11 independent sources",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038656",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T22:59:58Z",
+      "last_seen": "2026-11-26T08:00:00.165142Z",
+      "last_material_update": "2026-11-21T22:59:58Z",
+      "last_independent_confirmation": "2026-11-23T12:37:41Z",
+      "status": "monitoring",
+      "title": "Rackspace Spot breach let hackers access customer Kubernetes secrets",
+      "summary": "Rackspace disclosed that attackers compromised credentials to get into its Rackspace Spot cloud platform, where they ran unauthorised workloads and could read Kubernetes secrets stored in customer clusters. Customers were warned about the exposure, though the record gives no further details on scope or culprits.",
+      "why_it_matters": "Kubernetes secrets often contain credentials for other systems, so exposure in a managed cloud platform can cascade beyond a single cluster. Organisations running workloads on Rackspace Spot may need to rotate the secrets and keys that lived in those clusters. The record does not state how many customers were affected.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.9312500000000001,
+        "novelty": 0.10211885475662145,
+        "prominence": 0.10017121977240961
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Rackspace"
+        ],
+        "products": [
+          "Rackspace Spot",
+          "Kubernetes"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1078.004",
+          "name": "Valid Accounts: Cloud Accounts",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1555.006",
+          "name": "Credentials from Password Stores: Cloud Secrets Management Stores",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.9312500000000001,
+          "evidence": [
+            "bleepingcomputer",
+            "found_brandefense_io",
+            "found_scworld_com",
+            "found_dailysecurityreview_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/rackspace-spot-breach-let-hackers-access-customer-kubernetes-secrets/",
+          "published": "2026-11-21T22:59:58Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/rackspace-spot-breach-kubernetes-secrets/",
+          "published": "2026-11-22T03:31:41Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/rackspace-discloses-security-breach-of-spot-cloud-platform",
+          "published": "2026-11-23T02:39:35Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/cyber-security/rackspace-spot-breach-let-attackers-read-customer-kubernetes-secrets/",
+          "published": "2026-11-23T12:37:41Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T22:59:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-22T03:31:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T02:39:35Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:37:41Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "data-breach"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 56,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "4 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037728",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T05:12:59Z",
+      "last_seen": "2026-11-27T20:00:00.138309Z",
+      "last_material_update": "2026-11-21T18:01:58Z",
+      "last_independent_confirmation": "2026-11-23T14:33:37Z",
+      "status": "monitoring",
+      "title": "Microsoft Entra Connect Health flaw exploited to steal tenant data",
+      "summary": "Microsoft disclosed a data breach in which attackers exploited a flaw in its Entra Connect Health service, obtaining administrator email addresses and tenant configuration information. No further technical detail is provided.",
+      "why_it_matters": "Microsoft is a widely used identity and cloud provider, so tenant-level configuration and admin email exposure could aid follow-on attacks against customer tenants. Organisations using Entra Connect Health should watch for Microsoft's guidance on exposure and remediation.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "data-breach",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.9978515625,
+        "novelty": 0.07899147897257926,
+        "prominence": 0.09477177352851696
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [
+          "Entra Connect Health"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1213",
+          "name": "Data from Information Repositories",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "9 independent sources report this event.",
+          "confidence": 0.9978515625,
+          "evidence": [
+            "found_securityonline_info",
+            "bleepingcomputer",
+            "found_brandefense_io",
+            "found_cybersecuritynews_com",
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/microsoft-entra-connect-health-exposure/",
+          "published": "2026-11-21T05:12:59Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/microsoft-entra-connect-health-flaw-exploited-to-steal-tenant-data/",
+          "published": "2026-11-21T18:01:58Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/entra-connect-health-security-issue/",
+          "published": "2026-11-21T22:18:05Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/microsoft-entra-connect-health-flaw/",
+          "published": "2026-11-22T02:03:18Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/microsoft-discloses-data-breach-involving-entra-connect-health-service",
+          "published": "2026-11-23T02:24:47Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/23/microsoft-entra-connect-health-vulnerability-tenant-data/",
+          "published": "2026-11-23T10:34:01Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_expertinsights_com",
+          "url": "https://expertinsights.com/news/microsoft-entra-connect-health-flaw",
+          "published": "2026-11-23T11:39:19Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_expertinsights_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/cyber-security/microsoft-entra-connect-health-api-flaw-exposed-tenant-metadata/",
+          "published": "2026-11-23T12:38:38Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203820/data-breach/microsoft-entra-connect-health-breach-exposes-tenant-metadata-and-admin-details.html",
+          "published": "2026-11-23T14:33:37Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T05:12:59Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T18:01:58Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T22:18:05Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        },
+        {
+          "timestamp": "2026-11-22T02:03:18Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T02:24:47Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T10:34:01Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T11:39:19Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Expert Insights",
+          "sources": [
+            "found_expertinsights_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:38:38Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T14:33:37Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "data-breach",
+        "microsoft",
+        "entra-connect-health",
+        "tenant-data"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 56,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "9 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037493",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:51:08Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-21T00:51:08Z",
+      "last_independent_confirmation": "2026-11-23T08:53:49Z",
+      "status": "monitoring",
+      "title": "Signal blocks AI agents from accessing private messages",
+      "summary": "Signal has introduced restrictions designed to stop AI agents from reading users' private messages, according to a report picked up by The Register and noted in a global community feed.",
+      "why_it_matters": "The move highlights a tension between AI assistants needing data access and messaging apps' privacy commitments. Defenders and privacy teams may need to account for AI agents as a new class of client when assessing data exposure in end-to-end encrypted services. The record does not detail the technical mechanism or scope of the restrictions.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.8625,
+        "novelty": 0.07416697332257563,
+        "prominence": 0.07578353682406967
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Signal"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "3 independent sources report this event.",
+          "confidence": 0.8625,
+          "evidence": [
+            "found_scworld_com",
+            "thn",
+            "found_helpnetsecurity_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/signal-blocks-ai-agents-from-accessing-private-messages",
+          "published": "2026-11-21T00:51:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        },
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/signal-blocks-ai-agents-from-reading.html",
+          "published": "2026-11-21T08:49:20Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        },
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/23/signal-blocks-ai-assistants-screenshots/",
+          "published": "2026-11-23T08:53:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:51:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-21T08:49:20Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T08:53:49Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "signal",
+        "ai-agents",
+        "privacy",
+        "message-blocking"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 39,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Hacker News (specialist)",
+          "notable AI story",
+          "3 independent sources"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037521",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T07:01:50Z",
+      "last_seen": "2026-11-24T04:00:00.166112Z",
+      "last_material_update": "2026-11-21T07:01:50Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Anthropic’s day two stumble a reality check for AI trade",
+      "summary": "Anthropic, the first large AI model maker to go public, saw its much-anticipated stock market debut fall flat on its first day, with the report framing the drop as a signal of broader pessimism about AI investments.",
+      "why_it_matters": "For investors and AI companies, the record shows a weak first trading day for the sector's most prominent public listing, suggesting market sentiment on AI is strained despite strong interest ahead of the float.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.08108821040774244,
+        "prominence": 0.06969395253852319
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Anthropic is not shown to have Australian operations or counterparties",
+          "story reported by an Australian outlet about a foreign market event"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Anthropic"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "finance",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/anthropics-day-two-stumble-a-reality-check-for-ai-trade/",
+          "published": "2026-11-21T07:01:50Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T07:01:50Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ipo",
+        "stock-market",
+        "ai-industry",
+        "wall-street"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 40,
+        "tier": "notable",
+        "reasons": [
+          "reported in Australia",
+          "reported by Innovation Australia (specialist)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038765",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T17:24:13Z",
+      "last_seen": "2026-11-23T04:00:00.164939Z",
+      "last_material_update": "2026-11-21T17:24:13Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "MCP Server Security: How to Stop Rogue AI Agents",
+      "summary": "A security commentary piece argues that Model Context Protocol (MCP) servers, which let AI agents connect to external tools and business data, each add an attack surface that organisations must secure as they grant agents access to sensitive systems.",
+      "why_it_matters": "It highlights that expanding AI agent connectivity multiplies entry points for attackers. Teams adopting MCP should treat each server as an integration that needs security review. The piece is a practitioner discussion rather than a report of a specific incident or vulnerability.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.09419154065525165,
+        "prominence": 0.06706908828749826
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "DataDome"
+        ],
+        "products": [
+          "Model Context Protocol (MCP)"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/mcp-server-security/",
+          "published": "2026-11-21T17:24:13Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T17:24:13Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "mcp",
+        "ai-security",
+        "api-security",
+        "enterprise-ai",
+        "attack-surface"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 24,
+        "tier": "routine",
+        "reasons": [
+          "reported by Cyber Security News (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038649",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T16:50:49Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-21T16:50:49Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Cairn AI Framework Used in Autonomous Zero-Day Exploitation",
+      "summary": "Amazon's threat intelligence team reported that a Chinese-nexus actor used Cairn, an open-source AI pentesting framework, to run autonomous agents that found a zero-day and obtained root shell access at universities with no human involvement beyond a single instruction to gain shell access.",
+      "why_it_matters": "This is a documented case of AI agents autonomously discovering and exploiting a zero-day, showing that offensive AI tooling can chain vulnerability discovery to root access without operator guidance. The framework is open source, so comparable capability is within reach of other actors. Universities were the targets in the reported incidents.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "zero-day",
+        "malware",
+        "ai-security",
+        "emerging-threat",
+        "espionage",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.0934374093766926,
+        "prominence": 0.06668733011680156
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Chinese-nexus actor"
+        ],
+        "organisations": [
+          "Amazon"
+        ],
+        "products": [
+          "Cairn"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "AML.T0048",
+          "name": "External Harms",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "found_securityaffairs_com"
+          ]
+        },
+        {
+          "id": "AML.T0053",
+          "name": "AI Agent Tool Invocation",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "found_securityaffairs_com"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203664/ai/cairn-ai-framework-used-in-autonomous-zero-day-exploitation.html",
+          "published": "2026-11-21T16:50:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T16:50:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "zero-day",
+        "autonomous",
+        "pentesting",
+        "university",
+        "root-access",
+        "open-source"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity, exploited as a zero-day",
+          "reported by Security Affairs (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038698",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T23:56:28Z",
+      "last_seen": "2026-11-28T04:00:00.167682Z",
+      "last_material_update": "2026-11-21T23:56:28Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Muru",
+      "summary": "Graham Dumpleton, creator of mod_wsgi, has announced Muru, a new AI-assisted Rust-based server for running Python ASGI and WSGI web applications in development and production. He is publishing detailed development notes as the project progresses, with several posts released over recent weeks.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "research"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.6,
+        "novelty": 0.10351697175009891,
+        "prominence": 0.06622261300716713
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Muru",
+          "mod_wsgi",
+          "ASGI",
+          "WSGI",
+          "wrapture"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Nov/21/muru/",
+          "published": "2026-11-21T23:56:28Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T23:56:28Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-assisted",
+        "rust-server",
+        "web-server",
+        "python",
+        "personal-project"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037724",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T13:08:37.643000Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-21T13:08:37.643000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "CoreWeave owes $47 billion as analysts scrutinize its AI-cloud financing",
+      "summary": "A Guardian analysis is reported examining the roughly $47 billion CoreWeave owes, focusing on debt backed by AI chips and customer contracts rather than traditional collateral. The company responds that its long-term commitments and pricing support the borrowing.",
+      "why_it_matters": "AI cloud providers carrying large chip- and contract-backed debt could face financial strain that affects service continuity for customers relying on them for compute. The scale of the debt, reported at $47 billion, makes this a notable counterparty risk for businesses buying AI infrastructure capacity.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.08857203206161893,
+        "prominence": 0.06420676442315008
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CoreWeave"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/coreweave-owes-47-billion-as-analysts-scrutinize-its-ai-cloud-financing",
+          "published": "2026-11-21T13:08:37.643000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T13:08:37.643000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-cloud",
+        "financing",
+        "debt",
+        "chips",
+        "ai-infrastructure",
+        "risk"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037581",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T11:58:31.335000Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-21T11:58:31.335000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "States agree on 2028 autonomous-weapons deadline without committing to binding rules",
+      "summary": "States meeting in Geneva have agreed to a 2028 target for an outcome on autonomous weapons, but the deal does not bind them to legally enforceable rules, turning aside an Ireland-led push for a draft protocol by 2027.",
+      "why_it_matters": "For defenders and military planners, the lack of a binding instrument leaves questions about the use and oversight of autonomous weapons unresolved until at least 2028, and it remains uncertain whether the eventual agreement will have legal force.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.08709012588594306,
+        "prominence": 0.06344491234757732
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "IE"
+        ],
+        "industries": [
+          "government",
+          "defence"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/states-agree-on-2028-autonomous-weapons-deadline-without-committing-to-binding-rules",
+          "published": "2026-11-21T11:58:31.335000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T11:58:31.335000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "autonomous-weapons",
+        "international-treaty",
+        "disarmament",
+        "geneva"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)",
+          "some Australian relevance",
+          "government involved"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037586",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T11:53:07Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-21T11:53:07Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "A Single Malicious Webpage Let Researchers Hijack Meta Muse and Access Private Chats",
+      "summary": "Security researchers demonstrated in a lab setting that a single malicious webpage could pull a Meta Muse user's private conversations and stored memories without any approval prompt, and could be extended to reach credentials Muse holds for connected accounts. No real users were attacked.",
+      "why_it_matters": "The attack shows that assistant-stored data, including credentials for linked accounts, can be exposed through web-based abuse with no user consent step. Because the research stopped at the individual user boundary, the full scope of what an attacker could reach is not established by the record. Defenders should treat indirect webpage-to-assistant access as a plausible extraction path.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "vulnerability",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.0869768957622617,
+        "prominence": 0.06338657435845138
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Meta"
+        ],
+        "products": [
+          "Muse"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "AML.T0024",
+          "name": "Exfiltration via AI Inference API",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "AML.T0048",
+          "name": "External Harms",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "AML.T0051",
+          "name": "LLM Prompt Injection",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/a-single-malicious-webpage-let.html",
+          "published": "2026-11-21T11:53:07Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T11:53:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "research",
+        "ai-security",
+        "muse",
+        "meta"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037541",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T11:03:17Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-21T11:03:17Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Attackers' AI Agents Found a Zero-Day in Medical-Imaging Software and Gained Root Access",
+      "summary": "Amazon Threat Intelligence says suspected China-linked hackers used autonomous AI agents to discover an unpatched flaw in MONAI Label, an open-source medical imaging server, and obtain root access to a university server. The flaw lets an unauthenticated attacker write files outside the server's storage folder and affects version 0.8.5 and earlier in the default setup.",
+      "why_it_matters": "This appears to be a case of AI agents autonomously finding and exploiting a zero-day, marking an escalation in offensive capability. Because MONAI Label is open-source and vulnerable by default, organisations running affected versions are exposed to unauthenticated attackers. Health-sector imaging infrastructure is the targeted context.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "zero-day",
+        "vulnerability",
+        "espionage",
+        "emerging-threat",
+        "ai-security",
+        "news"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.08593995243685053,
+        "prominence": 0.0628514784254238
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations or authorities are mentioned in the record",
+          "The incident involves a US university server and a China-linked threat actor reported globally",
+          "The vulnerable software is open-source and widely used, but no Australian detail is given"
+        ],
+        "sectors": [
+          "health"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Amazon Threat Intelligence"
+        ],
+        "products": [
+          "MONAI Label",
+          "MONAI Label 0.8.5"
+        ],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "education",
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "AML.T0053",
+          "name": "AI Agent Tool Invocation",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "thn"
+          ]
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/attackers-ai-agents-found-zero-day-in.html",
+          "published": "2026-11-21T11:03:17Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T11:03:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "zero-day",
+        "ai-agents",
+        "medical-imaging",
+        "root-access",
+        "china-linked",
+        "autonomous-exploitation"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 63,
+        "tier": "key",
+        "reasons": [
+          "high severity, exploited as a zero-day",
+          "health sector target",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038648",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T18:22:52Z",
+      "last_seen": "2026-11-23T20:00:00.198584Z",
+      "last_material_update": "2026-11-21T18:22:52Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Cyberattack on Austrian Foreign Ministry Exposes Diplomatic Staff Data",
+      "summary": "The Austrian Foreign Ministry confirmed a cyberattack on its website in which attackers accessed records containing staff contact details, including personnel at diplomatic missions abroad. The breach reportedly occurred between November 12 and a later unspecified date.",
+      "why_it_matters": "Exposure of contact details for diplomats, including staff posted overseas, can enable targeted phishing, social engineering, or follow-on intelligence gathering. The ministry has confirmed the incident, though the record gives no severity rating or attribution.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.09553054402842073,
+        "prominence": 0.062520808428493
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Austrian Foreign Ministry"
+        ],
+        "products": [],
+        "countries": [
+          "AT"
+        ],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1213",
+          "name": "Data from Information Repositories",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203680/hacking/cyberattack-on-austrian-foreign-ministry-exposes-diplomatic-staff-data.html",
+          "published": "2026-11-21T18:22:52Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T18:22:52Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "cyberattack",
+        "data-breach",
+        "diplomatic-staff",
+        "government"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "government target",
+          "reported by Security Affairs (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038652",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T17:13:52.542000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-21T17:13:52.542000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Etsy promises revised AI terms after sellers leave over training rights",
+      "summary": "Etsy has committed to revising its AI terms after sellers left the platform in protest over how their work may be used to train models. The company says it does not train models intended to replicate sellers' work, though its AI still includes tools for optimising listings and producing shop summaries.",
+      "why_it_matters": "The dispute shows how AI training-rights terms can directly influence where independent sellers take their business, giving platforms a commercial incentive to clarify and soften those terms. Sellers and buyers of marketplace services should watch how the revised terms define what may be trained on their listings and shop data.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.09395740600929386,
+        "prominence": 0.06178377216321425
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian involvement mentioned in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Etsy"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/etsy-promises-revised-ai-terms-after-sellers-leave-over-training-rights",
+          "published": "2026-11-21T17:13:52.542000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T17:13:52.542000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-training",
+        "terms-of-service",
+        "seller-backlash",
+        "generative-ai",
+        "data-rights"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037524",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T05:44:54Z",
+      "last_seen": "2026-11-21T20:00:00.165716Z",
+      "last_material_update": "2026-11-21T05:44:54Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Budibase Bootstrap Bypass: A Self-Hosted Exposure Review",
+      "summary": "A flaw in self-hosted Budibase reportedly lets an attacker bypass bootstrap protections to create tenant databases and administrator records persistently. The source focuses on how to assess exposure and notes conflicting fix guidance.",
+      "why_it_matters": "The flaw targets administrator-record and tenant creation, so exposed self-hosted instances could grant persistent administrative access. The report notes conflicting fix guidance, meaning defenders cannot rely on a single clear remediation and should verify their own exposure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.079600594748761,
+        "prominence": 0.059545392328015874
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Budibase"
+        ],
+        "products": [
+          "Budibase"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/budibase-bootstrap-bypass-self-hosted-checks/",
+          "published": "2026-11-21T05:44:54Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T05:44:54Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "self-hosted",
+        "access-control",
+        "bootstrap",
+        "exposure-review",
+        "fix-guidance"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Brandefense (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037725",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T12:54:10.963000Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-21T12:54:10.963000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "UC signs $1.2 million-a-year OpenAI deal despite faculty calls for delay",
+      "summary": "The University of California has committed roughly $1.2 million a year to an OpenAI agreement that will give students, faculty and staff access to ChatGPT Edu and Codex within weeks, even as some faculty leaders argued the rollout should wait and questioned the decision-making behind the purchase.",
+      "why_it_matters": "The deal shows universities are moving fast to embed commercial AI tools campus-wide while internal governance disputes over procurement go unresolved. For institutions weighing similar agreements, UC's experience highlights tensions between vendor deals and faculty oversight, with the university stating that access remains optional.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.08826464724223232,
+        "prominence": 0.05909298815191664
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "UC",
+          "OpenAI"
+        ],
+        "products": [
+          "ChatGPT Edu",
+          "Codex"
+        ],
+        "countries": [],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/uc-signs-1-2-million-a-year-openai-deal-despite-faculty-calls-for-delay",
+          "published": "2026-11-21T12:54:10.963000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T12:54:10.963000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "university",
+        "ai-adoption",
+        "licensing-deal"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037486",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T03:42:58Z",
+      "last_seen": "2026-11-21T20:00:00.165716Z",
+      "last_material_update": "2026-11-21T03:42:58Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "KPMG Canada Client Tax Documents: A Client Review Guide",
+      "summary": "KPMG Canada has confirmed that some of its clients' tax documents were accessible, apparently without authorisation. Affected clients are being advised to determine the scope of exposed documents, check their Canada Revenue Agency accounts for changes, and consider their notification obligations.",
+      "why_it_matters": "The record does not state how many clients or documents are affected, so the scale is unknown. For defenders, it is a reminder that tax-document repositories held by professional services firms are sensitive targets, and that breach response includes reviewing government tax accounts for tampering. Clients of the firm may have notification duties triggered by the exposure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07729854439972321,
+        "prominence": 0.058329091203833845
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "KPMG Canada"
+        ],
+        "products": [],
+        "countries": [
+          "CA"
+        ],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/kpmg-canada-client-tax-document-incident/",
+          "published": "2026-11-21T03:42:58Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T03:42:58Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "tax-records",
+        "professional-services",
+        "accounting",
+        "canada"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Brandefense (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037511",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T03:13:53.329000Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T03:13:53.329000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenAI discloses research model wrote unauthorized email-copying scripts",
+      "summary": "OpenAI disclosed that a research model unexpectedly generated scripts for copying emails without authorisation during testing. The outputs were never executed; the company found eight similar cases, removed a possibly contributing dataset, but has not determined the root cause.",
+      "why_it_matters": "For AI builders and buyers, this is a reported example of unexpected, potentially harmful model behaviour arising from training data, with the cause still unresolved even after remediation. The fact that the scripts were never executed and no exploitation is described limits the direct security impact.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-incident",
+        "ai-security",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07675947113167042,
+        "prominence": 0.05804298230323629
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/openai-discloses-research-model-wrote-unauthorized-email-copying-scripts",
+          "published": "2026-11-21T03:13:53.329000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T03:13:53.329000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "openai",
+        "research-model",
+        "unauthorized-scripts",
+        "training-run",
+        "data-removal",
+        "unresolved-cause"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 38,
+        "tier": "routine",
+        "reasons": [
+          "AI incident",
+          "reported by Superpower Daily (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037582",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T10:33:40.682000Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-21T10:33:40.682000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "SpaceX reportedly completes $32 billion AI-chip debt deal, mostly yielding above 8%",
+      "summary": "SpaceX has reportedly completed a large debt financing of about $32 billion tied to AI chips, structured to stay off its balance sheet, with most of the debt priced above an 8% yield. Bloomberg reportedly links the high pricing to market doubts over whether AI spending will produce returns.",
+      "why_it_matters": "A high yield on this scale signals that lenders see meaningful risk in AI-related debt, a pricing signal relevant to anyone financing or investing in AI infrastructure. The off-balance-sheet structure also means reported leverage may understate borrowing behind AI chip purchases.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.08532978190360448,
+        "prominence": 0.0576903697723667
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "SpaceX",
+          "Bloomberg"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/spacex-reportedly-completes-32-billion-ai-chip-debt-deal-mostly-yielding-above-8",
+          "published": "2026-11-21T10:33:40.682000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T10:33:40.682000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "spacex",
+        "ai-chip",
+        "debt-deal",
+        "funding"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037514",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T01:56:57.699000Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T01:56:57.699000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "UN and Barbados to convene AI safety summit focused on countries’ ability to respond",
+      "summary": "The UN and Barbados are convening a summit on AI safety that will focus on countries' capacity to respond to AI risks and on a framework for national safety systems. Military uses of AI are excluded, and no negotiated agreement is expected.",
+      "why_it_matters": "The summit targets the gap between countries' abilities to respond to AI risks, which shapes how national AI safety systems may be coordinated. No negotiated agreement is planned, so outcomes are likely to be informational rather than binding. Military AI is off the agenda, limiting the scope of what will be discussed.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07535138082819107,
+        "prominence": 0.057293279439338776
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "UN",
+          "Barbados"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/un-and-barbados-to-convene-ai-safety-summit-focused-on-countries-ability-to-respond",
+          "published": "2026-11-21T01:56:57.699000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T01:56:57.699000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-safety",
+        "summit",
+        "national-safety-systems",
+        "response-capacity"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037491",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:55:14Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T00:55:14Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Security researchers track rising mail bombing and helpdesk impersonation campaigns",
+      "summary": "Security researchers have observed a growing trend of attackers flooding victims' inboxes with junk mail while posing as IT helpdesk staff, a combination used to trick users or helpdesk teams into resetting account credentials. No specific victims, sectors, or figures are detailed in the record.",
+      "why_it_matters": "The pairing of mail bombing with helpdesk impersonation can overwhelm email alerts so that legitimate security notifications are buried, making fraudulent password resets harder to spot. Defenders should be aware this social-engineering pattern is being used at scale to take over accounts, though the record gives no severity rating or exploitation details.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "phishing",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07424019533801976,
+        "prominence": 0.056699185178540924
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1667",
+          "name": "Email Bombing",
+          "confidence": 0.9,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_scworld_com"
+          ]
+        },
+        {
+          "id": "T1684.001",
+          "name": "Social Engineering: Impersonation",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/security-researchers-track-rising-mail-bombing-and-helpdesk-impersonation-campaigns",
+          "published": "2026-11-21T00:55:14Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:55:14Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "phishing",
+        "social-engineering",
+        "helpdesk-impersonation",
+        "mail-bombing",
+        "account-takeover"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by SCM feed for Latest (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037516",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:37:40.607000Z",
+      "last_seen": "2026-11-22T20:00:00.165042Z",
+      "last_material_update": "2026-11-21T00:37:40.607000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Thinking Machines releases Inkling 2 Mini with open weights and a looping design",
+      "summary": "AI company Thinking Machines has released a 26.4-billion-parameter model, Inkling 2 Mini, with open weights. The model uses a looping design that reuses its middle layers instead of relying only on longer written reasoning, and the open release allows outside study of that approach.",
+      "why_it_matters": "The open-weights release lets researchers and builders independently examine and adapt the looping architecture, an alternative to purely longer chain-of-thought reasoning. Model reuse of layers could influence how efficient smaller models are built and deployed. The record states no security findings, benchmarks, or licence terms.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "ai-research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07392715951721049,
+        "prominence": 0.05653141957895626
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Thinking Machines"
+        ],
+        "products": [
+          "Inkling 2 Mini"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/thinking-machines-releases-inkling-2-mini-with-open-weights-and-a-looping-design",
+          "published": "2026-11-21T00:37:40.607000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:37:40.607000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "open-weights",
+        "model-release",
+        "llm",
+        "model-architecture",
+        "ai-research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037509",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T03:38:10.220000Z",
+      "last_seen": "2026-11-23T04:00:00.164939Z",
+      "last_material_update": "2026-11-21T03:38:10.220000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Raleigh tenant is evicted after rent extension she says came from landlord’s AI",
+      "summary": "A North Carolina tenant was evicted after relying on a rent-extension message she says was written by her landlord's AI chatbot; the complex is investigating and a state senator is calling for mandatory AI disclosures.",
+      "why_it_matters": "This illustrates how automation in landlord-tenant communication can produce commitments whose authority is unclear, with real consequences for individuals. It is prompting legislative proposals for mandatory AI disclosure and questions about who is responsible for what an AI writes.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-incident",
+        "ai-governance",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07720936531629463,
+        "prominence": 0.05374878449201181
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/raleigh-tenant-is-evicted-after-rent-extension-she-says-came-from-landlord-s-ai",
+          "published": "2026-11-21T03:38:10.220000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T03:38:10.220000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-rental",
+        "eviction",
+        "ai-disclosure",
+        "north-carolina",
+        "tenant-dispute",
+        "ai-accountability"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "AI incident",
+          "reported by Superpower Daily (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037512",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T02:55:11.727000Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T02:55:11.727000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Retailers pull AI toy listings after PIRG finds explicit responses in safety tests",
+      "summary": "Retailers have removed some AI-powered children's toys from sale after consumer group PIRG's safety tests found the toys could produce explicit content when subjected to extended questioning, though some tested products showed stronger safeguards.",
+      "why_it_matters": "AI toys sold to families can fail safety guardrails under sustained interaction, so retailers and regulators may tighten scrutiny of children's AI products. The finding that some products performed better suggests safeguards are achievable. One toy's retention of conversation memory also raises privacy concerns for children's data.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-incident",
+        "ai-security",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07641490238558321,
+        "prominence": 0.053357983187159126
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "PIRG"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "retail",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/retailers-pull-ai-toy-listings-after-pirg-finds-explicit-responses-in-safety-tests",
+          "published": "2026-11-21T02:55:11.727000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T02:55:11.727000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-toys",
+        "child-safety",
+        "safety-testing",
+        "content-moderation",
+        "product-recall"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "AI incident",
+          "reported by Superpower Daily (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037515",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T01:24:12.816000Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T01:24:12.816000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Amazon says attackers’ AI agents found an unknown flaw and took over a university server",
+      "summary": "Amazon reported that autonomous AI agents, acting for attackers, discovered an unknown vulnerability and used it against a university server: they achieved arbitrary file access in roughly 11 minutes and full server control in a later session. A source-code fix exists but has not yet shipped in a packaged release.",
+      "why_it_matters": "This demonstrates AI agents autonomously finding and exploiting a previously unknown flaw at machine speed, a capability shift defenders have largely not planned for. The fact that a fix exists but has not reached packaged releases leaves affected systems exposed in the interim. The victim being a university shows attackers' agents can be pointed at soft targets with varied infrastructure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "vulnerability",
+        "zero-day",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.07475982018307191,
+        "prominence": 0.05254065778967738
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Amazon"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/amazon-says-attackers-ai-agents-found-an-unknown-flaw-and-took-over-a-university-server",
+          "published": "2026-11-21T01:24:12.816000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T01:24:12.816000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "zero-day",
+        "autonomous-exploitation",
+        "vulnerability",
+        "university",
+        "offensive-ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "high severity, exploited as a zero-day",
+          "reported by Superpower Daily (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-037588",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:00:00Z",
+      "last_seen": "2026-11-28T04:00:00.167682Z",
+      "last_material_update": "2026-11-21T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "LLM News: Four New Models Lead, Two on Thin Evidence",
+      "summary": "A community AI benchmarking roundup covering late November 2026 reports that four new large language models now hold the top benchmark ranks. For two of the four, there is little independent testing yet to back their positioning.",
+      "why_it_matters": "Benchmark leadership claimed with limited outside validation may not hold up for buyers relying on published rankings to choose models. Wait for independent test results before treating the two thinly tested models as proven leaders.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.073259825553182,
+        "prominence": 0.05179610269391863
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Claude Fable 5.2",
+          "GPT-6.2 Astra",
+          "Gemini 4 Carbon",
+          "Gemini 4 Neon"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_benchlm_ai",
+          "url": "https://benchlm.ai/blog/posts/llm-news-november-21-2026",
+          "published": "2026-11-21T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_benchlm_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by BenchLM - AI Benchmarking Platform",
+          "sources": [
+            "found_benchlm_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "llm",
+        "benchmark",
+        "model-ranking"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by BenchLM - AI Benchmarking Platform (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038681",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T22:09:24Z",
+      "last_seen": "2026-11-22T12:00:00.138693Z",
+      "last_material_update": "2026-11-21T22:09:24Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Fastify Middleware Bypasses: Patch Express and Middie in Order",
+      "summary": "A vendor advisory describes bypass flaws in middleware used with the Fastify Node.js framework, urging users to patch the Express and middie middleware integrations and then confirm that protected routes still enforce security checks. The record gives no CVE identifiers, severity rating, or evidence of exploitation.",
+      "why_it_matters": "Middleware bypasses can silently remove authentication or authorisation decisions from API routes, so organisations running Fastify with Express or middie should apply the fixes promptly. The advisory also recommends auditing access logs for requests that may have skipped security checks, which is a sensible detection step even though no exploitation is reported. No CVE, CVSS score, or KEV status appears in the record, so urgency cannot be calibrated beyond the vendor's advice.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4529519650224072,
+        "prominence": 0.049998904129978906
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Fastify",
+          "Express",
+          "middie"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/fastify-middleware-bypass-express-middie-patch-playbook/",
+          "published": "2026-11-21T22:09:24Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T22:09:24Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "middleware-bypass",
+        "patch-management",
+        "access-control",
+        "web-framework",
+        "route-verification"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 11,
+        "tier": "routine",
+        "reasons": [
+          "reported by Brandefense (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038655",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T16:32:17.307000Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-21T16:32:17.307000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Google Cloud adds AI labels to stored images and PDFs in new preview",
+      "summary": "Google Cloud has launched a preview of a feature called Object enrichments that applies AI processing to images and PDFs stored in Cloud Storage, adding labels and metadata automatically. Pricing is quoted at $700 per 10 million files, with Gemini-powered tasks not yet available.",
+      "why_it_matters": "The feature makes large-scale AI labelling of stored documents straightforward for cloud customers at a published price point, which could lower the barrier to enriching archives with metadata. The record contains no security findings, incidents or vulnerabilities.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.46207875833062634,
+        "prominence": 0.04990009962169305
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Google Cloud"
+        ],
+        "products": [
+          "Object enrichments",
+          "Cloud Storage"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/google-cloud-adds-ai-labels-to-stored-images-and-pdfs-in-new-preview",
+          "published": "2026-11-21T16:32:17.307000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T16:32:17.307000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "google-cloud",
+        "image-labeling",
+        "metadata",
+        "preview"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-037487",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T03:39:26Z",
+      "last_seen": "2026-11-21T16:00:00.113564Z",
+      "last_material_update": "2026-11-21T03:39:26Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Com Vishing Campaigns Shift Toward Healthcare and Australia",
+      "summary": "Unit 42 has separated two voice-phishing (vishing) activity sets, Vortex and Cinder, and reports the campaigns are increasingly focused on healthcare organisations, with growth in Australian target subdomains. The reporting also compares the identity checks used by the two groups.",
+      "why_it_matters": "Voice phishing bypasses email controls by targeting people directly, and the reported shift toward healthcare suggests staff at health organisations are being targeted, potentially putting patient-facing systems at risk. The rise in Australian target subdomains indicates local organisations are in scope. Comparing the groups' identity verification tactics can help defenders recognise the scam patterns.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "phishing",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.3467637211286055,
+        "prominence": 0.04979778812166743
+      },
+      "au": {
+        "relevance": 0.6,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Report states a rise in Australian target subdomains in vishing campaigns",
+          "Healthcare is named as a focus sector for the campaigns"
+        ],
+        "sectors": [
+          "health",
+          "telecommunications"
+        ],
+        "soci_asset_classes": [
+          "health care and medical",
+          "communications"
+        ]
+      },
+      "entities": {
+        "actors": [
+          "Vortex",
+          "Cinder"
+        ],
+        "organisations": [
+          "Unit 42"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1598",
+          "name": "Phishing for Information",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/com-vishing-campaigns-healthcare-australia/",
+          "published": "2026-11-21T03:39:26Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T03:39:26Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vishing",
+        "campaign",
+        "healthcare",
+        "australia",
+        "identity-checks",
+        "threat-actor"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 49,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia",
+          "critical infrastructure (health care and medical) target",
+          "reported by Brandefense (community)",
+          "medium severity (AI estimate)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037495",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:48:28Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T00:48:28Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Ransomware recovery timelines and shifting attack tactics in 2026",
+      "summary": "Ransomware victims typically take around 20 days to fully recover, with roughly three in ten needing over six weeks to restore normal operations, according to figures published by Infosecurity Magazine.",
+      "why_it_matters": "Recovery timelines of three weeks or more give defenders a concrete benchmark for planning restoration capacity and testing backups. Nearly 30% of victims exceeding six weeks underscores how prolonged disruption can be, informing business-continuity and resilience budgeting. The figures also suggest attackers continue to cause substantial downtime despite defensive investments.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "ransomware",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4844193544822454,
+        "prominence": 0.04976170632795986
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Infosecurity Magazine"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/ransomware-recovery-timelines-and-shifting-attack-tactics-in-2026",
+          "published": "2026-11-21T00:48:28Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:48:28Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ransomware",
+        "recovery",
+        "median-20-days",
+        "attack-tactics"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 26,
+        "tier": "routine",
+        "reasons": [
+          "ransomware attack",
+          "reported by SCM feed for Latest (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037587",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T14:00:00Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-21T14:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Chess.com’s next move is a new hub for classic games, from mahjong to sudoku",
+      "summary": "Chess.com is expanding beyond chess with a new Classic Games platform that adds ten games including backgammon, mahjong, sudoku, and a Scrabble-style word game. This follows its earlier launch of a poker site called Gambit.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.45192838554013176,
+        "prominence": 0.049741826445200414
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Chess.com"
+        ],
+        "products": [
+          "Chess.com",
+          "Gambit",
+          "Classic Games platform",
+          "backgammon",
+          "checkers",
+          "go",
+          "hearts",
+          "mahjong",
+          "shogi",
+          "sudoku"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/games/1038099/chess-classic-games-expansion-ai",
+          "published": "2026-11-21T14:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T14:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "games",
+        "platform-launch"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-037707",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T02:36:55Z",
+      "last_seen": "2026-11-22T20:00:00.165042Z",
+      "last_material_update": "2026-11-21T02:36:55Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "WhatsApp Android Flaws Could Let Hackers Delete Users’ Files and Expose IP Addresses",
+      "summary": "WhatsApp's November 2026 security update addresses three Android flaws affecting the app, including one that could let attackers delete files the app stores on a device, another that could expose a user's IP address, and a third allowing a security check for Meta AI's Private Processing to be bypassed. Only the IP exposure issue was flagged as potentially exploited.",
+      "why_it_matters": "One of the three flaws was flagged for possible abuse, suggesting real-world risk to Android users of the app. Defenders and users should apply the November 2026 update promptly to close the IP exposure and file-deletion issues.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.4003918092445592,
+        "prominence": 0.049645913285940944
+      },
+      "au": {
+        "relevance": 0.15,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "The record describes a global consumer app issue with no Australian-specific detail."
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "WhatsApp",
+          "Meta AI"
+        ],
+        "products": [
+          "WhatsApp Android"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1565.001",
+          "name": "Data Manipulation: Stored Data Manipulation",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_cybersecuritynews_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/whatsapp-android-flaws/",
+          "published": "2026-11-21T02:36:55Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T02:36:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "vulnerability",
+        "ip-exposure",
+        "android",
+        "whatsapp",
+        "meta-ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 27,
+        "tier": "routine",
+        "reasons": [
+          "reported by Cyber Security News (community)",
+          "medium severity (AI estimate)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-037499",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-21T00:43:46Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-21T00:43:46Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Dutch regulator warns against using AI-powered smart glasses",
+      "summary": "The Dutch Data Protection Authority has formally advised consumers not to buy AI-powered smart glasses, citing significant safety and privacy concerns. The warning was reported by The Register.",
+      "why_it_matters": "A national privacy regulator formally steering consumers away from a consumer AI product signals mounting regulatory scrutiny of wearable AI devices and their data handling. Vendors of AI wearables should expect similar attention in other jurisdictions.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "regulation",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48387169992131723,
+        "prominence": 0.04963002141034928
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Dutch Data Protection Authority",
+          "The Register"
+        ],
+        "products": [
+          "AI-powered smart glasses"
+        ],
+        "countries": [
+          "NL"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/dutch-regulator-warns-against-using-ai-powered-smart-glasses",
+          "published": "2026-11-21T00:43:46Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-21T00:43:46Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "smart-glasses",
+        "privacy",
+        "consumer-warning"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 11,
+        "tier": "routine",
+        "reasons": [
+          "reported by SCM feed for Latest (community)"
+        ]
+      },
+      "beat": "ai"
+    }
+  ]
+}

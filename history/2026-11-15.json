@@ -1,0 +1,3992 @@
+{
+  "generated_at": "2026-11-28T13:00:04.510164Z",
+  "date": "2026-11-15",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 38,
+    "critical": 1,
+    "high": 4,
+    "medium": 1,
+    "low": 7,
+    "unknown": 25,
+    "directly_reported_in_au": 5,
+    "pending_enrichment": 6
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-034098",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T14:23:19Z",
+      "last_seen": "2026-11-16T16:00:00.160622Z",
+      "last_material_update": "2026-11-15T14:23:19Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "tvOS 27.2.1 and HomeView 27.2 Fix Bluetooth Pairing and Brotli Flaws",
+      "summary": "A tvOS 27.2.1 update and HomeView Software 27.2 have been released to fix Bluetooth pairing bypass issues and a Brotli flaw that CISA lists as exploited. Related advisories cover a high-severity buffer overflow in a PLANET switch and an actively exploited XXE vulnerability in Cisco BroadWorks.",
+      "why_it_matters": "The Brotli flaw, CVE-2026-111497, carries a CVSS of 9.2, is on CISA's KEV catalogue, and has an EPSS score of about 0.83, indicating significant exploitation risk. The Cisco BroadWorks XXE issue, CVE-2026-20320, is also KEV-listed and actively exploited. Defenders running the affected products should prioritise patching these items.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "cna",
+      "risk": {
+        "urgency": 1.0,
+        "confidence": 0.3,
+        "novelty": 0.01127232409758091,
+        "prominence": 0.13696013244033187
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "CISA"
+        ],
+        "products": [
+          "tvOS 27.2.1",
+          "HomeView Software 27.2"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [
+        {
+          "id": "CVE-2026-109445",
+          "cvss": {
+            "score": 9.3,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.00686,
+            "status": "known"
+          },
+          "kev": {
+            "listed": false,
+            "date_added": null,
+            "due_date": null
+          },
+          "advisories": []
+        },
+        {
+          "id": "CVE-2026-111497",
+          "cvss": {
+            "score": 9.2,
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.99987,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-10-27",
+            "due_date": "2026-11-10"
+          },
+          "advisories": [
+            {
+              "id": "GHSA-9v8h-qqgm-4m35",
+              "source": "ghsa",
+              "severity": "critical",
+              "reviewed": true,
+              "packages": [
+                {
+                  "ecosystem": "PyPI",
+                  "name": "brotli",
+                  "fixed": [
+                    "1.2.1"
+                  ]
+                },
+                {
+                  "ecosystem": "PyPI",
+                  "name": "brotlicffi",
+                  "fixed": [
+                    "1.2.1.0"
+                  ]
+                }
+              ],
+              "url": "https://github.com/advisories/GHSA-9v8h-qqgm-4m35"
+            }
+          ]
+        },
+        {
+          "id": "CVE-2026-20320",
+          "cvss": {
+            "score": 7.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "cna"
+          },
+          "epss": {
+            "score": 0.01301,
+            "status": "known"
+          },
+          "kev": {
+            "listed": true,
+            "date_added": "2026-11-10",
+            "due_date": "2026-11-24"
+          },
+          "advisories": []
+        }
+      ],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "CISA lists CVE-2026-111497 and CVE-2026-20320 as exploited in the wild.",
+          "confidence": 0.85,
+          "evidence": [
+            "cisa_kev"
+          ]
+        },
+        {
+          "text": "CVE-2026-109445 is rated 9.3 (critical) under CVSS 4.0 by the CNA that assigned it, the highest of the 3 scored CVEs here.",
+          "confidence": 0.9,
+          "evidence": [
+            "cve_record:CVE-2026-109445"
+          ]
+        },
+        {
+          "text": "FIRST's EPSS puts the chance of CVE-2026-111497 being exploited in the next 30 days at 100%, the highest of the 3 CVEs here.",
+          "confidence": 0.6,
+          "evidence": [
+            "first_epss:CVE-2026-111497"
+          ]
+        },
+        {
+          "text": "A fix for brotli (PyPI) is published in 1.2.1, per GHSA-9v8h-qqgm-4m35.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-9v8h-qqgm-4m35"
+          ]
+        },
+        {
+          "text": "A fix for brotlicffi (PyPI) is published in 1.2.1.0, per GHSA-9v8h-qqgm-4m35.",
+          "confidence": 0.85,
+          "evidence": [
+            "GHSA-9v8h-qqgm-4m35"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_securityonline_info",
+          "url": "https://securityonline.info/tvos-27-2-1-update-homeview-27-2/",
+          "published": "2026-11-15T14:23:19Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityonline_info",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T14:23:19Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Daily CyberSecurity",
+          "sources": [
+            "found_securityonline_info"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-039817"
+        }
+      ],
+      "tags": [
+        "bluetooth-pairing",
+        "brotli",
+        "kev",
+        "cisa",
+        "patching",
+        "exploited-in-wild"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 45,
+        "tier": "notable",
+        "reasons": [
+          "critical severity, actively exploited (CISA KEV)",
+          "reported by Daily CyberSecurity (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034079",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T13:00:00Z",
+      "last_seen": "2026-11-16T20:00:00.097453Z",
+      "last_material_update": "2026-11-15T13:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "An overview of Jensen Huang’s messy days",
+      "summary": "A weekly tech newsletter item points to an unfolding Nvidia leadership crisis, describing the resignation of CEO Jensen Huang and its fallout. The snippet offers no further detail on circumstances or consequences.",
+      "why_it_matters": "Nvidia's leadership upheaval could create uncertainty for the companies and developers that depend on its products, though the record itself gives no specifics on impact. No security angle, breach details, or affected parties are stated in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "major",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.011048538931946239,
+        "prominence": 0.10605690472252931
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/column/1033943/jensen-huang-nvidia-china-spying-scandal-resignation",
+          "published": "2026-11-15T13:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T13:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "nvidia",
+        "leadership-change",
+        "resignation",
+        "ai-industry",
+        "executive"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "major AI story",
+          "reported by The Verge AI (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034138",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T21:56:35Z",
+      "last_seen": "2026-11-17T04:00:00.156816Z",
+      "last_material_update": "2026-11-15T21:56:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Is bad news for Jensen Huang also bad news for the AI industry?",
+      "summary": "An opinion piece asks whether trouble for Nvidia's chief executive would ripple through the broader AI industry, quoting a comment that the economy depends heavily on the company. The record gives no specifics on what the trouble is.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.4853666091441664,
+        "prominence": 0.049989982255695675
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian connection in the record",
+          "Foreign story reported by a non-Australian outlet"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/15/is-bad-news-for-jensen-huang-also-bad-news-for-the-ai-industry/",
+          "published": "2026-11-15T21:56:35Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T21:56:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "nvidia",
+        "jensen-huang",
+        "economy",
+        "ai-industry"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034137",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T23:30:00Z",
+      "last_seen": "2026-11-17T16:00:00.103726Z",
+      "last_material_update": "2026-11-15T23:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Indian chip startup Bharat Semi lands $24M seed round as it eyes global AI sensor market",
+      "summary": "Indian semiconductor startup Bharat Semi raised a $24 million seed round to expand its AI-enabled sensor technology, which it says has already won design contracts with customers such as General Atomics as it targets the global AI sensor market.",
+      "why_it_matters": "The funding and design wins signal growing commercial traction for AI-enabled sensor hardware, which buyers in defence-adjacent and industrial markets may source from a wider set of suppliers. For organisations building sensor-dependent AI systems, new entrants can shift the vendor landscape and supply-chain options.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.0696491429555649,
+        "prominence": 0.04998824280547662
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Bharat Semi",
+          "General Atomics"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/15/indian-chip-startup-bharat-semi-lands-24m-seed-round-as-it-eyes-global-ai-sensor-market/",
+          "published": "2026-11-15T23:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T23:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "funding",
+        "ai-enabled-sensors",
+        "chip-startup",
+        "semiconductor"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 28,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034084",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T15:56:31Z",
+      "last_seen": "2026-11-15T16:00:00.164799Z",
+      "last_material_update": "2026-11-15T15:56:31Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Give Claude or Cursor live TikTok, YouTube, Reddit and X data with one MCP URL",
+      "summary": "A promotional community post describes a paid social-data API with a hosted MCP server that lets AI assistants such as Claude or Cursor query live data from TikTok, Reddit, YouTube and other platforms. The author discloses they built the service and walks through connecting it and example prompt costs.",
+      "why_it_matters": "For people building with AI agents, it shows a way to connect assistants to real social-platform data instead of relying on guesses or invented sample data. It is a paid, per-call commercial offering, so cost and vendor dependency are relevant considerations. The record notes no security or safety findings.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48535878246132874,
+        "prominence": 0.04998809349819079
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "okdata"
+        ],
+        "products": [
+          "Claude",
+          "Cursor",
+          "TikTok",
+          "YouTube",
+          "Reddit",
+          "X",
+          "okdata"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/connho/give-claude-or-cursor-live-tiktok-youtube-reddit-and-x-data-with-one-mcp-url-4f4p",
+          "published": "2026-11-15T15:56:31Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T15:56:31Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "social-media-api",
+        "mcp-server",
+        "data-tool"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034039",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T07:56:13Z",
+      "last_seen": "2026-11-15T08:00:00.073315Z",
+      "last_material_update": "2026-11-15T07:56:13Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "GitHub Actions invalid pattern paths filter, and the quoting rule",
+      "summary": "A community post explains a common GitHub Actions pitfall: path patterns beginning with certain characters fail as a YAML syntax error rather than a filter problem, and how quoting and pattern ordering fix it.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4853236564342582,
+        "prominence": 0.0499796173246317
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GitHub"
+        ],
+        "products": [
+          "GitHub Actions"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/kalemi/github-actions-invalid-pattern-paths-filter-and-the-quoting-rule-3min",
+          "published": "2026-11-15T07:56:13Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T07:56:13Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "github-actions",
+        "yaml-error",
+        "pattern-filter",
+        "workflow-configuration"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034086",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T15:56:04Z",
+      "last_seen": "2026-11-15T16:00:00.164799Z",
+      "last_material_update": "2026-11-15T15:56:04Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Understanding LLMs Beyond API Integration: An Engineer's Perspective",
+      "summary": "A community blog post by an engineer reflecting on studying large language models, arguing that understanding model architecture, behaviour and limitations matters more than simply calling APIs for those moving into AI development.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48530621889036796,
+        "prominence": 0.0499754098425628
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/bobstar323/understanding-llms-beyond-api-integration-an-engineers-perspective-3g3f",
+          "published": "2026-11-15T15:56:04Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T15:56:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "llm",
+        "ai-engineering",
+        "model-behavior"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034088",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T15:55:38Z",
+      "last_seen": "2026-11-15T16:00:00.164799Z",
+      "last_material_update": "2026-11-15T15:55:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Is a 5B Image Model Enough? 120 Test Images Across Three Open-Source Models",
+      "summary": "A community post compares an open-source image generation model with around 5 billion parameters against larger flagship open models, running a 120-image benchmark across six workflows covering quality, speed tiers, layout control and colour-depth LoRA techniques. The author suggests the results are nuanced rather than a simple case of the largest model winning.",
+      "why_it_matters": "This is an AI capability and quality comparison with no security angle stated in the record. For people building or buying AI image tools, it offers practical evidence on how a smaller 5-billion-parameter model holds up against flagship open releases across quality, speed and layout-control workflows.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48525560749854024,
+        "prominence": 0.04996319911848555
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/ai-ksk/is-a-5b-image-model-enough-120-test-images-across-three-open-source-models-akg",
+          "published": "2026-11-15T15:55:38Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T15:55:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "image-model",
+        "open-source",
+        "comparison"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034104",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T19:15:43Z",
+      "last_seen": "2026-11-16T20:00:00.097453Z",
+      "last_material_update": "2026-11-15T19:15:43Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Congress wants to tighten export rules on AI chips after Nvidia spy scandal",
+      "summary": "US lawmakers from both parties are moving to tighten export controls on AI chips following a scandal involving Nvidia's then-CEO and a suspected Chinese spy, and have called for Nvidia executives to testify before Congress.",
+      "why_it_matters": "Tighter US export rules on AI chips could affect the supply and availability of advanced AI hardware globally, which matters to organisations that build or buy AI systems. Bipartisan congressional support suggests the measures have momentum, and Nvidia leaders may be summoned to testify.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "regulation",
+        "ai-governance",
+        "espionage",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06183739071055663,
+        "prominence": 0.04990304327172237
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia",
+          "Congress",
+          "Senate"
+        ],
+        "products": [],
+        "countries": [
+          "US",
+          "CN"
+        ],
+        "industries": [
+          "government",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1033984/congress-export-rules-ai-chips-china",
+          "published": "2026-11-15T19:15:43Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T19:15:43Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "export-controls",
+        "ai-chips",
+        "nvidia",
+        "espionage",
+        "congress",
+        "semiconductors"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 59,
+        "tier": "notable",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "espionage",
+          "government target",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034129",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T23:00:00.009177Z",
+      "last_seen": "2026-11-28T13:00:00.102081Z",
+      "last_material_update": "2026-11-15T23:00:00.009177Z",
+      "last_independent_confirmation": "2026-11-17T14:44:25Z",
+      "status": "archived",
+      "title": "Coles Group investigating a cyber incident",
+      "summary": "Australian retailer Coles Group is investigating a cyber incident. The company says it has found no evidence that data was compromised or removed, and few other details are available.",
+      "why_it_matters": "The company's statement that no data appears compromised or removed is an early, preliminary finding while the investigation is still new. Because the severity is unknown and the incident is unresolved, retailers and their suppliers should watch for updates on whether customer or operational systems were affected.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.965625,
+        "novelty": 0.022744572506397106,
+        "prominence": 0.04989897824577242
+      },
+      "au": {
+        "relevance": 0.8,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names an Australian organisation (Coles)",
+          "names Australia",
+          "reported by an Australian source",
+          "Coles Group is an Australian company and the incident involves it directly",
+          "The report comes from an Australian news source covering the domestic incident"
+        ],
+        "sectors": [
+          "retail"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Coles Group"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "retail"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "5 independent sources report this event.",
+          "confidence": 0.965625,
+          "evidence": [
+            "found_techpartner_news",
+            "cyber_daily",
+            "bleepingcomputer",
+            "found_techinformed_com",
+            "itnews_security"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_techpartner_news",
+          "url": "http://www.techpartner.news/news/coles-investigating-cyber-security-incident-630364?utm_source=feed&utm_medium=rss&utm_campaign=techpartner.news+",
+          "published": "2026-11-15T23:39:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techpartner_news",
+          "independent": true
+        },
+        {
+          "source_id": "cyber_daily",
+          "url": "https://www.cyberdaily.au/security/14446-breached-australian-supermarket-giant-coles-investigating-cyber-security-incident",
+          "published": "2026-11-16T01:25:43Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyber_daily",
+          "independent": true
+        },
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/australian-retail-giant-coles-investigates-cybersecurity-incident/",
+          "published": "2026-11-16T11:18:09Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_techinformed_com",
+          "url": "https://techinformed.com/coles-probes-cyber-incident-finds-no-evidence-of-data-theft/",
+          "published": "2026-11-17T14:44:25Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techinformed_com",
+          "independent": true
+        },
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/coles-group-investigating-a-cyber-incident-630361?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": null,
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T23:00:00.009177Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        },
+        {
+          "timestamp": "2026-11-15T23:39:00Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by techpartner.news",
+          "sources": [
+            "found_techpartner_news"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T01:25:43Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by CyberDaily AU",
+          "sources": [
+            "cyber_daily"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T11:18:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-17T14:44:25Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by TechInformed",
+          "sources": [
+            "found_techinformed_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "cyber-incident",
+        "coles-group"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 73,
+        "tier": "key",
+        "reasons": [
+          "strongly relevant to Australia",
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "5 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034068",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T08:31:00Z",
+      "last_seen": "2026-11-17T12:00:00.195884Z",
+      "last_material_update": "2026-11-15T08:31:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "RAG Security: How to Secure Retrieval-Augmented Generation",
+      "summary": "A security blog post explains the risks introduced by retrieval-augmented generation (RAG) systems — such as poisoning of the knowledge base, indirect prompt injection via retrieved content, and over-retrieval of sensitive data — and outlines mitigating controls for each risk. It is an educational piece, not a report of an incident.",
+      "why_it_matters": "It gives defenders a risk-and-controls mapping for RAG deployments, covering knowledge-base poisoning, indirect injection and over-retrieval. No specific incident, CVE, or exploitation is reported.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "ai-research",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4619354919065716,
+        "prominence": 0.04986457598032037
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Ciphers Security"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_cipherssecurity_com",
+          "url": "https://cipherssecurity.com/rag-security/",
+          "published": "2026-11-15T08:31:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cipherssecurity_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T08:31:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ciphers Security",
+          "sources": [
+            "found_cipherssecurity_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "rag-security",
+        "retrieval-augmented-generation",
+        "knowledge-base-poisoning",
+        "indirect-injection",
+        "over-retrieval"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 24,
+        "tier": "routine",
+        "reasons": [
+          "reported by Ciphers Security (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034007",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T00:08:07Z",
+      "last_seen": "2026-11-17T04:00:00.156816Z",
+      "last_material_update": "2026-11-15T00:08:07Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Where was Nvidia’s security team?",
+      "summary": "TechCrunch AI reports on turmoil in Nvidia's security and leadership: the company's security chief reportedly left in August, and the record claims CEO Jensen Huang has stepped down, with a former intelligence officer commenting that conversations-based leaks are hard for corporate security teams to detect. The record does not confirm these events from official sources.",
+      "why_it_matters": "If accurate, the departure of a major company's security chief and its CEO would raise questions about oversight of security and export-sensitive chip flows at a key AI hardware vendor. The record also highlights insider-leak risk, which it says most corporate security teams are ill-equipped to detect. Defenders should treat these claims as unverified, as the record cites no official confirmation.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "ai-governance",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06172439983198476,
+        "prominence": 0.04983958821019646
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia"
+        ],
+        "products": [],
+        "countries": [
+          "CN"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/14/where-was-nvidias-security-team/",
+          "published": "2026-11-15T00:08:07Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T00:08:07Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "nvidia",
+        "executive-departure",
+        "china",
+        "chip-funneling",
+        "security-team"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "notable AI story",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034102",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T18:29:53Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-15T18:29:53Z",
+      "last_independent_confirmation": "2026-11-16T20:06:09Z",
+      "status": "archived",
+      "title": "FBI warns ARTEX AI hacking tool is powering global cyberattacks",
+      "summary": "The FBI has issued a warning that attackers are weaponising ARTEX, an AI-driven penetration testing framework, to automate intrusions against organisations globally. The alert comes amid a reported ConnectWise supply-chain compromise that gave attackers access to Microsoft 365 customer environments.",
+      "why_it_matters": "AI-enabled offensive tooling can lower the barrier for adversaries to run automated attacks at scale, so defenders should treat ARTEX as a threat vector. The mention of a supply-chain breach affecting Microsoft 365 tenants highlights that trusted vendor channels are also in attackers' reach, warranting scrutiny of ConnectWise-related integrations and tenant access.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "supply-chain",
+        "malware",
+        "emerging-threat",
+        "news",
+        "vendor_advisory",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.96875,
+        "novelty": 0.04023353279250311,
+        "prominence": 0.049809634907786296
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "FBI",
+          "ConnectWise"
+        ],
+        "products": [
+          "ARTEX",
+          "Microsoft 365"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1195.002",
+          "name": "Supply Chain Compromise: Compromise Software Supply Chain",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "id": "T1588",
+          "name": "Obtain Capabilities",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.96875,
+          "evidence": [
+            "bleepingcomputer",
+            "malwarebytes",
+            "found_superpowerdaily_com",
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/fbi-warns-artex-ai-hacking-tool-is-powering-global-cyberattacks/",
+          "published": "2026-11-15T18:29:53Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "malwarebytes",
+          "url": "https://www.malwarebytes.com/blog/ai/2026/11/criminals-are-using-artex-ai-agents-to-speed-up-cyberattacks-fbi-warns",
+          "published": "2026-11-16T13:34:35Z",
+          "evidence_class": "VENDOR",
+          "lineage_id": "malwarebytes",
+          "independent": true
+        },
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/fbi-warns-ai-hacking-tool-artex-is-accelerating-cyberattacks-worldwide",
+          "published": "2026-11-16T18:37:29.661000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/news/fbi-warns-ai-pentesting-tool-artex-fuels-rapid-cyberattacks",
+          "published": "2026-11-16T20:06:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T18:29:53Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T13:34:35Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Malwarebytes Labs",
+          "sources": [
+            "malwarebytes"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T18:37:29.661000Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T20:06:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-powered",
+        "artex",
+        "supply-chain",
+        "hacking-tool",
+        "fbi-warning",
+        "global-cyberattacks"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 53,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "4 independent sources",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034131",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T22:28:25Z",
+      "last_seen": "2026-11-16T08:00:00.175124Z",
+      "last_material_update": "2026-11-15T22:28:25Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "SailPoint: Rogue AI agents expose weaknesses in enterprise security",
+      "summary": "A piece reported via an Australian outlet describes SailPoint's observation that enterprises have thousands of AI-linked agent identities that are not being managed, leaving gaps in oversight of what those agents can access.",
+      "why_it_matters": "Identity management programmes built for human users may not cover AI agents, creating unsupervised access to systems and data. The reported scale — thousands of unmanaged identities per enterprise — suggests defenders should audit non-human identities. The record gives no specific incident, CVE, or exploit details.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.42333342540020524,
+        "prominence": 0.04980170578656517
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Reported by Australian outlet Security Brief AU",
+          "No Australian organisations named in the record"
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "SailPoint"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "securitybrief_au",
+          "url": "https://securitybrief.com.au/story/sailpoint-rogue-ai-agents-expose-weaknesses-in-enterprise-security",
+          "published": "2026-11-15T22:28:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "securitybrief_au",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T22:28:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Brief AU",
+          "sources": [
+            "securitybrief_au"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "identity-management",
+        "enterprise-security",
+        "shadow-ai",
+        "research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 33,
+        "tier": "routine",
+        "reasons": [
+          "reported in Australia",
+          "reported by Security Brief AU (specialist)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034183",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T03:49:47Z",
+      "last_seen": "2026-11-26T00:00:00.105963Z",
+      "last_material_update": "2026-11-15T03:49:47Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "datasette-agent 0.6a0",
+      "summary": "A pre-release version (0.6a0) of Datasette Agent, a plugin that lets users ask AI questions about their data, adds a prompt directly to the Datasette homepage and supports hash-mentions of tables and queries.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "model-release",
+        "research"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.6,
+        "novelty": 0.4845727866816152,
+        "prominence": 0.049798637923518636
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "datasette-agent",
+          "Datasette"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Nov/15/datasette-agent/",
+          "published": "2026-11-15T03:49:47Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T03:49:47Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "datasette-agent",
+        "llm",
+        "datasette",
+        "generative-ai",
+        "plugin-release"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034076",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T10:43:16Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T10:43:16Z",
+      "last_independent_confirmation": "2026-11-16T19:13:16Z",
+      "status": "archived",
+      "title": "Data Breach at La Poste Subsidiary Maileva Affects 22 Million People in France",
+      "summary": "A September cyberattack on Maileva, a subsidiary of France's La Poste group, exposed the names and postal addresses of about 22 million people in France, including patients and tenants, in what is described as one of the largest breaches the country has experienced. La Poste confirmed the incident.",
+      "why_it_matters": "The scale — roughly 22 million people affected — makes this one of the largest breaches in France, and the stolen details (names and postal addresses) are well suited to targeted phishing and fraud campaigns. Organisations handling data via third-party mail and document services may face similar exposure through their vendors.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.6499999999999999,
+        "novelty": 0.051594333057279576,
+        "prominence": 0.04978937164013575
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "La Poste",
+          "Maileva"
+        ],
+        "products": [],
+        "countries": [
+          "FR"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.6499999999999999,
+          "evidence": [
+            "found_securityaffairs_com",
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203126/data-breach/data-breach-at-la-poste-subsidiary-maileva-affects-22-million-people-in-france.html",
+          "published": "2026-11-15T10:43:16Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_scworld_com",
+          "url": "https://www.scworld.com/brief/maileva-data-breach-exposes-information-of-22-million-people",
+          "published": "2026-11-16T19:13:16Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_scworld_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T10:43:16Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T19:13:16Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by SCM feed for Latest",
+          "sources": [
+            "found_scworld_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "france",
+        "personal-data",
+        "cyberattack",
+        "postal-services"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 37,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Security Affairs (community)",
+          "2 independent sources"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034015",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T03:49:17Z",
+      "last_seen": "2026-11-15T04:00:00.167577Z",
+      "last_material_update": "2026-11-15T03:49:17Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Beyond Black-Box Prompts: Building an Explainable Multi-Agent Financial Intelligence Platform with FastAPI & React",
+      "summary": "A developer blog post argues that using a single LLM prompt to make stock investment decisions is unreliable, citing problems like hallucinated figures and confirmation bias, and describes an alternative design using multiple specialised agent personas in a financial analysis platform built with FastAPI and React.",
+      "why_it_matters": "For people building AI-driven financial tools, the post highlights known LLM weaknesses — hallucination of financial figures and poor risk calibration — and proposes a multi-agent, explainable architecture as a mitigation. It suggests designs that mimic institutional committee structures with specialised, competing roles rather than one model verdict.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48451447764479455,
+        "prominence": 0.04978460077913263
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "SEC"
+        ],
+        "products": [
+          "FastAPI",
+          "React"
+        ],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/khare69/beyond-black-box-prompts-building-an-explainable-multi-agent-financial-intelligence-platform-with-4o03",
+          "published": "2026-11-15T03:49:17Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T03:49:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "multi-agent",
+        "llm",
+        "finance",
+        "explainability",
+        "hallucination",
+        "tutorial"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034057",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T11:49:11Z",
+      "last_seen": "2026-11-15T12:00:00.107980Z",
+      "last_material_update": "2026-11-15T11:49:11Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AER-1 in production: 3 things implementers got wrong on the first try",
+      "summary": "A technical article discusses common implementation pitfalls for AER-1, a specification with a frozen public conformance corpus of 143 vectors and 146 checks requiring byte-identical verdicts to reference runners. It notes most early implementers hit the same three traps, two of which were publicly documented by a team called probityai.",
+      "why_it_matters": "The record describes conformance details for a specification but states no vulnerability, exploitation, breach, or safety finding. It gives implementers practical guidance on matching a frozen reference corpus exactly. Beyond that, the record supports no security or regulatory implications.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.48450281723525496,
+        "prominence": 0.04978179397838284
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "probityai"
+        ],
+        "products": [
+          "AER-1"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/rambozambo/aer-1-in-production-3-things-implementers-got-wrong-on-the-first-try-2l27",
+          "published": "2026-11-15T11:49:11Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T11:49:11Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "aer-1",
+        "conformance",
+        "implementation"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034069",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T09:00:37Z",
+      "last_seen": "2026-11-16T16:00:00.160622Z",
+      "last_material_update": "2026-11-15T09:00:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Week in review: Secret stealer hits GitHub repos, Claude Code turned into remote-controlled implant",
+      "summary": "A weekly roundup from Help Net Security gathers notable cybersecurity stories, including secret-stealing malware affecting GitHub repositories and Claude Code being repurposed as a remote-controlled implant, alongside an interview on leaked credentials.",
+      "why_it_matters": "The roundup highlights supply-chain and secrets-exposure risks on developer platforms, which defenders commonly rely on. It also flags misuse of AI coding tools as a remote-controlled implant, a reminder that developer tooling can be subverted. Only headline-level detail is provided, with no specific incidents, severities, or CVEs in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "malware",
+        "supply-chain",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.061613091231047794,
+        "prominence": 0.049777047935382596
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GitGuardian"
+        ],
+        "products": [
+          "Claude Code"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/15/week-in-review-secret-stealer-hits-github-repos-claude-code-turned-into-remote-controlled-implant/",
+          "published": "2026-11-15T09:00:37Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T09:00:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "secret-stealer",
+        "github-repos",
+        "remote-controlled-implant",
+        "malware",
+        "supply-chain",
+        "emerging-threat"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 39,
+        "tier": "routine",
+        "reasons": [
+          "supply-chain attack",
+          "reported by Help Net Security (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034116",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T19:42:37Z",
+      "last_seen": "2026-11-15T20:00:00.135857Z",
+      "last_material_update": "2026-11-15T19:42:37Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Your Supabase key is in your deployed JavaScript. One of them is fine, one is an emergency",
+      "summary": "A community-posted guide explains how to tell whether a Supabase key exposed in deployed website JavaScript is a harmless publishable key or one that grants broad database access, and what to do if it is the dangerous kind. It walks through a quick check in browser dev tools and remediation steps.",
+      "why_it_matters": "The post says the difference between a safe and a serious exposure comes down to the key type, and that developers often learn about it only from scanners or AI tooling after deployment. It offers a concrete one-minute check and a fix path for teams shipping Supabase-backed apps.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.42478268528091584,
+        "prominence": 0.0497724106229463
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Supabase"
+        ],
+        "products": [
+          "Supabase"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/za_s_/your-supabase-key-is-in-your-deployed-javascript-one-of-them-is-fine-one-is-an-emergency-3dn2",
+          "published": "2026-11-15T19:42:37Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T19:42:37Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "credential-exposure",
+        "client-side-security",
+        "api-key-leak"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "data breach",
+          "reported by DEV Community (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034031",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T06:00:00Z",
+      "last_seen": "2026-11-19T12:00:00.083229Z",
+      "last_material_update": "2026-11-15T06:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI opens a new frontier in satellite hacking.",
+      "summary": "A cybersecurity news briefing discussed how increasingly capable AI tools are being used by malicious hackers to target and exploit critical satellite infrastructure.",
+      "why_it_matters": "Satellites underpin communications, navigation and other critical services, so AI-assisted attacks on satellite systems could widen the threat surface for operators. Defenders in the space-cyber domain may need to account for adversaries using AI in their tradecraft. The record provides no specific incident, actors, or technical detail.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "ai-security",
+        "news"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06160392478096679,
+        "prominence": 0.04977189631057161
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "critical-infrastructure"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/newsletters/signals-and-space/10/27",
+          "published": "2026-11-15T06:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T06:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-threat",
+        "satellite-hacking",
+        "critical-infrastructure",
+        "emerging-threat",
+        "cyber-espionage"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "reported by The CyberWire (established)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034097",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T15:00:08Z",
+      "last_seen": "2026-11-16T16:00:00.160622Z",
+      "last_material_update": "2026-11-15T15:00:08Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Security Affairs newsletter Round 604 by Pierluigi Paganini – INTERNATIONAL EDITION",
+      "summary": "This is a weekly roundup newsletter from Security Affairs, this edition headlining an extortion group's claim of stealing nearly one billion Expedia traveler records and a US CISA action involving Check Point.",
+      "why_it_matters": "The claimed theft of close to a billion traveler records would be a very large data breach affecting a widely used travel platform, and CISA additions typically flag actively exploited products defenders should patch. Defenders should note the roundup is a secondary aggregation and details of both items are not in this record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.432782039954844,
+        "prominence": 0.04976098348889423
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "Extortion Group"
+        ],
+        "organisations": [
+          "Expedia"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "hospitality"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203140/breaking-news/security-affairs-newsletter-round-604-by-pierluigi-paganini-international-edition.html",
+          "published": "2026-11-15T15:00:08Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T15:00:08Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "extortion",
+        "travel-records",
+        "data-theft"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "data breach",
+          "reported by Security Affairs (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034117",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T18:00:00Z",
+      "last_seen": "2026-11-19T00:00:00.148924Z",
+      "last_material_update": "2026-11-15T18:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Microsoft outage raises questions around sovereignty, resilience and over-reliance on a single provider",
+      "summary": "A Microsoft outage has prompted commentary from tech providers, analysts, lawyers and professors about sovereignty, resilience, and dependence on a single cloud provider. The record gives no details on the cause, scope, or duration of the outage.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.43276824362976485,
+        "prominence": 0.049757423371735436
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, authorities or infrastructure are named in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Microsoft"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_techpartner_news",
+          "url": "http://www.techpartner.news/news/microsoft-outage-raises-questions-around-sovereignty-resilience-and-over-reliance-on-a-single-provider-630359?utm_source=feed&utm_medium=rss&utm_campaign=techpartner.news+",
+          "published": "2026-11-15T18:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techpartner_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T18:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by techpartner.news",
+          "sources": [
+            "found_techpartner_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "outage",
+        "resilience",
+        "sovereignty",
+        "single-provider",
+        "microsoft"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 19,
+        "tier": "routine",
+        "reasons": [
+          "reported by techpartner.news (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034149",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T23:56:38Z",
+      "last_seen": "2026-11-16T00:00:00.165488Z",
+      "last_material_update": "2026-11-15T23:56:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The Share Link Was Never the Lock: 35,578 Apps Wide Open",
+      "summary": "Clarotec researchers tested 43,551 publicly published app addresses from xAI's Grok Build platform using a browser with no logged-in account and found 35,578 apps (94.7%) served their data without any authentication, with only 1,993 returning an authorization error.",
+      "why_it_matters": "The record documents a systemic failure in a widely used AI app-building platform where publicly shared links bypass authentication checks, exposing anyone's deployed app data to unauthenticated strangers. Organizations that have built or deployed apps on agent platforms using share-link features should assume their apps may be similarly accessible and verify that server-side permission checks actually execute. Any platform shipping share features without authorization enforcement may share the same exposure pattern.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.06155403658364532,
+        "prominence": 0.04974385516063447
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Claroc",
+          "Grok Build"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1530",
+          "name": "Data from Cloud Storage",
+          "confidence": 0.7,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_dev_to",
+          "url": "https://dev.to/phantom-byte/the-share-link-was-never-the-lock-35578-apps-wide-open-3pg9",
+          "published": "2026-11-15T23:56:38Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dev_to",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T23:56:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by DEV Community",
+          "sources": [
+            "found_dev_to"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "misconfiguration",
+        "authorization-bypass",
+        "data-exposure",
+        "api-security"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 36,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by DEV Community (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034346",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T09:00:00Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T09:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Recover Your M365 Workloads with Rubrik",
+      "summary": "Recover Your M365 Workloads with Rubrik opsdemon Sun, 15/11/2026 - 09:00 When Microsoft 365 goes down, email, calendars, files, and sites go with it, and your business stalls with every hour. You can’t restore into a service that isn’t there, and a cyber incident or an accidental delete can leave you just as stuck. In this video, we’ll explore Rubrik Microsoft 365 Recovery, part of Rubrik Security Cloud and built to keep your teams working when Microsoft 365 isn’t available. Download from Cloud lets you export Exchange mailboxes as PST files and OneDrive and SharePoint files as ZIP archives,…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192849346011466,
+        "prominence": 0.04974185350801235
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/videos/recover-your-m365-workloads-rubrik",
+          "published": "2026-11-15T09:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T09:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034347",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T09:00:00Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T09:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Back up and restore an OpenShift app in 3 minutes | Trilio for Kubernetes",
+      "summary": "Back up and restore an OpenShift app in 3 minutes | Trilio for Kubernetes opsdemon Sun, 15/11/2026 - 09:00 What Trilio for Kubernetes does, and the whole backup and restore path on Red Hat OpenShift in under three minutes: protect an application, back it up, restore it after it is deleted, and check that it works. You will see: The T4K management console and what you can protect: a whole namespace, or one application found by label, Helm release or operator, and virtual machines A backup target outside the cluster, on NFS or S3 A backup plan: namespace, target, schedule and retention An on-de…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192849346011466,
+        "prominence": 0.04974185350801235
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/videos/back-and-restore-openshift-app-3-minutes-trilio-kubernetes",
+          "published": "2026-11-15T09:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T09:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034348",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T09:00:00Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T09:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Restore a Kubernetes snapshot on OpenShift | Trilio for Kubernetes",
+      "summary": "Restore a Kubernetes snapshot on OpenShift | Trilio for Kubernetes opsdemon Sun, 15/11/2026 - 09:00 Roll an application back on OpenShift after a mistake: restore it in place from a snapshot with the Trilio for Kubernetes management console, then check the data in the application. You will: See the data loss: a folder deleted by mistake in a running application Open the backup plan's snapshots and pick the newest one Start a restore from the snapshot and keep the same namespace Turn on cleanupConfig (In-Place Restore) and read the cleanup warning Create the restore and follow it to Completed…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192849346011466,
+        "prominence": 0.04974185350801235
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/videos/restore-kubernetes-snapshot-openshift-trilio-kubernetes",
+          "published": "2026-11-15T09:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T09:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-031013"
+        }
+      ],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034349",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T08:00:00Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T08:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Ad Astra Equity vs Raincatcher vs Archstone: 3 Brokers for Selling a Larger US Construction Company (2026)",
+      "summary": "Ad Astra Equity vs Raincatcher vs Archstone: 3 Brokers for Selling a Larger US Construction Company (2026) opsdemon Sun, 15/11/2026 - 08:00 Key Takeaways Raincatcher is the best overall and strongest starting recommendation , pairing a competitive auction process with No. 9 finishes on two consecutive Axial Top 25 lists. Ad Astra Equity is the best for specialty trade sales up to $200m revenue , with the widest revenue range of the three and deep construction diligence content. Archstone Business Brokers is the best for owners who want a published commission range , since it publishes a 2% to…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192842625938323,
+        "prominence": 0.04974183665625959
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/posts/ad-astra-vs-raincatcher-vs-archstone-construction",
+          "published": "2026-11-15T08:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T08:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034350",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T08:00:00Z",
+      "last_seen": "2026-11-17T00:00:00.164932Z",
+      "last_material_update": "2026-11-15T08:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Enterprise security leaders are returning to single-tenant hardware for compliance",
+      "summary": "Enterprise security leaders are returning to single-tenant hardware for compliance opsdemon Sun, 15/11/2026 - 08:00 Rising cloud infrastructure costs, AI data privacy concerns, and tightening regulatory audits cause continuous stress for IT leadership. You face immense pressure to keep sensitive workloads secure without breaking the budget. Multi-tenant public clouds seemed like the default choice for a long time. Now, security leaders continually re-evaluate those shared environments in favor of physically isolated hardware. Moving away from public pools allows your organization to regain co…",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192842625938323,
+        "prominence": 0.04974183665625959
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/posts/enterprise-security-leaders-are-returning-single-tenant-hardware-compliance",
+          "published": "2026-11-15T08:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T08:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034645",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "0",
+      "first_seen": "2026-11-15T19:00:00Z",
+      "last_seen": "2026-11-19T00:00:00.148924Z",
+      "last_material_update": "2026-11-15T19:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "AI-Speed Attacks Have Moved Past the Endpoint. Here’s How to Answer Them.",
+      "summary": "Rethinking cybersecurity as AI accelerates emerging threats.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.45192838485307824,
+        "prominence": 0.04974182627290982
+      },
+      "au": {
+        "relevance": null,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_techpartner_news",
+          "url": "http://www.techpartner.news/feature/ai-speed-attacks-have-moved-past-the-endpoint-heres-how-to-answer-them-630302?utm_source=feed&utm_medium=rss&utm_campaign=techpartner.news+",
+          "published": "2026-11-15T19:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techpartner_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T19:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by techpartner.news",
+          "sources": [
+            "found_techpartner_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": true,
+      "importance": {
+        "version": "1",
+        "score": 11,
+        "tier": "routine",
+        "reasons": [
+          "reported by techpartner.news (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034140",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T22:00:01Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-15T22:00:01Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "A step toward defining the Standard Model on a lattice",
+      "summary": "OpenAI News reports on a proposed nonperturbative lattice definition of the Standard Model in particle physics, stating that an AI model called GPT-6 Astra helped develop the idea into a detailed proof. This is a theoretical physics and AI capability story, not a security incident.",
+      "why_it_matters": "The record suggests AI assistance was used in producing a detailed mathematical proof in fundamental physics, which is relevant to people tracking what AI systems can contribute to technical research. The record states no security impact, exploitation, or regulatory detail.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "ai_security"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.6,
+        "novelty": 0.06914835693029996,
+        "prominence": 0.04973568519936395
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "GPT-6 Astra"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "openai_news",
+          "url": "https://openai.com/index/step-toward-defining-the-standard-model",
+          "published": "2026-11-15T22:00:01Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "openai_news",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T22:00:01Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by OpenAI News",
+          "sources": [
+            "openai_news"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-for-science",
+        "physics",
+        "research",
+        "lattice",
+        "gpt-6-astra"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "reported by OpenAI News (specialist)",
+          "notable AI story"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034032",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T06:00:00Z",
+      "last_seen": "2026-11-19T12:00:00.083229Z",
+      "last_material_update": "2026-11-15T06:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Satellite hacking enters the AI era.",
+      "summary": "A podcast discussion with a security company executive examines how AI is changing hacking of space infrastructure, with AI tools raising the scale and scope of attacks on satellites and related ground systems. No specific incident or vulnerability is described.",
+      "why_it_matters": "The discussion frames satellite and ground-based space infrastructure as targets where AI-enabled techniques force defenders to rethink protection. No evidence of exploitation, CVEs, or affected organisations is given, so the immediate risk is unclear from this record alone.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "research",
+        "news"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.06914807533359153,
+        "prominence": 0.04973554305562169
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Assail"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "defence",
+          "critical-infrastructure"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "cyberwire",
+          "url": "https://thecyberwire.com/podcasts/tminus-space-cyber-briefing/733/notes",
+          "published": "2026-11-15T06:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "cyberwire",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T06:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The CyberWire",
+          "sources": [
+            "cyberwire"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-enabled-hacking",
+        "space-infrastructure",
+        "cyberattacks",
+        "defence",
+        "critical-infrastructure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 32,
+        "tier": "routine",
+        "reasons": [
+          "government target",
+          "reported by The CyberWire (established)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034179",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T23:58:36Z",
+      "last_seen": "2026-11-26T16:00:00.164488Z",
+      "last_material_update": "2026-11-15T23:58:36Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "datasette-maplibre 0.1a0",
+      "summary": "The blog post announces the alpha release of a Datasette plugin, datasette-maplibre 0.1a0, which adds geospatial mapping to Datasette using MapLibre GL and the free OpenFreeMap vector map server. The author says most of the plugin was built with a single prompt to an AI coding tool.",
+      "why_it_matters": "It is an example of software being built largely from one AI prompt, which is relevant to people tracking how AI coding tools change development workflows. The record contains no vulnerability, breach, or exploitation information, so it carries no direct defender significance.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "research"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.6,
+        "novelty": 0.4517761351151673,
+        "prominence": 0.049703655798107704
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Datasette",
+          "MapLibre GL",
+          "OpenFreeMap",
+          "GitHub"
+        ],
+        "products": [
+          "datasette-maplibre",
+          "Datasette",
+          "MapLibre GL",
+          "datasette-cluster-map",
+          "datasette-leaflet-geojson"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "simonwillison",
+          "url": "https://simonwillison.net/2026/Nov/15/datasette-maplibre/",
+          "published": "2026-11-15T23:58:36Z",
+          "evidence_class": "SPECIALIST",
+          "lineage_id": "simonwillison",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T23:58:36Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Simon Willison Blog",
+          "sources": [
+            "simonwillison"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 13,
+        "tier": "routine",
+        "reasons": [
+          "reported by Simon Willison Blog (specialist)"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-034132",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T22:15:00Z",
+      "last_seen": "2026-11-16T08:00:00.175124Z",
+      "last_material_update": "2026-11-15T22:15:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Australia to legislate safety rules for frontier AI",
+      "summary": "Australia plans to legislate safety rules for frontier AI, with the regime potentially requiring AI firms to report incidents more quickly. The move follows a chatbot probe that exposed weaknesses in the country's digital defences.",
+      "why_it_matters": "The proposed law could impose faster incident-disclosure duties on AI firms operating in Australia. Defenders and AI providers should watch how compliance obligations are defined, since the trigger was a probe showing gaps in national digital defences. No effective date or detail is given in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "regulation",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.030033330510460983,
+        "prominence": 0.04969705838667268
+      },
+      "au": {
+        "relevance": 0.9,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source",
+          "The record states Australia plans to legislate safety rules for frontier AI",
+          "A chatbot probe exposed gaps in Australia's digital defences, prompting the move"
+        ],
+        "sectors": [
+          "government",
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "securitybrief_au",
+          "url": "https://securitybrief.com.au/story/australia-to-legislate-safety-rules-for-frontier-ai",
+          "published": "2026-11-15T22:15:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "securitybrief_au",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T22:15:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Brief AU",
+          "sources": [
+            "securitybrief_au"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "policy",
+        "regulation",
+        "ai-safety",
+        "australia",
+        "incident-disclosure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by Security Brief AU (specialist)",
+          "Australian government involved",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-034051",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T08:45:38Z",
+      "last_seen": "2026-11-16T16:00:00.160622Z",
+      "last_material_update": "2026-11-15T08:45:38Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "CEO Fraud Verification: A Payment Approval Workflow for Finance Teams",
+      "summary": "A vendor shares a recommended workflow for finance teams to verify payment requests that appear to come from an executive, using a payment hold and out-of-band confirmation to counter CEO fraud. No incident, victim, or actor details are provided.",
+      "why_it_matters": "The record offers only general defensive guidance, not evidence of a specific attack, breach, or vulnerability. It suggests finance teams treat executive payment requests as untrusted until verified through a known channel. No CVSS score, KEV listing, exploitation data, or breach scale is included to quantify the risk.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "phishing",
+        "fraud",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4840890321463821,
+        "prominence": 0.049682253843952424
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/blog/ceo-fraud-bec-explained/",
+          "published": "2026-11-15T08:45:38Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T08:45:38Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ceo-fraud",
+        "payment-verification",
+        "social-engineering",
+        "business-email-compromise"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 26,
+        "tier": "routine",
+        "reasons": [
+          "fraud",
+          "reported by Brandefense (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-034546",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T23:39:00Z",
+      "last_seen": "2026-11-26T20:00:00.165577Z",
+      "last_material_update": "2026-11-16T19:48:49Z",
+      "last_independent_confirmation": "2026-11-17T16:52:35.419000Z",
+      "status": "archived",
+      "title": "Trump says Huang could return to Nvidia",
+      "summary": "US President Donald Trump has publicly backed a campaign to reinstate Jensen Huang as Nvidia's chief executive shortly after Huang's resignation, which reportedly followed concerns that he had been in a relationship with a Chinese spy.",
+      "why_it_matters": "Leadership instability at a major AI chipmaker, combined with allegations of foreign intelligence involvement, could affect perceptions of supply-chain and insider risk for organisations that depend on that vendor. The record contains no technical details, exploitation evidence, or confirmed security impact.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.9828125000000001,
+        "novelty": 0.2673634965058378,
+        "prominence": 0.04963158300703785
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Only connection to Australia is that the story was reported by an Australian outlet (ABC News)"
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "6 independent sources report this event.",
+          "confidence": 0.9828125000000001,
+          "evidence": [
+            "found_techpartner_news",
+            "abc_ai",
+            "found_feeds_abcnews_com",
+            "verge_ai",
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_techpartner_news",
+          "url": "http://www.techpartner.news/news/jensen-huang-discusses-comeback-as-nvidia-ceo-with-allies-ft-reports-630363?utm_source=feed&utm_medium=rss&utm_campaign=techpartner.news+",
+          "published": "2026-11-15T23:39:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_techpartner_news",
+          "independent": true
+        },
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-11-17/donald-trump-says-he-would-not-mind-jensen-huang-comeback/107393002",
+          "published": "2026-11-16T19:48:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        },
+        {
+          "source_id": "found_feeds_abcnews_com",
+          "url": "https://abcnews.com/Business/trump-mind-jensen-huang-reinstated-nvidia-ceo/story?id=138174468",
+          "published": "2026-11-16T20:19:14Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_feeds_abcnews_com",
+          "independent": true
+        },
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/tech/1035420/jensen-huang-nvidia-return-as-ceo-statement",
+          "published": "2026-11-17T16:09:57Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        },
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/17/jensen-huang-says-he-would-be-honored-if-allowed-to-return-as-nvidia-ceo/",
+          "published": "2026-11-17T16:44:15Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        },
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/jensen-huang-says-he-would-return-as-nvidia-ceo-if-the-board-asks",
+          "published": "2026-11-17T16:52:35.419000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_feeds_abcnews_com",
+          "url": "https://abcnews.com/Business/nvidia-forms-national-security-committee-feds-probe-company/story?id=138206932",
+          "published": "2026-11-17T18:08:09Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_feeds_abcnews_com",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T23:39:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by techpartner.news",
+          "sources": [
+            "found_techpartner_news"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T19:48:49Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        },
+        {
+          "timestamp": "2026-11-16T20:19:14Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ABC News",
+          "sources": [
+            "found_feeds_abcnews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-17T16:09:57Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        },
+        {
+          "timestamp": "2026-11-17T16:44:15Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        },
+        {
+          "timestamp": "2026-11-17T16:52:35.419000Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-17T18:08:09Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by ABC News",
+          "sources": [
+            "found_feeds_abcnews_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-industry",
+        "executive-change",
+        "nvidia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "reported in Australia",
+          "6 independent sources"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034136",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T20:43:49Z",
+      "last_seen": "2026-11-16T20:00:00.097453Z",
+      "last_material_update": "2026-11-15T20:43:49Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Jensen Huang might be plotting a return and more of the latest Nvidia drama",
+      "summary": "A news roundup reports ongoing developments in the executive drama at chipmaker Nvidia, including rumours that co-founder and former CEO Jensen Huang may be seeking a return to the CEO role. The record is based on speculation and does not confirm any personnel change.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.48387751316055244,
+        "prominence": 0.04963141809316706
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Nvidia"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/tech/1033999/jensen-huang-return-nvidia-megaspeed",
+          "published": "2026-11-15T20:43:49Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T20:43:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "nvidia",
+        "jensen-huang",
+        "ceo-return",
+        "ai-industry"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-034134",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-15T21:30:00Z",
+      "last_seen": "2026-11-16T04:00:00.165608Z",
+      "last_material_update": "2026-11-15T21:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Knightcorp warns tech insurers over AI & cloud gaps",
+      "summary": "Australian insurance broker Knightcorp is warning insurers that technology and cyber policies have not kept pace with how businesses now use AI, cloud platforms and third-party software, which could lead to disputes when claims are made.",
+      "why_it_matters": "Defenders and risk managers should review whether their cover explicitly addresses AI use and cloud dependencies, as gaps may surface at claim time. Knightcorp's warning suggests claims disputes are a realistic outcome, so policy wording review is a near-term action.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "regulation",
+        "ai-governance",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.45,
+        "novelty": 0.3665502736567426,
+        "prominence": 0.04962909262506941
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Australian outlet reporting",
+          "Australian insurance intermediary (Knightcorp) acting on the issue"
+        ],
+        "sectors": [
+          "insurance",
+          "technology"
+        ],
+        "soci_asset_classes": [
+          "financial services and markets"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Knightcorp"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "insurance",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "securitybrief_au",
+          "url": "https://securitybrief.com.au/story/knightcorp-warns-tech-insurers-over-ai-cloud-gaps",
+          "published": "2026-11-15T21:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "securitybrief_au",
+          "independent": true
+        },
+        {
+          "source_id": "securitybrief_au",
+          "url": "https://securitybrief.com.au/story/knightcorp-warns-tech-leaders-over-ai-cloud-gaps",
+          "published": "2026-11-15T21:30:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "securitybrief_au",
+          "independent": false
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-15T21:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Brief AU",
+          "sources": [
+            "securitybrief_au"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "insurance",
+        "ai-governance",
+        "cyber-policy",
+        "cloud",
+        "third-party-software",
+        "claims-disputes"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by Security Brief AU (specialist)",
+          "critical infrastructure (financial services and markets) involved",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    }
+  ]
+}

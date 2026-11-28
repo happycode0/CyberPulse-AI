@@ -1,0 +1,3978 @@
+{
+  "generated_at": "2026-11-28T13:00:04.510164Z",
+  "date": "2026-11-22",
+  "pipeline_version": "1.0.0",
+  "counts": {
+    "events": 40,
+    "critical": 1,
+    "high": 6,
+    "medium": 2,
+    "low": 4,
+    "unknown": 27,
+    "directly_reported_in_au": 6,
+    "pending_enrichment": 0
+  },
+  "events": [
+    {
+      "event_id": "evt-2026-038819",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T20:00:00.101009Z",
+      "last_seen": "2026-11-28T13:00:00.102081Z",
+      "last_material_update": "2026-11-22T20:00:00.101009Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "AI-found Ghostscript flaw turned file uploads into remote code execution",
+      "summary": "A sandbox escape in Ghostscript, found with AI assistance, has been published with exploit details and a proof of concept, letting a file upload become remote code execution. The write-up and PoC appeared over the weekend of 22 November 2026.",
+      "why_it_matters": "Systems that process uploaded PostScript or PDF-like files with Ghostscript could be exposed to code execution if attackers chain an upload with the escape. Public exploit details lower the barrier for attackers to reproduce the technique. Organisations running file-processing pipelines should check whether the sandbox escape applies to their Ghostscript versions.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "emerging-threat",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "critical",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.7272727272727273,
+        "confidence": 0.45,
+        "novelty": 0.13829619101641952,
+        "prominence": 0.25758600522285136
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Reported by an Australian news source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Ghostscript"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.8,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "itnews_security",
+          "url": "https://www.itnews.com.au/news/ai-found-ghostscript-flaw-turned-file-uploads-into-remote-code-execution-630512?utm_source=feed&utm_medium=rss&utm_campaign=iTnews+Security+feed",
+          "published": null,
+          "evidence_class": "NEWS",
+          "lineage_id": "itnews_security",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T20:00:00.101009Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ITNews Security",
+          "sources": [
+            "itnews_security"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ghostscript",
+        "remote-code-execution",
+        "sandbox-escape",
+        "upload2shell",
+        "flaw"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 57,
+        "tier": "notable",
+        "reasons": [
+          "critical severity (AI estimate)",
+          "reported by ITNews Security (established)",
+          "reported in Australia"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038837",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T16:37:34.329000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T16:37:34.329000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Australian AI committee is expected to publish report Monday as copyright tensions grow",
+      "summary": "An Australian parliamentary committee is reportedly set to release a report on Monday that may signal the Labor government's stance on AI-related copyright and data centres, with competing pressures from creators seeking stronger protection and others calling for cooperation.",
+      "why_it_matters": "The report may shape Australian policy on how AI firms can use copyrighted material and how data centres are treated, affecting both creators and AI developers. Businesses building or buying AI in Australia should watch it for signals on licensing obligations and data-centre rules.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "policy",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.13171990618895912,
+        "prominence": 0.13063325765932532
+      },
+      "au": {
+        "relevance": 0.8,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "names Australia",
+          "Australian parliamentary committee report on AI, copyright and data centres",
+          "Relates to Australian government policy direction under Labor",
+          "Concerns Australian creators' copyright protections"
+        ],
+        "sectors": [
+          "government",
+          "media",
+          "technology",
+          "legal"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Australian AI committee",
+          "Labor"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "government",
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/australian-ai-committee-is-expected-to-publish-report-monday-as-copyright-tensions-grow",
+          "published": "2026-11-22T16:37:34.329000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T16:37:34.329000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-policy",
+        "copyright",
+        "australia",
+        "parliamentary-report",
+        "data-centres"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 55,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "notable AI story",
+          "reported by Superpower Daily (community)",
+          "Australian government involved"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038758",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T07:53:12Z",
+      "last_seen": "2026-11-24T04:00:00.166112Z",
+      "last_material_update": "2026-11-22T07:53:12Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "NewsWrap: Crunch time looms for AI regulatory regime",
+      "summary": "The Australian Prime Minister announced two weeks prior that the government would legislate mandatory AI safety and security protections, but offered few details, leaving the industry awaiting specifics on how the regime will work.",
+      "why_it_matters": "Mandatory AI safety and security legislation is being proposed in Australia, but only broad dot points have been provided so far. Organisations building or deploying AI face new legal obligations once details and timing are clarified, and the industry is actively seeking that detail.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-governance",
+        "regulation",
+        "policy",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.1161025554246705,
+        "prominence": 0.12548424362086705
+      },
+      "au": {
+        "relevance": 0.9,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Reports the Australian Prime Minister's commitment to mandatory AI safety and security legislation",
+          "Covers pending detail for Australian industry on the regulatory regime",
+          "Published by Australian outlet Innovation Australia"
+        ],
+        "sectors": [
+          "technology",
+          "government"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/newswrap-crunch-time-looms-for-ai-regulatory-regime/",
+          "published": "2026-11-22T07:53:12Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T07:53:12Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-governance",
+        "regulation",
+        "ai-safety",
+        "legislation",
+        "australia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 51,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by Innovation Australia (specialist)",
+          "Australian government involved",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038792",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T15:43:04Z",
+      "last_seen": "2026-11-26T08:00:00.165142Z",
+      "last_material_update": "2026-11-22T15:43:04Z",
+      "last_independent_confirmation": "2026-11-23T13:00:14Z",
+      "status": "monitoring",
+      "title": "Cleverbridge warns hackers stole credit card numbers, CVVs in data breach",
+      "summary": "The e-commerce platform Cleverbridge disclosed that attackers breached its systems and made off with customers' payment card data, including card numbers and CVV codes. Details on how many customers were affected or how the intrusion occurred are not provided in the record.",
+      "why_it_matters": "Theft of CVV codes alongside card numbers is significant because payment security relies on those codes not being stored, and having both enables card-not-present fraud. Customers of the platform should watch for fraudulent charges and expect possible card reissuance.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "news",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.9312500000000001,
+        "novelty": 0.13000326661043904,
+        "prominence": 0.12515259072649806
+      },
+      "au": {
+        "relevance": 0.2,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "Record shows no Australian involvement",
+          "Breach is of a foreign e-commerce platform"
+        ],
+        "sectors": [
+          "retail"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cleverbridge"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1657",
+          "name": "Financial Theft",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "text": "4 independent sources report this event.",
+          "confidence": 0.9312500000000001,
+          "evidence": [
+            "bleepingcomputer",
+            "found_cybersecuritynews_com",
+            "found_dailysecurityreview_com",
+            "found_helpnetsecurity_com"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/cleverbridge-warns-hackers-stole-credit-card-numbers-cvvs-in-data-breach/",
+          "published": "2026-11-22T15:43:04Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        },
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/cleverbridge-data-breach/",
+          "published": "2026-11-23T02:37:31Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_dailysecurityreview_com",
+          "url": "https://dailysecurityreview.com/cyber-security/cleverbridge-warns-hackers-copied-card-numbers-and-cvv-codes/",
+          "published": "2026-11-23T12:30:22Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_dailysecurityreview_com",
+          "independent": true
+        },
+        {
+          "source_id": "found_helpnetsecurity_com",
+          "url": "https://www.helpnetsecurity.com/2026/11/23/cleverbridge-data-breach-card-numbers-cvv/",
+          "published": "2026-11-23T13:00:14Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_helpnetsecurity_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T15:43:04Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T02:37:31Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T12:30:22Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Daily Security Review",
+          "sources": [
+            "found_dailysecurityreview_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T13:00:14Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Help Net Security",
+          "sources": [
+            "found_helpnetsecurity_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "credit-card-theft",
+        "e-commerce",
+        "payment-card-data",
+        "cleverbridge"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 56,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bleeping Computer (established)",
+          "4 independent sources",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038771",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T09:36:36Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T09:36:36Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Foreign minister to elevate AI as national security challenge",
+      "summary": "Australia's Foreign Minister Penny Wong is set to publicly frame artificial intelligence as a major foreign policy and national security challenge, warning that foreign actors are gaining new means to disrupt democracies through the technology.",
+      "why_it_matters": "This signals AI is being moved up Australia's national security agenda at ministerial level, which may shape future policy, regulation or international engagement. Defenders and AI deployers in Australia should watch for follow-on guidance or requirements. No specific measures are detailed in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "ai-governance",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.11902812481867148,
+        "prominence": 0.12164033720134072
+      },
+      "au": {
+        "relevance": 0.8,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "Australian Foreign Minister Penny Wong is making the announcement",
+          "AI is being elevated as an Australian national security and foreign policy challenge",
+          "Concern focuses on foreign actors' tools to disrupt democracies, including Australia's"
+        ],
+        "sectors": [
+          "government",
+          "defence"
+        ],
+        "soci_asset_classes": [
+          "defence industry"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "government"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "abc_ai",
+          "url": "https://www.abc.net.au/news/2026-11-22/federal-politics-penny-wong-foreign-policy-ai-threat/107414236",
+          "published": "2026-11-22T09:36:36Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "abc",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T09:36:36Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by ABC News Artificial Intelligence",
+          "sources": [
+            "abc_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-policy",
+        "national-security",
+        "australia",
+        "foreign-interference",
+        "democracy"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 53,
+        "tier": "notable",
+        "reasons": [
+          "strongly relevant to Australia",
+          "reported by ABC (established)",
+          "Australian government involved",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038833",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T17:34:24.918000Z",
+      "last_seen": "2026-11-24T04:00:00.166112Z",
+      "last_material_update": "2026-11-22T17:34:24.918000Z",
+      "last_independent_confirmation": "2026-11-23T01:42:50Z",
+      "status": "monitoring",
+      "title": "OpenAI chief scientist proposes shared AI development limits tied to prediction scores",
+      "summary": "OpenAI's chief scientist, Jakub Pachocki, has proposed that AI developers agree on shared limits for frontier development, using internal training measurements he disclosed as the basis for the thresholds. The proposal is contested because these scores cannot be directly compared between labs and may not capture every route to more capable AI.",
+      "why_it_matters": "If adopted, shared capability thresholds tied to prediction scores could shape how frontier labs govern themselves, but the noted comparability problems mean any agreed limits may miss some capabilities. Builders and regulators should treat score-based thresholds as imperfect proxies rather than complete safety guarantees.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-governance",
+        "community",
+        "news"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.7250000000000001,
+        "novelty": 0.13353432130278164,
+        "prominence": 0.11666147363295624
+      },
+      "au": {
+        "relevance": 0.3,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenAI"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [
+        {
+          "text": "2 independent sources report this event.",
+          "confidence": 0.7250000000000001,
+          "evidence": [
+            "found_superpowerdaily_com",
+            "innovationaus"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/openai-chief-scientist-proposes-shared-ai-development-limits-tied-to-prediction-scores",
+          "published": "2026-11-22T17:34:24.918000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        },
+        {
+          "source_id": "innovationaus",
+          "url": "https://www.innovationaus.com/openai-scientist-proposes-ai-limits-tied-to-perplexity-metric/",
+          "published": "2026-11-23T01:42:50Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "innovationaus",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T17:34:24.918000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        },
+        {
+          "timestamp": "2026-11-23T01:42:50Z",
+          "type": "NEW_EVIDENCE",
+          "summary": "Also reported by Innovation Australia",
+          "sources": [
+            "innovationaus"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-governance",
+        "proposal",
+        "openai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "reported in Australia",
+          "reported by Innovation Australia (specialist)",
+          "notable AI story",
+          "2 independent sources"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038793",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T15:15:25Z",
+      "last_seen": "2026-11-24T12:00:00.166191Z",
+      "last_material_update": "2026-11-22T15:15:25Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Signal to block Siri, Gemini AI from capturing chats on iOS, Android",
+      "summary": "Messaging app Signal has introduced new mobile protections, including blocking screenshots on iOS and preventing AI assistants such as Siri and Gemini from capturing users' conversations on supported Android devices.",
+      "why_it_matters": "The feature targets a growing risk of AI assistants having access to sensitive messaging content on personal devices. Signal users gain a technical control to keep chats away from assistant-driven capture. The record does not state an Australian connection.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "news"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.12914100683471272,
+        "prominence": 0.08411275196103409
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Signal"
+        ],
+        "products": [
+          "Siri",
+          "Gemini",
+          "iOS 27",
+          "Android"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "bleepingcomputer",
+          "url": "https://www.bleepingcomputer.com/news/security/signal-to-block-siri-gemini-ai-from-capturing-chats-on-ios-android/",
+          "published": "2026-11-22T15:15:25Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "bleepingcomputer",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T15:15:25Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bleeping Computer",
+          "sources": [
+            "bleepingcomputer"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "privacy",
+        "encrypted-messaging",
+        "ai-assistants",
+        "mobile-security",
+        "signal"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 31,
+        "tier": "routine",
+        "reasons": [
+          "reported by Bleeping Computer (established)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038858",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T22:02:30.338000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T22:02:30.338000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Sarvam releases upgraded 105B AI model with cheaper hosting and a single-GPU option",
+      "summary": "Indian AI startup Sarvam has released an upgraded open-weights model, Sarvam-105B-1711, with around 105 billion parameters, offering cheaper token pricing and an option to run on a single GPU. The claimed capability improvements are based on the company's own benchmark tests.",
+      "why_it_matters": "For teams buying or self-hosting AI, a downloadable 105B model priced at $0.15 per million tokens and runnable on one GPU lowers the cost barrier for deployment. However, the capability claims come from company-run tests rather than independent evaluation, so buyers should verify performance before switching.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "model-release",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.1424343896614149,
+        "prominence": 0.08351563277780152
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Sarvam"
+        ],
+        "products": [
+          "Sarvam-105B-1711"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/sarvam-releases-upgraded-105b-ai-model-with-cheaper-hosting-and-a-single-gpu-option",
+          "published": "2026-11-22T22:02:30.338000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T22:02:30.338000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "model-release",
+        "llm",
+        "open-weights",
+        "pricing",
+        "inference",
+        "ai-model"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038860",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T20:18:43.343000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T20:18:43.343000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Senator Kennedy wants Lutnick and Bessent questioned under oath over Nvidia chip exports",
+      "summary": "A US senator is calling for two senior administration officials, Howard Lutnick and Scott Bessent, to be questioned under oath about the export of Nvidia chips and alleged diversion to China. The remarks, made in a television interview, centre on government enforcement rather than any individual executive's conduct.",
+      "why_it_matters": "The record does not state security-impact facts such as a CVSS score, exploitation, or breach scale. For readers tracking export enforcement, it signals possible sworn testimony about controls on Nvidia chip sales to China. The record gives no further detail.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.13892070766984269,
+        "prominence": 0.08199506479080942
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [
+          "US",
+          "CN"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/senator-kennedy-wants-lutnick-and-bessent-questioned-under-oath-over-nvidia-chip-exports",
+          "published": "2026-11-22T20:18:43.343000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T20:18:43.343000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "exports",
+        "chip-diversion",
+        "government-enforcement",
+        "senator-kennedy"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038849",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T20:14:19Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T20:14:19Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "GL.iNet GoodCloud Router and KVM Response Playbook",
+      "summary": "GL.iNet has confirmed that some of its routers and KVM devices were found to be running malware. The company has published a response process involving a check for a specific process on devices, treating any match as a sign of infection, and checking whether updated firmware is available for the affected model.",
+      "why_it_matters": "Compromised routers and KVM devices sit on network perimeters and can give attackers a foothold or traffic-visibility. Defenders running GL.iNet hardware should run the vendor's process check, assume infection on a match, and confirm firmware fixes exist for each model before remediating. No CVEs, severity rating, or exploitation details are given in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "malware",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.1387734810665635,
+        "prominence": 0.08193120346485776
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "GL.iNet"
+        ],
+        "products": [
+          "GoodCloud",
+          "KVM"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/glinet-goodcloud-router-kvm-incident-response/",
+          "published": "2026-11-22T20:14:19Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T20:14:19Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "malware",
+        "router",
+        "iot",
+        "firmware",
+        "incident-response"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 29,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Brandefense (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038832",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T19:26:18.891000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T19:26:18.891000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Tribe AI says its revenue run rate passed $100 million as clients move beyond pilots",
+      "summary": "AI consultancy Tribe AI reports its annualised revenue has passed $100 million, with the company profitable on under $10 million raised, citing clients moving past pilot projects into production work such as a Koch Industries employee coaching tool.",
+      "why_it_matters": "The record signals enterprise AI budgets shifting from experiments to deployed products, a demand signal for AI service firms. No security angle is stated.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.13717947170872086,
+        "prominence": 0.08123900145108015
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Tribe AI",
+          "Koch Industries"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/tribe-ai-says-its-revenue-run-rate-passed-100-million-as-clients-move-beyond-pilots",
+          "published": "2026-11-22T19:26:18.891000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T19:26:18.891000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "revenue-growth",
+        "profitability",
+        "enterprise-ai",
+        "funding",
+        "ai-adoption"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038834",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T17:29:35.139000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T17:29:35.139000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Danaher and Microsoft partner to bring AI control and guidance to lab instruments",
+      "summary": "Danaher and Microsoft are partnering to add AI control and guidance to laboratory instruments, with initial applications expected by the end of 2026. Early microscope trials suggest novice scientists could work faster, though those figures come from preliminary internal testing.",
+      "why_it_matters": "AI-guided lab instruments could lower the skill barrier for scientific work, letting less experienced researchers operate equipment faster, based on early internal results. For organisations buying lab technology, the partnership signals AI assistance becoming a built-in feature from major vendors. Builders should note the claimed gains are preliminary and unverified.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.13337919367465503,
+        "prominence": 0.07958280320152392
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Danaher",
+          "Microsoft"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/danaher-and-microsoft-partner-to-bring-ai-control-and-guidance-to-lab-instruments",
+          "published": "2026-11-22T17:29:35.139000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T17:29:35.139000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "partnership",
+        "lab-instruments",
+        "ai-control",
+        "preliminary-testing"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038772",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T08:46:49Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-22T08:46:49Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenRouter Prompt Exposure: Verify Every Inference Provider Hop",
+      "summary": "An LLM routing service, OpenRouter, removed three inference providers and 125 endpoints from eligibility for zero-data-retention arrangements after Dragos reported concerns about how those providers handle prompts. The record frames the episode as a prompt for buyers to verify data handling at every hop between providers.",
+      "why_it_matters": "Organisations using zero-data-retention assurances for AI inference may lose that protection if intermediate providers log or handle prompts outside the agreement, as this removal of endpoints illustrates. Defenders buying AI services should confirm data-handling behaviour at each provider in the chain rather than trusting a single vendor's attestation. No severity, exploitation, or affected-customer detail is given in the record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "ai-security",
+        "supply-chain",
+        "community"
+      ],
+      "ai_subdomain": "AI_SECURITY",
+      "ai_significance": "notable",
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.11761048027426374,
+        "prominence": 0.07861319869233109
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "The record does not mention Australia or Australian organisations"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenRouter",
+          "Dragos",
+          "ZDR"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_brandefense_io",
+          "url": "https://brandefense.io/security-news/openrouter-prompt-exposure-provider-checklist/",
+          "published": "2026-11-22T08:46:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_brandefense_io",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T08:46:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Brandefense",
+          "sources": [
+            "found_brandefense_io"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "prompt-exposure",
+        "supply-chain",
+        "provider-security",
+        "ai-security"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 39,
+        "tier": "routine",
+        "reasons": [
+          "supply-chain attack",
+          "reported by Brandefense (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038815",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T14:15:08.621000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T14:15:08.621000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Governors urge Congress to set AI rules while preserving state authority",
+      "summary": "A bipartisan group of US governors has recommended that Congress establish national AI rules while leaving room for states to act, alongside evidence-based safeguards and worker protections. The recommendations are advisory and impose no new legal obligations.",
+      "why_it_matters": "The proposal signals US state-level policymakers seeking a federal framework that does not override state authority on AI. Because it creates no binding duties, its practical effect on AI developers or buyers depends on whether Congress acts on it.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "policy",
+        "ai-governance",
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.12728117515245288,
+        "prominence": 0.07690683189752155
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Congress"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/governors-urge-congress-to-set-ai-rules-while-preserving-state-authority",
+          "published": "2026-11-22T14:15:08.621000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T14:15:08.621000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-governance",
+        "policy",
+        "state-authority",
+        "bipartisan-recommendations"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 15,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038768",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T06:27:56.094000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T06:27:56.094000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "AI-server suppliers seek up to 45% more after contracts are signed, FT reports",
+      "summary": "AI-server suppliers are asking buyers for price increases of up to 45% even after contracts have been signed, as rising memory costs flow through to customers at delivery. A dispute between Dell and XTX illustrates how a contract described as fixed-price can still become contested.",
+      "why_it_matters": "Organisations procuring AI infrastructure may face renegotiation or delivery disputes after committing to contracts, with suppliers seeking increases of up to 45%. The Dell–XTX disagreement shows that even fixed-price agreements can be contested when input costs shift, so buyers may want to scrutinise contract terms for such exposure.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.11374426362670134,
+        "prominence": 0.07674463763777335
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Dell",
+          "XTX"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/ai-server-suppliers-seek-up-to-45-more-after-contracts-are-signed-ft-reports",
+          "published": "2026-11-22T06:27:56.094000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T06:27:56.094000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-hardware",
+        "memory-prices",
+        "contract-dispute",
+        "pricing",
+        "suppliers"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 30,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038807",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T13:32:49Z",
+      "last_seen": "2026-11-25T12:00:00.073889Z",
+      "last_material_update": "2026-11-22T13:32:49Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Lean and Mathlib verify Claude-assisted Riemann Hypothesis proof",
+      "summary": "A proof of the Riemann Hypothesis developed with assistance from Claude has reportedly been independently verified by the Lean proof assistant and its Mathlib library. However, the underlying mathematics and the exact role the AI played remain to be fully explained.",
+      "why_it_matters": "Independent formal verification in Lean lends credibility to a Claude-assisted mathematical result, though questions remain about how much the AI actually contributed. This suggests AI systems are becoming usable collaborators in formal mathematics, while highlighting the need for human explanation of machine-assisted proofs before they are accepted.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.12599113096652237,
+        "prominence": 0.07633766430624486
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Claude",
+          "Lean",
+          "Mathlib"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_blog_growthforgeai_com",
+          "url": "https://blog.growthforgeai.com/lean-mathlib-verify-claude-riemann-hypothesis-proof/",
+          "published": "2026-11-22T13:32:49Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_blog_growthforgeai_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T13:32:49Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by GrowthForgeAI Signal",
+          "sources": [
+            "found_blog_growthforgeai_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-research",
+        "mathematics",
+        "formal-verification",
+        "theorem-proving",
+        "claude"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by GrowthForgeAI Signal (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038816",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T13:21:01.313000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T13:21:01.313000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Arizona attorney general seeks delay on SpaceX’s $50 billion AI campus",
+      "summary": "Arizona's attorney general has asked for a delay to SpaceX's proposed $50 billion AI campus, which would need $3.6 billion in grid upgrades. Separately, Texas county commissioners have declined to open talks on a full property-tax break for the project.",
+      "why_it_matters": "The record shows the project would require $3.6 billion in electricity grid upgrades, highlighting the large infrastructure demands of large-scale AI facilities. Local regulators and tax authorities in Arizona and Texas are the ones acting to slow or condition it.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.12563398426770653,
+        "prominence": 0.07617989504273058
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Arizona attorney general",
+          "SpaceX"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/arizona-attorney-general-seeks-delay-on-spacex-s-50-billion-ai-campus",
+          "published": "2026-11-22T13:21:01.313000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T13:21:01.313000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-campus",
+        "grid-upgrades",
+        "tax-break",
+        "spacex"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038759",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T05:06:55Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T05:06:55Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenRouter Drops 3 Providers After Researchers Catch Months of Prompt Theft at AI Hosting Firms",
+      "summary": "Three AI inference providers unknowingly hosted attackers who exfiltrated customer prompt data for months, and the intrusions came to light only when researchers reported them. Some of the stolen traffic had been marked as Zero Data Retention, meaning prompts should never have been stored.",
+      "why_it_matters": "Organisations routing AI workloads through third-party inference providers may have sensitive prompts and data captured even under Zero Data Retention guarantees. The long dwell time and absence of provider-side detection show these providers may not be able to detect insider theft of supposedly ephemeral data. Buyers of AI services should not treat retention settings as a security control on their own.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "data-breach",
+        "ai-incident",
+        "supply-chain",
+        "news"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.11154783073553254,
+        "prominence": 0.07567711157477584
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "attackers"
+        ],
+        "organisations": [
+          "Dragos",
+          "OpenRouter"
+        ],
+        "products": [
+          "Zero Data Retention"
+        ],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1213",
+          "name": "Data from Information Repositories",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/openrouter-drops-3-providers-after.html",
+          "published": "2026-11-22T05:06:55Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T05:06:55Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "prompt-theft",
+        "inference-providers",
+        "zero-data-retention",
+        "ai-hosting",
+        "supply-chain"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 46,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038760",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T05:03:41Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T05:03:41Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Researchers Demonstrate Ghostscript Sandbox-Escape RCE via Crafted File Uploads in Popular Apps",
+      "summary": "Researchers at pwn.ai demonstrated that a now-patched Ghostscript flaw let a malicious uploaded file break out of the program's security sandbox and execute commands on the server processing it. Ghostscript is widely used on Linux servers to convert PDFs, PostScript files and images, often invisibly to the calling application, so simple file uploads could trigger the exploit.",
+      "why_it_matters": "Any application that accepts document or image uploads from users and processes them with Ghostscript could be exposed to remote command execution, even without calling Ghostscript directly. The flaw is patched, but defenders should confirm their Ghostscript version is current and treat untrusted uploads as a code-execution vector.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.45,
+        "novelty": 0.11146105953387891,
+        "prominence": 0.07563484667178824
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "pwn.ai"
+        ],
+        "products": [
+          "Ghostscript"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "confidence": 0.85,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "thn"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "thn",
+          "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+          "published": "2026-11-22T05:03:41Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "thn",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T05:03:41Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Hacker News",
+          "sources": [
+            "thn"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "sandbox-escape",
+        "remote-code-execution",
+        "file-upload",
+        "ghostscript"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 41,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by The Hacker News (specialist)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038749",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T03:58:45Z",
+      "last_seen": "2026-11-23T08:00:00.074087Z",
+      "last_material_update": "2026-11-22T03:58:45Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "OpenRouter Users’ Private AI Chats May Have Been Exposed Via Compromised Third-Party Providers",
+      "summary": "AI routing service OpenRouter says private customer chat traffic may have been exposed through compromised or non-compliant third-party hosting providers. It has removed three providers, revoked Zero Data Retention eligibility for 125 endpoints, and notified potentially affected customers in a November 22 incident notice.",
+      "why_it_matters": "Private AI chat traffic sent through third-party providers may have been exposed, so organisations routing AI workloads via intermediaries should check which endpoints retain their data. OpenRouter's revocation of Zero Data Retention eligibility for 125 endpoints signals that assumed privacy guarantees may no longer hold for affected traffic.",
+      "resolution": null,
+      "domains": [
+        "ai",
+        "cybersecurity"
+      ],
+      "categories": [
+        "ai-incident",
+        "data-breach",
+        "ai-security",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.10973269756304051,
+        "prominence": 0.07479150575639384
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, people or authorities are mentioned in the record",
+          "The record only notes global coverage and OpenRouter customer notifications"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "OpenRouter"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "AML.T0010",
+          "name": "Supply Chain Compromise",
+          "confidence": 0.6,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATLAS 2026.10",
+          "evidence": [
+            "found_cybersecuritynews_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_cybersecuritynews_com",
+          "url": "https://cybersecuritynews.com/openrouter-ai-chat-leaks/",
+          "published": "2026-11-22T03:58:45Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cybersecuritynews_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T03:58:45Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Cyber Security News",
+          "sources": [
+            "found_cybersecuritynews_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-chats",
+        "third-party-compromise",
+        "data-exposure",
+        "provider-security",
+        "incident-notice"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 42,
+        "tier": "notable",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Cyber Security News (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038774",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T11:28:17Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T11:28:17Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "JPMorgan, Visa, Mastercard Disclose Vendor Data Incidents",
+      "summary": "JPMorgan, Visa and Mastercard have each confirmed data incidents at a vendor, following a leak of customer-linked data by a group calling itself N0n. Few details beyond the confirmations are currently known.",
+      "why_it_matters": "The involvement of three major global payments firms means their customers' data may be exposed via a shared vendor, so financial institutions and merchants should review third-party data handling. The record notes no severity rating or confirmed breach scope yet, so impact remains uncertain.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "high",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.12227092969981411,
+        "prominence": 0.07468999464094722
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "N0n group"
+        ],
+        "organisations": [
+          "JPMorgan",
+          "Visa",
+          "Mastercard"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_bellatorcyber_com",
+          "url": "https://bellatorcyber.com/blog/jpmorgan-visa-mastercard-vendor-data-incidents-2026",
+          "published": "2026-11-22T11:28:17Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_bellatorcyber_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T11:28:17Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Bellator Cyber Guard",
+          "sources": [
+            "found_bellatorcyber_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "vendor-incident",
+        "finance",
+        "n0n-group"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 29,
+        "tier": "routine",
+        "reasons": [
+          "high severity (AI estimate)",
+          "reported by Bellator Cyber Guard (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038754",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T03:47:59.085000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T03:47:59.085000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "Chainalysis finds 55% payment surge from China-linked wallets after US AI launches",
+      "summary": "Chainalysis reportedly observed a 55% rise in payments from China-linked wallets coinciding with US AI model launches, and a survey of AI intermediaries is cited as a possible explanation. The record notes that payment timing alone cannot establish who purchased model access or what they did with it.",
+      "why_it_matters": "If the pattern reflects bulk purchases of access to US AI models, it would matter for AI providers' export and abuse controls. However, the record itself concedes the evidence is circumstantial: timing alone cannot attribute buyers or their use. Defenders should treat this as an unverified signal, not a confirmed threat.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "emerging-threat",
+        "ai-security",
+        "community"
+      ],
+      "ai_subdomain": "AI_THREAT_ACTIVITY",
+      "ai_significance": "notable",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.10944875489744924,
+        "prominence": 0.07465268515961208
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Chainalysis"
+        ],
+        "products": [],
+        "countries": [
+          "CN",
+          "US"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/chainalysis-finds-55-payment-surge-from-china-linked-wallets-after-us-ai-launches",
+          "published": "2026-11-22T03:47:59.085000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T03:47:59.085000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "payment-surge",
+        "china-linked-wallets",
+        "ai-middlemen",
+        "model-access",
+        "cyber-threat"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 23,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038789",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T10:44:20.458000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T10:44:20.458000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "IDB estimates broad AI adoption could lift Latin American GDP 5.1% over a decade",
+      "summary": "The Inter-American Development Bank has released a report estimating that broad adoption of AI across Latin America could raise regional GDP by 5.1% over ten years. The report contrasts simply using off-the-shelf AI tools with the deeper organisational changes businesses and governments need to make to convert adoption into real productivity gains.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.12098462122001655,
+        "prominence": 0.07411804061747755
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "IDB"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/idb-estimates-broad-ai-adoption-could-lift-latin-american-gdp-5-1-over-a-decade",
+          "published": "2026-11-22T10:44:20.458000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T10:44:20.458000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "economic-impact",
+        "productivity",
+        "adoption"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038755",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T03:10:42.666000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T03:10:42.666000Z",
+      "last_independent_confirmation": null,
+      "status": "new",
+      "title": "MIT panel challenges how mathematicians earn credit in the AI era",
+      "summary": "An MIT panel is examining how mathematicians receive credit for proofs in an era where AI tools are increasingly involved. The record notes a surge in journal submissions and greater weight on interviews as part of this debate.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "notable",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.5454545454545454,
+        "confidence": 0.3,
+        "novelty": 0.10847129448660546,
+        "prominence": 0.06848807606078879
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "MIT"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/mit-panel-challenges-how-mathematicians-earn-credit-in-the-ai-era",
+          "published": "2026-11-22T03:10:42.666000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T03:10:42.666000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-research",
+        "mathematics",
+        "academic-publishing",
+        "ai-proofs",
+        "research-credit"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 22,
+        "tier": "routine",
+        "reasons": [
+          "notable AI story",
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038824",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T18:08:43Z",
+      "last_seen": "2026-11-24T16:00:00.072892Z",
+      "last_material_update": "2026-11-22T18:08:43Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why data centers are at the center of the Big Tech backlash",
+      "summary": "A TechCrunch interview with journalist Paris Marx discusses his new book about hyperscale data centers and their role in growing public criticism of big technology companies.",
+      "why_it_matters": "The record offers only a headline and a one-line description, so no specific security, policy, or business impact is stated. Defenders may find the data-center focus relevant context, but no facts in the record support a concrete takeaway.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.4336770077606463,
+        "prominence": 0.04999225012122047
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "techcrunch_ai",
+          "url": "https://techcrunch.com/2026/11/22/why-data-centers-are-at-the-center-of-the-big-tech-backlash/",
+          "published": "2026-11-22T18:08:43Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "techcrunch_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T18:08:43Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by TechCrunch AI",
+          "sources": [
+            "techcrunch_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 24,
+        "tier": "routine",
+        "reasons": [
+          "reported by TechCrunch AI (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-038788",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T10:56:06.786000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T10:56:06.786000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Taiwanese banks turn to AI defenses as cyberattack activity climbs",
+      "summary": "Disclosures from Taiwanese banks indicate rising cyberattack traffic, with the institutions increasingly deploying AI for threat detection while keeping autonomous action decisions separate.",
+      "why_it_matters": "The disclosures give defenders a picture of heightened attack activity against the banking sector and show AI-based detection being adopted in response. They also highlight that letting AI systems act autonomously is treated as a distinct decision from using AI to detect threats.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4853116131671634,
+        "prominence": 0.04997671139728442
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": [
+          "finance"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/taiwanese-banks-turn-to-ai-defenses-as-cyberattack-activity-climbs",
+          "published": "2026-11-22T10:56:06.786000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T10:56:06.786000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "taiwan",
+        "banks",
+        "ai-defenses",
+        "cyberattacks",
+        "detection"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038817",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T12:55:16.134000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T12:55:16.134000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Trium Capital bets SK Hynix’s 48% U.S. share premium will shrink",
+      "summary": "Hedge fund Trium Capital is taking a position that the valuation premium on SK Hynix's U.S.-listed shares, currently around 48% above its Korean listing, will narrow. Fund manager Tej Johar attributes the markup to strong U.S. investor appetite for AI exposure rather than fundamentals.",
+      "why_it_matters": "The premium reflects how heavily U.S. demand is pricing AI-exposed chipmakers; a convergence would signal that AI-hype valuations are correcting. For investors, the bet's success hinges on market sentiment shifting rather than on any new capability from SK Hynix.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4852130142582312,
+        "prominence": 0.04995292430871498
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Trium Capital",
+          "SK Hynix"
+        ],
+        "products": [],
+        "countries": [
+          "US"
+        ],
+        "industries": [
+          "technology"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/trium-capital-bets-sk-hynix-s-48-u-s-share-premium-will-shrink",
+          "published": "2026-11-22T12:55:16.134000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T12:55:16.134000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-chips",
+        "semiconductor",
+        "hedge-fund",
+        "valuation",
+        "sk-hynix",
+        "ai-exposure"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038808",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T14:31:35Z",
+      "last_seen": "2026-11-24T16:00:00.072892Z",
+      "last_material_update": "2026-11-22T14:31:35Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "SECURITY AFFAIRS AI-CYBERSECURITY NEWSLETTER ROUND 9",
+      "summary": "Security Affairs has published the ninth edition of its AI-cybersecurity newsletter, a roundup of articles and research on artificial intelligence in the international security landscape. It covers how AI is changing both offensive and defensive cyber operations, including agents that automate tasks, analyse large datasets, find vulnerabilities and accelerate attacks.",
+      "why_it_matters": "The newsletter gathers current research showing AI is reshaping attacker techniques and defender tooling alike, including automation of vulnerability discovery and offensive operations. Defenders can use it as a digest of notable AI-security reporting to track how the threat landscape is shifting. No specific incidents, vulnerabilities or breach figures are given in this record.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "minor",
+      "severity": "low",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4620004937349541,
+        "prominence": 0.04988069162157388
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203725/ai/security-affairs-ai-cybersecurity-newsletter-round-9.html",
+          "published": "2026-11-22T14:31:35Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T14:31:35Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-034121"
+        }
+      ],
+      "tags": [
+        "ai-cybersecurity",
+        "newsletter",
+        "roundup",
+        "offensive-ai",
+        "defensive-ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 26,
+        "tier": "routine",
+        "reasons": [
+          "reported by Security Affairs (community)",
+          "some Australian relevance",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038814",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T15:30:40.383000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T15:30:40.383000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Leading coding agents finish fewer than 8% of assignments in SWE-CoWork study",
+      "summary": "A study called SWE-CoWork measured how often leading coding agents complete real-world software work, and found they finish fewer than 8% of assignments when they must gather requirements from simulated colleagues. Notably, giving two of the models the full instructions upfront raised their scores on individual tests but did not improve their ability to complete whole tasks.",
+      "why_it_matters": "For teams buying or deploying AI coding tools, this suggests strong benchmark scores may overstate how well agents handle collaborative, requirements-gathering work that mirrors real jobs. Defenders and engineering leads should weight end-to-end task success, not isolated test results, when evaluating these tools.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-research",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4618993143615993,
+        "prominence": 0.04985560799010878
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/leading-coding-agents-finish-fewer-than-8-of-assignments-in-swe-cowork-study",
+          "published": "2026-11-22T15:30:40.383000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T15:30:40.383000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "coding-agents",
+        "benchmark",
+        "study"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038813",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T15:50:20.259000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T15:50:20.259000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Cal State faculty urge a shift from classroom AI to administrative work",
+      "summary": "Faculty in the California State University system have passed an advisory resolution through their Academic Senate calling for the university to redirect AI use away from classroom learning and toward administrative tasks, and for better methods of assessing student learning. Published faculty comments also criticise how the campus rollout of ChatGPT Edu was handled.",
+      "why_it_matters": "The resolution signals organised faculty pushback against institutional AI adoption in teaching, favouring administrative use instead. It also raises concerns about the procurement and rollout process for a campus-wide ChatGPT Edu deployment, which other universities weighing similar deals may note. No security impact is stated in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "ai-governance",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4846374375451807,
+        "prominence": 0.04981420462200114
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Cal State"
+        ],
+        "products": [
+          "ChatGPT Edu"
+        ],
+        "countries": [],
+        "industries": [
+          "education"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/cal-state-faculty-urge-a-shift-from-classroom-ai-to-administrative-work",
+          "published": "2026-11-22T15:50:20.259000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T15:50:20.259000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai",
+        "education",
+        "governance",
+        "policy",
+        "chatgpt-edu"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038773",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T09:02:00Z",
+      "last_seen": "2026-11-24T16:00:00.072892Z",
+      "last_material_update": "2026-11-22T09:02:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Agentic SOC: How AI Agents Are Changing Security Operations",
+      "summary": "A security blog post explains how AI agents are being used inside security operations centres to triage, investigate and respond to alerts, laying out a progression from manual processes to agentic ones and advice on adopting them safely. It is a general explainer rather than a report of a specific incident.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "cybersecurity",
+        "ai"
+      ],
+      "categories": [
+        "research",
+        "ai-industry",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": "AI_CYBER_CONVERGENCE",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4521461415384448,
+        "prominence": 0.049796450517429536
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Ciphers Security"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_cipherssecurity_com",
+          "url": "https://cipherssecurity.com/agentic-soc/",
+          "published": "2026-11-22T09:02:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_cipherssecurity_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T09:02:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Ciphers Security",
+          "sources": [
+            "found_cipherssecurity_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-agents",
+        "security-operations",
+        "soc",
+        "automation",
+        "research"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 16,
+        "tier": "routine",
+        "reasons": [
+          "reported by Ciphers Security (community)",
+          "cyber and AI"
+        ]
+      },
+      "beat": "both"
+    },
+    {
+      "event_id": "evt-2026-038751",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T00:00:00Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Five minutes from a GitHub secret to your Key Vault: the audit I'd run this week",
+      "summary": "A security blog post describes an incident where a secret leaked in a public GitHub repository was used to access Azure Key Vault data within five minutes, and walks readers through an audit of their own service principals' identities and permissions.",
+      "why_it_matters": "The five-minute path from public leak to secret access shows how little time defenders have to revoke leaked credentials. It highlights the value of auditing service principal permissions, scoping Key Vault access narrowly, and monitoring for leaked repository secrets. The piece offers a concrete checklist defenders can run themselves.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "research",
+        "emerging-threat",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "medium",
+      "severity_source": "ai_estimate",
+      "risk": {
+        "urgency": 0.36363636363636365,
+        "confidence": 0.3,
+        "novelty": 0.4084786970760672,
+        "prominence": 0.049788320835599115
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [
+          "No Australian organisations, people or authorities are mentioned in the record"
+        ],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "GitHub",
+          "Key Vault"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_secureinseconds_com",
+          "url": "https://www.secureinseconds.com/blog/2026-11-22-ai-agent-github-secret-key-vault",
+          "published": "2026-11-22T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_secureinseconds_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Secure in Seconds",
+          "sources": [
+            "found_secureinseconds_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "secret-exposure",
+        "identity-audit",
+        "service-principals",
+        "key-vault",
+        "github"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 26,
+        "tier": "routine",
+        "reasons": [
+          "reported by Secure in Seconds (community)",
+          "medium severity (AI estimate)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038767",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T07:48:47.613000Z",
+      "last_seen": "2026-11-23T12:00:00.165604Z",
+      "last_material_update": "2026-11-22T07:48:47.613000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Kraftwerk Berlin apologizes for hosting military AI launch after music-scene backlash",
+      "summary": "Berlin venue Kraftwerk apologised after criticism from the music scene over its hosting of a military AI launch event, with the club Tresor condemning it and the venue's managing director saying he had not been consulted. The record notes the dispute relates to Helsing's promise of human control over strikes.",
+      "why_it_matters": "The record shows public and cultural-sector pushback against a defence AI launch, including claims about human control over lethal strikes. Defenders and AI vendors can read it as reputational risk when defence-linked AI products are showcased in non-military venues.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4844574978286433,
+        "prominence": 0.049770885975362014
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Kraftwerk Berlin",
+          "Tresor",
+          "Helsing"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/kraftwerk-berlin-apologizes-for-hosting-military-ai-launch-after-music-scene-backlash",
+          "published": "2026-11-22T07:48:47.613000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T07:48:47.613000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-industry",
+        "public-backlash",
+        "military-ai"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038753",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T00:00:00Z",
+      "last_seen": "2026-11-28T12:00:00.177456Z",
+      "last_material_update": "2026-11-22T00:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Java4Shell: the patch triage order for admins who think they don't run Java",
+      "summary": "A newly reported vulnerability nicknamed Java4Shell affects Java-based software including Keycloak, Jira, Confluence and Jenkins, scoring 9.2 in default configurations. Exploitation requires four conditions to hold simultaneously, and guidance walks admins through checking them in order.",
+      "why_it_matters": "The vulnerability rates 9.2 in default configs across widely deployed tools, meaning organisations that believe they do not run Java may still be exposed through these platforms. A triage order for the four required conditions helps defenders prioritise patching and quickly rule out exposure.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "vulnerability",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4327682210120783,
+        "prominence": 0.04975741753540524
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [
+          "Keycloak",
+          "Jira",
+          "Confluence",
+          "Jenkins"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_secureinseconds_com",
+          "url": "https://www.secureinseconds.com/blog/2026-11-22-java4shell-patch-triage",
+          "published": "2026-11-22T00:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_secureinseconds_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T00:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Secure in Seconds",
+          "sources": [
+            "found_secureinseconds_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "java4shell",
+        "vulnerability",
+        "patch",
+        "keycloak",
+        "jira",
+        "confluence"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 18,
+        "tier": "routine",
+        "reasons": [
+          "reported by Secure in Seconds (community)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038794",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T13:00:00Z",
+      "last_seen": "2026-11-23T20:00:00.198584Z",
+      "last_material_update": "2026-11-22T13:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "The vibe-coding revolution is coming to all the gadgets",
+      "summary": "A weekly tech newsletter from The Verge discusses how AI-assisted (\"vibe\") coding is spreading to consumer gadgets, framing it as a major trend in how devices are built. No specific incident, vulnerability, or breach is described.",
+      "why_it_matters": "The record states only that AI-driven coding is expanding into hardware products. It provides no security facts—no vulnerabilities, exploitation, or breaches—so defenders get no actionable detail from it.",
+      "resolution": null,
+      "domains": [],
+      "categories": [
+        "news"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.45,
+        "novelty": 0.43276818884840734,
+        "prominence": 0.04975740923580363
+      },
+      "au": {
+        "relevance": 0.1,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "verge_ai",
+          "url": "https://www.theverge.com/column/1039139/vibe-coding-gadgets-tv-camera",
+          "published": "2026-11-22T13:00:00Z",
+          "evidence_class": "NEWS",
+          "lineage_id": "verge_ai",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T13:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by The Verge AI",
+          "sources": [
+            "verge_ai"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 24,
+        "tier": "routine",
+        "reasons": [
+          "reported by The Verge AI (established)",
+          "some Australian relevance"
+        ]
+      },
+      "beat": "other"
+    },
+    {
+      "event_id": "evt-2026-038912",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T08:00:00Z",
+      "last_seen": "2026-11-24T04:00:00.166112Z",
+      "last_material_update": "2026-11-22T08:00:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Why Data Breaches Are Fueling Class Action Settlements",
+      "summary": "A commentary-style article discusses how data breaches increasingly lead to class action settlements, with affected consumers receiving notices that their data was exposed and later offers of settlement payments, sometimes claimable without proof of loss.",
+      "why_it_matters": "The record suggests breach litigation and settlement payouts are becoming a routine consequence of data exposures, a cost factor alongside incident response. It describes no specific incident, actors, or security controls. No actionable threat indicators are present.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "data-breach",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4519284318047575,
+        "prominence": 0.049741838046858555
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securitysenses_com",
+          "url": "https://securitysenses.com/posts/why-data-breaches-are-fueling-class-action-settlements",
+          "published": "2026-11-22T08:00:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securitysenses_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T08:00:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World",
+          "sources": [
+            "found_securitysenses_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "data-breach",
+        "class-action",
+        "settlement"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 25,
+        "tier": "routine",
+        "reasons": [
+          "data breach",
+          "reported by SecuritySenses - The Latest Cybersecurity News & Insights From Around The World (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038835",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T16:45:48.521000Z",
+      "last_seen": "2026-11-23T16:00:00.165502Z",
+      "last_material_update": "2026-11-22T16:45:48.521000Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "UC San Diego students build a network linking AI research with industry",
+      "summary": "Students at UC San Diego launched a network called RAIN during the 2025–26 academic year that connects AI research with industry through a discovery platform, faculty mentoring, startup support and industry links.",
+      "why_it_matters": null,
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.4841094646318018,
+        "prominence": 0.04968716621064724
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "UC San Diego",
+          "RAIN"
+        ],
+        "products": [],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_superpowerdaily_com",
+          "url": "https://superpowerdaily.com/posts/uc-san-diego-students-build-a-network-linking-ai-research-with-industry",
+          "published": "2026-11-22T16:45:48.521000Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_superpowerdaily_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T16:45:48.521000Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Superpower Daily",
+          "sources": [
+            "found_superpowerdaily_com"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-industry",
+        "research",
+        "startup",
+        "education"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 10,
+        "tier": "routine",
+        "reasons": [
+          "reported by Superpower Daily (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038809",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T13:56:43Z",
+      "last_seen": "2026-11-24T16:00:00.072892Z",
+      "last_material_update": "2026-11-22T13:56:43Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "SECURITY AFFAIRS MALWARE NEWSLETTER ROUND 123",
+      "summary": "A Security Affairs malware newsletter (round 123) rounds up recent malware research, including a Rust-based remote access tool called Linux/EasyShell targeting Linux and macOS, a supply chain compromise dubbed BO Team affecting a software developer's infrastructure, and an analysis of the SANSAR Linux cryptomining operation.",
+      "why_it_matters": "The newsletter highlights a cross-platform RAT affecting Linux and macOS, platforms often under-monitored by defenders, and a supply chain compromise in a software developer's environment that could propagate to downstream customers. The cryptomining coverage signals ongoing abuse of Linux systems for illicit mining. No severity or exploitation details are given beyond these summaries.",
+      "resolution": null,
+      "domains": [
+        "cybersecurity"
+      ],
+      "categories": [
+        "malware",
+        "emerging-threat",
+        "supply-chain",
+        "research",
+        "community"
+      ],
+      "ai_subdomain": null,
+      "ai_significance": null,
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.2727272727272727,
+        "confidence": 0.3,
+        "novelty": 0.4515715701695888,
+        "prominence": 0.049652397064632744
+      },
+      "au": {
+        "relevance": 0.0,
+        "directly_reported_in_au": false,
+        "reasons": [],
+        "sectors": [],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [
+          "BO Team"
+        ],
+        "organisations": [],
+        "products": [
+          "Linux/EasyShell",
+          "SANSAR"
+        ],
+        "countries": [],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [
+        {
+          "id": "T1195.002",
+          "name": "Supply Chain Compromise: Compromise Software Supply Chain",
+          "confidence": 0.5,
+          "confidence_type": "ai_suggested",
+          "dataset_version": "ATT&CK v20.1",
+          "evidence": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_securityaffairs_com",
+          "url": "https://securityaffairs.com/203714/malware/security-affairs-malware-newsletter-round-123-2.html",
+          "published": "2026-11-22T13:56:43Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_securityaffairs_com",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T13:56:43Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by Security Affairs",
+          "sources": [
+            "found_securityaffairs_com"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-031255"
+        }
+      ],
+      "tags": [
+        "malware",
+        "linux",
+        "macos",
+        "rust",
+        "supply-chain",
+        "cryptomining"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 28,
+        "tier": "routine",
+        "reasons": [
+          "supply-chain attack",
+          "reported by Security Affairs (community)"
+        ]
+      },
+      "beat": "cyber"
+    },
+    {
+      "event_id": "evt-2026-038853",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T21:45:00Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-22T21:45:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Alyve warns Australian firms risk missing AI strategy",
+      "summary": "Consultancy Alyve has cautioned that Australian companies may be treating small AI pilot projects as though they amounted to an AI strategy, potentially gaining efficiency gains without any real competitive or growth advantage.",
+      "why_it_matters": "For organisations investing in AI, the warning suggests pilots alone do not translate into strategic value, and boards may be overestimating their AI maturity. Decision-makers should treat this as a prompt to assess whether their AI activity is tied to business goals rather than isolated experiments.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.37865553172203964,
+        "prominence": 0.04963705160277959
+      },
+      "au": {
+        "relevance": 0.6,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "names Australia",
+          "reported by an Australian source",
+          "Warning is aimed at Australian firms",
+          "Reported by an Australian outlet, IT Brief Australia"
+        ],
+        "sectors": [
+          "technology"
+        ],
+        "soci_asset_classes": []
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Alyve"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": []
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_itbrief_com_au",
+          "url": "https://itbrief.com.au/story/alyve-warns-australian-firms-risk-missing-ai-strategy",
+          "published": "2026-11-22T21:45:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_itbrief_com_au",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T21:45:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by IT Brief Australia",
+          "sources": [
+            "found_itbrief_com_au"
+          ]
+        }
+      ],
+      "relationships": [],
+      "tags": [
+        "ai-strategy",
+        "advisory"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 35,
+        "tier": "routine",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by IT Brief Australia (community)"
+        ]
+      },
+      "beat": "ai"
+    },
+    {
+      "event_id": "evt-2026-038856",
+      "schema_version": "1",
+      "pipeline_version": "1.0.0",
+      "scoring_version": "4",
+      "enrichment_version": "1",
+      "first_seen": "2026-11-22T21:30:00Z",
+      "last_seen": "2026-11-23T00:00:00.137486Z",
+      "last_material_update": "2026-11-22T21:30:00Z",
+      "last_independent_confirmation": null,
+      "status": "archived",
+      "title": "Gadali named Microsoft global finalist for aged care AI",
+      "summary": "A provider called ECH has adopted a scheduling AI tool from Gadali, reportedly halving the time it takes to reschedule morning roster disruptions for aged care staff, and Gadali has been named a Microsoft global finalist for this aged care AI work.",
+      "why_it_matters": "The record shows AI scheduling tools delivering measurable operational gains in aged care staffing, cutting rescheduling time by 50%. For Australian aged care operators, this signals AI adoption can ease staff burden during disruptions. No security risk is described in the record.",
+      "resolution": null,
+      "domains": [
+        "ai"
+      ],
+      "categories": [
+        "ai-industry",
+        "community"
+      ],
+      "ai_subdomain": "AI_INDUSTRY",
+      "ai_significance": "minor",
+      "severity": "unknown",
+      "severity_source": "unknown",
+      "risk": {
+        "urgency": 0.18181818181818182,
+        "confidence": 0.3,
+        "novelty": 0.3665503000021439,
+        "prominence": 0.049629100290105276
+      },
+      "au": {
+        "relevance": 0.7,
+        "directly_reported_in_au": true,
+        "reasons": [
+          "reported by an Australian source",
+          "ECH, an Australian aged care provider, is using the tool",
+          "Australian reported story about an Australian organisation's AI adoption"
+        ],
+        "sectors": [
+          "health"
+        ],
+        "soci_asset_classes": [
+          "health care and medical"
+        ]
+      },
+      "entities": {
+        "actors": [],
+        "organisations": [
+          "Gadali",
+          "Microsoft",
+          "ECH"
+        ],
+        "products": [],
+        "countries": [
+          "AU"
+        ],
+        "industries": [
+          "health"
+        ]
+      },
+      "cves": [],
+      "mitre_techniques": [],
+      "claims": [],
+      "sources": [
+        {
+          "source_id": "found_itbrief_com_au",
+          "url": "https://itbrief.com.au/story/gadali-named-microsoft-global-finalist-for-aged-care-ai",
+          "published": "2026-11-22T21:30:00Z",
+          "evidence_class": "COMMUNITY",
+          "lineage_id": "found_itbrief_com_au",
+          "independent": true
+        }
+      ],
+      "timeline": [
+        {
+          "timestamp": "2026-11-22T21:30:00Z",
+          "type": "NEW_FACT",
+          "summary": "First reported by IT Brief Australia",
+          "sources": [
+            "found_itbrief_com_au"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "type": "related_event",
+          "event_id": "evt-2026-034649"
+        }
+      ],
+      "tags": [
+        "ai-adoption",
+        "aged-care",
+        "microsoft",
+        "australia"
+      ],
+      "pending_enrichment": false,
+      "importance": {
+        "version": "1",
+        "score": 43,
+        "tier": "notable",
+        "reasons": [
+          "relevant to Australia, reported there",
+          "reported by IT Brief Australia (community)",
+          "critical infrastructure (health care and medical) involved"
+        ]
+      },
+      "beat": "ai"
+    }
+  ]
+}
